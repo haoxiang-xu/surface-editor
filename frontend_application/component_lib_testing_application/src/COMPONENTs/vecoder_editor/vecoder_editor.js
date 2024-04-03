@@ -366,7 +366,9 @@ const FileSelectionBar = ({
         setOnSwapIndex(-1);
         setDraggedItem(null);
         setDraggedOverItem(null);
-        setDragCommand(null);
+        setDragCommand("DELETE FROM SOURCE");
+
+
       } else {
         const dragedFile = draggedItem.content;
         editedFiles.splice(onDropIndex, 0, dragedFile);
