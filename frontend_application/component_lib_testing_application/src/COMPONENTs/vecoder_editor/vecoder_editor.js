@@ -206,11 +206,13 @@ const FileSelectionBar = ({
 
     setOnSelectedIndex(index);
     setOnDragIndex(index);
-    setDraggedItem(
-      accessMonacoEditorPathsByEditorIndex(code_editor_container_ref_index)[
-        index
-      ]
-    );
+    setDraggedItem({
+      source:
+        "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
+      content: accessMonacoEditorPathsByEditorIndex(
+        code_editor_container_ref_index
+      )[index],
+    });
   };
   const onFileDragEnd = (e, index) => {
     e.stopPropagation();
@@ -320,20 +322,72 @@ const FileSelectionBar = ({
           code_editor_container_ref_index
         ),
       ];
-      const dragedFile = draggedItem;
-      editedFiles.splice(onDropIndex, 0, dragedFile);
-      updateMonacoEditorPathsByEditorIndex(
-        code_editor_container_ref_index,
-        editedFiles
-      );
-      setOnSelectedIndex(onDropIndex);
+      if (
+        accessMonacoEditorPathsByEditorIndex(
+          code_editor_container_ref_index
+        ).indexOf(draggedItem.content) !== -1
+      ) {
+        const LocalOnDragIndex = accessMonacoEditorPathsByEditorIndex(
+          code_editor_container_ref_index
+        ).indexOf(draggedItem.content);
+        console.log(LocalOnDragIndex);
 
-      setOnDragIndex(-1);
-      setOnDropIndex(-1);
-      setOnSwapIndex(-1);
-      setDraggedItem(null);
-      setDraggedOverItem(null);
-      setDragCommand("WAITING FOR MODE APPEND");
+        if (LocalOnDragIndex < onDropIndex) {
+          const dragedFile = editedFiles.splice(LocalOnDragIndex, 1)[0];
+          editedFiles.splice(onDropIndex , 0, dragedFile);
+          setOnSelectedIndex(
+            Math.min(
+              onDropIndex - 1,
+              accessMonacoEditorPathsByEditorIndex(
+                code_editor_container_ref_index
+              ).length - 1
+            )
+          );
+        } else {
+          const dragedFile = editedFiles.splice(LocalOnDragIndex, 1)[0];
+          editedFiles.splice(onDropIndex, 0, dragedFile);
+          setOnSelectedIndex(
+            Math.min(
+              onDropIndex,
+              accessMonacoEditorPathsByEditorIndex(
+                code_editor_container_ref_index
+              ).length - 1
+            )
+          );
+        }
+        updateMonacoEditorPathsByEditorIndex(
+          code_editor_container_ref_index,
+          editedFiles
+        );
+
+        setOnSelectedIndex(onDropIndex);
+
+        setOnDragIndex(-1);
+        setOnDropIndex(-1);
+        setOnSwapIndex(-1);
+        setDraggedItem(null);
+        setDraggedOverItem(null);
+        setDragCommand(null);
+      } else {
+        const dragedFile = draggedItem.content;
+        editedFiles.splice(onDropIndex, 0, dragedFile);
+        updateMonacoEditorPathsByEditorIndex(
+          code_editor_container_ref_index,
+          editedFiles
+        );
+        setOnSelectedIndex(onDropIndex);
+
+        setOnDragIndex(-1);
+        setOnDropIndex(-1);
+        setOnSwapIndex(-1);
+        setDraggedItem(null);
+        setDraggedOverItem(null);
+        if (draggedItem.source === "vecoder_explorer") {
+          setDragCommand("WAITING FOR MODEL APPEND");
+        } else {
+          setDragCommand("WAITING FOR MODEL APPEND THEN DELETE FROM SOURCE");
+        }
+      }
     }
     if (onDragIndex !== -1 && dragCommand === "DELETE FROM SOURCE") {
       const editedFiles = [
@@ -557,7 +611,7 @@ const FileSelectionBar = ({
         );
       })}
       {onDragIndex !== -1 || draggedItem !== null ? (
-        <DirItemGhostDragImage draggedDirItemPath={draggedItem} />
+        <DirItemGhostDragImage draggedDirItemPath={draggedItem?.content} />
       ) : null}
     </div>
   );
@@ -610,6 +664,7 @@ const MonacoEditorGroup = ({
         key={filePath}
         //Editor required parameters
         editor_filePath={filePath}
+        code_editor_container_ref_index={code_editor_container_ref_index}
         //Editor function parameters
         onAppendContent={onAppendContent}
         setOnAppendContent={setOnAppendContent}

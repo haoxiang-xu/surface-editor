@@ -8,6 +8,7 @@ import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructure
 const Editor = ({
   //Editor required parameters
   editor_filePath,
+  code_editor_container_ref_index,
   //Editor function parameters
   onAppendContent,
   setOnAppendContent,
@@ -101,7 +102,6 @@ const Editor = ({
       updateMonacoEditorViewStateByPath,
       updateMonacoEditorModelByPath
     );
-    //console.log(editor.getModel()._isDisposed);
   };
   ////Get monaco editor on selected content
   const getEditorOnSelected = (monacoRef) => {
@@ -166,7 +166,12 @@ const Editor = ({
 
   /*Drag and Drop Save and Reload Model=================================*/
   useEffect(() => {
-    if (draggedItem && draggedItem === editor_filePath) {
+    if (
+      draggedItem &&
+      draggedItem.content === editor_filePath &&
+      draggedItem.source ===
+        "vecoder_editor" + "/" + code_editor_container_ref_index.toString()
+    ) {
       setMonacoModel(monacoRef.current.getModel());
       setMonacoViewState(monacoRef.current.saveViewState());
 
@@ -371,11 +376,11 @@ const applyEditorOptionsInMemory = (
     editor.restoreViewState(
       monacoEditorsOptionsAndContentData[editor_filePath].viewState
     );
-  } else {
-    editor.getAction("editor.foldAll").run();
   }
-  if (dragCommand === "WAITING FOR MODE APPEND") {
+  if (dragCommand === "WAITING FOR MODEL APPEND THEN DELETE FROM SOURCE") {
     setDragCommand("DELETE FROM SOURCE");
+  } else if (dragCommand === "WAITING FOR MODEL APPEND") {
+    setDragCommand(null);
   }
 };
 ////Append Content Widget for monaco editor

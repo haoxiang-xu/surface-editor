@@ -462,7 +462,10 @@ const DirItem = ({
     e.stopPropagation();
     e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
 
-    setDraggedItem(filePath);
+    setDraggedItem({
+      source: "vecoder_explorer",
+      content: filePath,
+    });
   };
   const onDragEnd = (e) => {
     e.stopPropagation();
@@ -821,7 +824,7 @@ const DirItem = ({
       {onDragFiles !== null &&
       draggedItem !== null &&
       filePath === draggedItem ? (
-        <DirItemGhostDragImage draggedDirItemPath={draggedItem} />
+        <DirItemGhostDragImage draggedDirItemPath={draggedItem.content} />
       ) : null}
 
       <style>
