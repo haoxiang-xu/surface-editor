@@ -143,6 +143,7 @@
   transform: translate(-50%, -50%);
 
   height: 50px;
+  max-height: 100%;
   width: 4px;
 
   /*STYLE*/

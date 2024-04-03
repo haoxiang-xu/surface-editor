@@ -461,7 +461,7 @@ const FileSelectionBar = ({
                   opacity: 0,
                   margin: "0px 0px 0px 0px",
                   overflow: "hidden",
-                  transition: "width 0.2s ease, opacity 0.32s ease",
+                  transition: "width 0.12s ease, opacity 0.12s ease",
                 };
               } else {
                 containerStyle = {
@@ -470,10 +470,24 @@ const FileSelectionBar = ({
                   opacity: 0,
                   margin: "0px 0px 0px 0px",
                   overflow: "hidden",
-                  transition: "height 0.2s ease, opacity 0.32s ease",
+                  transition: "height 0.16s ease, opacity 0.12s ease",
                 };
               }
-            } else if (index === onDropIndex) {
+            }
+            break;
+          case index === onDropIndex:
+            if (mode === "HORIZONTAL") {
+              className = "file_selection_bar_item1114";
+              containerStyle = {
+                width: spanRefs.current[index]?.offsetWidth + 38 + "px",
+                transition: "opacity 0.32s ease",
+              };
+            } else {
+              className = "file_selection_bar_item_vertical0123";
+              containerStyle = {
+                height: spanRefs.current[index]?.offsetWidth + 38 + "px",
+                transition: "opacity 0.32s ease",
+              };
             }
             break;
           default:

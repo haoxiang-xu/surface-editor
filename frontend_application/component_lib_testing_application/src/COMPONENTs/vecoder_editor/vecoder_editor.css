@@ -242,7 +242,7 @@
   margin: 0px 6px 4px 0px;
 }
 .file_selection_bar_item1114:hover {
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease;
   background-color: #2e2e2e;
 }
 .file_selection_bar_item_selected1114 {
