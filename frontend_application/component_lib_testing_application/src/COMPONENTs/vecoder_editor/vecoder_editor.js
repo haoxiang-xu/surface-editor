@@ -330,11 +330,10 @@ const FileSelectionBar = ({
         const LocalOnDragIndex = accessMonacoEditorPathsByEditorIndex(
           code_editor_container_ref_index
         ).indexOf(draggedItem.content);
-        console.log(LocalOnDragIndex);
 
         if (LocalOnDragIndex < onDropIndex) {
           const dragedFile = editedFiles.splice(LocalOnDragIndex, 1)[0];
-          editedFiles.splice(onDropIndex , 0, dragedFile);
+          editedFiles.splice(onDropIndex, 0, dragedFile);
           setOnSelectedIndex(
             Math.min(
               onDropIndex - 1,
