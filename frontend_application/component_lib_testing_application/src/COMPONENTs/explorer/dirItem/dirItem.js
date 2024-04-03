@@ -148,14 +148,21 @@ const SubDirList = ({
   const { accessFileExpandByPath, accessFilesByPath } = useContext(
     vecoderEditorContexts
   );
-
+  const [onHover, setOnHover] = useState(false);
+  useEffect(() => {
+    if (dirItemOnHover || dirPathOnHover === filePath) {
+      setOnHover(true);
+    } else {
+      setOnHover(false);
+    }
+  }, [dirItemOnHover, dirPathOnHover]);
   return accessFilesByPath(filePath).length !== 0 &&
     accessFileExpandByPath(filePath) ? (
     /*If file has children -> Including the children file list*/
     <div>
       <ul
         className={
-          dirItemOnHover || dirPathOnHover === filePath
+          onHover
             ? "dir_item_component_dir_list_on_hover0304"
             : "dir_item_component_dir_list0725"
         }
@@ -230,6 +237,108 @@ const DirItem = ({
     "dir_item_component_file_name0725"
   );
 
+  /* EXPAND RELATED ===================================================================== */
+  const [isExpanded, setIsExpanded] = useState(
+    accessFileExpandByPath(filePath)
+  );
+  const expandingTime = 0.12;
+  const unexpandingTime = 0.12;
+  const [dirListUnexpendKeyframes, setDirListUnexpendKeyframes] = useState({
+    "0%": {
+      height: "18.5px",
+    },
+    "100%": {
+      height: "0px",
+    },
+  });
+  const [dirListExpendKeyframes, setDirListExpendKeyframes] = useState({
+    "0%": {
+      top: "-18.5px",
+      opacity: 0,
+    },
+    "30%": {
+      opacity: 0,
+    },
+    "100%": {
+      top: "0px",
+      opacity: 1,
+    },
+  });
+  const dirListUnexpendAnimation = {
+    animation:
+      "dir_item_component_dir_list_unexpend_animation " + unexpandingTime + "s",
+  };
+  const dirListExpendAnimation = {
+    animation:
+      "dir_item_component_dir_list_expend_animation " + expandingTime + "s",
+  };
+  const [expendAnimation, setExpendAnimation] = useState({});
+  const [unexpendAnimation, setUnexpendAnimation] = useState({});
+
+  const handleExpandIconOnClick = (event) => {
+    handleOnLeftClick(event);
+    if (!accessFileExpandByPath(filePath)) {
+      setExpendAnimation({
+        ...dirListExpendAnimation,
+        ...dirListExpendKeyframes,
+      });
+      setUnexpendAnimation({});
+      updateFileExpandByPath(filePath, true);
+      setIsExpanded(true);
+      //REMOVE ANIMATION
+      setTimeout(() => {
+        setExpendAnimation({});
+      }, expandingTime * 1000);
+    } else {
+      setExpendAnimation({});
+      setUnexpendAnimation({
+        ...dirListUnexpendAnimation,
+        ...dirListUnexpendKeyframes,
+      });
+      updateFileExpandByPath(filePath, false);
+      setIsExpanded(false);
+      //REMOVE ANIMATION
+      setTimeout(() => {
+        setUnexpendAnimation({});
+      }, unexpandingTime * 1000);
+    }
+  };
+  const handleFolderOnRightClick = () => {
+    if (onCopyFile !== null) {
+      setOnRightClickItem({
+        source: "vecoder_explorer/" + filePath,
+        condition: { paste: onCopyFile.fileName },
+        content: JSON.parse(JSON.stringify(accessFileByPath(filePath))),
+        target: "vecoder_explorer/" + filePath,
+      });
+    } else {
+      setOnRightClickItem({
+        source: "vecoder_explorer/" + filePath,
+        condition: { paste: false },
+        content: JSON.parse(JSON.stringify(accessFileByPath(filePath))),
+        target: "vecoder_explorer/" + filePath,
+      });
+    }
+  };
+  const handleFileOnRightClick = () => {
+    if (onCopyFile !== null) {
+      setOnRightClickItem({
+        source: "vecoder_explorer/" + filePath,
+        condition: { paste: onCopyFile.fileName },
+        content: JSON.parse(JSON.stringify(accessFileByPath(filePath))),
+        target: "vecoder_explorer/" + filePath,
+      });
+    } else {
+      setOnRightClickItem({
+        source: "vecoder_explorer/" + filePath,
+        condition: { paste: false },
+        content: JSON.parse(JSON.stringify(accessFileByPath(filePath))),
+        target: "vecoder_explorer/" + filePath,
+      });
+    }
+  };
+  /* EXPAND RELATED ===================================================================== */
+
   /*Styling Related ----------------------------------------------------------------------------- */
   const labelRef = useRef();
   const [dirItemOnHover, setDirItemOnHover] = useState(false);
@@ -251,7 +360,7 @@ const DirItem = ({
     ) {
       setDirPathOnHover(null);
     }
-  }, [dirItemOnHover, exploreOptionsAndContentData]);
+  }, [dirItemOnHover, isExpanded]);
   useEffect(() => {
     /* Folder Item Border Radius ============================================== */
     if (
@@ -327,103 +436,6 @@ const DirItem = ({
     setDirItemOnHover(false);
   };
   /*Styling Related ----------------------------------------------------------------------------- */
-
-  /* EXPAND RELATED ===================================================================== */
-  const expandingTime = 0.12;
-  const unexpandingTime = 0.12;
-  const [dirListUnexpendKeyframes, setDirListUnexpendKeyframes] = useState({
-    "0%": {
-      height: "18.5px",
-    },
-    "100%": {
-      height: "0px",
-    },
-  });
-  const [dirListExpendKeyframes, setDirListExpendKeyframes] = useState({
-    "0%": {
-      top: "-18.5px",
-      opacity: 0,
-    },
-    "30%": {
-      opacity: 0,
-    },
-    "100%": {
-      top: "0px",
-      opacity: 1,
-    },
-  });
-  const dirListUnexpendAnimation = {
-    animation:
-      "dir_item_component_dir_list_unexpend_animation " + unexpandingTime + "s",
-  };
-  const dirListExpendAnimation = {
-    animation:
-      "dir_item_component_dir_list_expend_animation " + expandingTime + "s",
-  };
-  const [expendAnimation, setExpendAnimation] = useState({});
-  const [unexpendAnimation, setUnexpendAnimation] = useState({});
-
-  const handleExpandIconOnClick = (event) => {
-    handleOnLeftClick(event);
-    if (!accessFileExpandByPath(filePath)) {
-      setExpendAnimation({
-        ...dirListExpendAnimation,
-        ...dirListExpendKeyframes,
-      });
-      setUnexpendAnimation({});
-      updateFileExpandByPath(filePath, true);
-      //REMOVE ANIMATION
-      setTimeout(() => {
-        setExpendAnimation({});
-      }, expandingTime * 1000);
-    } else {
-      setExpendAnimation({});
-      setUnexpendAnimation({
-        ...dirListUnexpendAnimation,
-        ...dirListUnexpendKeyframes,
-      });
-      updateFileExpandByPath(filePath, false);
-      //REMOVE ANIMATION
-      setTimeout(() => {
-        setUnexpendAnimation({});
-      }, unexpandingTime * 1000);
-    }
-  };
-  const handleFolderOnRightClick = () => {
-    if (onCopyFile !== null) {
-      setOnRightClickItem({
-        source: "vecoder_explorer/" + filePath,
-        condition: { paste: onCopyFile.fileName },
-        content: JSON.parse(JSON.stringify(accessFileByPath(filePath))),
-        target: "vecoder_explorer/" + filePath,
-      });
-    } else {
-      setOnRightClickItem({
-        source: "vecoder_explorer/" + filePath,
-        condition: { paste: false },
-        content: JSON.parse(JSON.stringify(accessFileByPath(filePath))),
-        target: "vecoder_explorer/" + filePath,
-      });
-    }
-  };
-  const handleFileOnRightClick = () => {
-    if (onCopyFile !== null) {
-      setOnRightClickItem({
-        source: "vecoder_explorer/" + filePath,
-        condition: { paste: onCopyFile.fileName },
-        content: JSON.parse(JSON.stringify(accessFileByPath(filePath))),
-        target: "vecoder_explorer/" + filePath,
-      });
-    } else {
-      setOnRightClickItem({
-        source: "vecoder_explorer/" + filePath,
-        condition: { paste: false },
-        content: JSON.parse(JSON.stringify(accessFileByPath(filePath))),
-        target: "vecoder_explorer/" + filePath,
-      });
-    }
-  };
-  /* EXPAND RELATED ===================================================================== */
 
   //SINGLE CLICK
   const handleOnLeftClick = (event) => {
