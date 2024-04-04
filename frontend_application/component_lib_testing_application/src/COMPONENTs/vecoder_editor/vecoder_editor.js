@@ -470,7 +470,7 @@ const FileSelectionBar = ({
                   opacity: 0,
                   margin: "0px 0px 0px 0px",
                   overflow: "hidden",
-                  transition: "height 0.16s ease, opacity 0.12s ease",
+                  transition: "height 0.12s ease, opacity 0.12s ease",
                 };
               }
             }
