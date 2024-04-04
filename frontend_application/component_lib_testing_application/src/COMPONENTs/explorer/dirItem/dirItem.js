@@ -113,9 +113,9 @@ const RenameInputBox = ({
         }, 160);
       }
     }
-    // if (event.key === "Escape") {
-    //   setOnCommand("delete");
-    // }
+    if (event.key === "Escape") {
+      setOnCommand("false");
+    }
   };
 
   return (
@@ -472,12 +472,15 @@ const DirItem = ({
   }, [onRightClickItem]);
   const onDragStart = (e) => {
     e.stopPropagation();
-    e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
-
-    setDraggedItem({
-      source: "vecoder_explorer",
-      content: filePath,
-    });
+    if (onCommand === "false") {
+      e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+      setDraggedItem({
+        source: "vecoder_explorer",
+        content: filePath,
+      });
+    } else if (onCommand === "rename") {
+      e.preventDefault();
+    }
   };
   const onDragEnd = (e) => {
     e.stopPropagation();
