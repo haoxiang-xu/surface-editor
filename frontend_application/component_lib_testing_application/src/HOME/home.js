@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import VecoderEditorPage from "../vecoder_editor_page/vecoder_editor_page";
-import HeaderMenuBar from "../../COMPONENTs/headerMenuBar/headerMenuBar";
+import VecoderEditorPage from "../DATA_MANAGERs/core_components_dara_manager/core_components_data_manager";
+import HeaderMenuBar from "../COMPONENTs/headerMenuBar/headerMenuBar";
 import "./home.css";
 
 const Home = () => {
