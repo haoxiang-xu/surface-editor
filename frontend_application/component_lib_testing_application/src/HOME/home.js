@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import VecoderEditorPage from "../DATA_MANAGERs/core_components_dara_manager/core_components_data_manager";
+import VecoderEditorPage from "../DATA_MANAGERs/core_components_data_manager/core_components_data_manager";
 import HeaderMenuBar from "../COMPONENTs/headerMenuBar/headerMenuBar";
 import "./home.css";
 
