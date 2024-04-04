@@ -303,7 +303,7 @@ const DirItem = ({
       }, unexpandingTime * 1000);
     }
   };
-  const handleFolderOnRightClick = (e) => {
+  const handleFolderOnRightClick = () => {
     if (onCopyFile !== null) {
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
@@ -320,7 +320,7 @@ const DirItem = ({
       });
     }
   };
-  const handleFileOnRightClick = (e) => {
+  const handleFileOnRightClick = () => {
     if (onCopyFile !== null) {
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,

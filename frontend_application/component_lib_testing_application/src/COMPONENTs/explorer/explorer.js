@@ -235,6 +235,7 @@ const Explorer = ({
     explorer_width <= 50 ? setMode("VERTICAL") : setMode("HORIZONTAL");
   }, [explorer_width]);
   /* HORIZONTAL OR VERTICAL MODE ====================================================== */
+
   return (
     <div className="explorer_component_container0126">
       {mode === "VERTICAL" ? null : (

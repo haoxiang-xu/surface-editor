@@ -225,6 +225,24 @@ const CONTEXT_MENU_FUNCTION_MANAGER = {
     LEVEL: 0,
     CLICKABLE: true,
   },
+  openFolder: {
+    ICON: SYSTEM_ICON_MANAGER.openFolder.ICON512,
+    LABEL: "Open Folder...",
+    LABEL_COLOR: SYSTEM_ICON_MANAGER.openFolder.LABEL_COLOR,
+    BACKGROUND_ICON: SYSTEM_ICON_MANAGER.openFolder.ICON16,
+    MORE_OPTIONS: null,
+    LEVEL: 0,
+    CLICKABLE: true,
+  },
+  openFile: {
+    ICON: SYSTEM_ICON_MANAGER.openFile.ICON512,
+    LABEL: "Open File...",
+    LABEL_COLOR: SYSTEM_ICON_MANAGER.openFile.LABEL_COLOR,
+    BACKGROUND_ICON: SYSTEM_ICON_MANAGER.openFile.ICON16,
+    MORE_OPTIONS: null,
+    LEVEL: 0,
+    CLICKABLE: true,
+  },
 };
 /* Context Menu Item List ============================================================================================================= */
 
