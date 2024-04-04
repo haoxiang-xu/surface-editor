@@ -67,54 +67,6 @@ const HeaderMenuBar = ({
                 setIsDarwinIconOnHover(false);
               }}
             ></div>
-            <img
-              src={
-                isDarwinIconOnHover
-                  ? SYSTEM_ICON_MANAGER.macosMinimize.ICON512
-                  : SYSTEM_ICON_MANAGER.macosYellow.ICON512
-              }
-              onMouseEnter={() => {
-                setIsDarwinIconOnHover(true);
-              }}
-              className="header_menu_bar_darwin_minimize_icon0316"
-              style={{ opacity: isMenuBarHovered ? 1 : 0 }}
-              onClick={handleMinimize}
-              draggable="false"
-              alt="close"
-            />
-            <img
-              src={
-                isDarwinIconOnHover
-                  ? SYSTEM_ICON_MANAGER.macosMaximize.ICON512
-                  : SYSTEM_ICON_MANAGER.macosGreen.ICON512
-              }
-              onMouseEnter={() => {
-                setIsDarwinIconOnHover(true);
-              }}
-              className="header_menu_bar_darwin_maximize_icon0316"
-              style={{ opacity: isMenuBarHovered ? 1 : 0 }}
-              onClick={() => {
-                handleMaximize();
-                setIsWindowMaximized(!isWindowMaximized);
-              }}
-              draggable="false"
-              alt="close"
-            />
-            <img
-              src={
-                isDarwinIconOnHover
-                  ? SYSTEM_ICON_MANAGER.macosClose.ICON512
-                  : SYSTEM_ICON_MANAGER.macosRed.ICON512
-              }
-              onMouseEnter={() => {
-                setIsDarwinIconOnHover(true);
-              }}
-              className="header_menu_bar_darwin_close_icon0316"
-              style={{ opacity: isMenuBarHovered ? 1 : 0 }}
-              onClick={handleClose}
-              draggable="false"
-              alt="close"
-            />
             <div
               className="header_menu_bar_darwin_container_dragging_area0316"
               style={{ height: isMenuBarHovered ? "40px" : "12px" }}

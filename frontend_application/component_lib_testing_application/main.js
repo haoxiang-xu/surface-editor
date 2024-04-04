@@ -47,6 +47,8 @@ const createWindow = () => {
         nodeIntegration: false,
       },
       frame: false,
+      titleBarStyle: "hidden",
+      trafficLightPosition: { x: 16, y: 12 },
     });
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({

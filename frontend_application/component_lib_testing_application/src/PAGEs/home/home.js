@@ -27,8 +27,9 @@ const Home = () => {
       className="main_container0315"
       onMouseMove={handleMouseMove}
       style={{
+        transition: "border-radius 0.3s",
         borderRadius: isWindowMaximized ? "0px" : "16px",
-        border: isWindowMaximized ? "none" : "1px solid #585858",
+        border: isWindowMaximized ? "none" : "1px solid #58585872",
       }}
     >
       <HeaderMenuBar
