@@ -83,7 +83,6 @@ const HeaderMenuBar = ({
               style={{ opacity: isMenuBarHovered ? 1 : 0.16 }}
               onClick={handleMinimize}
               draggable="false"
-              alt="close"
             />
             <img
               src={
@@ -98,7 +97,6 @@ const HeaderMenuBar = ({
                 setIsWindowMaximized(!isWindowMaximized);
               }}
               draggable="false"
-              alt="close"
             />
             <img
               src={
@@ -109,7 +107,7 @@ const HeaderMenuBar = ({
               className="header_menu_bar_close_icon0316"
               style={{
                 opacity: isMenuBarHovered ? 1 : 0.16,
-                borderRadius: isWindowMaximized ? "0px" : "0px 12px 0px 0px",
+                borderRadius: isWindowMaximized ? "0px" : "0px 16px 0px 0px",
               }}
               onClick={handleClose}
               onMouseEnter={() => {
@@ -119,7 +117,6 @@ const HeaderMenuBar = ({
                 setIsWin32CloseIconOnHover(false);
               }}
               draggable="false"
-              alt="close"
             />
             {/* <div
               className="header_menu_bar_file_button0316"

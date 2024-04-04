@@ -19,6 +19,8 @@ const Editor = ({
   //Diff Editor optional parameters
   editor_diffContent,
   editor_setDiffContent,
+  onDeleteMonacoEditorPath,
+  setOnDeleteMonacoEditorPath,
 }) => {
   let EDITOR_FONT_SIZE;
   switch (window.osInfo.platform) {
@@ -32,10 +34,10 @@ const Editor = ({
       EDITOR_FONT_SIZE = 13;
   }
   const {
-    monacoEditorsOptionsAndContentData,
-    accessMonacoEditorsDataByPath,
-    updateMonacoEditorViewStateByPath,
-    updateMonacoEditorModelByPath,
+    monacoEditorsOptionsData,
+    accessMonacoEditorOptionsByPath,
+    updateMonacoEditorViewStatesByPath,
+    updateMonacoEditorModelsByPath,
 
     updateVecoderEditorFileContentDataByPath,
     accessVecoderEditorFileContentDataByPath,
@@ -70,6 +72,7 @@ const Editor = ({
     }),
     []
   );
+  const [isMonacoEditorMounted, setIsMonacoEditorMounted] = useState(false);
   const [monacoModel, setMonacoModel] = useState(null);
   const [monacoViewState, setMonacoViewState] = useState(null);
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
@@ -85,8 +88,8 @@ const Editor = ({
       monacoRef,
       editor_filePath,
       accessVecoderEditorFileLanguageDataByPath(editor_filePath),
-      monacoEditorsOptionsAndContentData,
-      accessMonacoEditorsDataByPath,
+      monacoEditorsOptionsData,
+      accessMonacoEditorOptionsByPath,
       draggedItem,
       dragCommand,
       setDragCommand
@@ -98,10 +101,11 @@ const Editor = ({
       monaco,
       editor,
       editor_filePath,
-      monacoEditorsOptionsAndContentData,
-      updateMonacoEditorViewStateByPath,
-      updateMonacoEditorModelByPath
+      monacoEditorsOptionsData,
+      updateMonacoEditorViewStatesByPath,
+      updateMonacoEditorModelsByPath
     );
+    setIsMonacoEditorMounted(true);
   };
   ////Get monaco editor on selected content
   const getEditorOnSelected = (monacoRef) => {
@@ -202,6 +206,15 @@ const Editor = ({
   }, [onDragIndex]);
   /*Drag and Drop Save and Reload Model=================================*/
 
+  /*Delete Monaco Editor Path===========================================*/
+  useEffect(() => {
+    if (onDeleteMonacoEditorPath === editor_filePath) {
+      monacoRef.current.setModel(null);
+      setOnDeleteMonacoEditorPath(null);
+    }
+  }, [onDeleteMonacoEditorPath]);
+  /*Delete Monaco Editor Path===========================================*/
+
   return (
     <div
       className="MONACO_EDITOR_CONTAINER"
@@ -226,6 +239,7 @@ const Editor = ({
           {...editorProps}
           value={accessVecoderEditorFileContentDataByPath(editor_filePath)}
           loading={<></>}
+          style={{ display: isMonacoEditorMounted ? "block" : "none"}}
         />
       )}
     </div>

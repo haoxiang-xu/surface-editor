@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import VecoderEditorPage from "../DATA_MANAGERs/core_components_data_manager/core_components_data_manager";
 import HeaderMenuBar from "../COMPONENTs/headerMenuBar/headerMenuBar";
+import { SYSTEM_FRAME_BORDER, SYSTEM_FRAME_BORDER_RADIUS } from "../CONSTs/systemFrameStyling";
 import "./home.css";
 
 const Home = () => {
@@ -28,8 +29,8 @@ const Home = () => {
       onMouseMove={handleMouseMove}
       style={{
         transition: "border-radius 0.3s",
-        borderRadius: isWindowMaximized ? "0px" : "16px",
-        border: isWindowMaximized ? "none" : "1px solid #58585872",
+        borderRadius: isWindowMaximized ? "0px" : SYSTEM_FRAME_BORDER_RADIUS,
+        border: isWindowMaximized ? "none" : SYSTEM_FRAME_BORDER,
       }}
     >
       <HeaderMenuBar

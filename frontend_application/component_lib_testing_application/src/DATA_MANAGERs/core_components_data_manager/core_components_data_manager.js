@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
 import StackStructure from "../../COMPONENTs/stack_structure/stack_structure";
 
-const DEFAULT_MONACO_EDITORS_OPTIONS_AND_CONTENT_DATA = {
+const DEFAULT_MONACO_EDITORS_OPTIONS_DATA = {
   "demo/src/code_editor.js": {
     viewState: null,
     model: null,
@@ -498,48 +498,48 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
   ],
 };
 const VecoderEditorPage = () => {
-  /* Monaco Editor Data and Functions ------------------------------------ */
+  /* Monaco Editor Options ------------------------------------ */
   const [
-    monacoEditorsOptionsAndContentData,
-    setMonacoEditorsOptionsAndContentData,
-  ] = useState(DEFAULT_MONACO_EDITORS_OPTIONS_AND_CONTENT_DATA);
-  const accessMonacoEditorsDataByPath = (path) => {
-    return monacoEditorsOptionsAndContentData[path];
+    monacoEditorsOptionsData,
+    setMonacoEditorsOptionsData,
+  ] = useState(DEFAULT_MONACO_EDITORS_OPTIONS_DATA);
+  const accessMonacoEditorOptionsByPath = (path) => {
+    return monacoEditorsOptionsData[path];
   };
-  const updateMonacoEditorsDataByPath = (path, data) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const updateMonacoEditorOptionsByPath = (path, data) => {
+    setMonacoEditorsOptionsData((prevData) => {
       return { ...prevData, [path]: data };
     });
   };
-  const appendMonacoEditorsDataByPath = (path, data) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const appendMonacoEditorOptionsByPath = (path, data) => {
+    setMonacoEditorsOptionsData((prevData) => {
       return { ...prevData, [path]: data };
     });
   };
-  const removeMonacoEditorsDataByPath = (path) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const removeMonacoEditorOptionsByPath = (path) => {
+    setMonacoEditorsOptionsData((prevData) => {
       const newData = { ...prevData };
       delete newData[path];
       return newData;
     });
   };
-  const updateMonacoEditorViewStateByPath = (path, newViewState) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const updateMonacoEditorViewStatesByPath = (path, newViewState) => {
+    setMonacoEditorsOptionsData((prevData) => {
       return {
         ...prevData,
         [path]: { ...prevData[path], viewState: newViewState },
       };
     });
   };
-  const updateMonacoEditorModelByPath = (path, newModel) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const updateMonacoEditorModelsByPath = (path, newModel) => {
+    setMonacoEditorsOptionsData((prevData) => {
       return {
         ...prevData,
         [path]: { ...prevData[path], model: newModel },
       };
     });
   };
-  /* Monaco Editor Data and Functions ------------------------------------ */
+  /* Monaco Editor Options ------------------------------------ */
 
   /* Vecoder Editor Data and Functions ============================================================== */
   const [vecoderEditorsOptionsData, setVecoderEditorsOptionsData] = useState(
@@ -625,13 +625,25 @@ const VecoderEditorPage = () => {
     });
   };
   const accessVecoderEditorFileContentDataByPath = (path) => {
-    return vecoderEditorContentData[path].fileContent;
+    if (path in vecoderEditorContentData) {
+      return vecoderEditorContentData[path].fileContent;
+    } else {
+      return "File path does not exist";
+    }
   };
   const accessVecoderEditorFileLanguageDataByPath = (path) => {
-    return vecoderEditorContentData[path].fileLanguage;
+    if (path in vecoderEditorContentData) {
+      return vecoderEditorContentData[path].fileLanguage;
+    } else {
+      return "File path does not exist";
+    }
   };
   const accessVecoderEditorFileNameDataByPath = (path) => {
-    return vecoderEditorContentData[path].fileName;
+    if (path in vecoderEditorContentData) {
+      return vecoderEditorContentData[path].fileName;
+    } else {
+      return "File path does not exist";
+    }
   };
   /* Vecoder Editor Data and Functions ============================================================== */
 
@@ -903,14 +915,14 @@ const VecoderEditorPage = () => {
   return (
     <vecoderEditorContexts.Provider
       value={{
-        monacoEditorsOptionsAndContentData,
-        setMonacoEditorsOptionsAndContentData,
-        accessMonacoEditorsDataByPath,
-        updateMonacoEditorsDataByPath,
-        appendMonacoEditorsDataByPath,
-        removeMonacoEditorsDataByPath,
-        updateMonacoEditorViewStateByPath,
-        updateMonacoEditorModelByPath,
+        monacoEditorsOptionsData,
+        setMonacoEditorsOptionsData,
+        accessMonacoEditorOptionsByPath,
+        updateMonacoEditorOptionsByPath,
+        appendMonacoEditorOptionsByPath,
+        removeMonacoEditorOptionsByPath,
+        updateMonacoEditorViewStatesByPath,
+        updateMonacoEditorModelsByPath,
 
         vecoderEditorsOptionsData,
         setVecoderEditorsOptionsData,

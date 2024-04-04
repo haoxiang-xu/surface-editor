@@ -144,6 +144,9 @@ const FileSelectionBar = ({
   setOnSelectedIndex,
   //HORIZONTAL OR VERTICAL MODE
   mode,
+
+  onDeleteMonacoEditorPath,
+  setOnDeleteMonacoEditorPath,
 }) => {
   const {
     draggedItem,
@@ -154,8 +157,7 @@ const FileSelectionBar = ({
     setDragCommand,
   } = useContext(globalDragAndDropContexts);
   const {
-    monacoEditorsOptionsAndContentData,
-    setMonacoEditorsOptionsAndContentData,
+    setMonacoEditorsOptionsData,
     updateMonacoEditorPathsByEditorIndex,
     accessMonacoEditorPathsByEditorIndex,
     accessVecoderEditorFileNameDataByPath,
@@ -171,35 +173,47 @@ const FileSelectionBar = ({
   const [onDragIndex, setOnDragIndex] = useState(-1);
   const [onDropIndex, setOnDropIndex] = useState(-1);
   const [onSwapIndex, setOnSwapIndex] = useState(-1);
+  const [onDeleteIndex, setOnDeleteIndex] = useState(-1);
 
   const onFileDelete = (e) => (index) => {
     e.stopPropagation();
-    const editedFiles = [
-      ...accessMonacoEditorPathsByEditorIndex(code_editor_container_ref_index),
-    ];
-    const pathToRemove = accessMonacoEditorPathsByEditorIndex(
-      code_editor_container_ref_index
-    )[index];
-    setMonacoEditorsOptionsAndContentData((prevState) => {
-      let editedOptions = { ...prevState };
-      delete editedOptions[pathToRemove];
-      return editedOptions;
-    });
-
-    editedFiles.splice(index, 1);
-    updateMonacoEditorPathsByEditorIndex(
-      code_editor_container_ref_index,
-      editedFiles
+    setOnDeleteMonacoEditorPath(
+      accessMonacoEditorPathsByEditorIndex(code_editor_container_ref_index)[
+        index
+      ]
     );
-
-    if (onSelectedIndex === index) {
-      setOnSelectedIndex(null);
-    } else {
-      if (onSelectedIndex > index) {
-        setOnSelectedIndex(onSelectedIndex - 1);
-      }
-    }
+    setOnDeleteIndex(index);
   };
+  useEffect(() => {
+    if (onDeleteMonacoEditorPath === null && onDeleteIndex !== -1) {
+      const editedFiles = [
+        ...accessMonacoEditorPathsByEditorIndex(
+          code_editor_container_ref_index
+        ),
+      ];
+      const pathToRemove = accessMonacoEditorPathsByEditorIndex(
+        code_editor_container_ref_index
+      )[onDeleteIndex];
+      setMonacoEditorsOptionsData((prevState) => {
+        let editedOptions = { ...prevState };
+        delete editedOptions[pathToRemove];
+        return editedOptions;
+      });
+      editedFiles.splice(onDeleteIndex, 1);
+      updateMonacoEditorPathsByEditorIndex(
+        code_editor_container_ref_index,
+        editedFiles
+      );
+      if (onSelectedIndex === onDeleteIndex) {
+        setOnSelectedIndex(null);
+      } else {
+        if (onSelectedIndex > onDeleteIndex) {
+          setOnSelectedIndex(onSelectedIndex - 1);
+        }
+      }
+      setOnDeleteIndex(-1);
+    }
+  }, [onDeleteMonacoEditorPath]);
   const onFileDragStart = (e, index) => {
     e.stopPropagation();
     e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
@@ -641,6 +655,9 @@ const MonacoEditorGroup = ({
   customizeRequest,
   //HORIZONTAL OR VERTICAL MODE
   mode,
+
+  onDeleteMonacoEditorPath,
+  setOnDeleteMonacoEditorPath,
 }) => {
   const { accessMonacoEditorPathsByEditorIndex } = useContext(
     vecoderEditorContexts
@@ -696,6 +713,8 @@ const MonacoEditorGroup = ({
         }
         //editor_diffContent={diffContent}
         //editor_setDiffContent={setDiffContent}
+        onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
+        setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
       ></Editor>
     );
   });
@@ -717,6 +736,8 @@ const VecoderEditor = ({
   const [onSelectedIndex, setOnSelectedIndex] = useState(
     accessOnSelectedMonacoIndexByEditorIndex(code_editor_container_ref_index)
   );
+  const [onDeleteMonacoEditorPath, setOnDeleteMonacoEditorPath] =
+    useState(null);
   useEffect(() => {
     updateOnSelectedMonacoIndexByEditorIndex(
       code_editor_container_ref_index,
@@ -905,6 +926,8 @@ const VecoderEditor = ({
           customizeRequest={customizeRequest}
           //HORIZONTAL OR VERTICAL MODE
           mode={mode}
+          onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
+          setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
         />
         <TopLeftSection
           mode={mode}
@@ -918,6 +941,8 @@ const VecoderEditor = ({
           setOnSelectedIndex={setOnSelectedIndex}
           //HORIZONTAL OR VERTICAL MODE
           mode={mode}
+          onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
+          setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
         />
       </div>
     </div>
