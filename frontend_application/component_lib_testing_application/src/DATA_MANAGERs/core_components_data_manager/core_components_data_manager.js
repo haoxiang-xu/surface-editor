@@ -499,10 +499,9 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
 };
 const VecoderEditorPage = () => {
   /* Monaco Editor Options ------------------------------------ */
-  const [
-    monacoEditorsOptionsData,
-    setMonacoEditorsOptionsData,
-  ] = useState(DEFAULT_MONACO_EDITORS_OPTIONS_DATA);
+  const [monacoEditorsOptionsData, setMonacoEditorsOptionsData] = useState(
+    DEFAULT_MONACO_EDITORS_OPTIONS_DATA
+  );
   const accessMonacoEditorOptionsByPath = (path) => {
     return monacoEditorsOptionsData[path];
   };
@@ -650,8 +649,14 @@ const VecoderEditorPage = () => {
   /* Explorer Data and Functions ------------------------------------------ */
   const [exploreOptionsAndContentData, setExploreOptionsAndContentData] =
     useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
+  const [
+    isExploreOptionsAndContentDataLoaded,
+    setIsExploreOptionsAndContentDataLoaded,
+  ] = useState(true);
   useEffect(() => {
-    // Listen for directory data
+    setIsExploreOptionsAndContentDataLoaded(true);
+  }, [exploreOptionsAndContentData.filePath]);
+  useEffect(() => {
     window.electron.receive("directory-data", (data) => {
       setExploreOptionsAndContentData(data);
     });
@@ -942,6 +947,8 @@ const VecoderEditorPage = () => {
 
         exploreOptionsAndContentData,
         setExploreOptionsAndContentData,
+        isExploreOptionsAndContentDataLoaded,
+        setIsExploreOptionsAndContentDataLoaded,
         updateFileOnExploreOptionsAndContentData,
         removeFileOnExploreOptionsAndContentData,
         renameAndRepathAllSubFiles,

@@ -195,7 +195,7 @@ const DirItem = ({
 }) => {
   const {
     exploreOptionsAndContentData,
-    setExploreOptionsAndContentData,
+    setIsExploreOptionsAndContentDataLoaded,
     updateFileOnExploreOptionsAndContentData,
     removeFileOnExploreOptionsAndContentData,
     checkDirNameExist,
@@ -666,6 +666,12 @@ const DirItem = ({
           break;
         case "copy":
           setOnCommand("copy");
+          break;
+        case "openFolder":
+          if (root) {
+            window.electronAPI.triggerReadDir();
+            setIsExploreOptionsAndContentDataLoaded(false);
+          }
           break;
         default:
           break;

@@ -3,6 +3,8 @@ import { ICON_MANAGER } from "../../ICONs/icon_manager";
 import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
 import { explorerContexts } from "../../CONTEXTs/explorerContexts";
 import DirItem from "./dirItem/dirItem.js";
+import PulseLoader from "react-spinners/PulseLoader";
+import BarLoader from "react-spinners/BarLoader";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -176,7 +178,7 @@ const MinMaxIcon = ({
   );
 };
 const DirList = ({}) => {
-  const { exploreOptionsAndContentData, getExpendedFilesAmountUnderPath } =
+  const { exploreOptionsAndContentData, isExploreOptionsAndContentDataLoaded } =
     useContext(vecoderEditorContexts);
   const [ExplorerOnMouseOver, setExplorerOnMouseOver] = useState(false);
   const [dirPathOnHover, setDirPathOnHover] = useState(null);
@@ -195,6 +197,7 @@ const DirList = ({}) => {
       id={"dir_list_component_container0725"}
       style={{
         overflowY: "scroll",
+        display: isExploreOptionsAndContentDataLoaded ? "block" : "none",
       }}
       onMouseEnter={() => {
         setExplorerOnMouseOver(true);
@@ -215,10 +218,7 @@ const DirList = ({}) => {
           setOnDragFiles,
         }}
       >
-        <DirItem
-          filePath={exploreOptionsAndContentData.filePath}
-          root={true}
-        />
+        <DirItem filePath={exploreOptionsAndContentData.filePath} root={true} />
       </explorerContexts.Provider>
     </div>
   );
@@ -229,6 +229,9 @@ const Explorer = ({
   onMaximizeOnClick,
   onMinimizeOnClick,
 }) => {
+  const { isExploreOptionsAndContentDataLoaded } = useContext(
+    vecoderEditorContexts
+  );
   /* HORIZONTAL OR VERTICAL MODE ====================================================== */
   const [mode, setMode] = useState("HORIZONTAL"); //["HORIZONTAL", "VERTICAL"]
   useEffect(() => {
@@ -250,6 +253,19 @@ const Explorer = ({
         onMinimizeOnClick={onMinimizeOnClick}
       />
       <CloseIcon />
+      {isExploreOptionsAndContentDataLoaded ? null : (
+        <div
+          className="dir_list_component_loading_container0404"
+        >
+          <BarLoader
+            size={8}
+            color={"#C8C8C864"}
+            height={5}
+            width={explorer_width - 16}
+            speed={1}
+          />
+        </div>
+      )}
     </div>
   );
 };

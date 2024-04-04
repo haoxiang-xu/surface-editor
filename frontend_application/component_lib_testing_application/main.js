@@ -245,3 +245,6 @@ ipcMain.on("window-control", (event, action) => {
 ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
   mainWindow.setWindowButtonVisibility(!shouldHide);
 });
+ipcMain.on("trigger-read-dir", () => {
+  openFolderDialog();
+});

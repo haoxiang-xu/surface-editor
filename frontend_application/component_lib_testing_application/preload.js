@@ -15,8 +15,10 @@ contextBridge.exposeInMainWorld("electron", {
   },
 });
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  toggleWindowButtons: (shouldHide) => ipcRenderer.send('toggle-window-buttons', shouldHide)
+contextBridge.exposeInMainWorld("electronAPI", {
+  toggleWindowButtons: (shouldHide) =>
+    ipcRenderer.send("toggle-window-buttons", shouldHide),
+  triggerReadDir: () => ipcRenderer.send("trigger-read-dir"),
 });
 
 contextBridge.exposeInMainWorld("osInfo", {
