@@ -131,7 +131,9 @@ const openFolderDialog = () => {
       properties: ["openDirectory"],
     })
     .then((result) => {
-      mainWindow.webContents.send("read-dir-state-changed", { isDirLoading: true });
+      mainWindow.webContents.send("read-dir-state-changed", {
+        isDirLoading: true,
+      });
       if (!result.canceled) {
         readDir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
@@ -270,10 +272,12 @@ ipcMain.on("window-control", (event, action) => {
   }
 });
 ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
-  setTimeout(() => {
-    mainWindow.setWindowButtonVisibility(!shouldHide);
-    mainWindow.setWindowButtonPosition({ x: 17, y: 15 });
-  } , 100);
+  if (process.platform === "darwin") {
+    setTimeout(() => {
+      mainWindow.setWindowButtonVisibility(!shouldHide);
+      mainWindow.setWindowButtonPosition({ x: 17, y: 15 });
+    }, 100);
+  }
 });
 ipcMain.on("trigger-read-dir", () => {
   openFolderDialog();
