@@ -47,6 +47,7 @@ const createWindow = () => {
         nodeIntegration: false,
       },
       frame: false,
+      hasShadow: false,
       titleBarStyle: "hidden",
       trafficLightPosition: { x: 17, y: 15 },
     });
@@ -276,7 +277,7 @@ ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
     setTimeout(() => {
       mainWindow.setWindowButtonVisibility(!shouldHide);
       mainWindow.setWindowButtonPosition({ x: 17, y: 15 });
-    }, 100);
+    }, 110);
   }
 });
 ipcMain.on("trigger-read-dir", () => {
