@@ -48,6 +48,9 @@ const HeaderMenuBar = ({
   };
   /* Darwin --------------------------------------------------------------------------------- */
   const [isDarwinIconOnHover, setIsDarwinIconOnHover] = useState(false);
+  useEffect(() => {
+    window.electronAPI.toggleWindowButtons(!isMenuBarHovered);
+  }, [isMenuBarHovered]);
   /* Darwin --------------------------------------------------------------------------------- */
   /* Win32 --------------------------------------------------------------------------------- */
   const [isWin32CloseIconOnHover, setIsWin32CloseIconOnHover] = useState(false);

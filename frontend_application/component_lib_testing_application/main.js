@@ -270,7 +270,10 @@ ipcMain.on("window-control", (event, action) => {
   }
 });
 ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
-  mainWindow.setWindowButtonVisibility(!shouldHide);
+  setTimeout(() => {
+    mainWindow.setWindowButtonVisibility(!shouldHide);
+    mainWindow.setWindowButtonPosition({ x: 17, y: 15 });
+  } , 100);
 });
 ipcMain.on("trigger-read-dir", () => {
   openFolderDialog();

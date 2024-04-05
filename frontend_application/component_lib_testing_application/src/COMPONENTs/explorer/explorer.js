@@ -200,6 +200,7 @@ const DirList = ({}) => {
     };
     window.electronAPI.subscribeToReadDirStateChange(updateLoadingStatus);
   }, []);
+
   return (
     <div
       id={"dir_list_component_container0725"}
