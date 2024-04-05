@@ -28,8 +28,8 @@ try {
 /* Load ICON manager --------------------------------------------------------------------------------- */
 
 const HeaderMenuBar = ({
-  isWindowMaximized,
-  setIsWindowMaximized,
+  isFrameMaximized,
+  setIsFrameMaximized,
   isMenuBarHovered,
   setIsMenuBarHovered,
   cursorPosition,
@@ -86,7 +86,7 @@ const HeaderMenuBar = ({
             />
             <img
               src={
-                isWindowMaximized
+                isFrameMaximized
                   ? SYSTEM_ICON_MANAGER.win32Unmaximize.ICON512
                   : SYSTEM_ICON_MANAGER.maximize.ICON512
               }
@@ -94,7 +94,6 @@ const HeaderMenuBar = ({
               style={{ opacity: isMenuBarHovered ? 0.72 : 0.12 }}
               onClick={() => {
                 handleMaximize();
-                setIsWindowMaximized(!isWindowMaximized);
               }}
               draggable="false"
             />
@@ -107,7 +106,7 @@ const HeaderMenuBar = ({
               className="header_menu_bar_close_icon0316"
               style={{
                 opacity: isMenuBarHovered ? 1 : 0.16,
-                borderRadius: isWindowMaximized ? "0px" : "0px 16px 0px 0px",
+                borderRadius: isFrameMaximized ? "0px" : "0px 16px 0px 0px",
               }}
               onClick={handleClose}
               onMouseEnter={() => {

@@ -5,7 +5,7 @@ import { SYSTEM_FRAME_BORDER, SYSTEM_FRAME_BORDER_RADIUS } from "../CONSTs/syste
 import "./home.css";
 
 const Home = () => {
-  const [isWindowMaximized, setIsWindowMaximized] = useState(false);
+  const [isFrameMaximized, setIsFrameMaximized] = useState(false);
   const [isMenuBarHovered, setIsMenuBarHovered] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   useEffect(() => {
@@ -22,20 +22,24 @@ const Home = () => {
       y: event.clientY,
     });
   };
-
+  useEffect(() => {
+    window.electronAPI.subscribeToWindowStateChange(({ isMaximized }) => {
+      setIsFrameMaximized(isMaximized);
+    });
+  }, []);
   return (
     <div
       className="main_container0315"
       onMouseMove={handleMouseMove}
       style={{
         transition: "border-radius 0.3s",
-        borderRadius: isWindowMaximized ? "0px" : SYSTEM_FRAME_BORDER_RADIUS,
-        border: isWindowMaximized ? "none" : SYSTEM_FRAME_BORDER,
+        borderRadius: isFrameMaximized ? "0px" : SYSTEM_FRAME_BORDER_RADIUS,
+        border: isFrameMaximized ? "none" : SYSTEM_FRAME_BORDER,
       }}
     >
       <HeaderMenuBar
-        isWindowMaximized={isWindowMaximized}
-        setIsWindowMaximized={setIsWindowMaximized}
+        isFrameMaximized={isFrameMaximized}
+        setIsFrameMaximized={setIsFrameMaximized}
         isMenuBarHovered={isMenuBarHovered}
         setIsMenuBarHovered={setIsMenuBarHovered}
         cursorPosition={cursorPosition}

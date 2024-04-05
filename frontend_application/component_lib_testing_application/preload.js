@@ -19,6 +19,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
   toggleWindowButtons: (shouldHide) =>
     ipcRenderer.send("toggle-window-buttons", shouldHide),
   triggerReadDir: () => ipcRenderer.send("trigger-read-dir"),
+  subscribeToWindowStateChange: (callback) => {
+    ipcRenderer.on("window-state-changed", (_, data) => callback(data));
+  },
 });
 
 contextBridge.exposeInMainWorld("osInfo", {

@@ -34,7 +34,7 @@ const createWindow = () => {
   // Initialize the browser window.
   if (process.platform === "darwin") {
     mainWindow = new BrowserWindow({
-      title: "Vecoder",
+      title: "",
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -48,11 +48,11 @@ const createWindow = () => {
       },
       frame: false,
       titleBarStyle: "hidden",
-      trafficLightPosition: { x: 16, y: 14 },
+      trafficLightPosition: { x: 17, y: 15 },
     });
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({
-      title: "Vecoder",
+      title: "",
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -68,7 +68,7 @@ const createWindow = () => {
     });
   } else {
     mainWindow = new BrowserWindow({
-      title: "Vecoder",
+      title: "",
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -83,8 +83,23 @@ const createWindow = () => {
       frame: false,
     });
   }
-
-  mainWindow.setTitle("Vecoder");
+  mainWindow.setTitle("");
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("window-state-changed", { isMaximized: true });
+  });
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("window-state-changed", { isMaximized: false });
+  });
+  mainWindow.on("enter-full-screen", () => {
+    mainWindow.webContents.send("window-state-changed", {
+      isMaximized: true,
+    });
+  });
+  mainWindow.on("leave-full-screen", () => {
+    mainWindow.webContents.send("window-state-changed", {
+      isMaximized: false,
+    });
+  });
 
   // Load the index.html of the app.
   checkServerAndLoadURL("http://127.0.0.1:3000");
@@ -119,7 +134,6 @@ const openFolderDialog = () => {
       if (!result.canceled) {
         readDir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
-            console.log(result.filePaths[0]);
             const rootFolder = result.filePaths[0]
               .replace(/\\/g, "/")
               .split("/")
