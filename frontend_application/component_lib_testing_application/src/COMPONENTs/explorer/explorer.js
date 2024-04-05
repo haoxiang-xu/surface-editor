@@ -178,8 +178,11 @@ const MinMaxIcon = ({
   );
 };
 const DirList = ({}) => {
-  const { exploreOptionsAndContentData, isExploreOptionsAndContentDataLoaded } =
-    useContext(vecoderEditorContexts);
+  const {
+    exploreOptionsAndContentData,
+    isExploreOptionsAndContentDataLoaded,
+    setIsExploreOptionsAndContentDataLoaded,
+  } = useContext(vecoderEditorContexts);
   const [ExplorerOnMouseOver, setExplorerOnMouseOver] = useState(false);
   const [dirPathOnHover, setDirPathOnHover] = useState(null);
   const [onSingleClickFile, setOnSingleClickFile] = useState(null);
@@ -191,7 +194,12 @@ const DirList = ({}) => {
       setDirPathOnHover(null);
     }
   }, [ExplorerOnMouseOver]);
-
+  useEffect(() => {
+    const updateLoadingStatus = ({ isDirLoading }) => {
+      setIsExploreOptionsAndContentDataLoaded(!isDirLoading);
+    };
+    window.electronAPI.subscribeToReadDirStateChange(updateLoadingStatus);
+  }, []);
   return (
     <div
       id={"dir_list_component_container0725"}
@@ -254,9 +262,7 @@ const Explorer = ({
       />
       <CloseIcon />
       {isExploreOptionsAndContentDataLoaded ? null : (
-        <div
-          className="dir_list_component_loading_container0404"
-        >
+        <div className="dir_list_component_loading_container0404">
           <BarLoader
             size={8}
             color={"#C8C8C864"}

@@ -14,16 +14,19 @@ contextBridge.exposeInMainWorld("electron", {
     }
   },
 });
-
 contextBridge.exposeInMainWorld("electronAPI", {
   toggleWindowButtons: (shouldHide) =>
     ipcRenderer.send("toggle-window-buttons", shouldHide),
   triggerReadDir: () => ipcRenderer.send("trigger-read-dir"),
+  subscribeToReadDirStateChange: (callback) => {
+    ipcRenderer.on("read-dir-state-changed", (event, data) => {
+      callback(data);
+    });
+  },
   subscribeToWindowStateChange: (callback) => {
     ipcRenderer.on("window-state-changed", (_, data) => callback(data));
   },
 });
-
 contextBridge.exposeInMainWorld("osInfo", {
   platform: process.platform,
 });

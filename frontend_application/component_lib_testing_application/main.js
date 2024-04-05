@@ -131,6 +131,7 @@ const openFolderDialog = () => {
       properties: ["openDirectory"],
     })
     .then((result) => {
+      mainWindow.webContents.send("read-dir-state-changed", { isDirLoading: true });
       if (!result.canceled) {
         readDir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
@@ -151,11 +152,23 @@ const openFolderDialog = () => {
           })
           .catch((err) => {
             console.error("Error reading directory:", err);
+          })
+          .finally(() => {
+            mainWindow.webContents.send("read-dir-state-changed", {
+              isDirLoading: false,
+            });
           });
+      } else {
+        mainWindow.webContents.send("read-dir-state-changed", {
+          isDirLoading: false,
+        });
       }
     })
     .catch((err) => {
       console.error(err);
+      mainWindow.webContents.send("read-dir-state-changed", {
+        isDirLoading: false,
+      });
     });
 };
 const readDir = async (dirPath, rootPath = dirPath) => {
