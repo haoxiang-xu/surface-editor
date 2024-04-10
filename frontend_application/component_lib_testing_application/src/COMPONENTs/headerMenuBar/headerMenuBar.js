@@ -58,8 +58,19 @@ const HeaderMenuBar = ({
   /* Darwin --------------------------------------------------------------------------------- */
   /* Win32 --------------------------------------------------------------------------------- */
   const [isWin32CloseIconOnHover, setIsWin32CloseIconOnHover] = useState(false);
+  const [win32CloseIconOpacity, setWin32CloseIconOpacity] = useState(0.16);
+  useEffect(() => {
+    if (isWin32CloseIconOnHover) {
+      setWin32CloseIconOpacity(1);
+    } else if (isMenuBarHovered) {
+      setWin32CloseIconOpacity(0.72);
+    } else if (isFrameMaximized) {
+      setWin32CloseIconOpacity(0.72);
+    } else {
+      setWin32CloseIconOpacity(0.16);
+    }
+  }, [isWin32CloseIconOnHover, isMenuBarHovered, isFrameMaximized]);
   /* Win32 --------------------------------------------------------------------------------- */
-
   const renderMenuBar = () => {
     switch (window.osInfo.platform) {
       case "darwin":
@@ -87,7 +98,9 @@ const HeaderMenuBar = ({
             <img
               src={SYSTEM_ICON_MANAGER.minimize.ICON512}
               className="header_menu_bar_minimize_icon0316"
-              style={{ opacity: isMenuBarHovered || isFrameMaximized ? 1 : 0.16 }}
+              style={{
+                opacity: isMenuBarHovered || isFrameMaximized ? 1 : 0.16,
+              }}
               onClick={handleMinimize}
               draggable="false"
             />
@@ -98,26 +111,27 @@ const HeaderMenuBar = ({
                   : SYSTEM_ICON_MANAGER.maximize.ICON512
               }
               className="header_menu_bar_maximize_icon0316"
-              style={{ opacity: isMenuBarHovered || isFrameMaximized ? 0.72 : 0.12 }}
+              style={{
+                opacity: isMenuBarHovered || isFrameMaximized ? 0.72 : 0.12,
+              }}
               onClick={() => {
                 handleMaximize();
               }}
               draggable="false"
             />
             <img
-              src={
-                isWin32CloseIconOnHover
-                  ? SYSTEM_ICON_MANAGER.win32Close.ICON512
-                  : SYSTEM_ICON_MANAGER.close.ICON512
-              }
+              src={SYSTEM_ICON_MANAGER.win32Close.ICON512}
               className="header_menu_bar_close_icon0316"
               style={{
-                opacity: isMenuBarHovered || isFrameMaximized ? 1 : 0.16,
+                opacity: win32CloseIconOpacity,
                 borderRadius: isFrameMaximized ? "0px" : "0px 16px 0px 0px",
               }}
               onClick={handleClose}
               onMouseEnter={() => {
                 setIsMenuBarHovered(true);
+              }}
+              onMouseMove={() => {
+                setIsWin32CloseIconOnHover(true);
               }}
               onMouseLeave={() => {
                 setIsWin32CloseIconOnHover(false);
