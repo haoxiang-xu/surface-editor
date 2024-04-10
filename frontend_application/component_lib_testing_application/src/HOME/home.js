@@ -15,7 +15,7 @@ const Home = () => {
     if (cursorPosition.y > 48) {
       setIsMenuBarHovered(false);
     }
-    if (cursorPosition.y < 16) {
+    if (cursorPosition.y < 16 && cursorPosition.y > 0) {
       setIsMenuBarHovered(true);
     }
   }, [cursorPosition]);

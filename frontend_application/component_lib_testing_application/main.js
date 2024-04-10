@@ -35,6 +35,10 @@ const createWindow = () => {
   if (process.platform === "darwin") {
     mainWindow = new BrowserWindow({
       title: "",
+      icon: path.join(
+        __dirname,
+        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+      ),
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -54,6 +58,10 @@ const createWindow = () => {
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({
       title: "",
+      icon: path.join(
+        __dirname,
+        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+      ),
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -70,6 +78,10 @@ const createWindow = () => {
   } else {
     mainWindow = new BrowserWindow({
       title: "",
+      icon: path.join(
+        __dirname,
+        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+      ),
       width: 1200,
       height: 800,
       webSecurity: true,
