@@ -49,7 +49,7 @@ const Home = () => {
       />
       <div
         className="major_content_container0316"
-        style={{ top: isMenuBarHovered ? "29px" : "0px" }}
+        style={{ top: isMenuBarHovered || isFrameMaximized ? "29px" : "0px" }}
       >
         <VecoderEditorPage />
       </div>
