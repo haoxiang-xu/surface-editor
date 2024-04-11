@@ -55,6 +55,12 @@ const createWindow = () => {
       titleBarStyle: "hidden",
       trafficLightPosition: { x: 17, y: 15 },
     });
+    app.dock.setIcon(
+      path.join(
+        __dirname,
+        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+      )
+    );
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({
       title: "",
@@ -137,7 +143,6 @@ const checkServerAndLoadURL = (url) => {
       setTimeout(() => checkServerAndLoadURL(url), 2000); // Adjust the delay as needed
     });
 };
-
 const openFolderDialog = () => {
   dialog
     .showOpenDialog({
@@ -245,6 +250,7 @@ const readDir = async (dirPath, rootPath = dirPath) => {
     throw e; // Rethrow the error to be caught by the caller
   }
 };
+
 app.whenReady().then(createWindow);
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
