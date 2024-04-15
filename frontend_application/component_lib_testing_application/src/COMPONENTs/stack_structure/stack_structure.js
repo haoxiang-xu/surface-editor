@@ -798,7 +798,7 @@ const StackStructure = () => {
       editedStacks[index].max_width,
       window.innerWidth -
         stackRefs.current[index]?.getBoundingClientRect().x -
-        RESIZER_CONTAINER.width / 2
+        RESIZER_CONTAINER.width
     );
     setStacks(editedStacks);
   };
