@@ -719,6 +719,7 @@ const MonacoEditorGroup = ({
     );
   });
 };
+
 const VecoderEditor = ({
   code_editor_width,
   code_editor_container_ref_index,

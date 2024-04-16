@@ -627,21 +627,21 @@ const VecoderEditorPage = () => {
     if (path in vecoderEditorContentData) {
       return vecoderEditorContentData[path].fileContent;
     } else {
-      return "File path does not exist";
+      return "";
     }
   };
   const accessVecoderEditorFileLanguageDataByPath = (path) => {
     if (path in vecoderEditorContentData) {
       return vecoderEditorContentData[path].fileLanguage;
     } else {
-      return "File path does not exist";
+      return "Unknow";
     }
   };
   const accessVecoderEditorFileNameDataByPath = (path) => {
     if (path in vecoderEditorContentData) {
       return vecoderEditorContentData[path].fileName;
     } else {
-      return "File path does not exist";
+      return "Unfound Path";
     }
   };
   /* Vecoder Editor Data and Functions ============================================================== */

@@ -258,6 +258,8 @@ export const ICON_MANAGER = () => {
   };
   try {
     /* 16X16 ICONs ---------------------------------------------------------------------- */
+    const WARNING_ICON16 = require("./SYSTEM_ICONs/16X16/warning.png");
+
     const CLOSE_ICON16 = require("./SYSTEM_ICONs/16X16/close.png");
     const ARROW_ICON16 = require("./SYSTEM_ICONs/16X16/arrow.png");
     const AST_ICON16 = require("./SYSTEM_ICONs/16X16/ast.png");
@@ -309,6 +311,8 @@ export const ICON_MANAGER = () => {
     /* 16X16 ICONs ---------------------------------------------------------------------- */
 
     /* 512X512 ICONs ---------------------------------------------------------------------- */
+    const WARNING_ICON512 = require("./SYSTEM_ICONs/512X512/warning.png");
+
     const CLOSE_ICON512 = require("./SYSTEM_ICONs/512X512/close.png");
     const ARROW_ICON512 = require("./SYSTEM_ICONs/512X512/arrow.png");
     const AST_ICON512 = require("./SYSTEM_ICONs/512X512/ast.png");
@@ -360,8 +364,8 @@ export const ICON_MANAGER = () => {
 
     SYSTEM_ICON_MANAGER = {
       default: {
-        ICON16: null,
-        ICON: null,
+        ICON16: WARNING_ICON16,
+        ICON: WARNING_ICON512,
         LABEL_COLOR: "#C8C8C8",
       },
       close: {
