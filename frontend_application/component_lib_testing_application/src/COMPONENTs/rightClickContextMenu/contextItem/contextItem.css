@@ -99,12 +99,12 @@
   /*POSITION*/
   display: flex;
   position: relative;
-  top: 3px;
+  top: 1px;
   left: 6px;
   right: 4px;
 
   /*FONT*/
-  font-size: 12px;
+  font-size: 13px;
   font-family: "Roboto";
   letter-spacing: 0px;
   white-space: nowrap;

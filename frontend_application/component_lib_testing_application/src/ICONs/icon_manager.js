@@ -292,8 +292,8 @@ export const ICON_MANAGER = () => {
     const DRAFTING_COMPASS16 = require("./SYSTEM_ICONs/16X16/drafting_compass.png");
     const SOFTWARE16 = require("./SYSTEM_ICONs/16X16/software.png");
     const MORE_OPTIONS16 = require("./SYSTEM_ICONs/16X16/more_options.png");
-    const OPEN_FOLDER16 = require("./SYSTEM_ICONs/16X16/open_folder.png");
-    const OPEN_FILE16 = require("./SYSTEM_ICONs/16X16/open_file.png");
+    const UPLOAD_FOLDER16 = require("./SYSTEM_ICONs/16X16/upload_folder.png");
+    const UPLOAD_FILE16 = require("./SYSTEM_ICONs/16X16/upload_file.png");
 
     const INVISIBLE16 = require("./SYSTEM_ICONs/16X16/invisible.png");
     const MAXIMIZE16 = require("./SYSTEM_ICONs/16X16/maximize.png");
@@ -345,8 +345,8 @@ export const ICON_MANAGER = () => {
     const DRAFTING_COMPASS512 = require("./SYSTEM_ICONs/512X512/drafting_compass.png");
     const SOFTWARE512 = require("./SYSTEM_ICONs/512X512/software.png");
     const MORE_OPTIONS512 = require("./SYSTEM_ICONs/512X512/more_options.png");
-    const OPEN_FOLDER512 = require("./SYSTEM_ICONs/512X512/open_folder.png");
-    const OPEN_FILE512 = require("./SYSTEM_ICONs/512X512/open_file.png");
+    const UPLOAD_FOLDER512 = require("./SYSTEM_ICONs/512X512/upload_folder.png");
+    const UPLOAD_FILE512 = require("./SYSTEM_ICONs/512X512/upload_file.png");
 
     const INVISIBLE512 = require("./SYSTEM_ICONs/512X512/invisible.png");
     const MAXIMIZE512 = require("./SYSTEM_ICONs/512X512/maximize.png");
@@ -573,14 +573,14 @@ export const ICON_MANAGER = () => {
         ICON512: WIN32_UNMAXIMIZE512,
         LABEL_COLOR: "#CCCCCC",
       },
-      openFolder: {
-        ICON16: OPEN_FOLDER16,
-        ICON512: OPEN_FOLDER512,
+      uploadFolder: {
+        ICON16: UPLOAD_FOLDER16,
+        ICON512: UPLOAD_FOLDER512,
         LABEL_COLOR: "#CCCCCC",
       },
-      openFile: {
-        ICON16: OPEN_FILE16,
-        ICON512: OPEN_FILE512,
+      uploadFile: {
+        ICON16: UPLOAD_FILE16,
+        ICON512: UPLOAD_FILE512,
         LABEL_COLOR: "#CCCCCC",
       },
     };
