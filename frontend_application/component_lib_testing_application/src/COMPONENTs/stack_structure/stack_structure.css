@@ -21,9 +21,9 @@
   display: flex;
   position: absolute;
 
-  top: 200px;
-  left: 0px;
-  bottom: 200px;
+  top: 12px;
+  left: 12px;
+  bottom: 12px;
 
   /*STYLE*/
   overflow-x: hidden;

@@ -56,7 +56,7 @@ const ENDING_CONTAINER = {
 };
 const TEST_CONTAINER = {
   type: "TESTING_CONTAINER",
-  min_width:42,
+  min_width: 42,
   width: 600,
   max_width: 2048,
   content: "TEST",
@@ -240,8 +240,7 @@ const ResizerTypeContainer = ({
       ref={(el) => (stackRefs.current[index] = el)}
       key={index}
       style={{
-        width: onDragIndex !== index - 1 ? item.width : "0px",
-        opacity: onDragIndex !== index - 1 ? "1" : "0",
+        width: item.width,
         cursor: "ew-resize",
       }}
       onMouseEnter={(e) => {
@@ -312,7 +311,8 @@ const ExplorerTypeContainer = ({
       }}
       style={{
         transition: resizerOnMouseDown ? "width 0s" : "width 0.16s",
-        width: onDragIndex === index ? "0px" : item.width,
+        width: item.width,
+        opacity: onDragIndex === index ? 0.32 : 1,
       }}
     >
       <Explorer
@@ -369,7 +369,8 @@ const VecoderEditorTypeContainer = ({
       }}
       style={{
         transition: resizerOnMouseDown ? "width 0s" : "width 0.16s",
-        width: onDragIndex === index ? "0px" : item.width,
+        width: item.width,
+        opacity: onDragIndex === index ? 0.32 : 1,
       }}
     >
       <VecoderEditor
