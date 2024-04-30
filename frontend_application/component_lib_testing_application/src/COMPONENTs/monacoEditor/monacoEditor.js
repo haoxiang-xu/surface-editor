@@ -39,6 +39,7 @@ const Editor = ({
     updateMonacoEditorViewStatesByPath,
     updateMonacoEditorModelsByPath,
 
+    vecoderEditorContentData,
     updateVecoderEditorFileContentDataByPath,
     accessVecoderEditorFileContentDataByPath,
     accessVecoderEditorFileLanguageDataByPath,
@@ -73,6 +74,13 @@ const Editor = ({
     []
   );
   const [isMonacoEditorMounted, setIsMonacoEditorMounted] = useState(false);
+  const [monacoContent, setMonacoContent] = useState(accessVecoderEditorFileContentDataByPath(editor_filePath));
+  const [monacoLanguage, setMonacoLanguage] = useState(accessVecoderEditorFileLanguageDataByPath(editor_filePath));
+  useEffect(() => {
+    setMonacoContent(accessVecoderEditorFileContentDataByPath(editor_filePath));
+    setMonacoLanguage(accessVecoderEditorFileLanguageDataByPath(editor_filePath));
+  }, [vecoderEditorContentData]);
+
   const [monacoModel, setMonacoModel] = useState(null);
   const [monacoViewState, setMonacoViewState] = useState(null);
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
@@ -158,7 +166,7 @@ const Editor = ({
     [baseEditorOptions]
   );
   const editorProps = {
-    language: accessVecoderEditorFileLanguageDataByPath(editor_filePath),
+    language: monacoLanguage,
     theme: "vs-dark",
     options: editor_diffContent ? diffEditorOptions : baseEditorOptions,
     onChange: (newValue, e) => {
@@ -231,13 +239,13 @@ const Editor = ({
       {editor_diffContent ? (
         <MonacoDiffEditor
           {...editorProps}
-          original={accessVecoderEditorFileContentDataByPath(editor_filePath)}
+          original={monacoContent}
           value={editor_diffContent}
         />
       ) : (
         <MonacoEditor
           {...editorProps}
-          value={accessVecoderEditorFileContentDataByPath(editor_filePath)}
+          value={monacoContent}
           loading={<></>}
           style={{ display: isMonacoEditorMounted ? "block" : "none"}}
         />

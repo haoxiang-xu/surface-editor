@@ -607,6 +607,20 @@ const VecoderEditorPage = () => {
   const [vecoderEditorContentData, setVecoderEditorContentData] = useState(
     DEFAULT_VECODER_EDITORS_CONTENT_DATA
   );
+  useEffect(() => {
+    window.electronAPI.onFileContent((content, relativePath) => {
+      const newFile = { [relativePath]: content };
+      setVecoderEditorContentData(prevData => {
+        return {
+          ...prevData,
+          ...newFile
+        };
+      });
+    });
+    window.electronAPI.onFileError((error) => {
+      console.error("Error:", error);
+    });
+  }, []);
   const updateVecoderEditorFileContentDataByPath = (path, data) => {
     setVecoderEditorContentData((prevData) => {
       if (prevData.hasOwnProperty(path)) {
@@ -627,7 +641,9 @@ const VecoderEditorPage = () => {
     if (path in vecoderEditorContentData) {
       return vecoderEditorContentData[path].fileContent;
     } else {
-      return "";
+      //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
+      window.electronAPI.readFile(accessFileAbsolutePathByPath(path), path);
+      return path;
     }
   };
   const accessVecoderEditorFileLanguageDataByPath = (path) => {
@@ -641,7 +657,7 @@ const VecoderEditorPage = () => {
     if (path in vecoderEditorContentData) {
       return vecoderEditorContentData[path].fileName;
     } else {
-      return "Unfound Path";
+      return path.split("/")[path.split("/").length - 1];
     }
   };
   /* Vecoder Editor Data and Functions ============================================================== */
@@ -809,6 +825,27 @@ const VecoderEditorPage = () => {
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
         return currentData.fileType;
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const accessFileAbsolutePathByPath = (path) => {
+    const pathArray = path.split("/");
+    let currentData = exploreOptionsAndContentData;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        if (currentData.fileAbsolutePath) {
+          return currentData.fileAbsolutePath;
+        } else {
+          return currentData.filePath;
+        }
       } else {
         currentData = currentData.files;
         for (let j = 0; j < currentData.length; j++) {

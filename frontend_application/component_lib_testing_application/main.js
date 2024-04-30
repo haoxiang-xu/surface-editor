@@ -1,7 +1,8 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
 const path = require("path");
 const axios = require("axios");
-const fs = require("fs/promises");
+const fs = require('fs').promises;
+const { EXTENSIONS_TO_LANGUAGES_MATCHING_LIST } = require('./src/CONSTs/extensionsToLanguagesMatchingList.js');
 
 let mainWindow;
 const menuTemplate = [
@@ -12,7 +13,7 @@ const menuTemplate = [
   {
     label: "File",
     submenu: [
-      { label: "Open Folder...", click: () => openFolderDialog() },
+      { label: "Open Folder...", click: () => openFolderStructureDialog() },
 
       { type: "separator" },
     ],
@@ -143,7 +144,8 @@ const checkServerAndLoadURL = (url) => {
       setTimeout(() => checkServerAndLoadURL(url), 2000); // Adjust the delay as needed
     });
 };
-const openFolderDialog = () => {
+
+const openFolderStructureDialog = () => {
   dialog
     .showOpenDialog({
       properties: ["openDirectory"],
@@ -162,6 +164,7 @@ const openFolderDialog = () => {
             const opendFolder = {
               fileName: rootFolder,
               filePath: rootFolder,
+              fileAbsolutePath: result.filePaths[0],
               fileSize: "0 bytes",
               fileType: "folder",
               fileExtname: path.extname(rootFolder),
@@ -213,6 +216,7 @@ const readDir = async (dirPath, rootPath = dirPath) => {
           return {
             fileName: dirent.name,
             filePath: relPath,
+            fileAbsolutePath: res,
             fileSize: stats.size + " bytes",
             fileType: "folder",
             fileExtname: path.extname(dirent.name),
@@ -223,6 +227,7 @@ const readDir = async (dirPath, rootPath = dirPath) => {
           return {
             fileName: dirent.name,
             filePath: relPath,
+            fileAbsolutePath: res,
             fileSize: stats.size + " bytes",
             fileType: "file",
             fileExtname: path.extname(dirent.name),
@@ -299,5 +304,31 @@ ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
   }
 });
 ipcMain.on("trigger-read-dir", () => {
-  openFolderDialog();
+  openFolderStructureDialog();
+});
+ipcMain.on('read-file', async (event, absolutePath, relativePath) => {
+  try {
+    const stats = await fs.stat(absolutePath);
+    if (stats.isFile()) {
+      const content = await fs.readFile(absolutePath, 'utf8');
+      const openedFile = {
+        fileName: path.basename(absolutePath),
+        filePath: relativePath,
+        fileAbsolutePath: absolutePath,
+        fileType: 'file',
+        fileLanguage: EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
+        fileContent: content,
+      };
+      event.reply('file-content', openedFile, relativePath);
+    } else {
+      event.reply('file-error', 'The provided path is a directory, not a file');
+    }
+  } catch (error) {
+    console.error('Failed to read file:', error);
+    if (error.code === 'ENOENT') {
+      event.reply('file-error', 'File does not exist');
+    } else {
+      event.reply('file-error', error.message || 'Failed to read file');
+    }
+  }
 });
