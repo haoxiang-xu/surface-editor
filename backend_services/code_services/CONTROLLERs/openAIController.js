@@ -79,9 +79,9 @@ router.post("/continue", async (req, res) => {
       " strictly adhering to the necessity of completing the current session without adding extra content." +
       " You will only respond with code (without ```) and only the content you have generated," +
       " ensuring it completes the current task or pattern without worrying about the entirety of the file or future tasks." +
-      " If there's nothing that you think can be added to the end of current code, return null.";
-    /*Primary Tasks-------------------------------------------------------------------------------------------------------------------------------------------*/
-    " Your primary tasks include" +
+      " If there's nothing that you think can be added to the end of current code, return null." +
+      /*Primary Tasks-------------------------------------------------------------------------------------------------------------------------------------------*/
+      " Your primary tasks include" +
       " 1. finishing unfinished functions with guidance from comments, function names, or context from the preceding code;" +
       " 2. autocompleting syntax patterns such as variable declarations and choosing appropriate variables for use;" +
       " 3. following established patterns in the code, such as iterating over table contents or similar structures." +
