@@ -37,7 +37,6 @@
   overflow-x: hidden;
 
   animation-timing-function: linear;
-  animation: dir_list_component_container_appear_animation 1.6s;
 }
 #dir_list_component_container0725::-webkit-scrollbar {
   width: 6px;
@@ -163,4 +162,14 @@
 
   /*STYLE*/
   background-color: #838383;
+}
+
+/* Loading Container */
+.dir_list_component_loading_container0404 {
+  position: absolute;
+  top: 42px;
+  left: 6px;
+  border-radius: 6px;
+  border: 1px solid #8c8c8c64;
+  overflow: hidden;
 }

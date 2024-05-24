@@ -29,6 +29,9 @@ const COMPONENT_ITEM_FUNCTION_CONFIG = {
     "insertFile",
     "hr",
     "paste_or_unpaste",
+    "hr",
+    "openFolder",
+    "openFile",
   ],
   vecoder_explorer_folder: [
     "newFile",

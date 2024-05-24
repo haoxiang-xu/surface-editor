@@ -19,5 +19,6 @@ backend_services/code_services/models
 backend_services/code_services/training_data
 backend_services/code_services/saved_weight
 
+.DS_Store
 .venv
 

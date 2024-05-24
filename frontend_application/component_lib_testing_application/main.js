@@ -1,7 +1,8 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
 const path = require("path");
 const axios = require("axios");
-const fs = require("fs/promises");
+const fs = require('fs').promises;
+const { EXTENSIONS_TO_LANGUAGES_MATCHING_LIST } = require('./src/CONSTs/extensionsToLanguagesMatchingList.js');
 
 let mainWindow;
 const menuTemplate = [
@@ -12,7 +13,7 @@ const menuTemplate = [
   {
     label: "File",
     submenu: [
-      { label: "Open Folder...", click: () => openFolderDialog() },
+      { label: "Open Folder...", click: () => openFolderStructureDialog() },
 
       { type: "separator" },
     ],
@@ -32,22 +33,93 @@ const menuTemplate = [
 ];
 const createWindow = () => {
   // Initialize the browser window.
-  mainWindow = new BrowserWindow({
-    title: "Vecoder",
-    width: 1200,
-    height: 800,
-    webSecurity: true,
-    transparent: true,
-    resizable: true,
-    maximizable: true,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      contextIsolation: true,
-      nodeIntegration: false,
-    },
-    frame: false,
+  if (process.platform === "darwin") {
+    mainWindow = new BrowserWindow({
+      title: "",
+      icon: path.join(
+        __dirname,
+        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+      ),
+      width: 1200,
+      height: 800,
+      webSecurity: true,
+      transparent: true,
+      resizable: true,
+      maximizable: true,
+      webPreferences: {
+        preload: path.join(__dirname, "preload.js"),
+        contextIsolation: true,
+        nodeIntegration: false,
+      },
+      frame: false,
+      hasShadow: false,
+      titleBarStyle: "hidden",
+      trafficLightPosition: { x: 17, y: 15 },
+    });
+    app.dock.setIcon(
+      path.join(
+        __dirname,
+        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+      )
+    );
+  } else if (process.platform === "win32") {
+    mainWindow = new BrowserWindow({
+      title: "",
+      icon: path.join(
+        __dirname,
+        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+      ),
+      width: 1200,
+      height: 800,
+      webSecurity: true,
+      transparent: true,
+      resizable: true,
+      maximizable: true,
+      webPreferences: {
+        preload: path.join(__dirname, "preload.js"),
+        contextIsolation: true,
+        nodeIntegration: false,
+      },
+      frame: false,
+    });
+  } else {
+    mainWindow = new BrowserWindow({
+      title: "",
+      icon: path.join(
+        __dirname,
+        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+      ),
+      width: 1200,
+      height: 800,
+      webSecurity: true,
+      transparent: true,
+      resizable: true,
+      maximizable: true,
+      webPreferences: {
+        preload: path.join(__dirname, "preload.js"),
+        contextIsolation: true,
+        nodeIntegration: false,
+      },
+      frame: false,
+    });
+  }
+  mainWindow.setTitle("");
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("window-state-changed", { isMaximized: true });
   });
-  mainWindow.setTitle("Vecoder");
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("window-state-changed", { isMaximized: false });
+  });
+  mainWindow.on("enter-full-screen", () => {
+    mainWindow.webContents.send("window-state-changed", {
+      isMaximized: true,
+    });
+  });
+  mainWindow.on("leave-full-screen", () => {
+    mainWindow.webContents.send("window-state-changed", {
+      isMaximized: false,
+    });
+  });
 
   // Load the index.html of the app.
   checkServerAndLoadURL("http://127.0.0.1:3000");
@@ -57,7 +129,7 @@ const createWindow = () => {
   Menu.setApplicationMenu(menu);
 
   // Optionally open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 };
 const checkServerAndLoadURL = (url) => {
   axios
@@ -73,16 +145,18 @@ const checkServerAndLoadURL = (url) => {
     });
 };
 
-const openFolderDialog = () => {
+const openFolderStructureDialog = () => {
   dialog
     .showOpenDialog({
       properties: ["openDirectory"],
     })
     .then((result) => {
+      mainWindow.webContents.send("read-dir-state-changed", {
+        isDirLoading: true,
+      });
       if (!result.canceled) {
         readDir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
-            console.log(result.filePaths[0]);
             const rootFolder = result.filePaths[0]
               .replace(/\\/g, "/")
               .split("/")
@@ -90,6 +164,7 @@ const openFolderDialog = () => {
             const opendFolder = {
               fileName: rootFolder,
               filePath: rootFolder,
+              fileAbsolutePath: result.filePaths[0],
               fileSize: "0 bytes",
               fileType: "folder",
               fileExtname: path.extname(rootFolder),
@@ -100,11 +175,23 @@ const openFolderDialog = () => {
           })
           .catch((err) => {
             console.error("Error reading directory:", err);
+          })
+          .finally(() => {
+            mainWindow.webContents.send("read-dir-state-changed", {
+              isDirLoading: false,
+            });
           });
+      } else {
+        mainWindow.webContents.send("read-dir-state-changed", {
+          isDirLoading: false,
+        });
       }
     })
     .catch((err) => {
       console.error(err);
+      mainWindow.webContents.send("read-dir-state-changed", {
+        isDirLoading: false,
+      });
     });
 };
 const readDir = async (dirPath, rootPath = dirPath) => {
@@ -129,6 +216,7 @@ const readDir = async (dirPath, rootPath = dirPath) => {
           return {
             fileName: dirent.name,
             filePath: relPath,
+            fileAbsolutePath: res,
             fileSize: stats.size + " bytes",
             fileType: "folder",
             fileExtname: path.extname(dirent.name),
@@ -139,6 +227,7 @@ const readDir = async (dirPath, rootPath = dirPath) => {
           return {
             fileName: dirent.name,
             filePath: relPath,
+            fileAbsolutePath: res,
             fileSize: stats.size + " bytes",
             fileType: "file",
             fileExtname: path.extname(dirent.name),
@@ -166,6 +255,7 @@ const readDir = async (dirPath, rootPath = dirPath) => {
     throw e; // Rethrow the error to be caught by the caller
   }
 };
+
 app.whenReady().then(createWindow);
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
@@ -203,5 +293,42 @@ ipcMain.on("window-control", (event, action) => {
       break;
     default:
       break;
+  }
+});
+ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
+  if (process.platform === "darwin") {
+    setTimeout(() => {
+      mainWindow.setWindowButtonVisibility(!shouldHide);
+      mainWindow.setWindowButtonPosition({ x: 17, y: 15 });
+    }, 110);
+  }
+});
+ipcMain.on("trigger-read-dir", () => {
+  openFolderStructureDialog();
+});
+ipcMain.on('read-file', async (event, absolutePath, relativePath) => {
+  try {
+    const stats = await fs.stat(absolutePath);
+    if (stats.isFile()) {
+      const content = await fs.readFile(absolutePath, 'utf8');
+      const openedFile = {
+        fileName: path.basename(absolutePath),
+        filePath: relativePath,
+        fileAbsolutePath: absolutePath,
+        fileType: 'file',
+        fileLanguage: EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
+        fileContent: content,
+      };
+      event.reply('file-content', openedFile, relativePath);
+    } else {
+      event.reply('file-error', 'The provided path is a directory, not a file');
+    }
+  } catch (error) {
+    console.error('Failed to read file:', error);
+    if (error.code === 'ENOENT') {
+      event.reply('file-error', 'File does not exist');
+    } else {
+      event.reply('file-error', error.message || 'Failed to read file');
+    }
   }
 });

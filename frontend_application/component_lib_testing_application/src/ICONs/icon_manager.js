@@ -79,167 +79,167 @@ export const ICON_MANAGER = () => {
       default: {
         ICON16: null,
         ICON: null,
-        LABEL_COLOR: "#C8C8C8",
+        LABEL_COLOR: "#CCCCCC28",
       },
       //CODE FILE TYPES
       js: {
         ICON16: JS16,
         ICON512: JS512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "javascript",
       },
       html: {
         ICON16: HTML16,
         ICON512: HTML512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "html",
       },
       css: {
         ICON16: CSS16,
         ICON512: CSS512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "css",
       },
       json: {
         ICON16: JSON16,
         ICON512: JSON512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "json",
       },
       cpp: {
         ICON16: CPP16,
         ICON512: CPP512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "cpp",
       },
       cs: {
         ICON16: CS16,
         ICON512: CS512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "cs",
       },
       py: {
         ICON16: PY16,
         ICON512: PY512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "python",
       },
       java: {
         ICON16: JAVA16,
         ICON512: JAVA512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "java",
       },
       php: {
         ICON16: PHP16,
         ICON512: PHP512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "php",
       },
       ipynb: {
         ICON16: IPYNB16,
         ICON512: IPYNB512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "python",
       },
       xml: {
         ICON16: XML16,
         ICON512: XML512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "xml",
       },
       //IMAGE FILE TYPES
       jpg: {
         ICON16: JPG16,
         ICON512: JPG512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "image",
       },
       png: {
         ICON16: PNG16,
         ICON512: PNG512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "image",
       },
       svg: {
         ICON16: SVG16,
         ICON512: SVG512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "image",
       },
       //DOCUMENT FILE TYPES
       txt: {
         ICON16: TXT16,
         ICON512: TXT512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "text",
       },
       pdf: {
         ICON16: PDF16,
         ICON512: PDF512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "pdf",
       },
       pptx: {
         ICON16: PPTX16,
         ICON512: PPTX512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "powerpoint",
       },
       ppt: {
         ICON16: PPT16,
         ICON512: PPT512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "powerpoint",
       },
       xlsx: {
         ICON16: XLSX16,
         ICON512: XLSX512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "excel",
       },
       xls: {
         ICON16: XLS16,
         ICON512: XLS512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "excel",
       },
       docx: {
         ICON16: DOCX16,
         ICON512: DOCX512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "word",
       },
       doc: {
         ICON16: DOC16,
         ICON512: DOC512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "word",
       },
       //DATABASE FILE TYPES
       sql: {
         ICON16: SQL16,
         ICON512: SQL512,
-        LABEL_COLOR: "#CCCCCC",
+        LABEL_COLOR: "#CCCCCC80",
         language: "sql",
       },
       //OTHER FILE TYPES
       gitignore: {
         ICON16: GITIGNORE16,
         ICON512: GITIGNORE512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "gitignore",
       },
       md: {
         ICON16: MD16,
         ICON512: MD512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "markdown",
       },
       env: {
         ICON16: ENV16,
         ICON512: ENV512,
-        LABEL_COLOR: "#8C8C8C",
+        LABEL_COLOR: "#CCCCCC28",
         language: "env",
       },
     };
@@ -258,6 +258,8 @@ export const ICON_MANAGER = () => {
   };
   try {
     /* 16X16 ICONs ---------------------------------------------------------------------- */
+    const WARNING_ICON16 = require("./SYSTEM_ICONs/16X16/warning.png");
+
     const CLOSE_ICON16 = require("./SYSTEM_ICONs/16X16/close.png");
     const ARROW_ICON16 = require("./SYSTEM_ICONs/16X16/arrow.png");
     const AST_ICON16 = require("./SYSTEM_ICONs/16X16/ast.png");
@@ -290,6 +292,8 @@ export const ICON_MANAGER = () => {
     const DRAFTING_COMPASS16 = require("./SYSTEM_ICONs/16X16/drafting_compass.png");
     const SOFTWARE16 = require("./SYSTEM_ICONs/16X16/software.png");
     const MORE_OPTIONS16 = require("./SYSTEM_ICONs/16X16/more_options.png");
+    const UPLOAD_FOLDER16 = require("./SYSTEM_ICONs/16X16/upload_folder.png");
+    const UPLOAD_FILE16 = require("./SYSTEM_ICONs/16X16/upload_file.png");
 
     const INVISIBLE16 = require("./SYSTEM_ICONs/16X16/invisible.png");
     const MAXIMIZE16 = require("./SYSTEM_ICONs/16X16/maximize.png");
@@ -307,6 +311,8 @@ export const ICON_MANAGER = () => {
     /* 16X16 ICONs ---------------------------------------------------------------------- */
 
     /* 512X512 ICONs ---------------------------------------------------------------------- */
+    const WARNING_ICON512 = require("./SYSTEM_ICONs/512X512/warning.png");
+
     const CLOSE_ICON512 = require("./SYSTEM_ICONs/512X512/close.png");
     const ARROW_ICON512 = require("./SYSTEM_ICONs/512X512/arrow.png");
     const AST_ICON512 = require("./SYSTEM_ICONs/512X512/ast.png");
@@ -339,6 +345,8 @@ export const ICON_MANAGER = () => {
     const DRAFTING_COMPASS512 = require("./SYSTEM_ICONs/512X512/drafting_compass.png");
     const SOFTWARE512 = require("./SYSTEM_ICONs/512X512/software.png");
     const MORE_OPTIONS512 = require("./SYSTEM_ICONs/512X512/more_options.png");
+    const UPLOAD_FOLDER512 = require("./SYSTEM_ICONs/512X512/upload_folder.png");
+    const UPLOAD_FILE512 = require("./SYSTEM_ICONs/512X512/upload_file.png");
 
     const INVISIBLE512 = require("./SYSTEM_ICONs/512X512/invisible.png");
     const MAXIMIZE512 = require("./SYSTEM_ICONs/512X512/maximize.png");
@@ -356,8 +364,8 @@ export const ICON_MANAGER = () => {
 
     SYSTEM_ICON_MANAGER = {
       default: {
-        ICON16: null,
-        ICON: null,
+        ICON16: WARNING_ICON16,
+        ICON: WARNING_ICON512,
         LABEL_COLOR: "#C8C8C8",
       },
       close: {
@@ -563,6 +571,16 @@ export const ICON_MANAGER = () => {
       win32Unmaximize: {
         ICON16: WIN32_UNMAXIMIZE16,
         ICON512: WIN32_UNMAXIMIZE512,
+        LABEL_COLOR: "#CCCCCC",
+      },
+      uploadFolder: {
+        ICON16: UPLOAD_FOLDER16,
+        ICON512: UPLOAD_FOLDER512,
+        LABEL_COLOR: "#CCCCCC",
+      },
+      uploadFile: {
+        ICON16: UPLOAD_FILE16,
+        ICON512: UPLOAD_FILE512,
         LABEL_COLOR: "#CCCCCC",
       },
     };

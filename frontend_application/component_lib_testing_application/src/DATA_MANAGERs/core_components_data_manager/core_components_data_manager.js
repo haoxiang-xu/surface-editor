@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
 import StackStructure from "../../COMPONENTs/stack_structure/stack_structure";
 
-const DEFAULT_MONACO_EDITORS_OPTIONS_AND_CONTENT_DATA = {
-  "demo/code_editor.js": {
+const DEFAULT_MONACO_EDITORS_OPTIONS_DATA = {
+  "demo/src/code_editor.js": {
     viewState: null,
     model: null,
   },
-  "demo/code_editor.css": {
+  "demo/index/style/code_editor.css": {
     viewState: null,
     model: null,
   },
@@ -15,7 +15,7 @@ const DEFAULT_MONACO_EDITORS_OPTIONS_AND_CONTENT_DATA = {
     viewState: null,
     model: null,
   },
-  "demo/index.html": {
+  "demo/index/index.html": {
     viewState: null,
     model: null,
   },
@@ -29,22 +29,22 @@ const DEFAULT_VECODER_EDITORS_OPTIONS_DATA = {
     code_editor_container_ref_index: 1,
     onSelectedMonacoIndex: -1,
     monacoEditorPaths: [
-      "demo/code_editor.js",
-      "demo/code_editor.css",
+      "demo/src/code_editor.js",
+      "demo/index/style/code_editor.css",
       "demo/main.py",
     ],
   },
   2: {
     code_editor_container_ref_index: 2,
     onSelectedMonacoIndex: -1,
-    monacoEditorPaths: ["demo/index.html", "demo/main.java"],
+    monacoEditorPaths: ["demo/index/index.html", "demo/main.java"],
   },
 };
 const DEFAULT_VECODER_EDITORS_CONTENT_DATA = {
-  "demo/code_editor.js": {
+  "demo/src/code_editor.js": {
     fileName: "code_editor.js",
     fileLanguage: "javascript",
-    filePath: "./code_editor.js",
+    filePath: "demo/src/code_editor.js",
     fileContent: `import React, { useState, useEffect, useRef } from "react";
 import MonacoEditor from "@monaco-editor/react";
 
@@ -220,10 +220,10 @@ export default CodeEditor;
 
 `,
   },
-  "demo/code_editor.css": {
+  "demo/index/style/code_editor.css": {
     fileName: "code_editor.css",
     fileLanguage: "css",
-    filePath: "demo/code_editor.css",
+    filePath: "demo/index/style/code_editor.css",
     fileContent: `#code_editor_container0829 {
   /*POSITION*/
   width: 500pt;
@@ -316,10 +316,10 @@ if __name__ == "__main__":
   main()
 `,
   },
-  "demo/index.html": {
+  "demo/index/index.html": {
     fileName: "index.html",
     fileLanguage: "html",
-    filePath: "demo/index.html",
+    filePath: "demo/index/index.html",
     fileContent: `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -384,7 +384,7 @@ renderFileContents();
   "demo/main.java": {
     fileName: "main.java",
     fileLanguage: "java",
-    filePath: "./main.java",
+    filePath: "demo/main.java",
     fileContent: `public class Main {
   public static void main(String[] args) {
     // Create some car objects
@@ -434,19 +434,57 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
   fileName: "demo",
   fileType: "folder",
   filePath: "demo",
-  fileExpend: true,
+  fileExpend: false,
   files: [
     {
-      fileName: "code_editor.js",
-      fileType: "file",
-      filePath: "demo/code_editor.js",
+      fileName: "index",
+      fileType: "folder",
+      filePath: "demo/index",
       fileExpend: false,
-      files: [],
+      files: [
+        {
+          fileName: "style",
+          fileType: "folder",
+          filePath: "demo/index/style",
+          fileExpend: false,
+          files: [
+            {
+              fileName: "code_editor.css",
+              fileType: "file",
+              filePath: "demo/index/style/code_editor.css",
+              fileExpend: false,
+              files: [],
+            },
+          ],
+        },
+        {
+          fileName: "index.html",
+          fileType: "file",
+          filePath: "demo/index/index.html",
+          fileExpend: false,
+          files: [],
+        },
+      ],
     },
     {
-      fileName: "code_editor.css",
+      fileName: "src",
+      fileType: "folder",
+      filePath: "demo/src",
+      fileExpend: false,
+      files: [
+        {
+          fileName: "code_editor.js",
+          fileType: "file",
+          filePath: "demo/src/code_editor.js",
+          fileExpend: false,
+          files: [],
+        },
+      ],
+    },
+    {
+      fileName: "main.java",
       fileType: "file",
-      filePath: "demo/code_editor.css",
+      filePath: "demo/main.java",
       fileExpend: false,
       files: [],
     },
@@ -457,65 +495,50 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
       fileExpend: false,
       files: [],
     },
-    {
-      fileName: "index.html",
-      fileType: "file",
-      filePath: "demo/index.html",
-      fileExpend: false,
-      files: [],
-    },
-    {
-      fileName: "main.java",
-      fileType: "file",
-      filePath: "demo/main.java",
-      fileExpend: false,
-      files: [],
-    },
   ],
 };
 const VecoderEditorPage = () => {
-  /* Monaco Editor Data and Functions ------------------------------------ */
-  const [
-    monacoEditorsOptionsAndContentData,
-    setMonacoEditorsOptionsAndContentData,
-  ] = useState(DEFAULT_MONACO_EDITORS_OPTIONS_AND_CONTENT_DATA);
-  const accessMonacoEditorsDataByPath = (path) => {
-    return monacoEditorsOptionsAndContentData[path];
+  /* Monaco Editor Options ------------------------------------ */
+  const [monacoEditorsOptionsData, setMonacoEditorsOptionsData] = useState(
+    DEFAULT_MONACO_EDITORS_OPTIONS_DATA
+  );
+  const accessMonacoEditorOptionsByPath = (path) => {
+    return monacoEditorsOptionsData[path];
   };
-  const updateMonacoEditorsDataByPath = (path, data) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const updateMonacoEditorOptionsByPath = (path, data) => {
+    setMonacoEditorsOptionsData((prevData) => {
       return { ...prevData, [path]: data };
     });
   };
-  const appendMonacoEditorsDataByPath = (path, data) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const appendMonacoEditorOptionsByPath = (path, data) => {
+    setMonacoEditorsOptionsData((prevData) => {
       return { ...prevData, [path]: data };
     });
   };
-  const removeMonacoEditorsDataByPath = (path) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const removeMonacoEditorOptionsByPath = (path) => {
+    setMonacoEditorsOptionsData((prevData) => {
       const newData = { ...prevData };
       delete newData[path];
       return newData;
     });
   };
-  const updateMonacoEditorViewStateByPath = (path, newViewState) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const updateMonacoEditorViewStatesByPath = (path, newViewState) => {
+    setMonacoEditorsOptionsData((prevData) => {
       return {
         ...prevData,
         [path]: { ...prevData[path], viewState: newViewState },
       };
     });
   };
-  const updateMonacoEditorModelByPath = (path, newModel) => {
-    setMonacoEditorsOptionsAndContentData((prevData) => {
+  const updateMonacoEditorModelsByPath = (path, newModel) => {
+    setMonacoEditorsOptionsData((prevData) => {
       return {
         ...prevData,
         [path]: { ...prevData[path], model: newModel },
       };
     });
   };
-  /* Monaco Editor Data and Functions ------------------------------------ */
+  /* Monaco Editor Options ------------------------------------ */
 
   /* Vecoder Editor Data and Functions ============================================================== */
   const [vecoderEditorsOptionsData, setVecoderEditorsOptionsData] = useState(
@@ -584,6 +607,20 @@ const VecoderEditorPage = () => {
   const [vecoderEditorContentData, setVecoderEditorContentData] = useState(
     DEFAULT_VECODER_EDITORS_CONTENT_DATA
   );
+  useEffect(() => {
+    window.electronAPI.onFileContent((content, relativePath) => {
+      const newFile = { [relativePath]: content };
+      setVecoderEditorContentData(prevData => {
+        return {
+          ...prevData,
+          ...newFile
+        };
+      });
+    });
+    window.electronAPI.onFileError((error) => {
+      console.error("Error:", error);
+    });
+  }, []);
   const updateVecoderEditorFileContentDataByPath = (path, data) => {
     setVecoderEditorContentData((prevData) => {
       if (prevData.hasOwnProperty(path)) {
@@ -601,72 +638,107 @@ const VecoderEditorPage = () => {
     });
   };
   const accessVecoderEditorFileContentDataByPath = (path) => {
-    return vecoderEditorContentData[path].fileContent;
+    if (path in vecoderEditorContentData) {
+      return vecoderEditorContentData[path].fileContent;
+    } else {
+      //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
+      window.electronAPI.readFile(accessFileAbsolutePathByPath(path), path);
+      return path;
+    }
   };
   const accessVecoderEditorFileLanguageDataByPath = (path) => {
-    return vecoderEditorContentData[path].fileLanguage;
+    if (path in vecoderEditorContentData) {
+      return vecoderEditorContentData[path].fileLanguage;
+    } else {
+      return "Unknow";
+    }
   };
   const accessVecoderEditorFileNameDataByPath = (path) => {
-    return vecoderEditorContentData[path].fileName;
+    if (path in vecoderEditorContentData) {
+      return vecoderEditorContentData[path].fileName;
+    } else {
+      return path.split("/")[path.split("/").length - 1];
+    }
   };
   /* Vecoder Editor Data and Functions ============================================================== */
 
   /* Explorer Data and Functions ------------------------------------------ */
   const [exploreOptionsAndContentData, setExploreOptionsAndContentData] =
     useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
+  const [
+    isExploreOptionsAndContentDataLoaded,
+    setIsExploreOptionsAndContentDataLoaded,
+  ] = useState(true);
   useEffect(() => {
-    // Listen for directory data
+    setIsExploreOptionsAndContentDataLoaded(true);
+  }, [exploreOptionsAndContentData.filePath]);
+  useEffect(() => {
     window.electron.receive("directory-data", (data) => {
       setExploreOptionsAndContentData(data);
     });
   }, []);
   const updateFileOnExploreOptionsAndContentData = (path, data) => {
     setExploreOptionsAndContentData((prevData) => {
-      const newExploreOptionsAndContentData = { ...prevData };
-      const pathArray = path.split("/");
-      let currentData = exploreOptionsAndContentData;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          currentData = data;
-          sortDirFiles(path);
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
+      const updateNestedFiles = (currentData, pathArray, currentIndex) => {
+        if (currentIndex === pathArray.length - 1) {
+          return data;
         }
-      }
-      return newExploreOptionsAndContentData;
+        const files = currentData.files ? [...currentData.files] : [];
+        const nextIndex = files.findIndex(
+          (file) => file.fileName === pathArray[currentIndex + 1]
+        );
+        if (nextIndex !== -1) {
+          files[nextIndex] = updateNestedFiles(
+            files[nextIndex],
+            pathArray,
+            currentIndex + 1
+          );
+        }
+        if (currentIndex === pathArray.length - 2) {
+          files.sort((a, b) => {
+            if (a.fileType === b.fileType) {
+              return a.fileName.localeCompare(b.fileName);
+            }
+            return a.fileType === "folder" ? -1 : 1;
+          });
+        }
+
+        return { ...currentData, files };
+      };
+
+      const pathArray = path.split("/");
+      const updatedData = updateNestedFiles(prevData, pathArray, 0);
+
+      return updatedData;
     });
   };
   const removeFileOnExploreOptionsAndContentData = (path) => {
     setExploreOptionsAndContentData((prevData) => {
-      const newExploreOptionsAndContentData = { ...prevData };
       const pathArray = path.split("/");
-      let currentData = exploreOptionsAndContentData;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 2) {
-          let subDirList = currentData.files;
-          for (let j = 0; j < subDirList.length; j++) {
-            if (subDirList[j].fileName === pathArray[i + 1]) {
-              subDirList.splice(j, 1);
-              break;
-            }
-          }
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
+      const removeItemRecursively = (data, index = 0) => {
+        if (index === pathArray.length - 2) {
+          const filteredFiles = data.files.filter(
+            (item) => item.fileName !== pathArray[pathArray.length - 1]
+          );
+          return { ...data, files: filteredFiles };
         }
-      }
-      return newExploreOptionsAndContentData;
+        const nextIndex = data.files.findIndex(
+          (item) => item.fileName === pathArray[index]
+        );
+        if (nextIndex === -1) {
+          return data;
+        }
+
+        const updatedFiles = [...data.files];
+        updatedFiles[nextIndex] = removeItemRecursively(
+          updatedFiles[nextIndex],
+          index + 1
+        );
+
+        return { ...data, files: updatedFiles };
+      };
+
+      return removeItemRecursively(prevData);
     });
   };
   const renameAndRepathAllSubFiles = (original_path, new_name) => {
@@ -702,38 +774,6 @@ const VecoderEditorPage = () => {
           }
         }
         return false;
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const sortDirFiles = (path) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 2) {
-        currentData.files.sort((a, b) => {
-          if (a.fileType === "folder" && b.fileType === "file") {
-            return -1;
-          }
-          if (a.fileType === "file" && b.fileType === "folder") {
-            return 1;
-          }
-          if (a.fileName < b.fileName) {
-            return -1;
-          }
-          if (a.fileName > b.fileName) {
-            return 1;
-          }
-          return 0;
-        });
-        return currentData;
       } else {
         currentData = currentData.files;
         for (let j = 0; j < currentData.length; j++) {
@@ -796,7 +836,28 @@ const VecoderEditorPage = () => {
       }
     }
   };
-  const accessFileExpendByPath = (path) => {
+  const accessFileAbsolutePathByPath = (path) => {
+    const pathArray = path.split("/");
+    let currentData = exploreOptionsAndContentData;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        if (currentData.fileAbsolutePath) {
+          return currentData.fileAbsolutePath;
+        } else {
+          return currentData.filePath;
+        }
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const accessFileExpandByPath = (path) => {
     const pathArray = path.split("/");
     let currentData = exploreOptionsAndContentData;
     for (let i = 0; i < pathArray.length; i++) {
@@ -812,6 +873,25 @@ const VecoderEditorPage = () => {
         }
       }
     }
+  };
+  const updateFileExpandByPath = (path, expend) => {
+    setExploreOptionsAndContentData((prevData) => {
+      const updateNestedFiles = (data, pathArray, currentIndex) => {
+        if (currentIndex === pathArray.length - 1) {
+          return { ...data, fileExpend: expend };
+        }
+        const nextIndex = currentIndex + 1;
+        const updatedFiles = data.files.map((file) => {
+          if (file.fileName === pathArray[nextIndex]) {
+            return updateNestedFiles(file, pathArray, nextIndex);
+          }
+          return file;
+        });
+        return { ...data, files: updatedFiles };
+      };
+      const pathArray = path.split("/");
+      return updateNestedFiles(prevData, pathArray, 0);
+    });
   };
   const accessFilesByPath = (path) => {
     const pathArray = path.split("/");
@@ -829,6 +909,34 @@ const VecoderEditorPage = () => {
         }
       }
     }
+  };
+  const getExpendedFilesAmountUnderPath = (path) => {
+    const pathArray = path.split("/");
+    let currentData = exploreOptionsAndContentData;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        return countExpendedFilesAmountUnderPath(currentData);
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const countExpendedFilesAmountUnderPath = (data) => {
+    let count = 0;
+    for (let i = 0; i < data.files.length; i++) {
+      if (data.files[i].fileType === "folder" && data.files[i].fileExpend) {
+        count += countExpendedFilesAmountUnderPath(data.files[i]) + 1;
+      } else {
+        count++;
+      }
+    }
+    return count;
   };
   /* Explorer Data and Functions ------------------------------------------ */
 
@@ -849,14 +957,14 @@ const VecoderEditorPage = () => {
   return (
     <vecoderEditorContexts.Provider
       value={{
-        monacoEditorsOptionsAndContentData,
-        setMonacoEditorsOptionsAndContentData,
-        accessMonacoEditorsDataByPath,
-        updateMonacoEditorsDataByPath,
-        appendMonacoEditorsDataByPath,
-        removeMonacoEditorsDataByPath,
-        updateMonacoEditorViewStateByPath,
-        updateMonacoEditorModelByPath,
+        monacoEditorsOptionsData,
+        setMonacoEditorsOptionsData,
+        accessMonacoEditorOptionsByPath,
+        updateMonacoEditorOptionsByPath,
+        appendMonacoEditorOptionsByPath,
+        removeMonacoEditorOptionsByPath,
+        updateMonacoEditorViewStatesByPath,
+        updateMonacoEditorModelsByPath,
 
         vecoderEditorsOptionsData,
         setVecoderEditorsOptionsData,
@@ -876,6 +984,8 @@ const VecoderEditorPage = () => {
 
         exploreOptionsAndContentData,
         setExploreOptionsAndContentData,
+        isExploreOptionsAndContentDataLoaded,
+        setIsExploreOptionsAndContentDataLoaded,
         updateFileOnExploreOptionsAndContentData,
         removeFileOnExploreOptionsAndContentData,
         renameAndRepathAllSubFiles,
@@ -883,8 +993,10 @@ const VecoderEditorPage = () => {
         accessFileByPath,
         accessFileNameByPath,
         accessFileTypeByPath,
-        accessFileExpendByPath,
+        accessFileExpandByPath,
+        updateFileExpandByPath,
         accessFilesByPath,
+        getExpendedFilesAmountUnderPath,
 
         stackStructureOptionsData,
         setStackStructureOptionsData,
