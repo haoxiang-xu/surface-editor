@@ -228,7 +228,7 @@
 /*File Selection Bar Item ---------------------------------------------------------------- */
 /*Horizontal Mode*/
 .file_selection_bar_item1114 {
-  transition: width 0.32s ease;
+  transition: width 0.12s ease;
   /*POSITION*/
   height: 30px;
   position: relative;
@@ -242,12 +242,12 @@
   margin: 0px 6px 4px 0px;
 }
 .file_selection_bar_item1114:hover {
-  transition: all 0.2s ease;
+  transition: background-color 0.12s ease;
   background-color: #2e2e2e;
 }
 .file_selection_bar_item_selected1114 {
   transition: opacity 0.16s ease, background-color 0.16s ease,
-    position 0.16s ease, width 0.32s ease;
+    position 0.12s ease, width 0.12s ease;
 
   /*POSITION*/
   height: 30px;
@@ -319,7 +319,7 @@
 }
 /*Vertical Mode*/
 .file_selection_bar_item_vertical0123 {
-  transition: height 0.32s ease;
+  transition: height 0.12s ease;
   /*POSITION*/
   width: 30px;
   position: relative;
@@ -332,12 +332,12 @@
   margin: 0px 0px 5px 0px;
 }
 .file_selection_bar_item_vertical0123:hover {
-  transition: all 0.2s ease;
+  transition: all 0.12s ease;
   background-color: #2e2e2e;
 }
 .file_selection_bar_item_selected_vertical0123 {
   transition: opacity 0.16s ease, background-color 0.16s ease,
-    position 0.16s ease, height 0.32s ease;
+    position 0.12s ease, height 0.12s ease;
 
   /*POSITION*/
   width: 30px;
@@ -446,36 +446,4 @@
   100% {
     opacity: 0.12;
   }
-}
-
-/* Ghost Drag Image ================================================================= */
-.ghost_drag_image_container0207 {
-  /*POSITION*/
-  transform: translate(-50%, -16%);
-  position: fixed;
-  height: 24px;
-
-  /*STYLE*/
-  background-color: #323232;
-  color: white;
-
-  border-radius: 6px;
-  margin: 0px 0px 5px 0px;
-  pointer-events: none;
-  z-index: 12;
-}
-.ghost_drag_image_filetype_label0207 {
-  /*POSITION*/
-  position: absolute;
-  transform: translate(0%, -50%);
-  top: 47%;
-  left: 12px;
-  padding: 0px 0px 0px 0px;
-
-  /*SIZE*/
-  font-size: 13px;
-  color: #cccccc;
-
-  pointer-events: none;
-  opacity: 1;
 }

@@ -28,8 +28,8 @@ try {
 /* Load ICON manager --------------------------------------------------------------------------------- */
 
 const HeaderMenuBar = ({
-  isWindowMaximized,
-  setIsWindowMaximized,
+  isFrameMaximized,
+  setIsFrameMaximized,
   isMenuBarHovered,
   setIsMenuBarHovered,
   cursorPosition,
@@ -48,11 +48,29 @@ const HeaderMenuBar = ({
   };
   /* Darwin --------------------------------------------------------------------------------- */
   const [isDarwinIconOnHover, setIsDarwinIconOnHover] = useState(false);
+  useEffect(() => {
+    if (isFrameMaximized) {
+      window.electronAPI.toggleWindowButtons(false);
+    } else {
+      window.electronAPI.toggleWindowButtons(!isMenuBarHovered);
+    }
+  }, [isMenuBarHovered, isFrameMaximized]);
   /* Darwin --------------------------------------------------------------------------------- */
   /* Win32 --------------------------------------------------------------------------------- */
   const [isWin32CloseIconOnHover, setIsWin32CloseIconOnHover] = useState(false);
+  const [win32CloseIconOpacity, setWin32CloseIconOpacity] = useState(0.16);
+  useEffect(() => {
+    if (isWin32CloseIconOnHover) {
+      setWin32CloseIconOpacity(1);
+    } else if (isMenuBarHovered) {
+      setWin32CloseIconOpacity(0.72);
+    } else if (isFrameMaximized) {
+      setWin32CloseIconOpacity(0.72);
+    } else {
+      setWin32CloseIconOpacity(0.16);
+    }
+  }, [isWin32CloseIconOnHover, isMenuBarHovered, isFrameMaximized]);
   /* Win32 --------------------------------------------------------------------------------- */
-
   const renderMenuBar = () => {
     switch (window.osInfo.platform) {
       case "darwin":
@@ -67,54 +85,6 @@ const HeaderMenuBar = ({
                 setIsDarwinIconOnHover(false);
               }}
             ></div>
-            <img
-              src={
-                isDarwinIconOnHover
-                  ? SYSTEM_ICON_MANAGER.macosMinimize.ICON512
-                  : SYSTEM_ICON_MANAGER.macosYellow.ICON512
-              }
-              onMouseEnter={() => {
-                setIsDarwinIconOnHover(true);
-              }}
-              className="header_menu_bar_darwin_minimize_icon0316"
-              style={{ opacity: isMenuBarHovered ? 1 : 0 }}
-              onClick={handleMinimize}
-              draggable="false"
-              alt="close"
-            />
-            <img
-              src={
-                isDarwinIconOnHover
-                  ? SYSTEM_ICON_MANAGER.macosMaximize.ICON512
-                  : SYSTEM_ICON_MANAGER.macosGreen.ICON512
-              }
-              onMouseEnter={() => {
-                setIsDarwinIconOnHover(true);
-              }}
-              className="header_menu_bar_darwin_maximize_icon0316"
-              style={{ opacity: isMenuBarHovered ? 1 : 0 }}
-              onClick={() => {
-                handleMaximize();
-                setIsWindowMaximized(!isWindowMaximized);
-              }}
-              draggable="false"
-              alt="close"
-            />
-            <img
-              src={
-                isDarwinIconOnHover
-                  ? SYSTEM_ICON_MANAGER.macosClose.ICON512
-                  : SYSTEM_ICON_MANAGER.macosRed.ICON512
-              }
-              onMouseEnter={() => {
-                setIsDarwinIconOnHover(true);
-              }}
-              className="header_menu_bar_darwin_close_icon0316"
-              style={{ opacity: isMenuBarHovered ? 1 : 0 }}
-              onClick={handleClose}
-              draggable="false"
-              alt="close"
-            />
             <div
               className="header_menu_bar_darwin_container_dragging_area0316"
               style={{ height: isMenuBarHovered ? "40px" : "12px" }}
@@ -128,46 +98,45 @@ const HeaderMenuBar = ({
             <img
               src={SYSTEM_ICON_MANAGER.minimize.ICON512}
               className="header_menu_bar_minimize_icon0316"
-              style={{ opacity: isMenuBarHovered ? 1 : 0.16 }}
+              style={{
+                opacity: isMenuBarHovered || isFrameMaximized ? 1 : 0.16,
+              }}
               onClick={handleMinimize}
               draggable="false"
-              alt="close"
             />
             <img
               src={
-                isWindowMaximized
+                isFrameMaximized
                   ? SYSTEM_ICON_MANAGER.win32Unmaximize.ICON512
                   : SYSTEM_ICON_MANAGER.maximize.ICON512
               }
               className="header_menu_bar_maximize_icon0316"
-              style={{ opacity: isMenuBarHovered ? 0.72 : 0.12 }}
+              style={{
+                opacity: isMenuBarHovered || isFrameMaximized ? 0.72 : 0.12,
+              }}
               onClick={() => {
                 handleMaximize();
-                setIsWindowMaximized(!isWindowMaximized);
               }}
               draggable="false"
-              alt="close"
             />
             <img
-              src={
-                isWin32CloseIconOnHover
-                  ? SYSTEM_ICON_MANAGER.win32Close.ICON512
-                  : SYSTEM_ICON_MANAGER.close.ICON512
-              }
+              src={SYSTEM_ICON_MANAGER.win32Close.ICON512}
               className="header_menu_bar_close_icon0316"
               style={{
-                opacity: isMenuBarHovered ? 1 : 0.16,
-                borderRadius: isWindowMaximized ? "0px" : "0px 12px 0px 0px",
+                opacity: win32CloseIconOpacity,
+                borderRadius: isFrameMaximized ? "0px" : "0px 16px 0px 0px",
               }}
               onClick={handleClose}
               onMouseEnter={() => {
                 setIsMenuBarHovered(true);
               }}
+              onMouseMove={() => {
+                setIsWin32CloseIconOnHover(true);
+              }}
               onMouseLeave={() => {
                 setIsWin32CloseIconOnHover(false);
               }}
               draggable="false"
-              alt="close"
             />
             {/* <div
               className="header_menu_bar_file_button0316"

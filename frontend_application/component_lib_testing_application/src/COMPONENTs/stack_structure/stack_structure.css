@@ -21,9 +21,9 @@
   display: flex;
   position: absolute;
 
-  top: 200px;
-  left: 0px;
-  bottom: 200px;
+  top: 12px;
+  left: 12px;
+  bottom: 12px;
 
   /*STYLE*/
   overflow-x: hidden;
@@ -143,6 +143,7 @@
   transform: translate(-50%, -50%);
 
   height: 50px;
+  max-height: 100%;
   width: 4px;
 
   /*STYLE*/

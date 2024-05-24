@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
+import { explorerContexts } from "../../CONTEXTs/explorerContexts";
 import DirItem from "./dirItem/dirItem.js";
+import PulseLoader from "react-spinners/PulseLoader";
+import BarLoader from "react-spinners/BarLoader";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -174,88 +177,82 @@ const MinMaxIcon = ({
     </div>
   );
 };
-const DirList = ({
-  files,
-  onRightClickItem,
-  setOnRightClickItem,
-  rightClickCommand,
-  setRightClickCommand,
-}) => {
+const DirList = ({}) => {
   const {
     exploreOptionsAndContentData,
+    isExploreOptionsAndContentDataLoaded,
+    setIsExploreOptionsAndContentDataLoaded,
   } = useContext(vecoderEditorContexts);
-  const [explorerExpand, setExplorerExpand] = useState(false);
-  const [childrenOnClicked, setChildrenOnClicked] = useState(null);
+  const [ExplorerOnMouseOver, setExplorerOnMouseOver] = useState(false);
+  const [dirPathOnHover, setDirPathOnHover] = useState(null);
   const [onSingleClickFile, setOnSingleClickFile] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
+  const [onDragFiles, setOnDragFiles] = useState(null);
 
-  const explorerContainerRef = useRef(null);
-  //SCROLLABLE
-  const [scrollable, setScrollable] = useState(false);
   useEffect(() => {
-    if (explorerContainerRef.current) {
-      if (explorerContainerRef.current.offsetWidth > 16) {
-        setScrollable(true);
-      } else {
-        setScrollable(false);
-      }
+    if (!ExplorerOnMouseOver) {
+      setDirPathOnHover(null);
     }
-  }, [explorerContainerRef.current?.offsetWidth]);
+  }, [ExplorerOnMouseOver]);
+  useEffect(() => {
+    const updateLoadingStatus = ({ isDirLoading }) => {
+      setIsExploreOptionsAndContentDataLoaded(!isDirLoading);
+    };
+    window.electronAPI.subscribeToReadDirStateChange(updateLoadingStatus);
+  }, []);
 
   return (
     <div
       id={"dir_list_component_container0725"}
       style={{
-        overflowY: scrollable ? "scroll" : "hidden",
+        overflowY: "scroll",
+        display: isExploreOptionsAndContentDataLoaded ? "block" : "none",
       }}
-      ref={explorerContainerRef}
+      onMouseEnter={() => {
+        setExplorerOnMouseOver(true);
+      }}
+      onMouseLeave={() => {
+        setExplorerOnMouseOver(false);
+      }}
     >
-      <DirItem
-        file={files}
-        filePath={exploreOptionsAndContentData.filePath}
-        root={true}
-        explorerExpand={explorerExpand}
-        setExplorerExpand={setExplorerExpand}
-        setChildrenOnClicked={setChildrenOnClicked}
-        onSingleClickFile={onSingleClickFile}
-        setOnSingleClickFile={setOnSingleClickFile}
-        onCopyFile={onCopyFile}
-        setOnCopyFile={setOnCopyFile}
-      />
+      <explorerContexts.Provider
+        value={{
+          dirPathOnHover,
+          setDirPathOnHover,
+          onSingleClickFile,
+          setOnSingleClickFile,
+          onCopyFile,
+          setOnCopyFile,
+          onDragFiles,
+          setOnDragFiles,
+        }}
+      >
+        <DirItem filePath={exploreOptionsAndContentData.filePath} root={true} />
+      </explorerContexts.Provider>
     </div>
   );
 };
 const Explorer = ({
   explorer_width,
-  files,
-  setFiles,
-  onRightClickItem,
-  setOnRightClickItem,
-  rightClickCommand,
-  setRightClickCommand,
   //Maximize and Minimize Container
   onMaximizeOnClick,
   onMinimizeOnClick,
 }) => {
-  const explorerRef = useRef(null);
-
+  const { isExploreOptionsAndContentDataLoaded } = useContext(
+    vecoderEditorContexts
+  );
   /* HORIZONTAL OR VERTICAL MODE ====================================================== */
   const [mode, setMode] = useState("HORIZONTAL"); //["HORIZONTAL", "VERTICAL"]
   useEffect(() => {
     explorer_width <= 50 ? setMode("VERTICAL") : setMode("HORIZONTAL");
   }, [explorer_width]);
   /* HORIZONTAL OR VERTICAL MODE ====================================================== */
+
   return (
-    <div className="explorer_component_container0126" ref={explorerRef}>
+    <div className="explorer_component_container0126">
       {mode === "VERTICAL" ? null : (
         <div>
-          <DirList
-            files={files}
-            onRightClickItem={onRightClickItem}
-            setOnRightClickItem={setOnRightClickItem}
-            rightClickCommand={rightClickCommand}
-            setRightClickCommand={setRightClickCommand}
-          />
+          <DirList />
           <SearchBar />
         </div>
       )}
@@ -265,6 +262,17 @@ const Explorer = ({
         onMinimizeOnClick={onMinimizeOnClick}
       />
       <CloseIcon />
+      {isExploreOptionsAndContentDataLoaded ? null : (
+        <div className="dir_list_component_loading_container0404">
+          <BarLoader
+            size={8}
+            color={"#C8C8C864"}
+            height={5}
+            width={explorer_width - 16}
+            speed={1}
+          />
+        </div>
+      )}
     </div>
   );
 };
