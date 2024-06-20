@@ -2,6 +2,8 @@
 
 ## [ About the Project ]
 
+![surface_editor_logo](https://github.com/haoxiang-xu/surface-editor/assets/59581718/e11a50c5-de07-47b5-b18c-f7b622cf62aa)
+
 ### CodeEditor+LLMs(Large Language Models):
 
 <span style="opacity: 0.64">CodeEditor+LLMs is a state-of-the-art Code Editor that leverages the power of large language models to assist in coding. By utilizing a vector database, it establishes intricate relationships between files and code segments. This advanced interconnectivity is designed to significantly enhance the efficiency of developers by providing context-aware insights and coding suggestions.</span>
