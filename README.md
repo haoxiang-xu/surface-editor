@@ -2,7 +2,7 @@
 
 ## [ About the Project ]
 
-![surface_editor_logo](https://github.com/haoxiang-xu/surface-editor/assets/59581718/e11a50c5-de07-47b5-b18c-f7b622cf62aa)
+![surface_editor_logo](https://github.com/haoxiang-xu/surface-editor/assets/59581718/adb02c67-443f-4ff0-90f1-9f4ea2d97bc5)
 
 ### CodeEditor+LLMs(Large Language Models):
 
