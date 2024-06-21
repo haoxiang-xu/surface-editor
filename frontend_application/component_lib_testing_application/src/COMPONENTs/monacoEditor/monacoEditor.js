@@ -54,6 +54,7 @@ const Editor = ({
   const baseEditorOptions = React.useMemo(
     () => ({
       contextmenu: false,
+      cursorSmoothCaretAnimation: true,
       smoothScrolling: true,
       minimap: { enabled: false },
       roundedSelection: true,
