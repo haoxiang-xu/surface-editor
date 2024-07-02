@@ -66,7 +66,6 @@ const FileTypeIconLoader = ({ fileIcon, fileIconBackground }) => {
 };
 const RenameInputBox = ({
   filePath,
-  dirItemOnHover,
   onCommand,
   setOnCommand,
 }) => {
@@ -75,7 +74,6 @@ const RenameInputBox = ({
     checkDirNameExist,
     accessFileNameByPath,
     accessFileTypeByPath,
-    accessFileExpandByPath,
   } = useContext(vecoderEditorContexts);
   const inputRef = useRef();
   useEffect(() => {
