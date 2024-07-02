@@ -13,7 +13,7 @@
   - [Required Installation](#required-installation)
   - [Recommended Installation for further development](#recommended-installation)
   - [Local Setup](#local-setup)
-  - [Join the development team](#join-the-team)
+  - [Join the development team](#)
 
 ## [ About the Project ]
 
@@ -32,19 +32,19 @@
 
 ### <a id="built-with"></a>BUILT WITH
 
-[![Github][Github-shield]][Github-url]
+<!-- [![Github][Github-shield]][Github-url] -->
+<!-- [![Node][Node-shield]][Node-install] -->
+<!-- [![MongoDB][MongoDB-shield]][MongoDB-install] -->
+<!-- [![Figma][Figma-shield]][Figma-url] -->
+<!-- [![VSC][VSC-shield]][VSC-install] -->
+<!-- [![Nodemon][Nodemon-shield]][Nodemon-url] -->
 [![OpenAI][OpenAI-shield]][OpenAI-url]
-[![Node][Node-shield]][Node-install]
 [![React][React-shield]][React-url]
 [![Express][Express-shield]][Express-url]
-[![MongoDB][MongoDB-shield]][MongoDB-install]
-[![Figma][Figma-shield]][Figma-url]
-[![VSC][VSC-shield]][VSC-install]
 ![Prettier][Prettier-shield]
 [![CodeMirror][CodeMirror-shield]][CoderMirror-url]
 [![MonacoEditor][MonacoEditor-shield]][MonacoEditor-url]
 [![Electron][Electron-shield]][Electron-url]
-[![Nodemon][Nodemon-shield]][Nodemon-url]
 
 [![Languages](https://skillicons.dev/icons?i=js,html,css,python)](https://skillicons.dev)
 
@@ -130,7 +130,7 @@
 [![VSC][VSC-download-shield]][VSC-install]
 [![Docker][Docker-download-shield]][Docker-install]
 [![Postman][Postman-download-shield]][Postman-install]
-[![MongoDB][MongoDB-download-shield]][MongoDB-install]
+<!-- [![MongoDB][MongoDB-download-shield]][MongoDB-install] -->
 
 ### <a id="local-setup"></a>LOCAL SETUP
 
