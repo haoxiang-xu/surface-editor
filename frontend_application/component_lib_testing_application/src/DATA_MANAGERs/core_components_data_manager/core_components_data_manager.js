@@ -610,10 +610,10 @@ const VecoderEditorPage = () => {
   useEffect(() => {
     window.electronAPI.onFileContent((content, relativePath) => {
       const newFile = { [relativePath]: content };
-      setVecoderEditorContentData(prevData => {
+      setVecoderEditorContentData((prevData) => {
         return {
           ...prevData,
-          ...newFile
+          ...newFile,
         };
       });
     });
@@ -953,6 +953,14 @@ const VecoderEditorPage = () => {
       return newOptionsData;
     });
   };
+  const removeStackStructureContainerIndex = (index) => {
+    setStackStructureOptionsData((prevData) => {
+      const newOptionsData = [...prevData];
+      newOptionsData.splice(index, 1);
+
+      return newOptionsData;
+    });
+  };
   /* Stack Structure Data and Functions ============================================================== */
   return (
     <vecoderEditorContexts.Provider
@@ -1001,6 +1009,7 @@ const VecoderEditorPage = () => {
         stackStructureOptionsData,
         setStackStructureOptionsData,
         updateStackStructureContainerIndex,
+        removeStackStructureContainerIndex,
       }}
     >
       <StackStructure />

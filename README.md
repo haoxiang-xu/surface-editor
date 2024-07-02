@@ -1,5 +1,7 @@
 # Surface Editor
 
+## [ Table of Contents ]
+
 ## [ About the Project ]
 
 ![surface_editor_logo](https://github.com/haoxiang-xu/surface-editor/assets/59581718/adb02c67-443f-4ff0-90f1-9f4ea2d97bc5)
@@ -15,7 +17,7 @@
 ![WIN UI](https://github.com/haoxiang-xu/surface-editor/assets/59581718/0b287c27-b582-43e4-a82f-7e53790c7b6b)
 ![MAC UI](https://github.com/haoxiang-xu/surface-editor/assets/59581718/c7e0e523-f704-4ee7-9ecf-ebd280143db5)
 
-### Built with
+### BUILT WITH
 
 [![Github][Github-shield]][Github-url]
 [![OpenAI][OpenAI-shield]][OpenAI-url]
@@ -33,25 +35,26 @@
 
 [![Languages](https://skillicons.dev/icons?i=js,html,css,python)](https://skillicons.dev)
 
+## [ To Everyone ]
 
 ## [ To Developers ]
 
-### UI Prototype
+### UI PROTOTYPE
 
 [![Figma][Figma-page-shield]][Figma-page]
 
-### Required Installation
+### REQUIRED INSTALLATION
 
 [![Node][Node-download-shield]][Node-install]
-[![Docker][Docker-download-shield]][Docker-install]
 
-### Recommended Installation for further development
+### RECOMMENDED INSTALLATION for further development
 
 [![VSC][VSC-download-shield]][VSC-install]
+[![Docker][Docker-download-shield]][Docker-install]
 [![Postman][Postman-download-shield]][Postman-install]
 [![MongoDB][MongoDB-download-shield]][MongoDB-install]
 
-### Setup Process
+### LOCAL SETUP
 
 <span style="opacity: 0.32">Instructions to run this application on a local machine</span><br><br>
 <span style="opacity: 0.32">1.Run the whole application in a docker container</span>
