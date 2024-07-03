@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
 import Editor from "../monacoEditor/monacoEditor";
 import DirItemGhostDragImage from "../dirItemGhostDragImage/dirItemGhostDragImage";
+import StackDivCloseButton from "../STACK_DIV_COMPONENTs/stackDivCloseButton.js";
 import "./vecoder_editor.css";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
@@ -109,12 +110,7 @@ const TopLeftSection = ({
         alt="minimize"
         style={MinimizeIconStyling}
       />
-      <img
-        src={SYSTEM_ICON_MANAGER.close.ICON512}
-        className="code_editor_close_icon1113"
-        draggable="false"
-        alt="close"
-      />
+      <StackDivCloseButton />
     </div>
   ) : (
     <div className="code_editor_top_right_section_vertical0129">
@@ -129,12 +125,7 @@ const TopLeftSection = ({
         }}
         alt="maximize"
       />
-      <img
-        src={SYSTEM_ICON_MANAGER.close.ICON512}
-        className="code_editor_close_icon1113"
-        draggable="false"
-        alt="close"
-      />
+      <StackDivCloseButton />
     </div>
   );
 };

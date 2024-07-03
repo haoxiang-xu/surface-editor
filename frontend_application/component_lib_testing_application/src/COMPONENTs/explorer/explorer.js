@@ -5,6 +5,7 @@ import { explorerContexts } from "../../CONTEXTs/explorerContexts";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
+import StackDivCloseButton from "../STACK_DIV_COMPONENTs/stackDivCloseButton.js";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -59,30 +60,6 @@ const SearchBar = ({}) => {
         alt="search"
       />
     </div>
-  );
-};
-const CloseIcon = ({}) => {
-  /* Load ICON manager -------------------------------- */
-  let SYSTEM_ICON_MANAGER = {
-    default: {
-      ICON: null,
-      LABEL_COLOR: "#C8C8C8",
-    },
-  };
-  try {
-    SYSTEM_ICON_MANAGER = ICON_MANAGER().SYSTEM_ICON_MANAGER;
-  } catch (e) {
-    console.log(e);
-  }
-  /* Load ICON manager -------------------------------- */
-  return (
-    <img
-      src={SYSTEM_ICON_MANAGER.close.ICON512}
-      className={"dir_list_component_close_icon0125"}
-      loading="lazy"
-      draggable="false"
-      alt="close"
-    />
   );
 };
 const MinMaxIcon = ({
@@ -261,7 +238,7 @@ const Explorer = ({
         onMaximizeOnClick={onMaximizeOnClick}
         onMinimizeOnClick={onMinimizeOnClick}
       />
-      <CloseIcon />
+      <StackDivCloseButton />
       {isExploreOptionsAndContentDataLoaded ? null : (
         <div className="dir_list_component_loading_container0404">
           <BarLoader
