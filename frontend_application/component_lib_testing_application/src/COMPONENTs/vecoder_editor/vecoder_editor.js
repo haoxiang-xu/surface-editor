@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
 import Editor from "../monacoEditor/monacoEditor";
 import DirItemGhostDragImage from "../dirItemGhostDragImage/dirItemGhostDragImage";
-import StackDivCloseButton from "../STACK_DIV_COMPONENTs/stackDivCloseButton.js";
-import StackDivLengthAdjustButton from "../STACK_DIV_COMPONENTs/stackDivLengthAdjustButton.js";
+import StackDivTopLeftSection from "../STACK_DIV_COMPONENTs/stackDivTopLeftSection";
 import "./vecoder_editor.css";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
@@ -36,23 +35,6 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* Load ICON manager --------------------------------------------------------------------------------- */
 
-const TopLeftSection = ({
-  mode,
-  //Maximize and Minimize Container
-  onMaximizeOnClick,
-  onMinimizeOnClick,
-}) => {
-  return (
-    <>
-      <StackDivLengthAdjustButton
-        mode={mode}
-        onMaximizeOnClick={onMaximizeOnClick}
-        onMinimizeOnClick={onMinimizeOnClick}
-      />
-      <StackDivCloseButton />
-    </>
-  );
-};
 const FileSelectionBar = ({
   code_editor_container_ref_index,
   onSelectedIndex,
@@ -845,7 +827,7 @@ const VecoderEditor = ({
           onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
           setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
         />
-        <TopLeftSection
+        <StackDivTopLeftSection
           mode={mode}
           //Maximize and Minimize Container
           onMaximizeOnClick={onMaximizeOnClick}

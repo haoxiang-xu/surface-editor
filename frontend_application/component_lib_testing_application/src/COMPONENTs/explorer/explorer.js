@@ -5,8 +5,7 @@ import { explorerContexts } from "../../CONTEXTs/explorerContexts";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
-import StackDivCloseButton from "../STACK_DIV_COMPONENTs/stackDivCloseButton.js";
-import StackDivLengthAdjustButton from "../STACK_DIV_COMPONENTs/stackDivLengthAdjustButton.js";
+import StackDivTopLeftSection from "../STACK_DIV_COMPONENTs/stackDivTopLeftSection";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -142,12 +141,12 @@ const Explorer = ({
           <SearchBar />
         </div>
       )}
-      <StackDivLengthAdjustButton
+      <StackDivTopLeftSection
         mode={mode}
+        //Maximize and Minimize Container
         onMaximizeOnClick={onMaximizeOnClick}
         onMinimizeOnClick={onMinimizeOnClick}
       />
-      <StackDivCloseButton />
       {isExploreOptionsAndContentDataLoaded ? null : (
         <div className="dir_list_component_loading_container0404">
           <BarLoader
