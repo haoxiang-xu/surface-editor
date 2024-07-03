@@ -64,11 +64,7 @@ const FileTypeIconLoader = ({ fileIcon, fileIconBackground }) => {
     </div>
   );
 };
-const RenameInputBox = ({
-  filePath,
-  onCommand,
-  setOnCommand,
-}) => {
+const RenameInputBox = ({ filePath, onCommand, setOnCommand }) => {
   const {
     renameAndRepathAllSubFiles,
     checkDirNameExist,

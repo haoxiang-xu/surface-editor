@@ -57,41 +57,6 @@
   background: transparent;
 }
 
-/* Close icon */
-.dir_list_component_close_icon_container0125 {
-  position: absolute;
-
-  top: 0px;
-  left: 0px;
-}
-.dir_list_component_close_icon0125 {
-  transition: all 0.2s ease;
-
-  /*POSITION*/
-  width: 12px;
-  height: 12px;
-  position: absolute;
-  top: 5px;
-  left: 5px;
-
-  /*STYLE*/
-  border-radius: 6px;
-  padding: 9px;
-}
-.dir_list_component_close_icon0125:hover {
-  transition: all 0.2s ease;
-
-  /*STYLE*/
-  background-color: #2e2e2e;
-  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.16);
-}
-.dir_list_component_close_icon0125:active {
-  transition: all 0.1s ease;
-
-  /*STYLE*/
-  background-color: #444444;
-}
-
 /* Search Bar */
 .dir_list_component_search_bar_container0125 {
   transition: all 0.32s ease;
