@@ -3,6 +3,7 @@ import axios from "axios";
 import Editor from "../monacoEditor/monacoEditor";
 import DirItemGhostDragImage from "../dirItemGhostDragImage/dirItemGhostDragImage";
 import StackDivCloseButton from "../STACK_DIV_COMPONENTs/stackDivCloseButton.js";
+import StackDivLengthAdjustButton from "../STACK_DIV_COMPONENTs/stackDivLengthAdjustButton.js";
 import "./vecoder_editor.css";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
@@ -41,92 +42,15 @@ const TopLeftSection = ({
   onMaximizeOnClick,
   onMinimizeOnClick,
 }) => {
-  const [MaxIconOnHover, setMaxIconOnHover] = useState(false);
-  const [MinIconOnHover, setMinIconOnHover] = useState(false);
-  const [MaximizeIconStyling, setMaximizeIconStyling] = useState(null);
-  const [MinimizeIconStyling, setMinimizeIconStyling] = useState(null);
-  const onMaximizeOnHover = () => {
-    setMaxIconOnHover(true);
-    setMinIconOnHover(false);
-    setMaximizeIconStyling({
-      opacity: 1,
-      zIndex: 1,
-      padding: "9px 4px 9px 4px",
-      left: 50,
-    });
-    setMinimizeIconStyling({
-      opacity: 0.16,
-      zIndex: 0,
-      padding: "9px 0px 9px 0px",
-    });
-  };
-  const onMinimizeOnHover = () => {
-    setMaxIconOnHover(false);
-    setMinIconOnHover(true);
-    setMaximizeIconStyling({
-      opacity: 0.16,
-      zIndex: 0,
-      padding: "9px 0px 9px 0px",
-      left: 58,
-    });
-    setMinimizeIconStyling({
-      opacity: 1,
-      zIndex: 1,
-      padding: "9px 4px 9px 4px",
-    });
-  };
-  const onMaximizeOut = () => {
-    setMaxIconOnHover(false);
-  };
-  const onMinimizeOut = () => {
-    setMinIconOnHover(false);
-  };
-  useEffect(() => {
-    if (!MaxIconOnHover && !MinIconOnHover) {
-      setMaximizeIconStyling(null);
-      setMinimizeIconStyling(null);
-    }
-  }, [MaxIconOnHover, MinIconOnHover]);
-
-  return mode === "HORIZONTAL" ? (
-    <div className="code_editor_top_right_section1113">
-      <img
-        src={SYSTEM_ICON_MANAGER.rightArrow.ICON512}
-        className="code_editor_maximize_icon0129"
-        draggable="false"
-        onClick={onMaximizeOnClick}
-        onMouseOver={onMaximizeOnHover}
-        onMouseOut={onMaximizeOut}
-        alt="maximize"
-        style={MaximizeIconStyling}
-      />
-      <img
-        src={SYSTEM_ICON_MANAGER.leftArrow.ICON512}
-        className="code_editor_minimize_icon0129"
-        draggable="false"
-        onClick={onMinimizeOnClick}
-        onMouseOver={onMinimizeOnHover}
-        onMouseOut={onMinimizeOut}
-        alt="minimize"
-        style={MinimizeIconStyling}
+  return (
+    <>
+      <StackDivLengthAdjustButton
+        mode={mode}
+        onMaximizeOnClick={onMaximizeOnClick}
+        onMinimizeOnClick={onMinimizeOnClick}
       />
       <StackDivCloseButton />
-    </div>
-  ) : (
-    <div className="code_editor_top_right_section_vertical0129">
-      <img
-        src={SYSTEM_ICON_MANAGER.rightArrow.ICON512}
-        className="code_editor_maximize_icon_vertical0129"
-        draggable="false"
-        onClick={(e) => {
-          onMaximizeOnClick();
-          setMaxIconOnHover(false);
-          setMinIconOnHover(false);
-        }}
-        alt="maximize"
-      />
-      <StackDivCloseButton />
-    </div>
+    </>
   );
 };
 const FileSelectionBar = ({
