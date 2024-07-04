@@ -1,5 +1,5 @@
-import HorizontalStackCloseButton from "./horizontalStackCloseButton";
-import HorizontalStackLengthAdjustButton from "./horizontalStackLengthAdjustButton";
+import HorizontalStackCloseButton from "./horizontal_stack_close_button";
+import HorizontalStackLengthAdjustButton from "./horizontal_stack_length_adjust_button";
 
 const HorizontalStackTopLeftSection = ({
   mode,

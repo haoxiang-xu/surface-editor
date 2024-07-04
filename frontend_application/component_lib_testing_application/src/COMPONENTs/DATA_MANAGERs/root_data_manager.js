@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { vecoderEditorContexts } from "../../../CONTEXTs/vecoderEditorContexts";
-import HorizontalStack from "../../STACK_STRUCTUREs/horizontal_stack/horizontal_stack";
+import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
+import HorizontalStack from "../STACK_STRUCTUREs/horizontal_stack/horizontal_stack";
 
 const DEFAULT_MONACO_EDITORS_OPTIONS_DATA = {
   "demo/src/code_editor.js": {

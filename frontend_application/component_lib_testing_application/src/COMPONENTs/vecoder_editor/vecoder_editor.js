@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
 import Editor from "../monacoEditor/monacoEditor";
 import DirItemGhostDragImage from "../dirItemGhostDragImage/dirItemGhostDragImage";
-import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontalStackTopLeftSection";
+import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section";
 import "./vecoder_editor.css";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
