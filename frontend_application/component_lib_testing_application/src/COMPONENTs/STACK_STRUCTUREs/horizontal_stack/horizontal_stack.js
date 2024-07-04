@@ -8,7 +8,7 @@ import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 import { stackStructureDragAndDropContexts } from "../../../CONTEXTs/stackStructureDragAndDropContexts";
 import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
-import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 //CSS ----------------------------------------------------------------------------------------------
 import "./horizontal_stack.css";
 

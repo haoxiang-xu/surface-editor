@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import MonacoEditor from "@monaco-editor/react";
 import { MonacoDiffEditor, monaco } from "react-monaco-editor";
-import { RootDataContexts } from "../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
 

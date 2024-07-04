@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import "./dirItemGhostDragImage.css";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
-import { RootDataContexts } from "../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ContextMenu from "../rightClickContextMenu/rightClickContextMenu";
-import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
+import ContextMenu from "../COMPONENTs/rightClickContextMenu/rightClickContextMenu";
+import { rightClickContextMenuCommandContexts } from "../CONTEXTs/rightClickContextMenuContexts";
 
 const CommandDataManager = ({ children }) => {
   const [isRightClicked, setIsRightClicked] = useState(false);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import DirItemGhostDragImage from "../../dirItemGhostDragImage/dirItemGhostDragImage";
 import { ICON_MANAGER, ICON_LOADER } from "../../../ICONs/icon_manager";
-import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
 import { explorerContexts } from "../../../CONTEXTs/explorerContexts";
 import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
