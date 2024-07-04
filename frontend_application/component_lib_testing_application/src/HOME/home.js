@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import VecoderEditorPage from "../COMPONENTs/DATA_MANAGERs/root_data_manager";
+import RootDataManager from "../COMPONENTs/DATA_MANAGERs/root_data_manager";
+import ContextMenuDataManager from "../COMPONENTs/DATA_MANAGERs/context_menu_data_manager";
 import HeaderMenuBar from "../COMPONENTs/headerMenuBar/headerMenuBar";
+import HorizontalStack from "../COMPONENTs/STACK_STRUCTUREs/horizontal_stack/horizontal_stack";
 import {
   SYSTEM_FRAME_BORDER,
   SYSTEM_FRAME_BORDER_RADIUS,
@@ -51,7 +53,11 @@ const Home = () => {
         className="major_content_container0316"
         style={{ top: isMenuBarHovered || isFrameMaximized ? "29px" : "0px" }}
       >
-        <VecoderEditorPage />
+        <RootDataManager>
+          <ContextMenuDataManager>
+            <HorizontalStack />
+          </ContextMenuDataManager>
+        </RootDataManager>
       </div>
     </div>
   );

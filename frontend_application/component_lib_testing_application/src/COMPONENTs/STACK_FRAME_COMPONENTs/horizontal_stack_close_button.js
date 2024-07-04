@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
 const HorizontalStackCloseButton = ({}) => {

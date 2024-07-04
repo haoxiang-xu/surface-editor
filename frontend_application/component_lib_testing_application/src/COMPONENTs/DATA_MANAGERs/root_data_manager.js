@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
-import HorizontalStack from "../STACK_STRUCTUREs/horizontal_stack/horizontal_stack";
 
 const DEFAULT_MONACO_EDITORS_OPTIONS_DATA = {
   "demo/src/code_editor.js": {
@@ -497,7 +496,7 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
     },
   ],
 };
-const VecoderEditorPage = () => {
+const RootDataManager = ({ children }) => {
   /* Monaco Editor Options ------------------------------------ */
   const [monacoEditorsOptionsData, setMonacoEditorsOptionsData] = useState(
     DEFAULT_MONACO_EDITORS_OPTIONS_DATA
@@ -1012,9 +1011,9 @@ const VecoderEditorPage = () => {
         removeStackStructureContainerIndex,
       }}
     >
-      <HorizontalStack />
+      {children}
     </vecoderEditorContexts.Provider>
   );
 };
 
-export default VecoderEditorPage;
+export default RootDataManager;

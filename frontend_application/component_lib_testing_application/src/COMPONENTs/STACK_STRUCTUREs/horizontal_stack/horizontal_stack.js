@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 //COMPONENTs ---------------------------------------------------------------------------------------
 import VecoderEditor from "../../vecoder_editor/vecoder_editor";
-import ContextMenu from "../../rightClickContextMenu/rightClickContextMenu";
 import Explorer from "../../explorer/explorer";
 //ICONs --------------------------------------------------------------------------------------------
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";
@@ -427,25 +426,7 @@ const HorizontalStack = () => {
     useContext(vecoderEditorContexts);
 
   /* Right Click Menu ================================================================================================================================== */
-  const [isRightClicked, setIsRightClicked] = useState(false);
-  const [rightClickX, setRightClickX] = useState(-1);
-  const [rightClickY, setRightClickY] = useState(-1);
-  const [onRightClickItem, setOnRightClickItem] = useState(null);
-  const [rightClickCommand, setRightClickCommand] = useState(null);
-  const handleRightClick = (event) => {
-    event.preventDefault();
-    setIsRightClicked(true);
-
-    const rightClickX = event.clientX;
-    const rightClickY = event.clientY;
-
-    setRightClickX(rightClickX);
-    setRightClickY(rightClickY);
-  };
-  const handleLeftClick = (event) => {
-    setIsRightClicked(false);
-    setOnRightClickItem(null);
-  };
+  const {handleRightClick, handleLeftClick} = useContext(rightClickContextMenuCommandContexts);
   /* Right Click Menu ================================================================================================================================== */
 
   /* Children Item Drag and Drop ----------------------------------------------------------------- */
@@ -898,124 +879,108 @@ const HorizontalStack = () => {
       onContextMenu={handleRightClick}
       onClick={handleLeftClick}
     >
-      <rightClickContextMenuCommandContexts.Provider
+      {/*Stack Structure Containers-----------------------------------------------------------------*/}
+      <globalDragAndDropContexts.Provider
         value={{
-          isRightClicked,
-          setIsRightClicked,
-          rightClickX,
-          rightClickY,
-          onRightClickItem,
-          setOnRightClickItem,
-          rightClickCommand,
-          setRightClickCommand,
+          draggedItem,
+          setDraggedItem,
+          draggedOverItem,
+          setDraggedOverItem,
+          dragCommand,
+          setDragCommand,
         }}
       >
-        {/*Stack Structure Containers-----------------------------------------------------------------*/}
-        <globalDragAndDropContexts.Provider
+        <stackStructureDragAndDropContexts.Provider
           value={{
-            draggedItem,
-            setDraggedItem,
-            draggedOverItem,
-            setDraggedOverItem,
-            dragCommand,
-            setDragCommand,
+            onDropIndex,
+            setOnDropIndex,
+            onDragIndex,
+            setOnDragIndex,
+            onStackItemDragStart,
+            onStackItemDragEnd,
+            resizerOnMouseDown,
+            setResizerOnMouseDown,
           }}
         >
-          <stackStructureDragAndDropContexts.Provider
-            value={{
-              onDropIndex,
-              setOnDropIndex,
-              onDragIndex,
-              setOnDragIndex,
-              onStackItemDragStart,
-              onStackItemDragEnd,
-              resizerOnMouseDown,
-              setResizerOnMouseDown,
-            }}
-          >
-            {stacks.map((item, index) => {
-              switch (item?.type) {
-                case "TESTING_CONTAINER":
-                  return (
-                    <TestingLabelContainer
-                      key={"TEST" + index}
-                      index={index}
-                      //Stack Data
-                      item={item}
-                      stackRefs={stackRefs}
-                      //Stack Structure Container Drag and Drop
-                      onStackItemDragStart={onStackItemDragStart}
-                      onStackItemDragEnd={onStackItemDragEnd}
-                      resizerOnMouseDown={resizerOnMouseDown}
-                      onDropIndex={onDropIndex}
-                    />
-                  );
-                case "EXPLORER":
-                  return (
-                    <ExplorerTypeContainer
-                      key={"EXPLORER" + item.explorer_container_ref_index}
-                      index={index}
-                      //Stack Data
-                      item={item}
-                      stackRefs={stackRefs}
-                      stacks={stacks}
-                      setStacks={setStacks}
-                      //Expand and Narrow Container
-                      expandContainer={expandContainer}
-                      narrowContainer={narrowContainer}
-                    />
-                  );
-                case "CODE_EDITOR":
-                  return (
-                    <VecoderEditorTypeContainer
-                      key={"CODE_EDITOR" + item.code_editor_container_ref_index}
-                      index={index}
-                      //Stack Data
-                      item={item}
-                      stackRefs={stackRefs}
-                      stacks={stacks}
-                      setStacks={setStacks}
-                      //Expand and Narrow Container
-                      expandContainer={expandContainer}
-                      narrowContainer={narrowContainer}
-                    />
-                  );
-                case "RESIZER":
-                  return (
-                    <ResizerTypeContainer
-                      key={"RESZIER" + index}
-                      index={index}
-                      //Stack Data
-                      item={item}
-                      stackRefs={stackRefs}
-                      stacks={stacks}
-                      setStacks={setStacks}
-                      //Resizer Double Click Functions
-                      maximizeContainer={maximizeContainer}
-                      minimizeContainer={minimizeContainer}
-                    />
-                  );
-                case "END":
-                  return (
-                    <EndingContainer
-                      key={"END" + index}
-                      index={index}
-                      //Stack Data
-                      item={item}
-                      stackRefs={stackRefs}
-                    />
-                  );
-                default:
-                  break;
-              }
-            })}
-          </stackStructureDragAndDropContexts.Provider>
-        </globalDragAndDropContexts.Provider>
-        {/*Stack Structure Containers-----------------------------------------------------------------*/}
-        {/*Right Click Menu===============================================================*/}
-        {isRightClicked ? <ContextMenu /> : <div></div>}
-        {/*Right Click Menu===============================================================*/}
-      </rightClickContextMenuCommandContexts.Provider>
+          {stacks.map((item, index) => {
+            switch (item?.type) {
+              case "TESTING_CONTAINER":
+                return (
+                  <TestingLabelContainer
+                    key={"TEST" + index}
+                    index={index}
+                    //Stack Data
+                    item={item}
+                    stackRefs={stackRefs}
+                    //Stack Structure Container Drag and Drop
+                    onStackItemDragStart={onStackItemDragStart}
+                    onStackItemDragEnd={onStackItemDragEnd}
+                    resizerOnMouseDown={resizerOnMouseDown}
+                    onDropIndex={onDropIndex}
+                  />
+                );
+              case "EXPLORER":
+                return (
+                  <ExplorerTypeContainer
+                    key={"EXPLORER" + item.explorer_container_ref_index}
+                    index={index}
+                    //Stack Data
+                    item={item}
+                    stackRefs={stackRefs}
+                    stacks={stacks}
+                    setStacks={setStacks}
+                    //Expand and Narrow Container
+                    expandContainer={expandContainer}
+                    narrowContainer={narrowContainer}
+                  />
+                );
+              case "CODE_EDITOR":
+                return (
+                  <VecoderEditorTypeContainer
+                    key={"CODE_EDITOR" + item.code_editor_container_ref_index}
+                    index={index}
+                    //Stack Data
+                    item={item}
+                    stackRefs={stackRefs}
+                    stacks={stacks}
+                    setStacks={setStacks}
+                    //Expand and Narrow Container
+                    expandContainer={expandContainer}
+                    narrowContainer={narrowContainer}
+                  />
+                );
+              case "RESIZER":
+                return (
+                  <ResizerTypeContainer
+                    key={"RESZIER" + index}
+                    index={index}
+                    //Stack Data
+                    item={item}
+                    stackRefs={stackRefs}
+                    stacks={stacks}
+                    setStacks={setStacks}
+                    //Resizer Double Click Functions
+                    maximizeContainer={maximizeContainer}
+                    minimizeContainer={minimizeContainer}
+                  />
+                );
+              case "END":
+                return (
+                  <EndingContainer
+                    key={"END" + index}
+                    index={index}
+                    //Stack Data
+                    item={item}
+                    stackRefs={stackRefs}
+                  />
+                );
+              default:
+                break;
+            }
+          })}
+        </stackStructureDragAndDropContexts.Provider>
+      </globalDragAndDropContexts.Provider>
+      {/*Stack Structure Containers-----------------------------------------------------------------*/}
     </div>
   );
 };
