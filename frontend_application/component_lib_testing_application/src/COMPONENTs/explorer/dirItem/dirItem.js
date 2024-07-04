@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import DirItemGhostDragImage from "../../dirItemGhostDragImage/dirItemGhostDragImage";
 import { ICON_MANAGER, ICON_LOADER } from "../../../ICONs/icon_manager";
-import { vecoderEditorContexts } from "../../../CONTEXTs/vecoderEditorContexts";
+import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
 import { explorerContexts } from "../../../CONTEXTs/explorerContexts";
 import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
@@ -70,7 +70,7 @@ const RenameInputBox = ({ filePath, onCommand, setOnCommand }) => {
     checkDirNameExist,
     accessFileNameByPath,
     accessFileTypeByPath,
-  } = useContext(vecoderEditorContexts);
+  } = useContext(RootDataContexts);
   const inputRef = useRef();
   useEffect(() => {
     if (onCommand === "rename" && inputRef.current) {
@@ -140,7 +140,7 @@ const SubDirList = ({
   unexpendAnimation,
 }) => {
   const { accessFileExpandByPath, accessFilesByPath } = useContext(
-    vecoderEditorContexts
+    RootDataContexts
   );
   const [onHover, setOnHover] = useState(false);
   useEffect(() => {
@@ -199,7 +199,7 @@ const DirItem = ({
     updateFileExpandByPath,
     accessFilesByPath,
     getExpendedFilesAmountUnderPath,
-  } = useContext(vecoderEditorContexts);
+  } = useContext(RootDataContexts);
   const {
     onRightClickItem,
     setOnRightClickItem,

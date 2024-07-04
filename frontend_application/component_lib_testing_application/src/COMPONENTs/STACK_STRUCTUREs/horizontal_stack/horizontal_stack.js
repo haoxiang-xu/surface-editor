@@ -8,7 +8,7 @@ import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 import { stackStructureDragAndDropContexts } from "../../../CONTEXTs/stackStructureDragAndDropContexts";
 import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
-import { vecoderEditorContexts } from "../../../CONTEXTs/vecoderEditorContexts";
+import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 //CSS ----------------------------------------------------------------------------------------------
 import "./horizontal_stack.css";
 
@@ -423,7 +423,7 @@ const HorizontalStack = () => {
     setStackStructureContainerClassName,
   ] = useState("stack_structure_container0116");
   const { stackStructureOptionsData, updateStackStructureContainerIndex } =
-    useContext(vecoderEditorContexts);
+    useContext(RootDataContexts);
 
   /* Right Click Menu ================================================================================================================================== */
   const {handleRightClick, handleLeftClick} = useContext(rightClickContextMenuCommandContexts);

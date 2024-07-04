@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
-import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
+import { RootDataContexts } from "../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { explorerContexts } from "../../CONTEXTs/explorerContexts";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
@@ -67,7 +67,7 @@ const DirList = ({}) => {
     exploreOptionsAndContentData,
     isExploreOptionsAndContentDataLoaded,
     setIsExploreOptionsAndContentDataLoaded,
-  } = useContext(vecoderEditorContexts);
+  } = useContext(RootDataContexts);
   const [ExplorerOnMouseOver, setExplorerOnMouseOver] = useState(false);
   const [dirPathOnHover, setDirPathOnHover] = useState(null);
   const [onSingleClickFile, setOnSingleClickFile] = useState(null);
@@ -124,7 +124,7 @@ const Explorer = ({
   onMinimizeOnClick,
 }) => {
   const { isExploreOptionsAndContentDataLoaded } = useContext(
-    vecoderEditorContexts
+    RootDataContexts
   );
   /* HORIZONTAL OR VERTICAL MODE ====================================================== */
   const [mode, setMode] = useState("HORIZONTAL"); //["HORIZONTAL", "VERTICAL"]

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ContextMenu from "../rightClickContextMenu/rightClickContextMenu";
 import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
 
-const ContextMenuDataManager = ({ children }) => {
+const CommandDataManager = ({ children }) => {
   const [isRightClicked, setIsRightClicked] = useState(false);
   const [rightClickX, setRightClickX] = useState(-1);
   const [rightClickY, setRightClickY] = useState(-1);
@@ -44,4 +44,4 @@ const ContextMenuDataManager = ({ children }) => {
   );
 };
 
-export default ContextMenuDataManager;
+export default CommandDataManager;

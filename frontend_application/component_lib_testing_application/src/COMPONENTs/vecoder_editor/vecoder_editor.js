@@ -7,7 +7,7 @@ import "./vecoder_editor.css";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
-import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
+import { RootDataContexts } from "../DATA_MANAGERs/root_data_manager/root_data_contexts";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -58,7 +58,7 @@ const FileSelectionBar = ({
     updateMonacoEditorPathsByEditorIndex,
     accessMonacoEditorPathsByEditorIndex,
     accessVecoderEditorFileNameDataByPath,
-  } = useContext(vecoderEditorContexts);
+  } = useContext(RootDataContexts);
   const [forceRefresh, setForceRefresh] = useState(false);
   const refresh = () => {
     setForceRefresh(!forceRefresh);
@@ -557,7 +557,7 @@ const MonacoEditorGroup = ({
   setOnDeleteMonacoEditorPath,
 }) => {
   const { accessMonacoEditorPathsByEditorIndex } = useContext(
-    vecoderEditorContexts
+    RootDataContexts
   );
   const [diffContent, setDiffContent] = useState(null);
   const handleRightClick = (event) => {
@@ -629,7 +629,7 @@ const VecoderEditor = ({
     updateOnSelectedMonacoIndexByEditorIndex,
     accessMonacoEditorFileLanguageDataByEditorIndexAndOnSelectedIndex,
     accessMonacoEditorFileContentDataByEditorIndexAndOnSelectedIndex,
-  } = useContext(vecoderEditorContexts);
+  } = useContext(RootDataContexts);
 
   const [onSelectedIndex, setOnSelectedIndex] = useState(
     accessOnSelectedMonacoIndexByEditorIndex(code_editor_container_ref_index)

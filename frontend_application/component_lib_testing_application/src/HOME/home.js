@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import RootDataManager from "../COMPONENTs/DATA_MANAGERs/root_data_manager";
-import ContextMenuDataManager from "../COMPONENTs/DATA_MANAGERs/context_menu_data_manager";
+import RootDataManager from "../COMPONENTs/DATA_MANAGERs/root_data_manager/root_data_manager";
+import CommandDataManager from "../COMPONENTs/DATA_MANAGERs/command_data_manager";
 import HeaderMenuBar from "../COMPONENTs/headerMenuBar/headerMenuBar";
 import HorizontalStack from "../COMPONENTs/STACK_STRUCTUREs/horizontal_stack/horizontal_stack";
 import {
@@ -54,9 +54,9 @@ const Home = () => {
         style={{ top: isMenuBarHovered || isFrameMaximized ? "29px" : "0px" }}
       >
         <RootDataManager>
-          <ContextMenuDataManager>
+          <CommandDataManager>
             <HorizontalStack />
-          </ContextMenuDataManager>
+          </CommandDataManager>
         </RootDataManager>
       </div>
     </div>
