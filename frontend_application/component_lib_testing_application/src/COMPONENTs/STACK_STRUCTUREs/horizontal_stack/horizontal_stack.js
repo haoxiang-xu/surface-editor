@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 //COMPONENTs ---------------------------------------------------------------------------------------
 import VecoderEditor from "../../vecoder_editor/vecoder_editor";
-import { ContextMenu } from "../../rightClickContextMenu/rightClickContextMenu";
+import ContextMenu from "../../rightClickContextMenu/rightClickContextMenu";
 import Explorer from "../../explorer/explorer";
 //ICONs --------------------------------------------------------------------------------------------
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";

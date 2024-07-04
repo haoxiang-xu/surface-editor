@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ICON_MANAGER } from "../../../../ICONs/icon_manager";
+import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
-const StackDivCloseButton = ({}) => {
+const HorizontalStackCloseButton = ({}) => {
   /* Load ICON manager ------------------------------------------------------------------------------ */
   let SYSTEM_ICON_MANAGER = {
     default: {
@@ -93,4 +93,4 @@ const StackDivCloseButton = ({}) => {
   );
 };
 
-export default StackDivCloseButton;
+export default HorizontalStackCloseButton;

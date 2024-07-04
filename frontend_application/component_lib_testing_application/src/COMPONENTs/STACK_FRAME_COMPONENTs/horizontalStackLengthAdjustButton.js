@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ICON_MANAGER } from "../../../../ICONs/icon_manager";
+import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
-const StackDivLengthAdjustButton = ({
+const HorizontalStackLengthAdjustButton = ({
   mode,
   //Maximize and Minimize Container
   onMaximizeOnClick,
@@ -282,4 +282,4 @@ const StackDivLengthAdjustButton = ({
   );
 };
 
-export default StackDivLengthAdjustButton;
+export default HorizontalStackLengthAdjustButton;

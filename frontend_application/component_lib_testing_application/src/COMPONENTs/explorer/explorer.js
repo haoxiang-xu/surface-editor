@@ -5,7 +5,7 @@ import { explorerContexts } from "../../CONTEXTs/explorerContexts";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
-import StackDivTopLeftSection from "../STACK_STRUCTUREs/horizontal_stack/STACK_DIV_COMPONENTs/stackDivTopLeftSection";
+import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontalStackTopLeftSection";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -141,7 +141,7 @@ const Explorer = ({
           <SearchBar />
         </div>
       )}
-      <StackDivTopLeftSection
+      <HorizontalStackTopLeftSection
         mode={mode}
         //Maximize and Minimize Container
         onMaximizeOnClick={onMaximizeOnClick}
