@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 //COMPONENTs ---------------------------------------------------------------------------------------
-import VecoderEditor from "../vecoder_editor/vecoder_editor";
-import { ContextMenu } from "../rightClickContextMenu/rightClickContextMenu";
-import Explorer from "../explorer/explorer";
+import VecoderEditor from "../../vecoder_editor/vecoder_editor";
+import { ContextMenu } from "../../rightClickContextMenu/rightClickContextMenu";
+import Explorer from "../../explorer/explorer";
 //ICONs --------------------------------------------------------------------------------------------
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
+import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 //CONTEXTs -----------------------------------------------------------------------------------------
-import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
-import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
-import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
-import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
+import { stackStructureDragAndDropContexts } from "../../../CONTEXTs/stackStructureDragAndDropContexts";
+import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
+import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
+import { vecoderEditorContexts } from "../../../CONTEXTs/vecoderEditorContexts";
 //CSS ----------------------------------------------------------------------------------------------
-import "./stack_structure.css";
+import "./horizontal_stack.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -418,7 +418,7 @@ const EndingContainer = ({
 };
 /* CONTAINERS ------------------------------------------------------------------------------------------------------------- */
 
-const StackStructure = () => {
+const HorizontalStack = () => {
   const [
     stackStructureContainerClassName,
     setStackStructureContainerClassName,
@@ -1020,4 +1020,4 @@ const StackStructure = () => {
   );
 };
 
-export default StackStructure;
+export default HorizontalStack;

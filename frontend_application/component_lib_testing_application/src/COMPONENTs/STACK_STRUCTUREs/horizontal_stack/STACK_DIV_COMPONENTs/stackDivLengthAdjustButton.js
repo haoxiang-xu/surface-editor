@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
+import { ICON_MANAGER } from "../../../../ICONs/icon_manager";
 
 const StackDivLengthAdjustButton = ({
   mode,

@@ -5,7 +5,7 @@ import { explorerContexts } from "../../CONTEXTs/explorerContexts";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
-import StackDivTopLeftSection from "../STACK_DIV_COMPONENTs/stackDivTopLeftSection";
+import StackDivTopLeftSection from "../STACK_STRUCTUREs/horizontal_stack/STACK_DIV_COMPONENTs/stackDivTopLeftSection";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
