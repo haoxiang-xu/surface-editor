@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { vecoderEditorContexts } from "../../../CONTEXTs/vecoderEditorContexts";
 import { RootDataContexts } from "./root_data_contexts";
 
 const DEFAULT_MONACO_EDITORS_OPTIONS_DATA = {
