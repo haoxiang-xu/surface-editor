@@ -45,7 +45,7 @@ Since your own component will be packed inside the `stack_frame` component, your
     - <span>"horizontal_stack_horizontal_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under horizontal mode which means width > the boundary) </span>
     - <span>"horizontal_stack_vertical_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under vertical mode which means width <= the boundary) </span>
 
-- `div_uid` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, we need this variable. `div_uid` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
+- `stack_div_component_unique_tag` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, we need this variable. `stack_div_component_unique_tag` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
 
 ### STEP 2 ACCESS TO SYSTEM DATA AND FUNCTIONs
 
