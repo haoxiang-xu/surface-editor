@@ -47,4 +47,10 @@ Since your own component will be packed inside the `stack_frame` component, your
 
 - `div_uid` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, we need this variable. `div_uid` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
 
-- 
+### STEP 2 ACCESS TO SYSTEM DATA AND FUNCTIONs
+
+### CONTEXTs & DATA MANAGERs
+
+- `root_data_manager` <span style="opacity: 0.64">Root Data Manager allows you to access, update, delete files under the repository that currently opened by this program.</span>
+
+- `command_data_manager`
