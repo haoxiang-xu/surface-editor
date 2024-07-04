@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import "./dirItemGhostDragImage.css";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
-import { vecoderEditorContexts } from "../../CONTEXTs/vecoderEditorContexts";
+import { RootDataContexts } from "../DATA_MANAGERs/root_data_manager/root_data_contexts";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -29,7 +29,7 @@ try {
 /* Load ICON manager --------------------------------------------------------------------------------- */
 
 const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
-  const { accessFileNameByPath } = useContext(vecoderEditorContexts);
+  const { accessFileNameByPath } = useContext(RootDataContexts);
   const [position, setPosition] = useState({
     x: -9999,
     y: -9999,
