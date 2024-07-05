@@ -255,6 +255,7 @@ const HorizontalStackContainer = ({
 
   return (
     <div
+      className={"horizontal_stack_container"}
       key={index}
       ref={(el) => (stackRefs.current[index] = el)}
       style={{

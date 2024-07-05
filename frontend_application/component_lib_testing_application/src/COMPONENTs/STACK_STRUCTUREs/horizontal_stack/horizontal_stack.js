@@ -218,7 +218,8 @@ const HorizontalStack = () => {
       return;
     }
     const targetElement = e.target.closest(
-      ".stack_structure_item0116, " +
+      ".horizontal_stack_container," +
+        ".stack_structure_item0116, " +
         ".stack_structure_item_test0128, " +
         ".stack_structure_explorer0122, " +
         ".stack_structure_code_editor0122"
