@@ -25,6 +25,7 @@ const DEFAULT_MONACO_EDITORS_OPTIONS_DATA = {
 };
 const DEFAULT_VECODER_EDITORS_OPTIONS_DATA = {
   1: {
+    stack_div_component_unique_tag: "monaco_editor_0002",
     code_editor_container_ref_index: 1,
     onSelectedMonacoIndex: -1,
     monacoEditorPaths: [
@@ -34,6 +35,7 @@ const DEFAULT_VECODER_EDITORS_OPTIONS_DATA = {
     ],
   },
   2: {
+    stack_div_component_unique_tag: "monaco_editor_0003",
     code_editor_container_ref_index: 2,
     onSelectedMonacoIndex: -1,
     monacoEditorPaths: ["demo/index/index.html", "demo/main.java"],
@@ -418,14 +420,17 @@ class Car {
 const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
   {
     type: "surface_explorer",
+    stack_div_component_unique_tag: "surface_explorer_0001",
     explorer_container_ref_index: 0,
   },
   {
     type: "monaco_editor",
+    stack_div_component_unique_tag: "monaco_editor_0002",
     code_editor_container_ref_index: 1,
   },
   {
     type: "monaco_editor",
+    stack_div_component_unique_tag: "monaco_editor_0003",
     code_editor_container_ref_index: 2,
   },
 ];
@@ -496,6 +501,7 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
     },
   ],
 };
+
 const RootDataManager = ({ children }) => {
   /* Monaco Editor Options ------------------------------------ */
   const [monacoEditorsOptionsData, setMonacoEditorsOptionsData] = useState(

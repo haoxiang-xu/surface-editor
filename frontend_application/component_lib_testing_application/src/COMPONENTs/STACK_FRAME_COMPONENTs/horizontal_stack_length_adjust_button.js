@@ -132,7 +132,7 @@ const HorizontalStackLengthAdjustButton = ({
     }
   }, [isMaxOnHover, isMinOnHover, isMaxOnClick, isMinOnClick]);
 
-  return mode === "HORIZONTAL" ? (
+  return mode === "horizontal_stack_horizontal_mode" ? (
     <>
       <img
         src={SYSTEM_ICON_MANAGER.rightArrow.ICON512}

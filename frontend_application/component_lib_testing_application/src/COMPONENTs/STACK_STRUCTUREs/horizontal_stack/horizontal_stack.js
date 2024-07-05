@@ -127,7 +127,6 @@ const HorizontalStack = () => {
   const [draggedOverItem, setDraggedOverItem] = useState(null);
   const [dragCommand, setDragCommand] = useState(null);
   /* Children Item Drag and Drop ----------------------------------------------------------------- */
-
   /* DATA =============================================================================================================================================== */
   //Stacking Data ----------------------------------------------------------------------
   let stacking_structure = [];
@@ -402,6 +401,7 @@ const HorizontalStack = () => {
                 return (
                   <StackFrame
                     key={"surface_explorer" + item.explorer_container_ref_index}
+                    stack_structure_type={"horizontal_stack"}
                     component_type={"surface_explorer"}
                     index={index}
                     //Stack Data
@@ -418,6 +418,7 @@ const HorizontalStack = () => {
                 return (
                   <StackFrame
                     key={"monaco_editor" + item.code_editor_container_ref_index}
+                    stack_structure_type={"horizontal_stack"}
                     index={index}
                     component_type={"monaco_editor"}
                     //Stack Data
@@ -435,6 +436,7 @@ const HorizontalStack = () => {
                   <StackFrame
                     key={"RESIZER" + index}
                     component_type={"horizontal_stack_resizer"}
+                    stack_structure_type={"horizontal_stack"}
                     index={index}
                     //Stack Data
                     item={item}

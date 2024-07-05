@@ -118,33 +118,17 @@ const DirList = ({}) => {
   );
 };
 const Explorer = ({
-  explorer_width,
-  //Maximize and Minimize Container
-  onMaximizeOnClick,
-  onMinimizeOnClick,
+  mode,
 }) => {
   const { isExploreOptionsAndContentDataLoaded } = useContext(RootDataContexts);
-  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
-  const [mode, setMode] = useState("HORIZONTAL"); //["HORIZONTAL", "VERTICAL"]
-  useEffect(() => {
-    explorer_width <= 50 ? setMode("VERTICAL") : setMode("HORIZONTAL");
-  }, [explorer_width]);
-  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
-
   return (
-    <div className="explorer_component_container0126">
-      {mode === "VERTICAL" ? null : (
+    <>
+      {mode === "horizontal_stack_vertical_mode" ? null : (
         <div>
           <DirList />
           <SearchBar />
         </div>
       )}
-      <HorizontalStackTopLeftSection
-        mode={mode}
-        //Maximize and Minimize Container
-        onMaximizeOnClick={onMaximizeOnClick}
-        onMinimizeOnClick={onMinimizeOnClick}
-      />
       {isExploreOptionsAndContentDataLoaded ? null : (
         <div className="dir_list_component_loading_container0404">
           <BarLoader
@@ -156,7 +140,7 @@ const Explorer = ({
           />
         </div>
       )}
-    </div>
+    </>
   );
 };
 

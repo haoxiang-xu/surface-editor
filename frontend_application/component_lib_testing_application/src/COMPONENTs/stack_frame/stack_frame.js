@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
 import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig";
 
@@ -208,6 +209,7 @@ const HorizontalStackResizer = ({
 const HorizontalStackContainer = ({
   index,
   component_type,
+  stack_structure_type,
   /* Stack Data ------------------------------------ */
   item,
   stackRefs,
@@ -246,6 +248,17 @@ const HorizontalStackContainer = ({
   } = useContext(stackStructureDragAndDropContexts);
   /* ---------------------------------------------------------------------------------------------------------- */
 
+  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
+  const [mode, setMode] = useState(null);
+  useEffect(() => {
+    if (stack_structure_type === "horizontal_stack") {
+      item.width <= 50
+        ? setMode(stack_structure_type + "_vertical_mode")
+        : setMode(stack_structure_type + "_horizontal_mode");
+    }
+  }, [item.width]);
+  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
+
   const onMaximizeOnClick = () => {
     expandContainer(index);
   };
@@ -283,15 +296,47 @@ const HorizontalStackContainer = ({
         onStackItemDragEnd(e);
       }}
     >
-      {StackFrameComponent ? (
-        <StackFrameComponent
-          explorer_width={item.width}
-          code_editor_width={item.width}
-          code_editor_container_ref_index={item.code_editor_container_ref_index}
+      <div
+        style={{
+          /* POSITION --------------------------- */
+          position: "absolute",
+          top: "0px",
+          left: "0px",
+
+          /* SIZE ------------------------------- */
+          height: "100%",
+          width: "100%",
+
+          /* STYLE ------------------------------ */
+          border: "2px solid #282828",
+          boxSizing: "border-box",
+          overflow: "hidden",
+          borderRadius: "11px",
+          backgroundColor: "#1E1E1E",
+
+          /* ANIMATION -------------------------- */
+          transition: "all 0.04s ease",
+        }}
+      >
+        {StackFrameComponent ? (
+          <StackFrameComponent
+            mode={mode}
+            explorer_width={item.width}
+            code_editor_width={item.width}
+            code_editor_container_ref_index={
+              item.code_editor_container_ref_index
+            }
+            onMaximizeOnClick={onMaximizeOnClick}
+            onMinimizeOnClick={onMinimizeOnClick}
+          />
+        ) : null}
+        <HorizontalStackTopLeftSection
+          mode={mode}
+          //Maximize and Minimize Container
           onMaximizeOnClick={onMaximizeOnClick}
           onMinimizeOnClick={onMinimizeOnClick}
         />
-      ) : null}
+      </div>
       {index === onDropIndex ? <HorizontalStackFrameOverLay /> : null}
       {onDragIndex !== -1 ? <HorizontalStackFrameInvisibleOverLay /> : null}
     </div>
@@ -300,6 +345,7 @@ const HorizontalStackContainer = ({
 
 const StackFrame = ({
   index,
+  stack_structure_type,
   component_type,
   /* Stack Data ------------------------------------ */
   item,
@@ -331,6 +377,7 @@ const StackFrame = ({
         <HorizontalStackContainer
           index={index}
           component_type={component_type}
+          stack_structure_type={stack_structure_type}
           item={item}
           stackRefs={stackRefs}
           stacks={stacks}
