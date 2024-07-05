@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
-import Editor from "../monacoEditor/monacoEditor";
-import DirItemGhostDragImage from "../dirItemGhostDragImage/dirItemGhostDragImage";
-import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section";
+import Editor from "./monacoEditor/monacoEditor";
+import DirItemGhostDragImage from "../../dirItemGhostDragImage/dirItemGhostDragImage";
+import HorizontalStackTopLeftSection from "../../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section";
 import "./vecoder_editor.css";
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
-import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
-import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
-import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { ICON_MANAGER } from "../../../ICONs/icon_manager";
+import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
+import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
+import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {

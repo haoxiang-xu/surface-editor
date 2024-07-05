@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
-import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
-import { explorerContexts } from "../../CONTEXTs/explorerContexts";
+import { ICON_MANAGER } from "../../../ICONs/icon_manager.js";
+import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
+import { explorerContexts } from "../../../CONTEXTs/explorerContexts.js";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
-import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
+import HorizontalStackTopLeftSection from "../../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -123,9 +123,7 @@ const Explorer = ({
   onMaximizeOnClick,
   onMinimizeOnClick,
 }) => {
-  const { isExploreOptionsAndContentDataLoaded } = useContext(
-    RootDataContexts
-  );
+  const { isExploreOptionsAndContentDataLoaded } = useContext(RootDataContexts);
   /* HORIZONTAL OR VERTICAL MODE ====================================================== */
   const [mode, setMode] = useState("HORIZONTAL"); //["HORIZONTAL", "VERTICAL"]
   useEffect(() => {

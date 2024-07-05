@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 //COMPONENTs ---------------------------------------------------------------------------------------
-import VecoderEditor from "../../vecoder_editor/vecoder_editor";
-import Explorer from "../../explorer/explorer";
 import StackFrame from "../../stack_frame/stack_frame";
 //ICONs --------------------------------------------------------------------------------------------
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";
