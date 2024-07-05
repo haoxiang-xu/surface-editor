@@ -54,3 +54,5 @@ Since your own component will be packed inside the `stack_frame` component, your
 - `root_data_manager` <span style="opacity: 0.64">Root Data Manager allows you to access, update, delete files under the repository that currently opened by this program.</span>
 
 - `command_data_manager`
+
+- `local_data_manager` <span style="opacity: 0.64">Local Data Manager Allows you to store and reload your component data by the `stack_div_component_unique_tag`, so that your component won't lose the data after disposed.</span>

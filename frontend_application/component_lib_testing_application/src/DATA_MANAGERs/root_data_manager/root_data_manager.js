@@ -417,15 +417,15 @@ class Car {
 };
 const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
   {
-    type: "EXPLORER",
+    type: "surface_explorer",
     explorer_container_ref_index: 0,
   },
   {
-    type: "CODE_EDITOR",
+    type: "monaco_editor",
     code_editor_container_ref_index: 1,
   },
   {
-    type: "CODE_EDITOR",
+    type: "monaco_editor",
     code_editor_container_ref_index: 2,
   },
 ];
