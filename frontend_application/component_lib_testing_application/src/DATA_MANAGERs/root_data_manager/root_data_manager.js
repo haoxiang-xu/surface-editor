@@ -667,284 +667,6 @@ const RootDataManager = ({ children }) => {
   };
   /* Vecoder Editor Data and Functions ============================================================== */
 
-  /* Explorer Data and Functions ------------------------------------------ */
-  const [exploreOptionsAndContentData, setExploreOptionsAndContentData] =
-    useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
-  const [
-    isExploreOptionsAndContentDataLoaded,
-    setIsExploreOptionsAndContentDataLoaded,
-  ] = useState(true);
-  useEffect(() => {
-    setIsExploreOptionsAndContentDataLoaded(true);
-  }, [exploreOptionsAndContentData.filePath]);
-  useEffect(() => {
-    window.electron.receive("directory-data", (data) => {
-      setExploreOptionsAndContentData(data);
-    });
-  }, []);
-  const updateFileOnExploreOptionsAndContentData = (path, data) => {
-    setExploreOptionsAndContentData((prevData) => {
-      const updateNestedFiles = (currentData, pathArray, currentIndex) => {
-        if (currentIndex === pathArray.length - 1) {
-          return data;
-        }
-        const files = currentData.files ? [...currentData.files] : [];
-        const nextIndex = files.findIndex(
-          (file) => file.fileName === pathArray[currentIndex + 1]
-        );
-        if (nextIndex !== -1) {
-          files[nextIndex] = updateNestedFiles(
-            files[nextIndex],
-            pathArray,
-            currentIndex + 1
-          );
-        }
-        if (currentIndex === pathArray.length - 2) {
-          files.sort((a, b) => {
-            if (a.fileType === b.fileType) {
-              return a.fileName.localeCompare(b.fileName);
-            }
-            return a.fileType === "folder" ? -1 : 1;
-          });
-        }
-
-        return { ...currentData, files };
-      };
-
-      const pathArray = path.split("/");
-      const updatedData = updateNestedFiles(prevData, pathArray, 0);
-
-      return updatedData;
-    });
-  };
-  const removeFileOnExploreOptionsAndContentData = (path) => {
-    setExploreOptionsAndContentData((prevData) => {
-      const pathArray = path.split("/");
-      const removeItemRecursively = (data, index = 0) => {
-        if (index === pathArray.length - 2) {
-          const filteredFiles = data.files.filter(
-            (item) => item.fileName !== pathArray[pathArray.length - 1]
-          );
-          return { ...data, files: filteredFiles };
-        }
-        const nextIndex = data.files.findIndex(
-          (item) => item.fileName === pathArray[index]
-        );
-        if (nextIndex === -1) {
-          return data;
-        }
-
-        const updatedFiles = [...data.files];
-        updatedFiles[nextIndex] = removeItemRecursively(
-          updatedFiles[nextIndex],
-          index + 1
-        );
-
-        return { ...data, files: updatedFiles };
-      };
-
-      return removeItemRecursively(prevData);
-    });
-  };
-  const renameAndRepathAllSubFiles = (original_path, new_name) => {
-    const renameAllSubFiles = (file, pathIndex, new_name) => {
-      for (let i = 0; i < file.files.length; i++) {
-        const path = file.files[i].filePath.split("/");
-        path[pathIndex] = new_name;
-        file.files[i].filePath = path.join("/");
-
-        renameAllSubFiles(file.files[i], pathIndex, new_name);
-      }
-    };
-    let target_file = accessFileByPath(original_path);
-
-    target_file.fileName = new_name;
-    let Path = target_file.filePath.split("/");
-    Path[Path.length - 1] = new_name;
-    target_file.filePath = Path.join("/");
-
-    renameAllSubFiles(target_file, Path.length - 1, new_name);
-
-    updateFileOnExploreOptionsAndContentData(original_path, target_file);
-  };
-  const checkDirNameExist = (path, pending_file_name) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 1) {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pending_file_name) {
-            return true;
-          }
-        }
-        return false;
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const accessFileByPath = (path) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 1) {
-        return currentData;
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const accessFileNameByPath = (path) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 1) {
-        return currentData.fileName;
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const accessFileTypeByPath = (path) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 1) {
-        return currentData.fileType;
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const accessFileAbsolutePathByPath = (path) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 1) {
-        if (currentData.fileAbsolutePath) {
-          return currentData.fileAbsolutePath;
-        } else {
-          return currentData.filePath;
-        }
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const accessFileExpandByPath = (path) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 1) {
-        return currentData.fileExpend;
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const updateFileExpandByPath = (path, expend) => {
-    setExploreOptionsAndContentData((prevData) => {
-      const updateNestedFiles = (data, pathArray, currentIndex) => {
-        if (currentIndex === pathArray.length - 1) {
-          return { ...data, fileExpend: expend };
-        }
-        const nextIndex = currentIndex + 1;
-        const updatedFiles = data.files.map((file) => {
-          if (file.fileName === pathArray[nextIndex]) {
-            return updateNestedFiles(file, pathArray, nextIndex);
-          }
-          return file;
-        });
-        return { ...data, files: updatedFiles };
-      };
-      const pathArray = path.split("/");
-      return updateNestedFiles(prevData, pathArray, 0);
-    });
-  };
-  const accessFilesByPath = (path) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 1) {
-        return currentData.files;
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const getExpendedFilesAmountUnderPath = (path) => {
-    const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
-    for (let i = 0; i < pathArray.length; i++) {
-      if (i === pathArray.length - 1) {
-        return countExpendedFilesAmountUnderPath(currentData);
-      } else {
-        currentData = currentData.files;
-        for (let j = 0; j < currentData.length; j++) {
-          if (currentData[j].fileName === pathArray[i + 1]) {
-            currentData = currentData[j];
-            break;
-          }
-        }
-      }
-    }
-  };
-  const countExpendedFilesAmountUnderPath = (data) => {
-    let count = 0;
-    for (let i = 0; i < data.files.length; i++) {
-      if (data.files[i].fileType === "folder" && data.files[i].fileExpend) {
-        count += countExpendedFilesAmountUnderPath(data.files[i]) + 1;
-      } else {
-        count++;
-      }
-    }
-    return count;
-  };
-  /* Explorer Data and Functions ------------------------------------------ */
-
   /* { DIR } =========================================================================================================================== */
   const [dir, setDir] = useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
   const [isDirLoaded, setIsDirLoaded] = useState(true);
@@ -986,7 +708,7 @@ const RootDataManager = ({ children }) => {
       return updatedData;
     });
   };
-  const remove_path_undex_dir = (path) => {
+  const remove_path_under_dir = (path) => {
     setDir((prevData) => {
       const pathArray = path.split("/");
       const removeItemRecursively = (data, index = 0) => {
@@ -1025,7 +747,7 @@ const RootDataManager = ({ children }) => {
         renameAllSubFiles(file.files[i], pathIndex, new_name);
       }
     };
-    let target_file = accessFileByPath(original_path);
+    let target_file = access_file_content_by_path(original_path);
 
     target_file.fileName = new_name;
     let Path = target_file.filePath.split("/");
@@ -1244,7 +966,7 @@ const RootDataManager = ({ children }) => {
         isDirLoaded,
         setIsDirLoaded,
         update_path_under_dir,
-        remove_path_undex_dir,
+        remove_path_under_dir,
         rename_file_under_dir,
         check_is_file_name_exist_under_path,
         access_file_content_by_path,
@@ -1280,22 +1002,6 @@ const RootDataManager = ({ children }) => {
         accessVecoderEditorFileContentDataByPath,
         accessVecoderEditorFileLanguageDataByPath,
         accessVecoderEditorFileNameDataByPath,
-
-        exploreOptionsAndContentData,
-        setExploreOptionsAndContentData,
-        isExploreOptionsAndContentDataLoaded,
-        setIsExploreOptionsAndContentDataLoaded,
-        updateFileOnExploreOptionsAndContentData,
-        removeFileOnExploreOptionsAndContentData,
-        renameAndRepathAllSubFiles,
-        checkDirNameExist,
-        accessFileByPath,
-        accessFileNameByPath,
-        accessFileTypeByPath,
-        accessFileExpandByPath,
-        updateFileExpandByPath,
-        accessFilesByPath,
-        getExpendedFilesAmountUnderPath,
 
         stackStructureOptionsData,
         setStackStructureOptionsData,

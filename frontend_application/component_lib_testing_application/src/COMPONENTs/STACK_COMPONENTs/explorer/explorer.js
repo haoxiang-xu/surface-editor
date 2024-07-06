@@ -5,7 +5,6 @@ import { explorerContexts } from "../../../CONTEXTs/explorerContexts.js";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
-import HorizontalStackTopLeftSection from "../../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -63,11 +62,7 @@ const SearchBar = ({}) => {
   );
 };
 const DirList = ({}) => {
-  const {
-    exploreOptionsAndContentData,
-    isExploreOptionsAndContentDataLoaded,
-    setIsExploreOptionsAndContentDataLoaded,
-  } = useContext(RootDataContexts);
+  const { dir, isDirLoaded, setIsDirLoaded } = useContext(RootDataContexts);
   const [ExplorerOnMouseOver, setExplorerOnMouseOver] = useState(false);
   const [dirPathOnHover, setDirPathOnHover] = useState(null);
   const [onSingleClickFile, setOnSingleClickFile] = useState(null);
@@ -81,7 +76,7 @@ const DirList = ({}) => {
   }, [ExplorerOnMouseOver]);
   useEffect(() => {
     const updateLoadingStatus = ({ isDirLoading }) => {
-      setIsExploreOptionsAndContentDataLoaded(!isDirLoading);
+      setIsDirLoaded(!isDirLoading);
     };
     window.electronAPI.subscribeToReadDirStateChange(updateLoadingStatus);
   }, []);
@@ -91,7 +86,7 @@ const DirList = ({}) => {
       id={"dir_list_component_container0725"}
       style={{
         overflowY: "scroll",
-        display: isExploreOptionsAndContentDataLoaded ? "block" : "none",
+        display: isDirLoaded ? "block" : "none",
       }}
       onMouseEnter={() => {
         setExplorerOnMouseOver(true);
@@ -112,15 +107,13 @@ const DirList = ({}) => {
           setOnDragFiles,
         }}
       >
-        <DirItem filePath={exploreOptionsAndContentData.filePath} root={true} />
+        <DirItem filePath={dir.filePath} root={true} />
       </explorerContexts.Provider>
     </div>
   );
 };
-const Explorer = ({
-  mode,
-}) => {
-  const { isExploreOptionsAndContentDataLoaded } = useContext(RootDataContexts);
+const Explorer = ({ mode }) => {
+  const { isDirLoaded } = useContext(RootDataContexts);
   return (
     <>
       {mode === "horizontal_stack_vertical_mode" ? null : (
@@ -129,15 +122,9 @@ const Explorer = ({
           <SearchBar />
         </div>
       )}
-      {isExploreOptionsAndContentDataLoaded ? null : (
+      {isDirLoaded ? null : (
         <div className="dir_list_component_loading_container0404">
-          <BarLoader
-            size={8}
-            color={"#C8C8C864"}
-            height={5}
-            width={explorer_width - 16}
-            speed={1}
-          />
+          <BarLoader size={8} color={"#C8C8C864"} height={5} width={32} speed={1} />
         </div>
       )}
     </>
