@@ -1,15 +1,15 @@
 const STACK_COMPONENT_CONFIG = {
   monaco_editor: {
-    component_type: "monaco_editor",
-    component_path: "monaco_editor",
+    type: "monaco_editor",
+    path: "monaco_editor",
   },
   surface_explorer: {
-    component_type: "surface_explorer",
-    component_path: "explorer",
+    type: "surface_explorer",
+    path: "explorer",
   },
   horizontal_stack_resizer: {
-    component_type: "horizontal_stack_resizer",
-    component_path: ".",
+    type: "horizontal_stack_resizer",
+    path: ".",
   },
 };
 

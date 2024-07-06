@@ -38,7 +38,6 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - <span style="opacity: 0.64">`context menu` A major component of the `command_data_manager`
 
-
 #### LOCAL DATA ACCESS
 
 - `local_data_manager` <span style="opacity: 0.64">Local Data Manager Allows you to store and reload your component data by the `stack_div_component_unique_tag`, so that your component won't lose the data after disposed.</span>
@@ -51,20 +50,20 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ```
   test_component: {
-    component_type: "test_component",
-    component_path: "test_component_folder_name",
+    type: "test_component",
+    path: "test_component_folder_name",
   },
 ```
 
-<span style="opacity: 0.64">`component_type` should have the same value as the key, and you need to make sure that is unique across the list</span>
+<span style="opacity: 0.64">`type` should have the same value as the key, and you need to make sure that is unique across the list</span>
 
 #### [ 000_002 ] <a id="000_002"></a> Command are store in a dic, you can access the command received by using your own `stack_component_unique_tag`, and you will get a list of json like below:
 
 ```
 {
-  command_source: 'stack_component_unique_tag_from'
-  command_target: 'stack_component_unique_tag_to'
-  command_content: {}
+  source: 'stack_component_unique_tag_from'
+  target: 'stack_component_unique_tag_to'
+  content: {}
 }
 ```
 
