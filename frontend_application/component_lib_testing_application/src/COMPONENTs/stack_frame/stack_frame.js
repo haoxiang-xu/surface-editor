@@ -228,7 +228,7 @@ const HorizontalStackContainer = ({
       const component_path =
         STACK_COMPONENT_CONFIG[component_type].component_path;
       const { default: LoadedComponent } = await import(
-        `../STACK_COMPONENTs/${component_path}/${component_path}`
+        `../STACK_COMPONENTs/${path}/${path}`
       );
       setStackFrameComponent(() => LoadedComponent);
     }
