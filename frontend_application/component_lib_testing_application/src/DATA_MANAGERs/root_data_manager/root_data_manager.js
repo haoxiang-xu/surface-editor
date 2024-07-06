@@ -25,7 +25,7 @@ const DEFAULT_MONACO_EDITORS_OPTIONS_DATA = {
 };
 const DEFAULT_VECODER_EDITORS_OPTIONS_DATA = {
   1: {
-    stack_div_component_unique_tag: "monaco_editor_0002",
+    stack_component_unique_tag: "monaco_editor_0002",
     code_editor_container_ref_index: 1,
     onSelectedMonacoIndex: -1,
     monacoEditorPaths: [
@@ -35,7 +35,7 @@ const DEFAULT_VECODER_EDITORS_OPTIONS_DATA = {
     ],
   },
   2: {
-    stack_div_component_unique_tag: "monaco_editor_0003",
+    stack_component_unique_tag: "monaco_editor_0003",
     code_editor_container_ref_index: 2,
     onSelectedMonacoIndex: -1,
     monacoEditorPaths: ["demo/index/index.html", "demo/main.java"],
@@ -420,17 +420,17 @@ class Car {
 const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
   {
     type: "surface_explorer",
-    stack_div_component_unique_tag: "surface_explorer_0001",
+    stack_component_unique_tag: "surface_explorer_0001",
     explorer_container_ref_index: 0,
   },
   {
     type: "monaco_editor",
-    stack_div_component_unique_tag: "monaco_editor_0002",
+    stack_omponent_unique_tag: "monaco_editor_0002",
     code_editor_container_ref_index: 1,
   },
   {
     type: "monaco_editor",
-    stack_div_component_unique_tag: "monaco_editor_0003",
+    stack_component_unique_tag: "monaco_editor_0003",
     code_editor_container_ref_index: 2,
   },
 ];
@@ -945,6 +945,275 @@ const RootDataManager = ({ children }) => {
   };
   /* Explorer Data and Functions ------------------------------------------ */
 
+  /* { DIR } =========================================================================================================================== */
+  const [dir, setDir] = useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
+  const [isDirLoaded, setIsDirLoaded] = useState(true);
+  useEffect(() => {
+    setIsDirLoaded(true);
+  }, [dir.filePath]);
+  const update_path_under_dir = (path, data) => {
+    setDir((prevData) => {
+      const updateNestedFiles = (currentData, pathArray, currentIndex) => {
+        if (currentIndex === pathArray.length - 1) {
+          return data;
+        }
+        const files = currentData.files ? [...currentData.files] : [];
+        const nextIndex = files.findIndex(
+          (file) => file.fileName === pathArray[currentIndex + 1]
+        );
+        if (nextIndex !== -1) {
+          files[nextIndex] = updateNestedFiles(
+            files[nextIndex],
+            pathArray,
+            currentIndex + 1
+          );
+        }
+        if (currentIndex === pathArray.length - 2) {
+          files.sort((a, b) => {
+            if (a.fileType === b.fileType) {
+              return a.fileName.localeCompare(b.fileName);
+            }
+            return a.fileType === "folder" ? -1 : 1;
+          });
+        }
+
+        return { ...currentData, files };
+      };
+
+      const pathArray = path.split("/");
+      const updatedData = updateNestedFiles(prevData, pathArray, 0);
+
+      return updatedData;
+    });
+  };
+  const remove_path_undex_dir = (path) => {
+    setDir((prevData) => {
+      const pathArray = path.split("/");
+      const removeItemRecursively = (data, index = 0) => {
+        if (index === pathArray.length - 2) {
+          const filteredFiles = data.files.filter(
+            (item) => item.fileName !== pathArray[pathArray.length - 1]
+          );
+          return { ...data, files: filteredFiles };
+        }
+        const nextIndex = data.files.findIndex(
+          (item) => item.fileName === pathArray[index]
+        );
+        if (nextIndex === -1) {
+          return data;
+        }
+
+        const updatedFiles = [...data.files];
+        updatedFiles[nextIndex] = removeItemRecursively(
+          updatedFiles[nextIndex],
+          index + 1
+        );
+
+        return { ...data, files: updatedFiles };
+      };
+
+      return removeItemRecursively(prevData);
+    });
+  };
+  const rename_file_under_dir = (original_path, new_name) => {
+    const renameAllSubFiles = (file, pathIndex, new_name) => {
+      for (let i = 0; i < file.files.length; i++) {
+        const path = file.files[i].filePath.split("/");
+        path[pathIndex] = new_name;
+        file.files[i].filePath = path.join("/");
+
+        renameAllSubFiles(file.files[i], pathIndex, new_name);
+      }
+    };
+    let target_file = accessFileByPath(original_path);
+
+    target_file.fileName = new_name;
+    let Path = target_file.filePath.split("/");
+    Path[Path.length - 1] = new_name;
+    target_file.filePath = Path.join("/");
+
+    renameAllSubFiles(target_file, Path.length - 1, new_name);
+
+    update_path_under_dir(original_path, target_file);
+  };
+  const check_is_file_name_exist_under_path = (path, pending_file_name) => {
+    const pathArray = path.split("/");
+    let currentData = dir;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pending_file_name) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const access_file_content_by_path = (path) => {
+    const pathArray = path.split("/");
+    let currentData = dir;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        return currentData;
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const access_file_name_by_path = (path) => {
+    const pathArray = path.split("/");
+    let currentData = dir;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        return currentData.fileName;
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const access_file_type_by_path = (path) => {
+    const pathArray = path.split("/");
+    let currentData = dir;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        return currentData.fileType;
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const access_file_absolute_path_by_path = (path) => {
+    const pathArray = path.split("/");
+    let currentData = dir;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        if (currentData.fileAbsolutePath) {
+          return currentData.fileAbsolutePath;
+        } else {
+          return currentData.filePath;
+        }
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const access_folder_expand_status_by_path = (path) => {
+    const pathArray = path.split("/");
+    let currentData = dir;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        return currentData.fileExpend;
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const update_folder_expand_status_by_path = (path, expend) => {
+    setDir((prevData) => {
+      const updateNestedFiles = (data, pathArray, currentIndex) => {
+        if (currentIndex === pathArray.length - 1) {
+          return { ...data, fileExpend: expend };
+        }
+        const nextIndex = currentIndex + 1;
+        const updatedFiles = data.files.map((file) => {
+          if (file.fileName === pathArray[nextIndex]) {
+            return updateNestedFiles(file, pathArray, nextIndex);
+          }
+          return file;
+        });
+        return { ...data, files: updatedFiles };
+      };
+      const pathArray = path.split("/");
+      return updateNestedFiles(prevData, pathArray, 0);
+    });
+  };
+  const access_subfiles_by_path = (path) => {
+    const pathArray = path.split("/");
+    let currentData = dir;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        return currentData.files;
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  const access_subfile_length_recusively_by_path = (path) => {
+    const count_provided_file_subfile_length = (data) => {
+      let count = 0;
+      for (let i = 0; i < data.files.length; i++) {
+        if (data.files[i].fileType === "folder" && data.files[i].fileExpend) {
+          count += count_provided_file_subfile_length(data.files[i]) + 1;
+        } else {
+          count++;
+        }
+      }
+      return count;
+    };
+    const pathArray = path.split("/");
+    let currentData = dir;
+    for (let i = 0; i < pathArray.length; i++) {
+      if (i === pathArray.length - 1) {
+        return count_provided_file_subfile_length(currentData);
+      } else {
+        currentData = currentData.files;
+        for (let j = 0; j < currentData.length; j++) {
+          if (currentData[j].fileName === pathArray[i + 1]) {
+            currentData = currentData[j];
+            break;
+          }
+        }
+      }
+    }
+  };
+  /* { DIR } =========================================================================================================================== */
+
   /* Stack Structure Data and Functions ============================================================== */
   const [stackStructureOptionsData, setStackStructureOptionsData] = useState(
     DEFAULT_STACK_STRUCTURE_OPTIONS_DATA
@@ -970,6 +1239,23 @@ const RootDataManager = ({ children }) => {
   return (
     <RootDataContexts.Provider
       value={{
+        dir,
+        setDir,
+        isDirLoaded,
+        setIsDirLoaded,
+        update_path_under_dir,
+        remove_path_undex_dir,
+        rename_file_under_dir,
+        check_is_file_name_exist_under_path,
+        access_file_content_by_path,
+        access_file_name_by_path,
+        access_file_type_by_path,
+        access_file_absolute_path_by_path,
+        access_folder_expand_status_by_path,
+        update_folder_expand_status_by_path,
+        access_subfiles_by_path,
+        access_subfile_length_recusively_by_path,
+
         monacoEditorsOptionsData,
         setMonacoEditorsOptionsData,
         accessMonacoEditorOptionsByPath,

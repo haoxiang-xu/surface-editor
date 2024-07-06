@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
-import MonacoCore from "./monacoEditor/monacoEditor";
+import MonacoCore from "./monaco_core/monaco_core";
 import DirItemGhostDragImage from "../../dirItemGhostDragImage/dirItemGhostDragImage";
-import HorizontalStackTopLeftSection from "../../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section";
-import "./vecoder_editor.css";
+import "./monaco_editor.css";
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
 import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
@@ -615,7 +614,7 @@ const MonacoEditorGroup = ({
   });
 };
 
-const VecoderEditor = ({
+const MonacoEditor = ({
   mode,
   code_editor_container_ref_index,
 }) => {
@@ -829,4 +828,4 @@ const VecoderEditor = ({
   );
 };
 
-export default VecoderEditor;
+export default MonacoEditor;

@@ -1,7 +1,7 @@
 const STACK_COMPONENT_CONFIG = {
   monaco_editor: {
     component_type: "monaco_editor",
-    component_path: "vecoder_editor",
+    component_path: "monaco_editor",
   },
   surface_explorer: {
     component_type: "surface_explorer",
