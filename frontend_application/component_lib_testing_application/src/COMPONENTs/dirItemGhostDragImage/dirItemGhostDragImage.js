@@ -29,7 +29,7 @@ try {
 /* Load ICON manager --------------------------------------------------------------------------------- */
 
 const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
-  const { accessFileNameByPath } = useContext(RootDataContexts);
+  const { access_file_name_by_path } = useContext(RootDataContexts);
   const [position, setPosition] = useState({
     x: -9999,
     y: -9999,
@@ -68,7 +68,7 @@ const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
           }}
         >
           <span className="ghost_drag_image_filetype_label0207" ref={labelRef}>
-            {accessFileNameByPath(draggedDirItemPath)}
+            {access_file_name_by_path(draggedDirItemPath)}
           </span>
         </div>
       ) : null}

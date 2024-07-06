@@ -25,6 +25,7 @@ const DEFAULT_MONACO_EDITORS_OPTIONS_DATA = {
 };
 const DEFAULT_VECODER_EDITORS_OPTIONS_DATA = {
   1: {
+    stack_component_unique_tag: "monaco_editor_0002",
     code_editor_container_ref_index: 1,
     onSelectedMonacoIndex: -1,
     monacoEditorPaths: [
@@ -34,6 +35,7 @@ const DEFAULT_VECODER_EDITORS_OPTIONS_DATA = {
     ],
   },
   2: {
+    stack_component_unique_tag: "monaco_editor_0003",
     code_editor_container_ref_index: 2,
     onSelectedMonacoIndex: -1,
     monacoEditorPaths: ["demo/index/index.html", "demo/main.java"],
@@ -417,15 +419,18 @@ class Car {
 };
 const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
   {
-    type: "EXPLORER",
+    type: "surface_explorer",
+    stack_component_unique_tag: "surface_explorer_0001",
     explorer_container_ref_index: 0,
   },
   {
-    type: "CODE_EDITOR",
+    type: "monaco_editor",
+    stack_omponent_unique_tag: "monaco_editor_0002",
     code_editor_container_ref_index: 1,
   },
   {
-    type: "CODE_EDITOR",
+    type: "monaco_editor",
+    stack_component_unique_tag: "monaco_editor_0003",
     code_editor_container_ref_index: 2,
   },
 ];
@@ -496,6 +501,7 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
     },
   ],
 };
+
 const RootDataManager = ({ children }) => {
   /* Monaco Editor Options ------------------------------------ */
   const [monacoEditorsOptionsData, setMonacoEditorsOptionsData] = useState(
@@ -641,7 +647,7 @@ const RootDataManager = ({ children }) => {
       return vecoderEditorContentData[path].fileContent;
     } else {
       //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
-      window.electronAPI.readFile(accessFileAbsolutePathByPath(path), path);
+      window.electronAPI.readFile(access_file_absolute_path_by_path(path), path);
       return path;
     }
   };
@@ -661,23 +667,14 @@ const RootDataManager = ({ children }) => {
   };
   /* Vecoder Editor Data and Functions ============================================================== */
 
-  /* Explorer Data and Functions ------------------------------------------ */
-  const [exploreOptionsAndContentData, setExploreOptionsAndContentData] =
-    useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
-  const [
-    isExploreOptionsAndContentDataLoaded,
-    setIsExploreOptionsAndContentDataLoaded,
-  ] = useState(true);
+  /* { DIR } =========================================================================================================================== */
+  const [dir, setDir] = useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
+  const [isDirLoaded, setIsDirLoaded] = useState(true);
   useEffect(() => {
-    setIsExploreOptionsAndContentDataLoaded(true);
-  }, [exploreOptionsAndContentData.filePath]);
-  useEffect(() => {
-    window.electron.receive("directory-data", (data) => {
-      setExploreOptionsAndContentData(data);
-    });
-  }, []);
-  const updateFileOnExploreOptionsAndContentData = (path, data) => {
-    setExploreOptionsAndContentData((prevData) => {
+    setIsDirLoaded(true);
+  }, [dir.filePath]);
+  const update_path_under_dir = (path, data) => {
+    setDir((prevData) => {
       const updateNestedFiles = (currentData, pathArray, currentIndex) => {
         if (currentIndex === pathArray.length - 1) {
           return data;
@@ -711,8 +708,8 @@ const RootDataManager = ({ children }) => {
       return updatedData;
     });
   };
-  const removeFileOnExploreOptionsAndContentData = (path) => {
-    setExploreOptionsAndContentData((prevData) => {
+  const remove_path_under_dir = (path) => {
+    setDir((prevData) => {
       const pathArray = path.split("/");
       const removeItemRecursively = (data, index = 0) => {
         if (index === pathArray.length - 2) {
@@ -740,7 +737,7 @@ const RootDataManager = ({ children }) => {
       return removeItemRecursively(prevData);
     });
   };
-  const renameAndRepathAllSubFiles = (original_path, new_name) => {
+  const rename_file_under_dir = (original_path, new_name) => {
     const renameAllSubFiles = (file, pathIndex, new_name) => {
       for (let i = 0; i < file.files.length; i++) {
         const path = file.files[i].filePath.split("/");
@@ -750,7 +747,7 @@ const RootDataManager = ({ children }) => {
         renameAllSubFiles(file.files[i], pathIndex, new_name);
       }
     };
-    let target_file = accessFileByPath(original_path);
+    let target_file = access_file_content_by_path(original_path);
 
     target_file.fileName = new_name;
     let Path = target_file.filePath.split("/");
@@ -759,11 +756,11 @@ const RootDataManager = ({ children }) => {
 
     renameAllSubFiles(target_file, Path.length - 1, new_name);
 
-    updateFileOnExploreOptionsAndContentData(original_path, target_file);
+    update_path_under_dir(original_path, target_file);
   };
-  const checkDirNameExist = (path, pending_file_name) => {
+  const check_is_file_name_exist_under_path = (path, pending_file_name) => {
     const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
+    let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
         currentData = currentData.files;
@@ -784,9 +781,9 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const accessFileByPath = (path) => {
+  const access_file_content_by_path = (path) => {
     const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
+    let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
         return currentData;
@@ -801,9 +798,9 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const accessFileNameByPath = (path) => {
+  const access_file_name_by_path = (path) => {
     const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
+    let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
         return currentData.fileName;
@@ -818,9 +815,9 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const accessFileTypeByPath = (path) => {
+  const access_file_type_by_path = (path) => {
     const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
+    let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
         return currentData.fileType;
@@ -835,9 +832,9 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const accessFileAbsolutePathByPath = (path) => {
+  const access_file_absolute_path_by_path = (path) => {
     const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
+    let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
         if (currentData.fileAbsolutePath) {
@@ -856,9 +853,9 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const accessFileExpandByPath = (path) => {
+  const access_folder_expand_status_by_path = (path) => {
     const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
+    let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
         return currentData.fileExpend;
@@ -873,8 +870,8 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const updateFileExpandByPath = (path, expend) => {
-    setExploreOptionsAndContentData((prevData) => {
+  const update_folder_expand_status_by_path = (path, expend) => {
+    setDir((prevData) => {
       const updateNestedFiles = (data, pathArray, currentIndex) => {
         if (currentIndex === pathArray.length - 1) {
           return { ...data, fileExpend: expend };
@@ -892,9 +889,9 @@ const RootDataManager = ({ children }) => {
       return updateNestedFiles(prevData, pathArray, 0);
     });
   };
-  const accessFilesByPath = (path) => {
+  const access_subfiles_by_path = (path) => {
     const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
+    let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
         return currentData.files;
@@ -909,12 +906,23 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const getExpendedFilesAmountUnderPath = (path) => {
+  const access_subfile_length_recusively_by_path = (path) => {
+    const count_provided_file_subfile_length = (data) => {
+      let count = 0;
+      for (let i = 0; i < data.files.length; i++) {
+        if (data.files[i].fileType === "folder" && data.files[i].fileExpend) {
+          count += count_provided_file_subfile_length(data.files[i]) + 1;
+        } else {
+          count++;
+        }
+      }
+      return count;
+    };
     const pathArray = path.split("/");
-    let currentData = exploreOptionsAndContentData;
+    let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
       if (i === pathArray.length - 1) {
-        return countExpendedFilesAmountUnderPath(currentData);
+        return count_provided_file_subfile_length(currentData);
       } else {
         currentData = currentData.files;
         for (let j = 0; j < currentData.length; j++) {
@@ -926,18 +934,7 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const countExpendedFilesAmountUnderPath = (data) => {
-    let count = 0;
-    for (let i = 0; i < data.files.length; i++) {
-      if (data.files[i].fileType === "folder" && data.files[i].fileExpend) {
-        count += countExpendedFilesAmountUnderPath(data.files[i]) + 1;
-      } else {
-        count++;
-      }
-    }
-    return count;
-  };
-  /* Explorer Data and Functions ------------------------------------------ */
+  /* { DIR } =========================================================================================================================== */
 
   /* Stack Structure Data and Functions ============================================================== */
   const [stackStructureOptionsData, setStackStructureOptionsData] = useState(
@@ -964,6 +961,23 @@ const RootDataManager = ({ children }) => {
   return (
     <RootDataContexts.Provider
       value={{
+        dir,
+        setDir,
+        isDirLoaded,
+        setIsDirLoaded,
+        update_path_under_dir,
+        remove_path_under_dir,
+        rename_file_under_dir,
+        check_is_file_name_exist_under_path,
+        access_file_content_by_path,
+        access_file_name_by_path,
+        access_file_type_by_path,
+        access_file_absolute_path_by_path,
+        access_folder_expand_status_by_path,
+        update_folder_expand_status_by_path,
+        access_subfiles_by_path,
+        access_subfile_length_recusively_by_path,
+
         monacoEditorsOptionsData,
         setMonacoEditorsOptionsData,
         accessMonacoEditorOptionsByPath,
@@ -988,22 +1002,6 @@ const RootDataManager = ({ children }) => {
         accessVecoderEditorFileContentDataByPath,
         accessVecoderEditorFileLanguageDataByPath,
         accessVecoderEditorFileNameDataByPath,
-
-        exploreOptionsAndContentData,
-        setExploreOptionsAndContentData,
-        isExploreOptionsAndContentDataLoaded,
-        setIsExploreOptionsAndContentDataLoaded,
-        updateFileOnExploreOptionsAndContentData,
-        removeFileOnExploreOptionsAndContentData,
-        renameAndRepathAllSubFiles,
-        checkDirNameExist,
-        accessFileByPath,
-        accessFileNameByPath,
-        accessFileTypeByPath,
-        accessFileExpandByPath,
-        updateFileExpandByPath,
-        accessFilesByPath,
-        getExpendedFilesAmountUnderPath,
 
         stackStructureOptionsData,
         setStackStructureOptionsData,

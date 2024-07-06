@@ -250,7 +250,7 @@ const CustomizedRequestFormContextItem = () => {
   return <Form></Form>;
 };
 const DefaultContextItem = ({ item_function, parentContextMenuWidth }) => {
-  const { onRightClickItem } = useContext(rightClickContextMenuCommandContexts);
+  const { onRightClickItem, setIsRightClicked } = useContext(rightClickContextMenuCommandContexts);
   const {
     progressRightClickCommand,
     onHoverContextItems,
@@ -266,6 +266,7 @@ const DefaultContextItem = ({ item_function, parentContextMenuWidth }) => {
   const handleItemOnClick = (e) => {
     if (CONTEXT_MENU_FUNCTION_MANAGER[item_function].MORE_OPTIONS === null) {
       progressRightClickCommand(item_function);
+      setIsRightClicked(false);
     } else {
       e.stopPropagation();
     }

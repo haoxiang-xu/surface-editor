@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
-import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
-import { explorerContexts } from "../../CONTEXTs/explorerContexts";
+import { ICON_MANAGER } from "../../../ICONs/icon_manager.js";
+import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
+import { explorerContexts } from "../../../CONTEXTs/explorerContexts.js";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
-import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import "./explorer.css";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -63,11 +62,7 @@ const SearchBar = ({}) => {
   );
 };
 const DirList = ({}) => {
-  const {
-    exploreOptionsAndContentData,
-    isExploreOptionsAndContentDataLoaded,
-    setIsExploreOptionsAndContentDataLoaded,
-  } = useContext(RootDataContexts);
+  const { dir, isDirLoaded, setIsDirLoaded } = useContext(RootDataContexts);
   const [ExplorerOnMouseOver, setExplorerOnMouseOver] = useState(false);
   const [dirPathOnHover, setDirPathOnHover] = useState(null);
   const [onSingleClickFile, setOnSingleClickFile] = useState(null);
@@ -81,7 +76,7 @@ const DirList = ({}) => {
   }, [ExplorerOnMouseOver]);
   useEffect(() => {
     const updateLoadingStatus = ({ isDirLoading }) => {
-      setIsExploreOptionsAndContentDataLoaded(!isDirLoading);
+      setIsDirLoaded(!isDirLoading);
     };
     window.electronAPI.subscribeToReadDirStateChange(updateLoadingStatus);
   }, []);
@@ -91,7 +86,7 @@ const DirList = ({}) => {
       id={"dir_list_component_container0725"}
       style={{
         overflowY: "scroll",
-        display: isExploreOptionsAndContentDataLoaded ? "block" : "none",
+        display: isDirLoaded ? "block" : "none",
       }}
       onMouseEnter={() => {
         setExplorerOnMouseOver(true);
@@ -112,53 +107,27 @@ const DirList = ({}) => {
           setOnDragFiles,
         }}
       >
-        <DirItem filePath={exploreOptionsAndContentData.filePath} root={true} />
+        <DirItem filePath={dir.filePath} root={true} />
       </explorerContexts.Provider>
     </div>
   );
 };
-const Explorer = ({
-  explorer_width,
-  //Maximize and Minimize Container
-  onMaximizeOnClick,
-  onMinimizeOnClick,
-}) => {
-  const { isExploreOptionsAndContentDataLoaded } = useContext(
-    RootDataContexts
-  );
-  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
-  const [mode, setMode] = useState("HORIZONTAL"); //["HORIZONTAL", "VERTICAL"]
-  useEffect(() => {
-    explorer_width <= 50 ? setMode("VERTICAL") : setMode("HORIZONTAL");
-  }, [explorer_width]);
-  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
-
+const Explorer = ({ mode }) => {
+  const { isDirLoaded } = useContext(RootDataContexts);
   return (
-    <div className="explorer_component_container0126">
-      {mode === "VERTICAL" ? null : (
+    <>
+      {mode === "horizontal_stack_vertical_mode" ? null : (
         <div>
           <DirList />
           <SearchBar />
         </div>
       )}
-      <HorizontalStackTopLeftSection
-        mode={mode}
-        //Maximize and Minimize Container
-        onMaximizeOnClick={onMaximizeOnClick}
-        onMinimizeOnClick={onMinimizeOnClick}
-      />
-      {isExploreOptionsAndContentDataLoaded ? null : (
+      {isDirLoaded ? null : (
         <div className="dir_list_component_loading_container0404">
-          <BarLoader
-            size={8}
-            color={"#C8C8C864"}
-            height={5}
-            width={explorer_width - 16}
-            speed={1}
-          />
+          <BarLoader size={8} color={"#C8C8C864"} height={5} width={32} speed={1} />
         </div>
       )}
-    </div>
+    </>
   );
 };
 

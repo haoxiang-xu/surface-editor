@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import MonacoEditor from "@monaco-editor/react";
 import { MonacoDiffEditor, monaco } from "react-monaco-editor";
-import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
-import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
-import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
+import { RootDataContexts } from "../../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { globalDragAndDropContexts } from "../../../../CONTEXTs/globalDragAndDropContexts";
+import { stackStructureDragAndDropContexts } from "../../../../CONTEXTs/stackStructureDragAndDropContexts";
 
-const Editor = ({
+const MonacoCore = ({
   //Editor required parameters
   editor_filePath,
   code_editor_container_ref_index,
@@ -75,11 +75,17 @@ const Editor = ({
     []
   );
   const [isMonacoEditorMounted, setIsMonacoEditorMounted] = useState(false);
-  const [monacoContent, setMonacoContent] = useState(accessVecoderEditorFileContentDataByPath(editor_filePath));
-  const [monacoLanguage, setMonacoLanguage] = useState(accessVecoderEditorFileLanguageDataByPath(editor_filePath));
+  const [monacoContent, setMonacoContent] = useState(
+    accessVecoderEditorFileContentDataByPath(editor_filePath)
+  );
+  const [monacoLanguage, setMonacoLanguage] = useState(
+    accessVecoderEditorFileLanguageDataByPath(editor_filePath)
+  );
   useEffect(() => {
     setMonacoContent(accessVecoderEditorFileContentDataByPath(editor_filePath));
-    setMonacoLanguage(accessVecoderEditorFileLanguageDataByPath(editor_filePath));
+    setMonacoLanguage(
+      accessVecoderEditorFileLanguageDataByPath(editor_filePath)
+    );
   }, [vecoderEditorContentData]);
 
   const [monacoModel, setMonacoModel] = useState(null);
@@ -230,7 +236,7 @@ const Editor = ({
       style={{
         height: "100%",
         width: "100%",
-        display: display && mode === "HORIZONTAL" ? "block" : "none",
+        display: display && mode === "horizontal_stack_horizontal_mode" ? "block" : "none",
       }}
       onContextMenu={(e) => {
         getEditorOnSelected(monacoRef);
@@ -248,14 +254,14 @@ const Editor = ({
           {...editorProps}
           value={monacoContent}
           loading={<></>}
-          style={{ display: isMonacoEditorMounted ? "block" : "none"}}
+          style={{ display: isMonacoEditorMounted ? "block" : "none" }}
         />
       )}
     </div>
   );
 };
 
-export default Editor;
+export default MonacoCore;
 
 /*INITIALIZE MONACO EDITOR FUNCTION GROUP----------------------------------------------------*/
 ////Define theme for monaco editor

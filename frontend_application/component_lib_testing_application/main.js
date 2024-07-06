@@ -254,7 +254,7 @@ const readDir = async (dirPath, rootPath = dirPath) => {
   } catch (e) {
     throw e; // Rethrow the error to be caught by the caller
   }
-};
+2};
 
 app.whenReady().then(createWindow);
 app.on("activate", () => {

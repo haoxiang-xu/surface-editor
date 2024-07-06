@@ -8,14 +8,13 @@
   top: 0px;
 
   /*STYLE*/
-  border: 1px solid #282828;
   box-sizing: border-box;
   border-radius: 11px;
   padding: 44px 8px 8px 4px;
 
   box-sizing: border-box;
   overflow: hidden;
-  background-color: #1e1e1e;
+
 
   -webkit-user-select: none;
   -moz-user-select: none;

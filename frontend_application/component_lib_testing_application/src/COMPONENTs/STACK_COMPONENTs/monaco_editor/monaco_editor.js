@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
-import Editor from "../monacoEditor/monacoEditor";
-import DirItemGhostDragImage from "../dirItemGhostDragImage/dirItemGhostDragImage";
-import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section";
-import "./vecoder_editor.css";
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
-import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
-import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
-import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import MonacoCore from "./monaco_core/monaco_core";
+import DirItemGhostDragImage from "../../dirItemGhostDragImage/dirItemGhostDragImage";
+import "./monaco_editor.css";
+import { ICON_MANAGER } from "../../../ICONs/icon_manager";
+import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
+import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
+import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -334,7 +333,7 @@ const FileSelectionBar = ({
   return (
     <div
       className={
-        mode === "HORIZONTAL"
+        mode === "horizontal_stack_horizontal_mode"
           ? "file_selection_bar_container1114"
           : "file_selection_bar_container_vertical0122"
       }
@@ -353,7 +352,7 @@ const FileSelectionBar = ({
         let containerStyle = {};
         switch (true) {
           case index === onSelectedIndex:
-            if (mode === "HORIZONTAL") {
+            if (mode === "horizontal_stack_horizontal_mode") {
               className = "file_selection_bar_item_selected1114";
               containerStyle = {
                 width: spanRefs.current[index]?.offsetWidth + 54 + "px",
@@ -365,7 +364,7 @@ const FileSelectionBar = ({
               };
             }
             if (index === onDragIndex) {
-              if (mode === "HORIZONTAL") {
+              if (mode === "horizontal_stack_horizontal_mode") {
                 containerStyle = {
                   width: 0 + "px",
                   height: 30 + "px",
@@ -387,7 +386,7 @@ const FileSelectionBar = ({
             }
             break;
           case index === onDropIndex:
-            if (mode === "HORIZONTAL") {
+            if (mode === "horizontal_stack_horizontal_mode") {
               className = "file_selection_bar_item1114";
               containerStyle = {
                 width: spanRefs.current[index]?.offsetWidth + 38 + "px",
@@ -402,7 +401,7 @@ const FileSelectionBar = ({
             }
             break;
           default:
-            if (mode === "HORIZONTAL") {
+            if (mode === "horizontal_stack_horizontal_mode") {
               className = "file_selection_bar_item1114";
               containerStyle = {
                 width: spanRefs.current[index]?.offsetWidth + 38 + "px",
@@ -437,7 +436,7 @@ const FileSelectionBar = ({
             <span
               ref={(el) => (spanRefs.current[index] = el)}
               className={
-                mode === "HORIZONTAL"
+                mode === "horizontal_stack_horizontal_mode"
                   ? "file_selection_bar_file_text1114"
                   : "file_selection_bar_file_text_vertical0123"
               }
@@ -445,8 +444,8 @@ const FileSelectionBar = ({
                 index === onSelectedIndex
                   ? {
                       color: "#cccccc",
-                      left: mode === "HORIZONTAL" ? "47px" : "50%",
-                      top: mode === "HORIZONTAL" ? "50%" : "47px",
+                      left: mode === "horizontal_stack_horizontal_mode" ? "47px" : "50%",
+                      top: mode === "horizontal_stack_horizontal_mode" ? "50%" : "47px",
                       transition:
                         "color 0.2s ease, left 0.2s ease, top 0.2s ease",
                     }
@@ -468,7 +467,7 @@ const FileSelectionBar = ({
                 ]?.ICON512
               }
               className={
-                mode === "HORIZONTAL"
+                mode === "horizontal_stack_horizontal_mode"
                   ? "file_selection_bar_item_filetype_icon1114"
                   : "file_selection_bar_item_filetype_icon_vertical0123"
               }
@@ -478,7 +477,7 @@ const FileSelectionBar = ({
                   ? {
                       opacity: "1",
                       padding:
-                        mode === "HORIZONTAL"
+                        mode === "horizontal_stack_horizontal_mode"
                           ? "7px 0px 0px 28px"
                           : "28px 0px 0px 7px",
                       transition: "padding 0.2s ease",
@@ -495,7 +494,7 @@ const FileSelectionBar = ({
             <img
               src={SYSTEM_ICON_MANAGER.close.ICON512}
               className={
-                mode === "HORIZONTAL"
+                mode === "horizontal_stack_horizontal_mode"
                   ? "file_selection_bar_item_close_icon1114"
                   : "file_selection_bar_item_close_icon_vertical0123"
               }
@@ -556,9 +555,7 @@ const MonacoEditorGroup = ({
   onDeleteMonacoEditorPath,
   setOnDeleteMonacoEditorPath,
 }) => {
-  const { accessMonacoEditorPathsByEditorIndex } = useContext(
-    RootDataContexts
-  );
+  const { accessMonacoEditorPathsByEditorIndex } = useContext(RootDataContexts);
   const [diffContent, setDiffContent] = useState(null);
   const handleRightClick = (event) => {
     event.preventDefault();
@@ -587,7 +584,7 @@ const MonacoEditorGroup = ({
     code_editor_container_ref_index
   ).map((filePath, index) => {
     return (
-      <Editor
+      <MonacoCore
         key={filePath}
         //Editor required parameters
         editor_filePath={filePath}
@@ -612,17 +609,14 @@ const MonacoEditorGroup = ({
         //editor_setDiffContent={setDiffContent}
         onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
         setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-      ></Editor>
+      ></MonacoCore>
     );
   });
 };
 
-const VecoderEditor = ({
-  code_editor_width,
+const MonacoEditor = ({
+  mode,
   code_editor_container_ref_index,
-  //Maximize and Minimize Container
-  onMaximizeOnClick,
-  onMinimizeOnClick,
 }) => {
   const {
     accessOnSelectedMonacoIndexByEditorIndex,
@@ -793,13 +787,6 @@ const VecoderEditor = ({
   };
   /* Context Menu ----------------------------------------------------------------------- */
 
-  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
-  const [mode, setMode] = useState("HORIZONTAL"); //["HORIZONTAL", "VERTICAL"]
-  useEffect(() => {
-    code_editor_width <= 50 ? setMode("VERTICAL") : setMode("HORIZONTAL");
-  }, [code_editor_width]);
-  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
-
   return (
     <div
       className="code_editor_container1113"
@@ -827,12 +814,6 @@ const VecoderEditor = ({
           onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
           setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
         />
-        <HorizontalStackTopLeftSection
-          mode={mode}
-          //Maximize and Minimize Container
-          onMaximizeOnClick={onMaximizeOnClick}
-          onMinimizeOnClick={onMinimizeOnClick}
-        />
         <FileSelectionBar
           code_editor_container_ref_index={code_editor_container_ref_index}
           onSelectedIndex={onSelectedIndex}
@@ -847,4 +828,4 @@ const VecoderEditor = ({
   );
 };
 
-export default VecoderEditor;
+export default MonacoEditor;
