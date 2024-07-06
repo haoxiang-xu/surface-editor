@@ -647,7 +647,7 @@ const RootDataManager = ({ children }) => {
       return vecoderEditorContentData[path].fileContent;
     } else {
       //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
-      window.electronAPI.readFile(accessFileAbsolutePathByPath(path), path);
+      window.electronAPI.readFile(access_file_absolute_path_by_path(path), path);
       return path;
     }
   };
