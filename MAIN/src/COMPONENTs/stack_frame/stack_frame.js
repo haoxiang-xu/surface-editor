@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
-import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
-import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig";
+import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
+import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 
 import "./stack_frame.css";
 
@@ -226,9 +226,9 @@ const HorizontalStackContainer = ({
   useEffect(() => {
     async function loadComponent() {
       const component_path =
-        STACK_COMPONENT_CONFIG[component_type].component_path;
+        STACK_COMPONENT_CONFIG[component_type].path;
       const { default: LoadedComponent } = await import(
-        `../STACK_COMPONENTs/${path}/${path}`
+        `../STACK_COMPONENTs/${component_path}/${component_path}`
       );
       setStackFrameComponent(() => LoadedComponent);
     }
