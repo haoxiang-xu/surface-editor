@@ -14,12 +14,17 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ### PARAMETERs:
 
+- `stack_component_unique_tag` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, you need this variable. `stack_component_unique_tag` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
+
 - `mode` (TYPE: String) <span style="opacity: 0.64"> (Basically you can check the value that is stored inside this `mode` variable, and base on the value to render the content inside this Stack Div) </span>
 
   - <span>"horizontal_stack_horizontal_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under horizontal mode which means width > the boundary) </span>
   - <span>"horizontal_stack_vertical_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under vertical mode which means width <= the boundary) </span>
 
-- `stack_component_unique_tag` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, you need this variable. `stack_component_unique_tag` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
+
+- `received_command` (TYPE: List)
+
+- `storage` (TYPE: Json) <span style="opacity: 0.64"> storage allows you to store and reload your component data by the `stack_div_component_unique_tag`, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
 
 ### STEP 3 ACCESS TO SYSTEM DATA AND FUNCTIONs
 
@@ -38,12 +43,6 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - <span style="opacity: 0.64">`context menu` A major component of the `command_data_manager`
 
-#### LOCAL DATA ACCESS
-
-- `local_data_manager` <span style="opacity: 0.64">Local Data Manager Allows you to store and reload your component data by the `stack_div_component_unique_tag`, so that your component won't lose the data after disposed.</span>
-
-- `local_command_manager`
-
 ## [ VARIABLE FORMATING GUIDE ]
 
 #### [ 000_001 ] <a id="000_001"></a> Declare your compnent inside `src/CONSTs/stackComponentConfig.js`, So the system will recognize your component.
@@ -61,10 +60,22 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ```
 {
-  source: 'stack_component_unique_tag_from'
-  target: 'stack_component_unique_tag_to'
+  source: 'stack_component_unique_tag_from',
+  target: 'stack_component_unique_tag_to',
   content: {}
 }
 ```
 
 #### [000_003] <a id="000_003"></a> To structure a context menu item
+
+#### [000_004] <a id="000_004"></a> To receive context Menu command
+
+```
+{
+  source: 'context_menu',
+  target: 'stack_component_unique_tag_to',
+  content: {
+    command_title: 'String'
+  }
+}
+```
