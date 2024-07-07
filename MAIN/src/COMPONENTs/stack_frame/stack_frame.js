@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import HorizontalStackTopLeftSection from "../STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
+import HorizontalStackTopLeftSection from "./STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
 import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 

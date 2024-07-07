@@ -21,10 +21,9 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   - <span>"horizontal_stack_horizontal_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under horizontal mode which means width > the boundary) </span>
   - <span>"horizontal_stack_vertical_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under vertical mode which means width <= the boundary) </span>
 
-
 - `received_command` (TYPE: List)
 
-- `storage` (TYPE: Json) <span style="opacity: 0.64"> storage allows you to store and reload your component data by the `stack_div_component_unique_tag`, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
+- `data` (TYPE: Json) <span style="opacity: 0.64"> data allows you to store and reload your component data, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
 
 ### STEP 3 ACCESS TO SYSTEM DATA AND FUNCTIONs
 
@@ -34,14 +33,13 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 - `root_data_manager` <span style="opacity: 0.64">Root Data Manager allows you to access, update, delete files under the repository that currently opened by this program.</span>
 
-  - <span style="opacity: 0.64">`dir` Opened Folder and all subfolder will store recusively inside this variable as one single JSON structure.</span>
-  - <span style="opacity: 0.64">`file` You can access any file under opened root folder by passing relative path.</span>
+  - `dir` <span style="opacity: 0.64">Opened Folder and all subfolder will store recusively inside this variable as one single JSON structure.</span>
+  - `file` <span style="opacity: 0.64">You can access any file under opened root folder by passing relative path.</span>
+  - `storage` <span style="opacity: 0.64">storage allows you to store and reload your component data by the `stack_div_component_unique_tag`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their tag.</span>
 
 - `command_data_manager` (inorder to access this variable, you will need to get the premission from the user)
 
-  - <span style="opacity: 0.64">`command` Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`json sample`](#000_002)<span style="opacity: 0.64">.</span>
-
-  - <span style="opacity: 0.64">`context menu` A major component of the `command_data_manager`
+  - `command` <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`json sample`](#000_002)<span style="opacity: 0.64">.</span>
 
 ## [ VARIABLE FORMATING GUIDE ]
 

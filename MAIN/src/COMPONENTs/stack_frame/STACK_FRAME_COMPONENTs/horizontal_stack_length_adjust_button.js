@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
+import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 
 const HorizontalStackLengthAdjustButton = ({
   mode,
