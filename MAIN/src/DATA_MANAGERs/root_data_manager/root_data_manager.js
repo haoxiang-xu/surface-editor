@@ -715,6 +715,11 @@ const RootDataManager = ({ children }) => {
   useEffect(() => {
     setIsDirLoaded(true);
   }, [dir.filePath]);
+  useEffect(() => {
+    window.electron.receive("directory-data", (data) => {
+      setDir(data);
+    });
+  }, []);
   const update_path_under_dir = (path, data) => {
     setDir((prevData) => {
       const updateNestedFiles = (currentData, pathArray, currentIndex) => {
@@ -840,7 +845,7 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const access_file_name_by_path = (path) => {
+  const access_file_name_by_path_in_dir = (path) => {
     const pathArray = path.split("/");
     let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
@@ -1010,6 +1015,13 @@ const RootDataManager = ({ children }) => {
       }
     });
   };
+  const access_file_name_by_path_in_file = (path) => {
+    if (path in file) {
+      return file[path].fileName;
+    } else {
+      return path.split("/")[path.split("/").length - 1];
+    }
+  };
   const access_file_content_by_path = (path) => {
     if (path in file) {
       return file[path].fileContent;
@@ -1083,7 +1095,7 @@ const RootDataManager = ({ children }) => {
         rename_file_under_dir,
         check_is_file_name_exist_under_path,
         access_file_subfiles_by_path,
-        access_file_name_by_path,
+        access_file_name_by_path_in_dir,
         access_file_type_by_path,
         access_file_absolute_path_by_path,
         access_folder_expand_status_by_path,
@@ -1093,6 +1105,7 @@ const RootDataManager = ({ children }) => {
 
         file,
         update_file_content_by_path,
+        access_file_name_by_path_in_file,
         access_file_content_by_path,
         access_file_language_by_path,
 

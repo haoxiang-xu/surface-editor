@@ -55,7 +55,7 @@ const FileSelectionBar = ({
     dragCommand,
     setDragCommand,
   } = useContext(globalDragAndDropContexts);
-  const { access_file_name_by_path } = useContext(RootDataContexts);
+  const { access_file_name_by_path_in_file } = useContext(RootDataContexts);
   const {
     onSelectedMonacoIndex,
     setOnSelectedMonacoIndex,
@@ -399,12 +399,12 @@ const FileSelectionBar = ({
                     }
               }
             >
-              {access_file_name_by_path(filePath)}
+              {access_file_name_by_path_in_file(filePath)}
             </span>
             <img
               src={
                 FILE_TYPE_ICON_MANAGER[
-                  access_file_name_by_path(filePath).split(".").pop()
+                  access_file_name_by_path_in_file(filePath).split(".").pop()
                 ]?.ICON512
               }
               className={

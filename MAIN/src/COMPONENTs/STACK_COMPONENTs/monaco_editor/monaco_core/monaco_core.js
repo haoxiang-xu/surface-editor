@@ -407,12 +407,12 @@ const applyEditorOptionsInMemory = (
   dragCommand,
   setDragCommand
 ) => {
-  if (access_monaco_core_by_path(editor_filePath).model) {
+  if (access_monaco_core_by_path(editor_filePath) && access_monaco_core_by_path(editor_filePath).model) {
     monacoRef.current.setModel(
       access_monaco_core_by_path(editor_filePath).model
     );
   }
-  if (access_monaco_core_by_path(editor_filePath).viewState) {
+  if (access_monaco_core_by_path(editor_filePath) && access_monaco_core_by_path(editor_filePath)?.viewState) {
     editor.restoreViewState(
       access_monaco_core_by_path(editor_filePath).viewState
     );
