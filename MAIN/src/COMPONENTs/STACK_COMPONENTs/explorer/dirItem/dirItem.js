@@ -191,7 +191,7 @@ const DirItem = ({
     update_path_under_dir,
     remove_path_under_dir,
     check_is_file_name_exist_under_path,
-    access_file_content_by_path,
+    access_file_subfiles_by_path,
     access_file_name_by_path,
     access_file_type_by_path,
     access_folder_expand_status_by_path,
@@ -299,14 +299,14 @@ const DirItem = ({
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
         condition: { paste: onCopyFile.fileName },
-        content: JSON.parse(JSON.stringify(access_file_content_by_path(filePath))),
+        content: JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))),
         target: "vecoder_explorer/" + filePath,
       });
     } else {
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
         condition: { paste: false },
-        content: JSON.parse(JSON.stringify(access_file_content_by_path(filePath))),
+        content: JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))),
         target: "vecoder_explorer/" + filePath,
       });
     }
@@ -316,14 +316,14 @@ const DirItem = ({
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
         condition: { paste: onCopyFile.fileName },
-        content: JSON.parse(JSON.stringify(access_file_content_by_path(filePath))),
+        content: JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))),
         target: "vecoder_explorer/" + filePath,
       });
     } else {
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
         condition: { paste: false },
-        content: JSON.parse(JSON.stringify(access_file_content_by_path(filePath))),
+        content: JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))),
         target: "vecoder_explorer/" + filePath,
       });
     }
@@ -433,7 +433,7 @@ const DirItem = ({
     if (event.shiftKey) {
       console.log("shift from file: " + access_file_name_by_path,(filePath));
     } else {
-      setOnSingleClickFile(access_file_content_by_path(filePath));
+      setOnSingleClickFile(access_file_subfiles_by_path(filePath));
     }
   };
   useEffect(() => {
@@ -496,7 +496,7 @@ const DirItem = ({
         files: [],
       };
 
-      let editedFile = access_file_content_by_path(filePath);
+      let editedFile = access_file_subfiles_by_path(filePath);
       editedFile.files.push(newFile);
       update_path_under_dir(filePath, editedFile);
 
@@ -542,7 +542,7 @@ const DirItem = ({
         files: [],
       };
 
-      let editedFile = access_file_content_by_path(filePath);
+      let editedFile = access_file_subfiles_by_path(filePath);
       editedFile.files.push(newFolder);
       update_path_under_dir(filePath, editedFile);
 
@@ -602,7 +602,7 @@ const DirItem = ({
         const combinedPath = add_path.concat(path.slice(pasteFileIndex));
         pasteFile.filePath = combinedPath.join("/");
 
-        let editedFile = access_file_content_by_path(filePath);
+        let editedFile = access_file_subfiles_by_path(filePath);
         editedFile.files.push(pasteFile);
         update_path_under_dir(filePath, editedFile);
 
@@ -628,7 +628,7 @@ const DirItem = ({
   //COPY
   useEffect(() => {
     if (onCommand === "copy") {
-      setOnCopyFile(JSON.parse(JSON.stringify(access_file_content_by_path(filePath))));
+      setOnCopyFile(JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))));
       setOnCommand("false");
     }
   }, [onCommand]);

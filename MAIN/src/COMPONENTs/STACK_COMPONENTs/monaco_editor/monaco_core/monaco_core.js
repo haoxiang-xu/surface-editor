@@ -35,17 +35,18 @@ const MonacoCore = ({
       EDITOR_FONT_SIZE = 13;
   }
   const {
-    monacoEditorsOptionsData,
-    accessMonacoEditorOptionsByPath,
-    updateMonacoEditorViewStatesByPath,
-    updateMonacoEditorModelsByPath,
-
-    vecoderEditorContentData,
-    updateVecoderEditorFileContentDataByPath,
-    accessVecoderEditorFileContentDataByPath,
-    accessVecoderEditorFileLanguageDataByPath,
+    file,
+    update_file_content_by_path,
+    access_file_content_by_path,
+    access_file_language_by_path,
   } = useContext(RootDataContexts);
-  const { monacoPaths } = useContext(MonacoEditorContexts);
+  const {
+    monacoPaths,
+    monacoCores,
+    access_monaco_core_by_path,
+    update_monaco_core_view_state,
+    update_monaco_core_model,
+  } = useContext(MonacoEditorContexts);
   const { draggedItem, dragCommand, setDragCommand } = useContext(
     globalDragAndDropContexts
   );
@@ -78,17 +79,15 @@ const MonacoCore = ({
   );
   const [isMonacoEditorMounted, setIsMonacoEditorMounted] = useState(false);
   const [monacoContent, setMonacoContent] = useState(
-    accessVecoderEditorFileContentDataByPath(editor_filePath)
+    access_file_content_by_path(editor_filePath)
   );
   const [monacoLanguage, setMonacoLanguage] = useState(
-    accessVecoderEditorFileLanguageDataByPath(editor_filePath)
+    access_file_language_by_path(editor_filePath)
   );
   useEffect(() => {
-    setMonacoContent(accessVecoderEditorFileContentDataByPath(editor_filePath));
-    setMonacoLanguage(
-      accessVecoderEditorFileLanguageDataByPath(editor_filePath)
-    );
-  }, [vecoderEditorContentData]);
+    setMonacoContent(access_file_content_by_path(editor_filePath));
+    setMonacoLanguage(access_file_language_by_path(editor_filePath));
+  }, [file]);
 
   const [monacoModel, setMonacoModel] = useState(null);
   const [monacoViewState, setMonacoViewState] = useState(null);
@@ -104,10 +103,10 @@ const MonacoCore = ({
       monaco,
       monacoRef,
       editor_filePath,
-      accessVecoderEditorFileLanguageDataByPath(editor_filePath),
-      monacoEditorsOptionsData,
+      access_file_language_by_path(editor_filePath),
+      monacoCores,
       monacoPaths,
-      accessMonacoEditorOptionsByPath,
+      access_monaco_core_by_path,
       draggedItem,
       dragCommand,
       setDragCommand
@@ -119,9 +118,9 @@ const MonacoCore = ({
       monaco,
       editor,
       editor_filePath,
-      monacoEditorsOptionsData,
-      updateMonacoEditorViewStatesByPath,
-      updateMonacoEditorModelsByPath
+      monacoCores,
+      update_monaco_core_view_state,
+      update_monaco_core_model
     );
     setIsMonacoEditorMounted(true);
   };
@@ -180,7 +179,7 @@ const MonacoCore = ({
     theme: "vs-dark",
     options: editor_diffContent ? diffEditorOptions : baseEditorOptions,
     onChange: (newValue, e) => {
-      updateVecoderEditorFileContentDataByPath(editor_filePath, newValue);
+      update_file_content_by_path(editor_filePath, newValue);
     },
     onMount: onEditorMount,
   };
@@ -358,21 +357,21 @@ const registerStateChangeListeners = (
   monaco,
   editor,
   editor_filePath,
-  monacoEditorsOptionsAndContentData,
-  updateMonacoEditorViewStateByPath,
-  updateMonacoEditorModelByPath
+  monacoCores,
+  update_monaco_core_view_state,
+  update_monaco_core_model
 ) => {
   editor.onDidScrollChange((e) => {
     const viewState = editor.saveViewState();
-    updateMonacoEditorViewStateByPath(editor_filePath, viewState);
+    update_monaco_core_view_state(editor_filePath, viewState);
     const Model = editor.getModel();
-    updateMonacoEditorModelByPath(editor_filePath, Model);
+    update_monaco_core_model(editor_filePath, Model);
   });
   editor.onDidChangeModelContent((e) => {
     const viewState = editor.saveViewState();
-    updateMonacoEditorViewStateByPath(editor_filePath, viewState);
+    update_monaco_core_view_state(editor_filePath, viewState);
     const Model = editor.getModel();
-    updateMonacoEditorModelByPath(editor_filePath, Model);
+    update_monaco_core_model(editor_filePath, Model);
   });
   editor.onMouseDown((e) => {
     const { position } = e.target;
@@ -390,27 +389,21 @@ const applyEditorOptionsInMemory = (
   monacoRef,
   editor_filePath,
   editor_language,
-  monacoEditorsOptionsAndContentData,
+  monacoCores,
   monacoPaths,
-  accessMonacoEditorsDataByPath,
+  access_monaco_core_by_path,
   draggedItem,
   dragCommand,
   setDragCommand
 ) => {
-  if (
-    editor_filePath in monacoPaths &&
-    monacoEditorsOptionsAndContentData[editor_filePath].model
-  ) {
+  if (access_monaco_core_by_path(editor_filePath).model) {
     monacoRef.current.setModel(
-      monacoEditorsOptionsAndContentData[editor_filePath].model
+      access_monaco_core_by_path(editor_filePath).model
     );
   }
-  if (
-    editor_filePath in monacoPaths &&
-    monacoEditorsOptionsAndContentData[editor_filePath].viewState
-  ) {
+  if (access_monaco_core_by_path(editor_filePath).viewState) {
     editor.restoreViewState(
-      monacoEditorsOptionsAndContentData[editor_filePath].viewState
+      access_monaco_core_by_path(editor_filePath).viewState
     );
   }
   if (dragCommand === "WAITING FOR MODEL APPEND THEN DELETE FROM SOURCE") {

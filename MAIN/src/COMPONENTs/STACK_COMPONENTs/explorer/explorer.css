@@ -62,10 +62,9 @@
   transition: all 0.32s ease;
   /*POSITION*/
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 4px;
   left: 90px;
-  right: 5px;
+  right: 4px;
 
   /*SIZE*/
   overflow-y: hidden;

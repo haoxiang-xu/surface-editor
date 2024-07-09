@@ -528,7 +528,7 @@ const FAKE_STORAGE = {
   monaco_editor_0003: {
     on_selected_monaco_core_index: -1,
     monaco_paths: ["demo/index/index.html", "demo/main.java"],
-    monaco_core: {
+    monaco_cores: {
       "demo/index/index.html": {
         viewState: null,
         model: null,
@@ -789,7 +789,7 @@ const RootDataManager = ({ children }) => {
         renameAllSubFiles(file.files[i], pathIndex, new_name);
       }
     };
-    let target_file = access_file_content_by_path(original_path);
+    let target_file = access_file_subfiles_by_path(original_path);
 
     target_file.fileName = new_name;
     let Path = target_file.filePath.split("/");
@@ -823,7 +823,7 @@ const RootDataManager = ({ children }) => {
       }
     }
   };
-  const access_file_content_by_path = (path) => {
+  const access_file_subfiles_by_path = (path) => {
     const pathArray = path.split("/");
     let currentData = dir;
     for (let i = 0; i < pathArray.length; i++) {
@@ -978,7 +978,60 @@ const RootDataManager = ({ children }) => {
   };
   /* { DIR } =========================================================================================================================== */
 
-  /* { STORAGE } ----------------------------------------------------------------------------------------------------------------------- */
+  /* { FILE } ========================================================================================================================== */
+  const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
+  useEffect(() => {
+    window.electronAPI.onFileContent((content, relativePath) => {
+      const newFile = { [relativePath]: content };
+      setFile((prevData) => {
+        return {
+          ...prevData,
+          ...newFile,
+        };
+      });
+    });
+    window.electronAPI.onFileError((error) => {
+      console.error("Error:", error);
+    });
+  }, []);
+  const update_file_content_by_path = (path, data) => {
+    setFile((prevData) => {
+      if (prevData.hasOwnProperty(path)) {
+        return {
+          ...prevData,
+          [path]: {
+            ...prevData[path],
+            fileContent: data,
+          },
+        };
+      } else {
+        console.error("File path does not exist:", path);
+        return { ...prevData };
+      }
+    });
+  };
+  const access_file_content_by_path = (path) => {
+    if (path in file) {
+      return file[path].fileContent;
+    } else {
+      //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
+      window.electronAPI.readFile(
+        access_file_absolute_path_by_path(path),
+        path
+      );
+      return path;
+    }
+  };
+  const access_file_language_by_path = (path) => {
+    if (path in file) {
+      return file[path].fileLanguage;
+    } else {
+      return "UNKNOWN LANGUAGE";
+    }
+  };
+  /* { FILE } ========================================================================================================================== */
+
+  /* { STORAGE } ======================================================================================================================= */
   const [storage, setStorage] = useState(FAKE_STORAGE);
   const access_storage_by_tag = (tag) => {
     return storage[tag];
@@ -995,7 +1048,7 @@ const RootDataManager = ({ children }) => {
       return newData;
     });
   };
-  /* { STORAGE } ----------------------------------------------------------------------------------------------------------------------- */
+  /* { STORAGE } ======================================================================================================================= */
 
   /* Stack Structure Data and Functions ============================================================== */
   const [stackStructureOptionsData, setStackStructureOptionsData] = useState(
@@ -1029,7 +1082,7 @@ const RootDataManager = ({ children }) => {
         remove_path_under_dir,
         rename_file_under_dir,
         check_is_file_name_exist_under_path,
-        access_file_content_by_path,
+        access_file_subfiles_by_path,
         access_file_name_by_path,
         access_file_type_by_path,
         access_file_absolute_path_by_path,
@@ -1038,35 +1091,15 @@ const RootDataManager = ({ children }) => {
         access_subfiles_by_path,
         access_subfile_length_recusively_by_path,
 
+        file,
+        update_file_content_by_path,
+        access_file_content_by_path,
+        access_file_language_by_path,
+
         storage,
         access_storage_by_tag,
         update_storage_by_tag,
         remove_storage_by_tag,
-
-        monacoEditorsOptionsData,
-        setMonacoEditorsOptionsData,
-        accessMonacoEditorOptionsByPath,
-        updateMonacoEditorOptionsByPath,
-        appendMonacoEditorOptionsByPath,
-        removeMonacoEditorOptionsByPath,
-        updateMonacoEditorViewStatesByPath,
-        updateMonacoEditorModelsByPath,
-
-        vecoderEditorsOptionsData,
-        setVecoderEditorsOptionsData,
-        updateOnSelectedMonacoIndexByEditorIndex,
-        accessOnSelectedMonacoIndexByEditorIndex,
-        updateMonacoEditorPathsByEditorIndex,
-        accessMonacoEditorPathsByEditorIndex,
-        accessMonacoEditorFileLanguageDataByEditorIndexAndOnSelectedIndex,
-        accessMonacoEditorFileContentDataByEditorIndexAndOnSelectedIndex,
-
-        vecoderEditorContentData,
-        setVecoderEditorContentData,
-        updateVecoderEditorFileContentDataByPath,
-        accessVecoderEditorFileContentDataByPath,
-        accessVecoderEditorFileLanguageDataByPath,
-        accessVecoderEditorFileNameDataByPath,
 
         stackStructureOptionsData,
         setStackStructureOptionsData,
