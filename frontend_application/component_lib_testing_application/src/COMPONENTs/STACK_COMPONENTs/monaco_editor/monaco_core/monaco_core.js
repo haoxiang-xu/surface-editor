@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import MonacoEditor from "@monaco-editor/react";
-import { MonacoDiffEditor, monaco } from "react-monaco-editor";
+import { MonacoDiffEditor, monaco, Range } from "react-monaco-editor";
 import { RootDataContexts } from "../../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { globalDragAndDropContexts } from "../../../../CONTEXTs/globalDragAndDropContexts";
 import { stackStructureDragAndDropContexts } from "../../../../CONTEXTs/stackStructureDragAndDropContexts";
@@ -287,10 +287,21 @@ const registerCompletionProvider = (monaco) => {
 const registerInlineCompletionProvider = (monaco) => {
   const inlineCompletionProvider = {
     provideInlineCompletions: (model, position, context, token) => {
+      const offset = 5;
+      const contextText = model.getValueInRange({
+        startLineNumber: position.lineNumber - offset,
+        startColumn: 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      });
+
+      // Make request to backend using contextText in prompt
+      // const response = fetch();
+
       return {
         items: [
           {
-            insertText: "InlineCompletion",
+            insertText: contextText,
             range: {
               startLineNumber: position.lineNumber,
               startColumn: position.column,
