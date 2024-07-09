@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
+/* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
 import DirItemGhostDragImage from "../../dirItemGhostDragImage/dirItemGhostDragImage";
-import "./monaco_editor.css";
-import { ICON_MANAGER } from "../../../ICONs/icon_manager";
+/* { Import Contexts } --------------------------------------------------------------------------------------- */
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
 import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { MonacoEditorContexts } from "./monaco_editor_contexts";
+/* { Import ICONs } ------------------------------------------------------------------------------------------ */
+import { ICON_MANAGER } from "../../../ICONs/icon_manager";
+/* { Import Styling } ---------------------------------------------------------------------------------------- */
+import "./monaco_editor.css";
 
-/* Load ICON manager --------------------------------------------------------------------------------- */
+/* { ICONs } ------------------------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
   default: {
     ICON: null,
@@ -33,7 +37,7 @@ try {
   console.log(e);
 }
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
-/* Load ICON manager --------------------------------------------------------------------------------- */
+/* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const FileSelectionBar = ({
   code_editor_container_ref_index,
@@ -57,6 +61,8 @@ const FileSelectionBar = ({
     setOnSelectedMonacoIndex,
     monacoPaths,
     setMonacoPaths,
+    monacoCores,
+    setMonacoCores,
   } = useContext(MonacoEditorContexts);
 
   const [forceRefresh, setForceRefresh] = useState(false);
@@ -95,13 +101,13 @@ const FileSelectionBar = ({
   const onFileDragStart = (e, index) => {
     e.stopPropagation();
     e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
-
     setOnSelectedMonacoIndex(index);
     setOnDragIndex(index);
     setDraggedItem({
       source:
         "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
       content: monacoPaths[index],
+      monaco_cores: monacoCores[monacoPaths[index]],
     });
   };
   const onFileDragEnd = (e, index) => {
@@ -221,7 +227,11 @@ const FileSelectionBar = ({
         }
         const dragedFile = draggedItem.content;
         editedFiles.splice(onDropIndex, 0, dragedFile);
+        const draggedMonacoCore = draggedItem.monaco_cores;
+        const editedMonacoCore = { ...monacoCores };
+        editedMonacoCore[dragedFile] = draggedMonacoCore;
         setMonacoPaths(editedFiles);
+        setMonacoCores(editedMonacoCore);
         setOnSelectedMonacoIndex(onDropIndex);
 
         setOnDragIndex(-1);
@@ -233,9 +243,11 @@ const FileSelectionBar = ({
     }
     if (onDragIndex !== -1 && dragCommand === "DELETE FROM SOURCE") {
       const editedFiles = [...monacoPaths];
-
+      const editedMonacoCore = { ...monacoCores };
+      delete editedMonacoCore[monacoPaths[onDragIndex]];
       editedFiles.splice(onDragIndex, 1);
       setMonacoPaths(editedFiles);
+      setMonacoCores(editedMonacoCore);
       setOnSelectedMonacoIndex(null);
 
       setOnDragIndex(-1);
@@ -243,7 +255,7 @@ const FileSelectionBar = ({
       setOnSwapIndex(-1);
       setDragCommand(null);
     }
-  }, [dragCommand, monacoPaths]);
+  }, [dragCommand, monacoPaths, monacoCores]);
   useEffect(() => {
     setOnDropIndex(-1);
   }, [draggedOverItem]);
@@ -541,16 +553,34 @@ const MonacoEditor = ({
   data,
   setData,
 }) => {
-  const {
-    accessMonacoEditorFileLanguageDataByEditorIndexAndOnSelectedIndex,
-    accessMonacoEditorFileContentDataByEditorIndexAndOnSelectedIndex,
-  } = useContext(RootDataContexts);
+  const { access_file_language_by_path, access_file_content_by_path } =
+    useContext(RootDataContexts);
 
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
   const [onSelectedMonacoIndex, setOnSelectedMonacoIndex] = useState(
     data?.on_selected_monaco_core_index
   );
   const [monacoPaths, setMonacoPaths] = useState(data?.monaco_paths);
+  const [monacoCores, setMonacoCores] = useState(data?.monaco_cores);
+  const access_monaco_core_by_path = (path) => {
+    return monacoCores[path];
+  };
+  const update_monaco_core_view_state = (path, view_state) => {
+    setMonacoCores((prevData) => {
+      return {
+        ...prevData,
+        [path]: { ...prevData[path], viewState: view_state },
+      };
+    });
+  };
+  const update_monaco_core_model = (path, model) => {
+    setMonacoCores((prevData) => {
+      return {
+        ...prevData,
+        [path]: { ...prevData[path], model: model },
+      };
+    });
+  };
   useEffect(() => {
     setData((prevData) => {
       return {
@@ -567,6 +597,14 @@ const MonacoEditor = ({
       };
     });
   }, [monacoPaths]);
+  useEffect(() => {
+    setData((prevData) => {
+      return {
+        ...prevData,
+        monaco_cores: monacoCores,
+      };
+    });
+  }, [monacoCores]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
   const [onDeleteMonacoEditorPath, setOnDeleteMonacoEditorPath] =
     useState(null);
@@ -576,11 +614,10 @@ const MonacoEditor = ({
   /* API =================================================================================== */
   const continueAPI = async () => {
     const requestBody = {
-      language:
-        accessMonacoEditorFileLanguageDataByEditorIndexAndOnSelectedIndex(
-          code_editor_container_ref_index,
-          onSelectedMonacoIndex
-        ),
+      language: access_file_language_by_path(
+        code_editor_container_ref_index,
+        onSelectedMonacoIndex
+      ),
       prompt: onSelectedCotent?.selectedText,
     };
 
@@ -598,18 +635,17 @@ const MonacoEditor = ({
   };
   const getAST = async () => {
     const requestBody = {
-      language:
-        accessMonacoEditorFileLanguageDataByEditorIndexAndOnSelectedIndex(
-          code_editor_container_ref_index,
-          onSelectedMonacoIndex
-        ),
+      language: access_file_language_by_path(
+        code_editor_container_ref_index,
+        onSelectedMonacoIndex
+      ),
       prompt: onSelectedCotent?.selectedText,
     };
 
     try {
       const response = await axios.post(
         "http://localhost:8200/AST/" +
-          accessMonacoEditorFileLanguageDataByEditorIndexAndOnSelectedIndex(
+          access_file_language_by_path(
             code_editor_container_ref_index,
             onSelectedMonacoIndex
           ),
@@ -635,7 +671,7 @@ const MonacoEditor = ({
         break;
       case "entireFile":
         prompt =
-          accessMonacoEditorFileContentDataByEditorIndexAndOnSelectedIndex(
+          access_file_content_by_path(
             code_editor_container_ref_index,
             onSelectedMonacoIndex
           ) || "";
@@ -646,7 +682,7 @@ const MonacoEditor = ({
     }
     const requestBody = {
       language:
-        accessMonacoEditorFileLanguageDataByEditorIndexAndOnSelectedIndex(
+        access_file_language_by_path(
           code_editor_container_ref_index,
           onSelectedMonacoIndex
         ) || "defaultLanguage",
@@ -734,6 +770,11 @@ const MonacoEditor = ({
           setOnSelectedMonacoIndex,
           monacoPaths,
           setMonacoPaths,
+          monacoCores,
+          setMonacoCores,
+          access_monaco_core_by_path,
+          update_monaco_core_view_state,
+          update_monaco_core_model,
         }}
       >
         <link

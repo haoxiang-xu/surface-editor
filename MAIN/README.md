@@ -43,6 +43,12 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ## [ VARIABLE FORMATING GUIDE ]
 
+#### [ variable naming rules ]
+
+- `UpperCaseSplitVariables` -> <span style="opacity: 0.64">useContext() variables</span>
+- `lowerCaseSplitVariables` -> <span style="opacity: 0.64">useState() variables</span>
+- `under_score_split_variables` -> <span style="opacity: 0.64">folders, files and json keys</span>
+
 #### [ 000_001 ] <a id="000_001"></a> Declare your compnent inside `src/CONSTs/stackComponentConfig.js`, So the system will recognize your component.
 
 ```
@@ -75,5 +81,14 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   content: {
     command_title: 'String'
   }
+}
+```
+
+#### [000_005] <a id="000_005"></a> Drag and Drop
+
+```
+{
+  source: 'stack_component_unique_tag_from',
+  content: {}
 }
 ```
