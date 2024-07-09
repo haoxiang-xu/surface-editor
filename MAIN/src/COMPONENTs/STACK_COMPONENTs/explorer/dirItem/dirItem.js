@@ -68,7 +68,7 @@ const RenameInputBox = ({ filePath, onCommand, setOnCommand }) => {
   const {
     rename_file_under_dir,
     check_is_file_name_exist_under_path,
-    access_file_name_by_path,
+    access_file_name_by_path_in_dir,
     access_file_type_by_path,
   } = useContext(RootDataContexts);
   const inputRef = useRef();
@@ -78,7 +78,7 @@ const RenameInputBox = ({ filePath, onCommand, setOnCommand }) => {
     }
   }, [onCommand]);
   const [renameInput, setRenameInput] = useState(
-    access_file_name_by_path(filePath)
+    access_file_name_by_path_in_dir(filePath)
   );
   const [inputBoxClassName, setInputBoxClassName] = useState(
     "dir_item_component_input_box0803"
@@ -88,7 +88,7 @@ const RenameInputBox = ({ filePath, onCommand, setOnCommand }) => {
   };
   const handleRenameInputOnKeyDown = async (event) => {
     if (event.key === "Enter") {
-      if (renameInput === access_file_name_by_path(filePath)) {
+      if (renameInput === access_file_name_by_path_in_dir(filePath)) {
         setOnCommand("false");
         return;
       }
@@ -192,7 +192,7 @@ const DirItem = ({
     remove_path_under_dir,
     check_is_file_name_exist_under_path,
     access_file_subfiles_by_path,
-    access_file_name_by_path,
+    access_file_name_by_path_in_dir,
     access_file_type_by_path,
     access_folder_expand_status_by_path,
     update_folder_expand_status_by_path,
@@ -431,7 +431,7 @@ const DirItem = ({
   //SINGLE CLICK
   const handleOnLeftClick = (event) => {
     if (event.shiftKey) {
-      console.log("shift from file: " + access_file_name_by_path,(filePath));
+      console.log("shift from file: " + access_file_name_by_path_in_dir,(filePath));
     } else {
       setOnSingleClickFile(access_file_subfiles_by_path(filePath));
     }
@@ -721,7 +721,7 @@ const DirItem = ({
                     onClick={handleExpandIconOnClick}
                     loading="lazy"
                   />
-                  {access_file_name_by_path(filePath)}
+                  {access_file_name_by_path_in_dir(filePath)}
                 </span>
               )}
             </div>
@@ -753,7 +753,7 @@ const DirItem = ({
                     className="dir_item_component_unexpendable_arrow_icon_right0826"
                     loading="lazy"
                   />
-                  {access_file_name_by_path(filePath)}
+                  {access_file_name_by_path_in_dir(filePath)}
                 </span>
               )}
             </div>
@@ -787,7 +787,7 @@ const DirItem = ({
                   onSingleClickFile && onSingleClickFile.filePath === filePath
                     ? "#CCCCCC"
                     : FILE_TYPE_ICON_MANAGER[
-                        access_file_name_by_path,(filePath).split(".").pop()
+                        access_file_name_by_path_in_dir,(filePath).split(".").pop()
                       ]?.LABEL_COLOR,
                 borderRadius: fileItemBorderRadius,
                 animation:
@@ -796,7 +796,7 @@ const DirItem = ({
                   "s",
                 padding:
                   FILE_TYPE_ICON_MANAGER[
-                    access_file_name_by_path,(filePath).split(".").pop()
+                    access_file_name_by_path_in_dir,(filePath).split(".").pop()
                   ]?.ICON512 !== undefined
                     ? "1px 0px 1px 6px"
                     : "1px 0px 1px 21px",
@@ -806,16 +806,16 @@ const DirItem = ({
               <FileTypeIconLoader
                 fileIcon={
                   FILE_TYPE_ICON_MANAGER[
-                    access_file_name_by_path,(filePath).split(".").pop()
+                    access_file_name_by_path_in_dir,(filePath).split(".").pop()
                   ]?.ICON512
                 }
                 fileIconBackground={
                   FILE_TYPE_ICON_MANAGER[
-                    access_file_name_by_path,(filePath).split(".").pop()
+                    access_file_name_by_path_in_dir,(filePath).split(".").pop()
                   ]?.ICON16
                 }
               />
-              {access_file_name_by_path(filePath)}
+              {access_file_name_by_path_in_dir(filePath)}
             </span>
           )}
         </div>
