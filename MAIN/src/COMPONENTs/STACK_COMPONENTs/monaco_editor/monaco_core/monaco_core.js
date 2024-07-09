@@ -289,7 +289,7 @@ const registerCompletionProvider = (monaco) => {
   });
 };
 ////Register inline completion provider for monaco editor
-const registerInlineCompletionProvider = (monaco) => {
+const registerInlineCompletionProvider = async (monaco) => {
   const inlineCompletionProvider = {
     provideInlineCompletions: (model, position, context, token) => {
       const offset = 5;
@@ -300,13 +300,28 @@ const registerInlineCompletionProvider = (monaco) => {
         endColumn: position.column,
       });
 
-      // Make request to backend using contextText in prompt
-      // const response = fetch();
+      const continueAPI = async () => {
+        const requestBody = {
+          language: "javascript",
+          propmt: contextText,
+        };
+
+        try {
+          const response = await axios.post(
+            "http://localhost:8200/openai/continue",
+            requestBody,
+          );
+          return response;
+        }
+        catch (e) {
+          console.log(e);
+        }
+      }
 
       return {
         items: [
           {
-            insertText: contextText,
+            insertText: continueAPI(),
             range: {
               startLineNumber: position.lineNumber,
               startColumn: position.column,
