@@ -4,6 +4,7 @@ import { MonacoDiffEditor, monaco } from "react-monaco-editor";
 import { RootDataContexts } from "../../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { globalDragAndDropContexts } from "../../../../CONTEXTs/globalDragAndDropContexts";
 import { stackStructureDragAndDropContexts } from "../../../../CONTEXTs/stackStructureDragAndDropContexts";
+import { MonacoEditorContexts } from "../monaco_editor_contexts";
 
 const MonacoCore = ({
   //Editor required parameters
@@ -44,6 +45,7 @@ const MonacoCore = ({
     accessVecoderEditorFileContentDataByPath,
     accessVecoderEditorFileLanguageDataByPath,
   } = useContext(RootDataContexts);
+  const { monacoPaths } = useContext(MonacoEditorContexts);
   const { draggedItem, dragCommand, setDragCommand } = useContext(
     globalDragAndDropContexts
   );
@@ -104,6 +106,7 @@ const MonacoCore = ({
       editor_filePath,
       accessVecoderEditorFileLanguageDataByPath(editor_filePath),
       monacoEditorsOptionsData,
+      monacoPaths,
       accessMonacoEditorOptionsByPath,
       draggedItem,
       dragCommand,
@@ -236,7 +239,10 @@ const MonacoCore = ({
       style={{
         height: "100%",
         width: "100%",
-        display: display && mode === "horizontal_stack_horizontal_mode" ? "block" : "none",
+        display:
+          display && mode === "horizontal_stack_horizontal_mode"
+            ? "block"
+            : "none",
       }}
       onContextMenu={(e) => {
         getEditorOnSelected(monacoRef);
@@ -385,13 +391,14 @@ const applyEditorOptionsInMemory = (
   editor_filePath,
   editor_language,
   monacoEditorsOptionsAndContentData,
+  monacoPaths,
   accessMonacoEditorsDataByPath,
   draggedItem,
   dragCommand,
   setDragCommand
 ) => {
   if (
-    editor_filePath in monacoEditorsOptionsAndContentData &&
+    editor_filePath in monacoPaths &&
     monacoEditorsOptionsAndContentData[editor_filePath].model
   ) {
     monacoRef.current.setModel(
@@ -399,7 +406,7 @@ const applyEditorOptionsInMemory = (
     );
   }
   if (
-    editor_filePath in monacoEditorsOptionsAndContentData &&
+    editor_filePath in monacoPaths &&
     monacoEditorsOptionsAndContentData[editor_filePath].viewState
   ) {
     editor.restoreViewState(

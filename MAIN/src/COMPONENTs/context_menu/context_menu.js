@@ -1,5 +1,5 @@
 import React from "react";
-import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_context";
+import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 
 const ContextMenu = () => {
   const {

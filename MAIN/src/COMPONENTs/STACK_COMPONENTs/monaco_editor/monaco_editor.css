@@ -30,8 +30,8 @@
   display: flex;
   position: absolute;
   left: 90px;
-  right: 5px;
-  top: 5px;
+  right: 4px;
+  top: 4px;
   height: 38px;
   scroll-behavior: smooth;
 
@@ -57,7 +57,7 @@
   transition: all 0.32s ease;
   /*POSITION*/
   position: absolute;
-  left: 5px;
+  left: 4px;
   top: 90px;
   right: 0px;
   bottom: 0px;

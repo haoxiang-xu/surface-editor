@@ -425,7 +425,7 @@ const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
   },
   {
     type: "monaco_editor",
-    stack_omponent_unique_tag: "monaco_editor_0002",
+    stack_component_unique_tag: "monaco_editor_0002",
     code_editor_container_ref_index: 1,
   },
   {
@@ -500,6 +500,45 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
       files: [],
     },
   ],
+};
+
+const FAKE_STORAGE = {
+  monaco_editor_0002: {
+    on_selected_monaco_core_index: -1,
+    monaco_paths: [
+      "demo/src/code_editor.js",
+      "demo/index/style/code_editor.css",
+      "demo/main.py",
+    ],
+    monaco_cores: {
+      "demo/src/code_editor.js": {
+        viewState: null,
+        model: null,
+      },
+      "demo/index/style/code_editor.css": {
+        viewState: null,
+        model: null,
+      },
+      "demo/main.py": {
+        viewState: null,
+        model: null,
+      },
+    },
+  },
+  monaco_editor_0003: {
+    on_selected_monaco_core_index: -1,
+    monaco_paths: ["demo/index/index.html", "demo/main.java"],
+    monaco_core: {
+      "demo/index/index.html": {
+        viewState: null,
+        model: null,
+      },
+      "demo/main.java": {
+        viewState: null,
+        model: null,
+      },
+    },
+  },
 };
 
 const RootDataManager = ({ children }) => {
@@ -647,7 +686,10 @@ const RootDataManager = ({ children }) => {
       return vecoderEditorContentData[path].fileContent;
     } else {
       //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
-      window.electronAPI.readFile(access_file_absolute_path_by_path(path), path);
+      window.electronAPI.readFile(
+        access_file_absolute_path_by_path(path),
+        path
+      );
       return path;
     }
   };
@@ -937,7 +979,22 @@ const RootDataManager = ({ children }) => {
   /* { DIR } =========================================================================================================================== */
 
   /* { STORAGE } ----------------------------------------------------------------------------------------------------------------------- */
-  const [storage, setStorage] = useState({});
+  const [storage, setStorage] = useState(FAKE_STORAGE);
+  const access_storage_by_tag = (tag) => {
+    return storage[tag];
+  };
+  const update_storage_by_tag = (tag, data) => {
+    setStorage((prevData) => {
+      return { ...prevData, [tag]: data };
+    });
+  };
+  const remove_storage_by_tag = (tag) => {
+    setStorage((prevData) => {
+      const newData = { ...prevData };
+      delete newData[tag];
+      return newData;
+    });
+  };
   /* { STORAGE } ----------------------------------------------------------------------------------------------------------------------- */
 
   /* Stack Structure Data and Functions ============================================================== */
@@ -966,7 +1023,6 @@ const RootDataManager = ({ children }) => {
     <RootDataContexts.Provider
       value={{
         dir,
-        setDir,
         isDirLoaded,
         setIsDirLoaded,
         update_path_under_dir,
@@ -981,6 +1037,11 @@ const RootDataManager = ({ children }) => {
         update_folder_expand_status_by_path,
         access_subfiles_by_path,
         access_subfile_length_recusively_by_path,
+
+        storage,
+        access_storage_by_tag,
+        update_storage_by_tag,
+        remove_storage_by_tag,
 
         monacoEditorsOptionsData,
         setMonacoEditorsOptionsData,
