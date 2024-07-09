@@ -55,8 +55,8 @@ const HorizontalStackCloseButton = ({}) => {
 
         /* POSITION -------------- */
         position: "absolute",
-        top: "5px",
-        left: "5px",
+        top: "4px",
+        left: "4px",
 
         /* SIZE ------------------ */
         width: "12px",

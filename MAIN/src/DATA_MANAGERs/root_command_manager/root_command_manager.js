@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { RootCommandContexts } from "./root_command_context";
+import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../COMPONENTs/context_menu/context_menu";
 
 const RootCommandManager = ({ children }) => {

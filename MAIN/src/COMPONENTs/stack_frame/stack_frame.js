@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import HorizontalStackTopLeftSection from "./STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
+import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
 import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 
 import "./stack_frame.css";
@@ -208,6 +209,7 @@ const HorizontalStackResizer = ({
 };
 const HorizontalStackContainer = ({
   index,
+  stack_component_unique_tag,
   component_type,
   stack_structure_type,
   /* Stack Data ------------------------------------ */
@@ -225,8 +227,7 @@ const HorizontalStackContainer = ({
   const [StackFrameComponent, setStackFrameComponent] = useState(null);
   useEffect(() => {
     async function loadComponent() {
-      const component_path =
-        STACK_COMPONENT_CONFIG[component_type].path;
+      const component_path = STACK_COMPONENT_CONFIG[component_type].path;
       const { default: LoadedComponent } = await import(
         `../STACK_COMPONENTs/${component_path}/${component_path}`
       );
@@ -246,9 +247,9 @@ const HorizontalStackContainer = ({
     resizerOnMouseDown,
     setResizerOnMouseDown,
   } = useContext(stackStructureDragAndDropContexts);
-  /* ---------------------------------------------------------------------------------------------------------- */
+  /* { Stack Frame Drag and Drop } ---------------------------------------------------------------------------- */
 
-  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
+  /* { mode } ================================================================================================= */
   const [mode, setMode] = useState(null);
   useEffect(() => {
     if (stack_structure_type === "horizontal_stack") {
@@ -257,7 +258,20 @@ const HorizontalStackContainer = ({
         : setMode(stack_structure_type + "_horizontal_mode");
     }
   }, [item.width]);
-  /* HORIZONTAL OR VERTICAL MODE ====================================================== */
+  /* { mode } ================================================================================================= */
+
+  /* { data } ------------------------------------------------------------------------------------------------- */
+  const {
+    storage,
+    access_storage_by_tag,
+    update_storage_by_tag,
+    delete_storage_by_tag,
+  } = useContext(RootDataContexts);
+  const [data, setData] = useState(access_storage_by_tag(stack_component_unique_tag));
+  useEffect(() => {
+    update_storage_by_tag(String(stack_component_unique_tag), data);
+  }, [data]);
+  /* { data } ------------------------------------------------------------------------------------------------- */
 
   const onMaximizeOnClick = () => {
     expandContainer(index);
@@ -320,7 +334,10 @@ const HorizontalStackContainer = ({
       >
         {StackFrameComponent ? (
           <StackFrameComponent
+            stack_component_unique_tag={stack_component_unique_tag}
             mode={mode}
+            data={data}
+            setData={setData}
             explorer_width={item.width}
             code_editor_width={item.width}
             code_editor_container_ref_index={
@@ -345,6 +362,7 @@ const HorizontalStackContainer = ({
 
 const StackFrame = ({
   index,
+  stack_component_unique_tag,
   stack_structure_type,
   component_type,
   /* Stack Data ------------------------------------ */
@@ -376,6 +394,7 @@ const StackFrame = ({
       return (
         <HorizontalStackContainer
           index={index}
+          stack_component_unique_tag={stack_component_unique_tag}
           component_type={component_type}
           stack_structure_type={stack_structure_type}
           item={item}

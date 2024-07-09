@@ -23,7 +23,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 - `received_command` (TYPE: List)
 
-- `data` (TYPE: Json) <span style="opacity: 0.64"> data allows you to store and reload your component data, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
+- `data & setData` (TYPE: Json) <span style="opacity: 0.64"> data allows you to store and reload your component data, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
 
 ### STEP 3 ACCESS TO SYSTEM DATA AND FUNCTIONs
 
