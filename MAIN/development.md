@@ -17,8 +17,21 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 - `mode` (TYPE: String) <span style="opacity: 0.64"> (Basically you can check the value that is stored inside this `mode` variable, and base on the value to render the content inside this Stack Div) </span>
 
-  - <span>"horizontal_stack_horizontal_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under horizontal mode which means width > the boundary) </span>
-  - <span>"horizontal_stack_vertical_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under vertical mode which means width <= the boundary) </span>
+  - <span>"horizontal_stack_/_horizontal_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under horizontal mode which means width > the boundary) </span>
+
+  - <span>"horizontal_stack_/_vertical_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under vertical mode which means width <= the boundary) </span>
+
+  - <span>"vertical_stack_/_horizontal_mode"</sapn>
+
+  - <span>"vertical_stack_/_vertical_mode"</sapn>
+
+  - <span>"horizontal_space_/_horizontal_mode"</sapn>
+
+  - <span>"horizontal_space_/_vertical_mode"</sapn>
+
+  - <span>"vertical_space_/_horizontal_mode"</sapn>
+  
+  - <span>"vertical_space_/_vertical_mode"</sapn>
 
 - `received_command` (TYPE: List)
 
