@@ -9,6 +9,7 @@ const RootCommandManager = ({ children }) => {
   const [contextMenuOnLoad, setContextMenuOnLoad] = useState(false);
   const [contextMenuPositionX, setContextMenuPositionX] = useState(-1);
   const [contextMenuPositionY, setContextMenuPositionY] = useState(-1);
+  const [sourceStackComponentTag, setSourceStackComponentTag] = useState(null);
 
   const loadContextMenu = (event) => {
     event.preventDefault();
@@ -20,8 +21,11 @@ const RootCommandManager = ({ children }) => {
     setContextMenuPositionX(position_x);
     setContextMenuPositionY(position_y);
   };
-  const unloadContextMenu = (event) => {
+  const unloadContextMenu = () => {
     setContextMenuOnLoad(false);
+    setContextMenuPositionX(-999);
+    setContextMenuPositionY(-999);
+    setSourceStackComponentTag(null);
   };
   /* { Context Menu } -------------------------------------------------------------------------------- */
 
@@ -69,12 +73,15 @@ const RootCommandManager = ({ children }) => {
         /* { Context Menu } ------------------------- */
         contextMenuPositionX,
         contextMenuPositionY,
+        sourceStackComponentTag,
         loadContextMenu,
         unloadContextMenu,
       }}
     >
-      {children}
-      {contextMenuOnLoad ? <ContextMenu /> : null}
+      <div onContextMenu={loadContextMenu} onClick={unloadContextMenu}>
+        {children}
+        {contextMenuOnLoad ? <ContextMenu /> : null}
+      </div>
     </RootCommandContexts.Provider>
   );
 };

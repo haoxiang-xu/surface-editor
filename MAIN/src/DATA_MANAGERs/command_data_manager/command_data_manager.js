@@ -39,7 +39,7 @@ const CommandDataManager = ({ children }) => {
       }}
     >
       {children}
-      {isRightClicked ? <ContextMenu /> : <div></div>}
+      {/* {isRightClicked ? <ContextMenu /> : <div></div>} */}
     </rightClickContextMenuCommandContexts.Provider>
   );
 };

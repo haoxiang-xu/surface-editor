@@ -11,15 +11,16 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 ### STEP 2 HANDLE COMPONENT PARAMETERs
 
 <span style="opacity: 0.64">Since your own component will be packed inside the `stack_frame` component, your component should have several parameters need to be handled.</span>
+
 ### PARAMETERs:
 
 - `stack_component_unique_tag` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, you need this variable. `stack_component_unique_tag` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
 
 - `mode` (TYPE: String) <span style="opacity: 0.64"> (Basically you can check the value that is stored inside this `mode` variable, and base on the value to render the content inside this Stack Div) </span>
 
-  - <span>"horizontal_stack_/_horizontal_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under horizontal mode which means width > the boundary) </span>
+  - <span>"horizontal*stack*/\_horizontal_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under horizontal mode which means width > the boundary) </span>
 
-  - <span>"horizontal_stack_/_vertical_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under vertical mode which means width <= the boundary) </span>
+  - <span>"horizontal*stack*/\_vertical_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under vertical mode which means width <= the boundary) </span>
 
   - <span>"vertical_stack_/_horizontal_mode"</sapn>
 
@@ -30,7 +31,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   - <span>"horizontal_space_/_vertical_mode"</sapn>
 
   - <span>"vertical_space_/_horizontal_mode"</sapn>
-  
+
   - <span>"vertical_space_/_vertical_mode"</sapn>
 
 - `received_command` (TYPE: List)
@@ -38,6 +39,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `data` & `setData` (TYPE: Json) <span style="opacity: 0.64"> data allows you to store and reload your component data, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
 
 ### STEP 3 ACCESS TO SYSTEM DATA AND FUNCTIONs (Optional)
+
 ### GLOBAL CONTEXTs & DATA MANAGERs:
 
 - [`root_data_manager`](#root_data_manager) <span style="opacity: 0.64">Root Data Manager allows you to access, update, delete files under the repository that currently opened by this program.</span>
@@ -51,6 +53,16 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   - `command` <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
 
 ### STEP 4 DEFINE YOUR OWN CONTEXT MENU (Optional)
+
+#### STEP 4.1 Declare Context Menu Structure
+
+<span style="opacity: 0.64">You can see this</span> [`SAMPLE 000_007`](#000_007) <span style="opacity: 0.64">to get a basic understand of how to declare a conext menu structure. </span>
+
+#### STEP 4.2 Handle Parameters
+
+<span style="opacity: 0.64">If you want to define a component inside of your context menu, you need to handle just 1 parameter so you can send a json back to your component. </span>
+
+- `progress_context_menu_item` <span style="opacity: 0.64">it takes a json as variable and after you call this function it will generate a command just like `button` type context menu item will do.</span>
 
 ### STEP 5 DEFINE OTHER REQURIED FILES
 
@@ -90,7 +102,14 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 ```
   test_component: {
     type: "test_component",
-    path: "test_component_folder_name",
+    path: "test_component_folder_name/test_component_file_name",
+  },
+```
+
+```
+  monaco_editor: {
+    type: "monaco_editor",
+    path: "monaco_editor/monaco_editor",
   },
 ```
 
@@ -171,3 +190,44 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   },
 }
 ```
+
+#### [000_007] <a id="000_007"></a> Context Menu Structure
+
+```
+[
+  root: {
+    type: 'root',
+    sub_items: ['unique_tag1', 'unique_tag2'],
+  },
+  copy: {
+    type: 'button'
+    unique_tag: 'copy',
+    clickable: true,
+    height: '100px',
+    label: 'Copy',
+    sub_label: 'on copy string',
+    icon: 'url',
+    quick_view_background: `url`,
+    sub_items: ['unique_tag1', 'unique_tag2'],
+  },
+  component: {
+    type: `component`,
+    unique_tag: 'component',
+    path: `path_to_that_component`,
+  }
+]
+```
+
+- `type` (TYPE: String, DEFAULT VALUE: 'button')<span style="opacity: 0.64"> There are several context menu item type, you must declare the type so that the system will know how to render this item. Below is the list of all avaliable types:</span>
+
+  - `root` in your context menu strcuture declaration, a root type object is a must have, and you should have only one root. which list all root context menu items.
+  - `button`
+  - `component`
+
+- `unique_tag` (TYPE: String, MAX LENGTH: 256)<span style="opacity: 0.64"> Should be unique, you must define this. This variable will be used in 2 cases:</span>
+  - <span style="opacity: 0.64"> When user click on your some context item, context menu will return to your componet this tag, so that you know how to handle this event</span>
+  - <span style="opacity: 0.64"> When you declare a sub context menu, you will use this tag for that. </span>
+- `label` (TYPE: String, MAX LENGTH: 25)<span style="opacity: 0.64"> (Optional) this label is optional since not every type of item will need this. For button type item, label will be the displaying text letting user know what function is this button.</span>
+- `sub_label` (TYPE: String) <span style="opacity: 0.64"> (Optional) this variable will displayed as a low opacity text after label</span>
+- `icon` <span style="opacity: 0.64">(Optional)</span>
+- `quick_view_background` <span style="opacity: 0.64">(Optional)</span>

@@ -5,6 +5,7 @@ import { RootDataContexts } from "../../../../DATA_MANAGERs/root_data_manager/ro
 import { rightClickContextMenuCommandContexts } from "../../../../CONTEXTs/rightClickContextMenuContexts";
 import { explorerContexts } from "../../../../CONTEXTs/explorerContexts";
 import { globalDragAndDropContexts } from "../../../../CONTEXTs/globalDragAndDropContexts";
+import { RootCommandContexts } from "../../../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 import "./dirItem.css";
 
 /* Load ICON manager -------------------------------- */
@@ -198,6 +199,7 @@ const DirItem = ({
     update_folder_expand_status_by_path,
     access_subfiles_by_path,
   } = useContext(RootDataContexts);
+  const {} = useContext(RootCommandContexts);
   const {
     onRightClickItem,
     setOnRightClickItem,
@@ -299,14 +301,18 @@ const DirItem = ({
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
         condition: { paste: onCopyFile.fileName },
-        content: JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))),
+        content: JSON.parse(
+          JSON.stringify(access_file_subfiles_by_path(filePath))
+        ),
         target: "vecoder_explorer/" + filePath,
       });
     } else {
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
         condition: { paste: false },
-        content: JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))),
+        content: JSON.parse(
+          JSON.stringify(access_file_subfiles_by_path(filePath))
+        ),
         target: "vecoder_explorer/" + filePath,
       });
     }
@@ -316,17 +322,24 @@ const DirItem = ({
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
         condition: { paste: onCopyFile.fileName },
-        content: JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))),
+        content: JSON.parse(
+          JSON.stringify(access_file_subfiles_by_path(filePath))
+        ),
         target: "vecoder_explorer/" + filePath,
       });
     } else {
       setOnRightClickItem({
         source: "vecoder_explorer/" + filePath,
         condition: { paste: false },
-        content: JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))),
+        content: JSON.parse(
+          JSON.stringify(access_file_subfiles_by_path(filePath))
+        ),
         target: "vecoder_explorer/" + filePath,
       });
     }
+  };
+  const handleOnContextMenu = (event) => {
+    event.preventDefault();
   };
   /* EXPAND RELATED ===================================================================== */
 
@@ -361,14 +374,16 @@ const DirItem = ({
       setFolderItemBorderRadius("7px 7px 2px 2px");
     } else if (
       index <
-        access_subfiles_by_path(filePath.split("/").slice(0, -1).join("/")).length -
+        access_subfiles_by_path(filePath.split("/").slice(0, -1).join("/"))
+          .length -
           1 ||
       access_folder_expand_status_by_path(filePath)
     ) {
       setFolderItemBorderRadius("2px");
     } else if (
       index ===
-        access_subfiles_by_path(filePath.split("/").slice(0, -1).join("/")).length -
+        access_subfiles_by_path(filePath.split("/").slice(0, -1).join("/"))
+          .length -
           1 &&
       dirItemOnHover
     ) {
@@ -381,7 +396,8 @@ const DirItem = ({
     /* File Item Border Radius ============================================== */
     if (
       index ===
-        access_subfiles_by_path(filePath.split("/").slice(0, -1).join("/")).length -
+        access_subfiles_by_path(filePath.split("/").slice(0, -1).join("/"))
+          .length -
           1 &&
       (dirItemOnHover ||
         dirPathOnHover === filePath.split("/").slice(0, -1).join("/"))
@@ -391,7 +407,9 @@ const DirItem = ({
       !root &&
       parentDirItemOnHover &&
       index ===
-        access_subfiles_by_path(filePath.split("/").slice(0, -1).join("/")).length - 1
+        access_subfiles_by_path(filePath.split("/").slice(0, -1).join("/"))
+          .length -
+          1
     ) {
       setFileItemBorderRadius("2px 2px 7px 2px");
     } else {
@@ -431,7 +449,10 @@ const DirItem = ({
   //SINGLE CLICK
   const handleOnLeftClick = (event) => {
     if (event.shiftKey) {
-      console.log("shift from file: " + access_file_name_by_path_in_dir,(filePath));
+      console.log(
+        "shift from file: " + access_file_name_by_path_in_dir,
+        filePath
+      );
     } else {
       setOnSingleClickFile(access_file_subfiles_by_path(filePath));
     }
@@ -628,7 +649,9 @@ const DirItem = ({
   //COPY
   useEffect(() => {
     if (onCommand === "copy") {
-      setOnCopyFile(JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath))));
+      setOnCopyFile(
+        JSON.parse(JSON.stringify(access_file_subfiles_by_path(filePath)))
+      );
       setOnCommand("false");
     }
   }, [onCommand]);
@@ -705,7 +728,7 @@ const DirItem = ({
                   ref={labelRef}
                   className={fileNameClassName}
                   onClick={handleExpandIconOnClick}
-                  onContextMenu={handleFolderOnRightClick}
+                  onContextMenu={handleOnContextMenu}
                   style={{
                     borderRadius: folderItemBorderRadius,
                     backgroundColor: folderItemBackgroundColor,
@@ -746,7 +769,7 @@ const DirItem = ({
                     backgroundColor: folderItemBackgroundColor,
                   }}
                   onClick={(e) => handleOnLeftClick(e)}
-                  onContextMenu={handleFolderOnRightClick}
+                  onContextMenu={handleOnContextMenu}
                 >
                   <img
                     src={SYSTEM_ICON_MANAGER.arrow.ICON512}
@@ -787,7 +810,8 @@ const DirItem = ({
                   onSingleClickFile && onSingleClickFile.filePath === filePath
                     ? "#CCCCCC"
                     : FILE_TYPE_ICON_MANAGER[
-                        access_file_name_by_path_in_dir,(filePath).split(".").pop()
+                        (access_file_name_by_path_in_dir,
+                        filePath.split(".").pop())
                       ]?.LABEL_COLOR,
                 borderRadius: fileItemBorderRadius,
                 animation:
@@ -796,22 +820,22 @@ const DirItem = ({
                   "s",
                 padding:
                   FILE_TYPE_ICON_MANAGER[
-                    access_file_name_by_path_in_dir,(filePath).split(".").pop()
+                    (access_file_name_by_path_in_dir, filePath.split(".").pop())
                   ]?.ICON512 !== undefined
                     ? "1px 0px 1px 6px"
                     : "1px 0px 1px 21px",
               }}
-              onContextMenu={handleFileOnRightClick}
+              onContextMenu={handleOnContextMenu}
             >
               <FileTypeIconLoader
                 fileIcon={
                   FILE_TYPE_ICON_MANAGER[
-                    access_file_name_by_path_in_dir,(filePath).split(".").pop()
+                    (access_file_name_by_path_in_dir, filePath.split(".").pop())
                   ]?.ICON512
                 }
                 fileIconBackground={
                   FILE_TYPE_ICON_MANAGER[
-                    access_file_name_by_path_in_dir,(filePath).split(".").pop()
+                    (access_file_name_by_path_in_dir, filePath.split(".").pop())
                   ]?.ICON16
                 }
               />

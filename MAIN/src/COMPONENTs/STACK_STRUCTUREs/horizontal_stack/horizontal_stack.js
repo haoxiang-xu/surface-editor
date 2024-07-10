@@ -8,6 +8,7 @@ import { stackStructureDragAndDropContexts } from "../../../CONTEXTs/stackStruct
 import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootCommandContexts } from "../../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 //CSS ----------------------------------------------------------------------------------------------
 import "./horizontal_stack.css";
 
@@ -117,9 +118,7 @@ const HorizontalStack = () => {
     useContext(RootDataContexts);
 
   /* Right Click Menu ================================================================================================================================== */
-  const { handleRightClick, handleLeftClick } = useContext(
-    rightClickContextMenuCommandContexts
-  );
+  const { unloadContextMenu } = useContext(RootCommandContexts);
   /* Right Click Menu ================================================================================================================================== */
 
   /* Children Item Drag and Drop ----------------------------------------------------------------- */
@@ -174,7 +173,7 @@ const HorizontalStack = () => {
   const [onDropIndex, setOnDropIndex] = useState(-1);
 
   const onStackItemDragStart = (e, index) => {
-    handleLeftClick(e);
+    unloadContextMenu();
     e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
 
     setOnDragIndex(index);
@@ -356,8 +355,6 @@ const HorizontalStack = () => {
       onDragLeave={(e) => {
         setOnDropIndex(-1);
       }}
-      onContextMenu={handleRightClick}
-      onClick={handleLeftClick}
     >
       {/*Stack Structure Containers-----------------------------------------------------------------*/}
       <globalDragAndDropContexts.Provider
