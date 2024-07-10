@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import MonacoEditor from "@monaco-editor/react";
-import { MonacoDiffEditor, monaco } from "react-monaco-editor";
+import { MonacoDiffEditor, monaco, Range } from "react-monaco-editor";
 import { RootDataContexts } from "../../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { globalDragAndDropContexts } from "../../../../CONTEXTs/globalDragAndDropContexts";
 import { stackStructureDragAndDropContexts } from "../../../../CONTEXTs/stackStructureDragAndDropContexts";
@@ -289,13 +289,39 @@ const registerCompletionProvider = (monaco) => {
   });
 };
 ////Register inline completion provider for monaco editor
-const registerInlineCompletionProvider = (monaco) => {
+const registerInlineCompletionProvider = async (monaco) => {
   const inlineCompletionProvider = {
     provideInlineCompletions: (model, position, context, token) => {
+      const offset = 5;
+      const contextText = model.getValueInRange({
+        startLineNumber: position.lineNumber - offset,
+        startColumn: 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      });
+
+      const continueAPI = async () => {
+        const requestBody = {
+          language: "javascript",
+          propmt: contextText,
+        };
+
+        try {
+          const response = await axios.post(
+            "http://localhost:8200/openai/continue",
+            requestBody,
+          );
+          return response;
+        }
+        catch (e) {
+          console.log(e);
+        }
+      }
+
       return {
         items: [
           {
-            insertText: "InlineCompletion",
+            insertText: continueAPI(),
             range: {
               startLineNumber: position.lineNumber,
               startColumn: position.column,
