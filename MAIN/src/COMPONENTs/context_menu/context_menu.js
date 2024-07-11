@@ -81,6 +81,7 @@ const FAKE_CONTEXT = {
     icon: SYSTEM_ICON_MANAGER.ast.ICON512,
     quick_view_background: SYSTEM_ICON_MANAGER.ast.ICON16,
     clickable: true,
+    sub_items: ["viewAST", "updateAST"],
   },
   continue: {
     type: "button",
@@ -112,16 +113,6 @@ const FAKE_CONTEXT = {
     sub_items: [
       "fold",
       "unfold",
-      "continue",
-      "fix",
-      "br",
-      "customizeInstruction",
-      "customizeAPI",
-      "AST",
-      "br",
-      "moreOptions",
-      "copy",
-      "paste",
     ],
   },
   fold: {
@@ -138,6 +129,22 @@ const FAKE_CONTEXT = {
     icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
     label: "Unfold All",
     quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
+    clickable: true,
+  },
+  viewAST: {
+    type: "button",
+    unique_tag: "viewAST",
+    icon: SYSTEM_ICON_MANAGER.folderTree.ICON512,
+    label: "view AST",
+    quick_view_background: SYSTEM_ICON_MANAGER.folderTree.ICON16,
+    clickable: true,
+  },
+  updateAST: {
+    type: "button",
+    unique_tag: "updateAST",
+    icon: SYSTEM_ICON_MANAGER.update.ICON512,
+    label: "update AST",
+    quick_view_background: SYSTEM_ICON_MANAGER.update.ICON16,
     clickable: true,
   },
 };
@@ -166,7 +173,7 @@ const ContextItemButton = ({
   const [style, setStyle] = useState({
     backgroundColor: default_clickable_panel_styling.backgroundColor.default,
     boxShadow: default_clickable_panel_styling.boxShadow.default,
-    borderRadius: default_clickable_panel_styling.borderRadius.default,
+    borderRadius: button_fixed_styling.borderRadius,
     transition: default_clickable_panel_styling.transition.default,
   });
   useEffect(() => {
@@ -175,7 +182,7 @@ const ContextItemButton = ({
         backgroundColor:
           default_clickable_panel_styling.backgroundColor.onClick,
         boxShadow: default_clickable_panel_styling.boxShadow.onClick,
-        borderRadius: default_clickable_panel_styling.borderRadius.default,
+        borderRadius: button_fixed_styling.borderRadius,
         transition: default_clickable_panel_styling.transition.onClick,
       });
     } else if (onHover && contextStructure[unique_tag].clickable) {
@@ -183,7 +190,7 @@ const ContextItemButton = ({
         backgroundColor:
           default_clickable_panel_styling.backgroundColor.onHover,
         boxShadow: default_clickable_panel_styling.boxShadow.onHover,
-        borderRadius: default_clickable_panel_styling.borderRadius.default,
+        borderRadius: button_fixed_styling.borderRadius,
         transition: default_clickable_panel_styling.transition.onHover,
       });
     } else {
@@ -191,7 +198,7 @@ const ContextItemButton = ({
         backgroundColor:
           default_clickable_panel_styling.backgroundColor.default,
         boxShadow: default_clickable_panel_styling.boxShadow.default,
-        borderRadius: default_clickable_panel_styling.borderRadius.default,
+        borderRadius: button_fixed_styling.borderRadius,
         transition: default_clickable_panel_styling.transition.default,
       });
     }
@@ -205,21 +212,21 @@ const ContextItemButton = ({
       setSubListPosition(
         get_context_menu_show_up_direction(
           [
-            [position_x - context_menu_fixed_styling.padding * 2, position_y],
+            [position_x - context_menu_fixed_styling.padding * 1.4, position_y],
             [
-              position_x - context_menu_fixed_styling.padding * 2,
+              position_x - context_menu_fixed_styling.padding * 1.4,
               position_y + get_context_item_height(unique_tag),
             ],
             [
               position_x -
                 context_menu_fixed_styling.width +
-                context_menu_fixed_styling.padding * 2,
+                context_menu_fixed_styling.padding * 1.4,
               position_y,
             ],
             [
               position_x -
                 context_menu_fixed_styling.width +
-                context_menu_fixed_styling.padding * 2,
+                context_menu_fixed_styling.padding * 1.4,
               position_y + get_context_item_height(unique_tag),
             ],
           ],

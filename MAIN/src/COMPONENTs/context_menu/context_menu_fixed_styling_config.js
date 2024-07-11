@@ -3,7 +3,7 @@ const contextMenu_borderRadius = 11;
 const contextMenu_boxShadow = "0px 2px 32px 12px rgba(0, 0, 0, 0.32)";
 const contextMenu_backgroundColor = "#202020";
 const contextMenu_border = 1;
-const contextMenu_padding = 5;
+const contextMenu_padding = 7;
 const contextMenu_width = 256;
 const contextMenu_minHeight = 16;
 
@@ -22,8 +22,10 @@ const context_menu_fixed_styling = {
 
 /* { Button } */
 const button_height = 28;
+const button_borderRadius = 4;
 const button_fixed_styling = {
   height: button_height,
+  borderRadius: button_borderRadius,
 };
 
 /* { Br } */

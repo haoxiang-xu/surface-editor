@@ -322,7 +322,7 @@ const HorizontalStackContainer = ({
           width: "100%",
 
           /* STYLE ------------------------------ */
-          border: "2px solid #282828",
+          border: "1px solid #282828",
           boxSizing: "border-box",
           overflow: "hidden",
           borderRadius: "11px",

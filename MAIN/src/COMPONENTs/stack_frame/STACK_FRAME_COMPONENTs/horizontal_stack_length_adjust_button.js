@@ -142,7 +142,7 @@ const HorizontalStackLengthAdjustButton = ({
 
           /* POSITION -------------- */
           position: "absolute",
-          top: "4px",
+          top: "5px",
           left: MaximizeStyling.left,
           zIndex: MaximizeStyling.zIndex,
 
@@ -190,7 +190,7 @@ const HorizontalStackLengthAdjustButton = ({
 
           /* POSITION -------------- */
           position: "absolute",
-          top: "4px",
+          top: "5px",
           left: MinimizeStyling.left,
           zIndex: MinimizeStyling.zIndex,
 
@@ -242,7 +242,7 @@ const HorizontalStackLengthAdjustButton = ({
           /* POSITION -------------- */
           position: "absolute",
           top: "40px",
-          left: "4px",
+          left: "5px",
 
           /* SIZE ------------------ */
           width: "12px",
