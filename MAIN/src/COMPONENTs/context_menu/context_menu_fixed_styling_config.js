@@ -4,7 +4,7 @@ const contextMenu_boxShadow = "0px 2px 32px 12px rgba(0, 0, 0, 0.32)";
 const contextMenu_backgroundColor = "#202020";
 const contextMenu_border = 1;
 const contextMenu_padding = 7;
-const contextMenu_width = 256;
+const contextMenu_width = 220;
 const contextMenu_minHeight = 16;
 
 const context_menu_fixed_styling = {
