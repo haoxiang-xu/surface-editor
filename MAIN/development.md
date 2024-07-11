@@ -222,6 +222,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - `root` in your context menu strcuture declaration, a root type object is a must have, and you should have only one root. which list all root context menu items.
   - `button`
+  - `br`
   - `component`
 
 - `unique_tag` (TYPE: String, MAX LENGTH: 256)<span style="opacity: 0.64"> Should be unique, you must define this. This variable will be used in 2 cases:</span>

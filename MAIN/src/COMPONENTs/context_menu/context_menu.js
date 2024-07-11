@@ -4,6 +4,7 @@ import { default_clickable_panel_styling } from "../../DATA_MANAGERs/global_styl
 import {
   context_menu_fixed_styling,
   button_fixed_styling,
+  br_fixed_styling,
 } from "./context_menu_fixed_styling_config";
 
 import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
@@ -28,12 +29,22 @@ try {
 const FAKE_CONTEXT = {
   root: {
     type: "root",
-    sub_items: ["continue", "fix", "copy", "paste"],
+    sub_items: [
+      "continue",
+      "fix",
+      "br",
+      "customizeInstruction",
+      "customizeAPI",
+      "AST",
+      "br",
+      "moreOptions",
+      "copy",
+      "paste",
+    ],
   },
   copy: {
     type: "button",
     unique_tag: "copy",
-    height: 30,
     clickable: true,
     label: "Copy",
     icon: SYSTEM_ICON_MANAGER.copy.ICON512,
@@ -42,16 +53,38 @@ const FAKE_CONTEXT = {
   paste: {
     type: "button",
     unique_tag: "paste",
-    height: 30,
-    clickable: true,
+    clickable: false,
     label: "Paste",
     icon: SYSTEM_ICON_MANAGER.paste.ICON512,
     quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
   },
+  customizeInstruction: {
+    type: "button",
+    unique_tag: "customizeInstruction",
+    clickable: true,
+    label: "Customize Instruction",
+    icon: SYSTEM_ICON_MANAGER.draftingCompass.ICON512,
+    quick_view_background: SYSTEM_ICON_MANAGER.draftingCompass.ICON16,
+  },
+  customizeAPI: {
+    type: "button",
+    unique_tag: "customizeAPI",
+    icon: SYSTEM_ICON_MANAGER.customize.ICON512,
+    label: "Customize API",
+    quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
+    clickable: true,
+  },
+  AST: {
+    type: "button",
+    unique_tag: "AST",
+    label: "AST",
+    icon: SYSTEM_ICON_MANAGER.ast.ICON512,
+    quick_view_background: SYSTEM_ICON_MANAGER.ast.ICON16,
+    clickable: true,
+  },
   continue: {
     type: "button",
     unique_tag: "continue",
-    height: 30,
     clickable: true,
     label: "Continue...",
     icon: SYSTEM_ICON_MANAGER.continue.ICON512,
@@ -60,17 +93,69 @@ const FAKE_CONTEXT = {
   fix: {
     type: "button",
     unique_tag: "fix",
-    height: 30,
     clickable: true,
     label: "Fix...",
     icon: SYSTEM_ICON_MANAGER.fix.ICON512,
     quick_view_background: SYSTEM_ICON_MANAGER.fix.ICON16,
   },
+  br: {
+    type: "br",
+    unique_tag: "br",
+  },
+  moreOptions: {
+    type: "button",
+    unique_tag: "moreOptions",
+    icon: SYSTEM_ICON_MANAGER.moreOptions.ICON512,
+    label: "More Editor Options...",
+    quick_view_background: SYSTEM_ICON_MANAGER.moreOptions.ICON16,
+    clickable: true,
+    sub_items: [
+      "fold",
+      "unfold",
+      "continue",
+      "fix",
+      "br",
+      "customizeInstruction",
+      "customizeAPI",
+      "AST",
+      "br",
+      "moreOptions",
+      "copy",
+      "paste",
+    ],
+  },
+  fold: {
+    type: "button",
+    unique_tag: "fold",
+    icon: SYSTEM_ICON_MANAGER.fold.ICON512,
+    label: "Fold All",
+    quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
+    clickable: true,
+  },
+  unfold: {
+    type: "button",
+    unique_tag: "unfold",
+    icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
+    label: "Unfold All",
+    quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
+    clickable: true,
+  },
 };
 
-const ContextItemButton = ({ index, unique_tag, top_position }) => {
-  const { contextStructure, get_context_item_height } =
-    useContext(ContextMenuContexts);
+/* { Context Menu Prestyled Component } ======================================================================================================== */
+const ContextItemButton = ({
+  index,
+  unique_tag,
+  top_position,
+  position_x,
+  position_y,
+  position_z,
+}) => {
+  const {
+    contextStructure,
+    get_context_item_height,
+    get_context_menu_show_up_direction,
+  } = useContext(ContextMenuContexts);
 
   const [onHover, setOnHover] = useState(false);
   const [onClicked, setOnClicked] = useState(false);
@@ -78,7 +163,6 @@ const ContextItemButton = ({ index, unique_tag, top_position }) => {
   const handleIconLoad = () => {
     setIsIconLoaded(true);
   };
-
   const [style, setStyle] = useState({
     backgroundColor: default_clickable_panel_styling.backgroundColor.default,
     boxShadow: default_clickable_panel_styling.boxShadow.default,
@@ -86,7 +170,7 @@ const ContextItemButton = ({ index, unique_tag, top_position }) => {
     transition: default_clickable_panel_styling.transition.default,
   });
   useEffect(() => {
-    if (onClicked) {
+    if (onClicked && contextStructure[unique_tag].clickable) {
       setStyle({
         backgroundColor:
           default_clickable_panel_styling.backgroundColor.onClick,
@@ -94,7 +178,7 @@ const ContextItemButton = ({ index, unique_tag, top_position }) => {
         borderRadius: default_clickable_panel_styling.borderRadius.default,
         transition: default_clickable_panel_styling.transition.onClick,
       });
-    } else if (onHover) {
+    } else if (onHover && contextStructure[unique_tag].clickable) {
       setStyle({
         backgroundColor:
           default_clickable_panel_styling.backgroundColor.onHover,
@@ -112,7 +196,44 @@ const ContextItemButton = ({ index, unique_tag, top_position }) => {
       });
     }
   }, [onHover, onClicked]);
-
+  const [subListPostion, setSubListPosition] = useState([[-999, -999], 0]);
+  useEffect(() => {
+    if (
+      contextStructure[unique_tag].sub_items !== undefined &&
+      contextStructure[unique_tag].sub_items.length !== 0
+    ) {
+      setSubListPosition(
+        get_context_menu_show_up_direction(
+          [
+            [position_x - context_menu_fixed_styling.padding * 2, position_y],
+            [
+              position_x - context_menu_fixed_styling.padding * 2,
+              position_y + get_context_item_height(unique_tag),
+            ],
+            [
+              position_x -
+                context_menu_fixed_styling.width +
+                context_menu_fixed_styling.padding * 2,
+              position_y,
+            ],
+            [
+              position_x -
+                context_menu_fixed_styling.width +
+                context_menu_fixed_styling.padding * 2,
+              position_y + get_context_item_height(unique_tag),
+            ],
+          ],
+          contextStructure[unique_tag].sub_items,
+          [
+            [false, false, false, true],
+            [false, true, false, false],
+            [false, false, true, false],
+            [true, false, false, false],
+          ]
+        )
+      );
+    }
+  }, [position_x, position_y]);
   return (
     <div
       style={{
@@ -139,6 +260,7 @@ const ContextItemButton = ({ index, unique_tag, top_position }) => {
       onMouseDown={() => setOnClicked(true)}
       onMouseUp={() => setOnClicked(false)}
     >
+      {/* Context Item Icon render ---------------------------------------------------------- */}
       <div
         style={{
           /* POSITION -------------- */
@@ -166,12 +288,17 @@ const ContextItemButton = ({ index, unique_tag, top_position }) => {
             /* SIZE ------------------ */
             width: "16px",
             height: "16px",
+            userSelect: "none",
           }}
           loading="lazy"
           onLoad={handleIconLoad}
+          draggable={false}
           alt={unique_tag}
         />
       </div>
+      {/* Context Item Icon render ---------------------------------------------------------- */}
+
+      {/* Context Item Label render --------------------------------------------------------- */}
       <span
         style={{
           position: "absolute",
@@ -184,34 +311,149 @@ const ContextItemButton = ({ index, unique_tag, top_position }) => {
       >
         {contextStructure[unique_tag].label}
       </span>
+      {/* Context Item Label render --------------------------------------------------------- */}
+
+      {/* Context Item More option Icon render ---------------------------------------------- */}
+      {contextStructure[unique_tag].sub_items !== undefined &&
+      contextStructure[unique_tag].sub_items.length !== 0 ? (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            right: "8px",
+            transform: "translate(0%, -45%)",
+          }}
+        >
+          <img
+            style={{
+              width: "16px",
+              height: "16px",
+            }}
+            src={SYSTEM_ICON_MANAGER.arrow.ICON512}
+            loading="lazy"
+          />
+        </div>
+      ) : null}
+      {/* Context Item More option Icon render ---------------------------------------------- */}
+
+      {/* Context Item Sub List render ------------------------------------------------------ */}
+      {contextStructure[unique_tag].sub_items !== undefined &&
+      contextStructure[unique_tag].sub_items.length !== 0 &&
+      onHover ? (
+        <ContextList
+          position_x={subListPostion[0][0]}
+          position_y={subListPostion[0][1]}
+          position_z={position_z + 12}
+          direction={subListPostion[1]}
+          sub_items={contextStructure[unique_tag].sub_items}
+        />
+      ) : null}
     </div>
   );
 };
-const ContextList = ({ position_x, position_y, position_z, sub_items }) => {
+const ContextItemBr = ({ index, unique_tag, top_position }) => {
+  const { get_context_item_height } = useContext(ContextMenuContexts);
+
+  return (
+    <div
+      style={{
+        /* POSITION -------------- */
+        position: "absolute",
+        top: top_position + get_context_item_height(unique_tag) / 2,
+        left:
+          context_menu_fixed_styling.padding +
+          context_menu_fixed_styling.padding,
+
+        /* SIZE ------------------ */
+        height: 1,
+        width: `calc(100% - ${
+          (context_menu_fixed_styling.padding +
+            context_menu_fixed_styling.padding) *
+          2
+        }px)`,
+
+        /* STYLE ----------------- */
+        borderTop: "1px solid #58585896",
+      }}
+    ></div>
+  );
+};
+/* { Context Menu Prestyled Component } ======================================================================================================== */
+const ContextList = ({
+  position_x,
+  position_y,
+  position_z,
+  direction,
+  sub_items,
+}) => {
   const {
     contextStructure,
     calculate_context_list_height,
     calculate_item_top_position,
   } = useContext(ContextMenuContexts);
 
+  const [listPosition, setListPosition] = useState([-999, -999]);
+  const [borderRadius, setBorderRadius] = useState(
+    `0px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px`
+  );
+  const [height, setHeight] = useState(context_menu_fixed_styling.minHeight);
+  useEffect(() => {
+    setTimeout(() => {
+      setHeight(calculate_context_list_height(sub_items));
+    }, 20);
+    if (direction === 3) {
+      setListPosition([position_x, position_y]);
+      setBorderRadius(
+        `0px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px`
+      );
+    } else if (direction === 2) {
+      setListPosition([
+        position_x - context_menu_fixed_styling.width,
+        position_y,
+      ]);
+      setBorderRadius(
+        `${context_menu_fixed_styling.borderRadius}px 0px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px`
+      );
+    } else if (direction === 1) {
+      setListPosition([
+        position_x,
+        position_y - calculate_context_list_height(sub_items),
+      ]);
+      setBorderRadius(
+        `${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px 0px`
+      );
+    } else {
+      setListPosition([
+        position_x - context_menu_fixed_styling.width,
+        position_y - calculate_context_list_height(sub_items),
+      ]);
+      setBorderRadius(
+        `${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px 0px ${context_menu_fixed_styling.borderRadius}px`
+      );
+    }
+  }, [position_x, position_y, position_z, direction, sub_items]);
+
   return (
     <div
       style={{
+        /*ANIMATION ---------------- */
+        transition: "height 0.24s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+
         /*POSITION ---------------- */
         position: "fixed",
-        top: `${position_y}px`,
-        left: `${position_x}px`,
+        top: `${listPosition[1]}px`,
+        left: `${listPosition[0]}px`,
         zIndex: position_z,
 
         /*SIZE -------------------- */
-        height: `${calculate_context_list_height(sub_items)}px`,
-        width: "238px",
+        height: height,
+        width: `${context_menu_fixed_styling.width}px`,
 
         /*STYLE ------------------- */
-        border: "1.5px solid #58585896",
+        border: `${context_menu_fixed_styling.border}px solid #58585896`,
         backgroundColor: "#202020",
-        borderRadius: "0px 11px 11px 11px",
-        boxShadow: "0px 4px 16px 8px rgba(0, 0, 0, 0.32)",
+        borderRadius: borderRadius,
+        boxShadow: context_menu_fixed_styling.boxShadow,
         overflow: "hidden",
       }}
       onContextMenu={(e) => {
@@ -220,14 +462,34 @@ const ContextList = ({ position_x, position_y, position_z, sub_items }) => {
       }}
     >
       {sub_items.map((item, index) => {
-        return (
-          <ContextItemButton
-            key={item}
-            index={index}
-            unique_tag={item}
-            top_position={calculate_item_top_position(index, sub_items)}
-          />
-        );
+        switch (contextStructure[item].type) {
+          case "button":
+            return (
+              <ContextItemButton
+                key={item}
+                index={index}
+                unique_tag={item}
+                top_position={calculate_item_top_position(index, sub_items)}
+                position_x={listPosition[0] + context_menu_fixed_styling.width}
+                position_y={
+                  listPosition[1] +
+                  calculate_item_top_position(index, sub_items)
+                }
+                position_z={position_z}
+              />
+            );
+          case "br":
+            return (
+              <ContextItemBr
+                key={index}
+                index={index}
+                unique_tag={item}
+                top_position={calculate_item_top_position(index, sub_items)}
+              />
+            );
+          default:
+            return null;
+        }
       })}
     </div>
   );
@@ -245,9 +507,12 @@ const ContextMenu = () => {
   } = useContext(RootCommandContexts);
 
   const [contextStructure, setContextStructure] = useState(FAKE_CONTEXT);
+
   const get_context_item_height = (unique_tag) => {
     if (contextStructure[unique_tag].type === "button") {
       return button_fixed_styling.height;
+    } else if (contextStructure[unique_tag].type === "br") {
+      return br_fixed_styling.height;
     } else {
       return contextStructure[unique_tag].height;
     }
@@ -266,6 +531,60 @@ const ContextMenu = () => {
     }
     return top_position;
   };
+  const get_context_menu_show_up_direction = (
+    positions,
+    sub_items,
+    filters
+  ) => {
+    let avaliable_positions = [...filters];
+    /* 
+      positions -> array of position values [x, y]
+      filters -> array of avaliable directions [top_left, top_right, bottom_left, bottom_right] represented by trues and falses
+
+      return -> [position, direction] direction will be a index of filters, if top_left is avaliable, return 0
+    */
+    for (let i = 0; i < positions.length; i++) {
+      const position = positions[i];
+      if (
+        position[1] + calculate_context_list_height(sub_items) >
+        window.innerHeight
+      ) {
+        avaliable_positions[i][2] = false;
+        avaliable_positions[i][3] = false;
+      }
+      if (position[0] + context_menu_fixed_styling.width > window.innerWidth) {
+        avaliable_positions[i][1] = false;
+        avaliable_positions[i][3] = false;
+      }
+      avaliable_positions[i][0] = true && avaliable_positions[i][0];
+    }
+
+    for (let i = 0; i < avaliable_positions.length; i++) {
+      for (let p = avaliable_positions[i].length - 1; p >= 0; p--) {
+        if (avaliable_positions[i][p]) {
+          return [positions[i], p];
+        }
+      }
+    }
+    return [[-999, -999], 0];
+  };
+
+  const [subListPostion, setSubListPosition] = useState(
+    get_context_menu_show_up_direction(
+      [[contextMenuPositionX, contextMenuPositionY]],
+      contextStructure.root.sub_items,
+      [[true, true, true, true]]
+    )
+  );
+  useEffect(() => {
+    setSubListPosition(
+      get_context_menu_show_up_direction(
+        [[contextMenuPositionX, contextMenuPositionY]],
+        contextStructure.root.sub_items,
+        [[true, true, true, true]]
+      )
+    );
+  }, [contextMenuPositionX, contextMenuPositionY]);
 
   const progress_context_menu_item = () => {};
   return (
@@ -276,12 +595,14 @@ const ContextMenu = () => {
         calculate_context_list_height,
         calculate_item_top_position,
         progress_context_menu_item,
+        get_context_menu_show_up_direction,
       }}
     >
       <ContextList
-        position_x={contextMenuPositionX}
-        position_y={contextMenuPositionY}
+        position_x={subListPostion[0][0]}
+        position_y={subListPostion[0][1]}
         position_z={12}
+        direction={subListPostion[1]}
         sub_items={contextStructure.root.sub_items}
       />
     </ContextMenuContexts.Provider>

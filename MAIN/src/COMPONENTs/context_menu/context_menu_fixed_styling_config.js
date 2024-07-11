@@ -1,9 +1,11 @@
 /* { Fixed Context Menu Styling } --------------------------------------------------------------------------------------------------------- */
-const contextMenu_borderRadius = "11px";
-const contextMenu_boxShadow = "0px 4px 16px 8px rgba(0, 0, 0, 0.32)";
+const contextMenu_borderRadius = 11;
+const contextMenu_boxShadow = "0px 2px 32px 12px rgba(0, 0, 0, 0.32)";
 const contextMenu_backgroundColor = "#202020";
-const contextMenu_border = "1.5px solid #585858";
+const contextMenu_border = 1;
 const contextMenu_padding = 5;
+const contextMenu_width = 256;
+const contextMenu_minHeight = 16;
 
 const context_menu_fixed_styling = {
   borderRadius: contextMenu_borderRadius,
@@ -11,6 +13,8 @@ const context_menu_fixed_styling = {
   backgroundColor: contextMenu_backgroundColor,
   border: contextMenu_border,
   padding: contextMenu_padding,
+  width: contextMenu_width,
+  minHeight: contextMenu_minHeight,
 };
 /* { Fixed Context Menu Styling } --------------------------------------------------------------------------------------------------------- */
 
@@ -18,10 +22,16 @@ const context_menu_fixed_styling = {
 
 /* { Button } */
 const button_height = 28;
-
 const button_fixed_styling = {
   height: button_height,
 };
+
+/* { Br } */
+const br_height = 8;
+const br_fixed_styling = {
+  height: br_height,
+  padding: 5,
+};
 /* { Fixed Context Item Styling } --------------------------------------------------------------------------------------------------------- */
 
-export { context_menu_fixed_styling, button_fixed_styling };
+export { context_menu_fixed_styling, button_fixed_styling, br_fixed_styling };
