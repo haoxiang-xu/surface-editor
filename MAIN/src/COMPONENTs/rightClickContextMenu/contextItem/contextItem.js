@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 import { SubContextMenu } from "../rightClickContextMenu";
-import Form from "../customizeRequestForm/customizeRequestForm";
+import CustomizeRequestForm from "../customizeRequestForm/customizeRequestForm";
 import "./contextItem.css";
 import {
   rightClickContextMenuCommandContexts,
@@ -243,15 +243,16 @@ const CONTEXT_MENU_FUNCTION_MANAGER = {
     LEVEL: 0,
     CLICKABLE: true,
   },
-  
 };
 /* Context Menu Item List ============================================================================================================= */
 
 const CustomizedRequestFormContextItem = () => {
-  return <Form></Form>;
+  return <CustomizeRequestForm></CustomizeRequestForm>;
 };
 const DefaultContextItem = ({ item_function, parentContextMenuWidth }) => {
-  const { onRightClickItem, setIsRightClicked } = useContext(rightClickContextMenuCommandContexts);
+  const { onRightClickItem, setIsRightClicked } = useContext(
+    rightClickContextMenuCommandContexts
+  );
   const {
     progressRightClickCommand,
     onHoverContextItems,

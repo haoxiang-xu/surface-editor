@@ -47,13 +47,14 @@ const FAKE_CONTEXT = {
     unique_tag: "copy",
     clickable: true,
     label: "Copy",
+    short_cut_label: "Ctrl + C",
     icon: SYSTEM_ICON_MANAGER.copy.ICON512,
     quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
   },
   paste: {
     type: "button",
     unique_tag: "paste",
-    clickable: false,
+    clickable: true,
     label: "Paste",
     icon: SYSTEM_ICON_MANAGER.paste.ICON512,
     quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
@@ -73,6 +74,7 @@ const FAKE_CONTEXT = {
     label: "Customize API",
     quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
     clickable: true,
+    sub_items: ["customizeRequest"],
   },
   AST: {
     type: "button",
@@ -110,10 +112,7 @@ const FAKE_CONTEXT = {
     label: "More Editor Options...",
     quick_view_background: SYSTEM_ICON_MANAGER.moreOptions.ICON16,
     clickable: true,
-    sub_items: [
-      "fold",
-      "unfold",
-    ],
+    sub_items: ["fold", "unfold"],
   },
   fold: {
     type: "button",
@@ -146,6 +145,12 @@ const FAKE_CONTEXT = {
     label: "update AST",
     quick_view_background: SYSTEM_ICON_MANAGER.update.ICON16,
     clickable: true,
+  },
+  customizeRequest: {
+    unique_tag: "customizeRequest",
+    height: 256,
+    type: "component",
+    path: "monaco_editor/customizeRequestForm/customizeRequestForm",
   },
 };
 
@@ -273,7 +278,7 @@ const ContextItemButton = ({
           /* POSITION -------------- */
           position: "absolute",
           top: "50%",
-          left: "6px",
+          left: 6,
           transform: "translate(0%, -50%)",
 
           /* SIZE ------------------ */
@@ -320,6 +325,24 @@ const ContextItemButton = ({
       </span>
       {/* Context Item Label render --------------------------------------------------------- */}
 
+      {/* Context Item Short Cut Label render ----------------------------------------------- */}
+      {contextStructure[unique_tag].short_cut_label !== undefined ? (
+        <span
+          style={{
+            position: "absolute",
+            top: "50%",
+            right: 6,
+            color: "#CCCCCC",
+            transform: "translate(0%, -54%)",
+            userSelect: "none",
+            opacity: 0.32,
+          }}
+        >
+          {contextStructure[unique_tag].short_cut_label}
+        </span>
+      ) : null}
+      {/* Context Item Short Cut Label render ----------------------------------------------- */}
+
       {/* Context Item More option Icon render ---------------------------------------------- */}
       {contextStructure[unique_tag].sub_items !== undefined &&
       contextStructure[unique_tag].sub_items.length !== 0 ? (
@@ -329,12 +352,14 @@ const ContextItemButton = ({
             top: "50%",
             right: "8px",
             transform: "translate(0%, -45%)",
+            draggable: false,
           }}
         >
           <img
             style={{
               width: "16px",
               height: "16px",
+              userSelect: "none",
             }}
             src={SYSTEM_ICON_MANAGER.arrow.ICON512}
             loading="lazy"
@@ -383,6 +408,47 @@ const ContextItemBr = ({ index, unique_tag, top_position }) => {
         borderTop: "1px solid #58585896",
       }}
     ></div>
+  );
+};
+const ContextItemCustomizeComponent = ({ index, unique_tag, top_position }) => {
+  const {
+    contextStructure,
+    get_context_item_height,
+    progress_context_menu_item,
+  } = useContext(ContextMenuContexts);
+
+  const [ContextItemComponent, setContextItemComponent] = useState(null);
+  useEffect(() => {
+    async function loadComponent() {
+      const component_path = contextStructure[unique_tag].path;
+      const { default: LoadedComponent } = await import(
+        `../STACK_COMPONENTs/${component_path}`
+      );
+      setContextItemComponent(() => LoadedComponent);
+    }
+
+    loadComponent();
+  }, [contextStructure]);
+
+  return (
+    <div
+      style={{
+        /* POSITION -------------- */
+        position: "absolute",
+        top: top_position,
+        left: context_menu_fixed_styling.padding,
+
+        /* SIZE ------------------ */
+        height: get_context_item_height(unique_tag),
+        width: "100%",
+      }}
+    >
+      {ContextItemComponent ? (
+        <ContextItemComponent
+          progress_context_menu_item={progress_context_menu_item}
+        />
+      ) : null}
+    </div>
   );
 };
 /* { Context Menu Prestyled Component } ======================================================================================================== */
@@ -494,6 +560,15 @@ const ContextList = ({
                 top_position={calculate_item_top_position(index, sub_items)}
               />
             );
+          case "component":
+            return (
+              <ContextItemCustomizeComponent
+                key={item}
+                index={index}
+                unique_tag={item}
+                top_position={calculate_item_top_position(index, sub_items)}
+              />
+            );
           default:
             return null;
         }
@@ -509,19 +584,22 @@ const ContextMenu = () => {
     pop_command_by_tag,
     contextMenuPositionX,
     contextMenuPositionY,
-    loadContextMenu,
+    sourceStackComponentTag,
     unloadContextMenu,
   } = useContext(RootCommandContexts);
 
   const [contextStructure, setContextStructure] = useState(FAKE_CONTEXT);
 
   const get_context_item_height = (unique_tag) => {
-    if (contextStructure[unique_tag].type === "button") {
-      return button_fixed_styling.height;
-    } else if (contextStructure[unique_tag].type === "br") {
-      return br_fixed_styling.height;
-    } else {
-      return contextStructure[unique_tag].height;
+    switch (contextStructure[unique_tag].type) {
+      case "button":
+        return button_fixed_styling.height;
+      case "br":
+        return br_fixed_styling.height;
+      case "component":
+        return contextStructure[unique_tag].height;
+      default:
+        return contextStructure[unique_tag].height;
     }
   };
   const calculate_context_list_height = (sub_items) => {
@@ -593,7 +671,16 @@ const ContextMenu = () => {
     );
   }, [contextMenuPositionX, contextMenuPositionY]);
 
-  const progress_context_menu_item = () => {};
+  const progress_context_menu_item = (unique_tag) => {
+    push_command_by_tag(sourceStackComponentTag, {
+      source: "context_menu",
+      target: sourceStackComponentTag,
+      content: {
+        command: unique_tag,
+      },
+    });
+    unloadContextMenu();
+  };
   return (
     <ContextMenuContexts.Provider
       value={{

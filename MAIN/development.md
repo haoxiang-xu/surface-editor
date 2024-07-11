@@ -205,7 +205,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
     clickable: true,
     height: '100px',
     label: 'Copy',
-    sub_label: 'on copy string',
+    short_cut_label: `Ctrl+C`
     icon: 'url',
     quick_view_background: `url`,
     sub_items: ['unique_tag1', 'unique_tag2'],
