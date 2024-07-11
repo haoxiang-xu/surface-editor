@@ -203,7 +203,8 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
     type: 'button'
     unique_tag: 'copy',
     clickable: true,
-    height: '100px',
+    height: 100,
+    width: 512,
     label: 'Copy',
     short_cut_label: `Ctrl+C`
     icon: 'url',
@@ -232,3 +233,5 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `sub_label` (TYPE: String) <span style="opacity: 0.64"> (Optional) this variable will displayed as a low opacity text after label</span>
 - `icon` <span style="opacity: 0.64">(Optional)</span>
 - `quick_view_background` <span style="opacity: 0.64">(Optional)</span>
+- `height` <span style="opacity: 0.64">(Optional) A button component default height will be 28, and br componet default height will be 8.</span>
+- `width` <span style="opacity: 0.64">(Optional) `context_menu` default width is 220.</span>

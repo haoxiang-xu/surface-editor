@@ -5,6 +5,7 @@ import {
   context_menu_fixed_styling,
   button_fixed_styling,
   br_fixed_styling,
+  customize_component_fixed_styling,
 } from "./context_menu_fixed_styling_config";
 
 import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
@@ -151,6 +152,7 @@ const FAKE_CONTEXT = {
     height: 256,
     type: "component",
     path: "monaco_editor/customizeRequestForm/customizeRequestForm",
+    width: 278,
   },
 };
 
@@ -158,6 +160,7 @@ const FAKE_CONTEXT = {
 const ContextItemButton = ({
   index,
   unique_tag,
+  width,
   top_position,
   position_x,
   position_y,
@@ -175,10 +178,19 @@ const ContextItemButton = ({
   const handleIconLoad = () => {
     setIsIconLoaded(true);
   };
+  const setButtonBorderRadius = () => {
+    if (index === 0) {
+      return `${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
+    } else if (index === -1) {
+      return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.outterBorderRadius}px`;
+    } else {
+      return `${button_fixed_styling.innerBorderRadius}px`;
+    }
+  };
   const [style, setStyle] = useState({
     backgroundColor: default_clickable_panel_styling.backgroundColor.default,
     boxShadow: default_clickable_panel_styling.boxShadow.default,
-    borderRadius: button_fixed_styling.borderRadius,
+    borderRadius: setButtonBorderRadius(),
     transition: default_clickable_panel_styling.transition.default,
   });
   useEffect(() => {
@@ -187,7 +199,7 @@ const ContextItemButton = ({
         backgroundColor:
           default_clickable_panel_styling.backgroundColor.onClick,
         boxShadow: default_clickable_panel_styling.boxShadow.onClick,
-        borderRadius: button_fixed_styling.borderRadius,
+        borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.onClick,
       });
     } else if (onHover && contextStructure[unique_tag].clickable) {
@@ -195,7 +207,7 @@ const ContextItemButton = ({
         backgroundColor:
           default_clickable_panel_styling.backgroundColor.onHover,
         boxShadow: default_clickable_panel_styling.boxShadow.onHover,
-        borderRadius: button_fixed_styling.borderRadius,
+        borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.onHover,
       });
     } else {
@@ -203,7 +215,7 @@ const ContextItemButton = ({
         backgroundColor:
           default_clickable_panel_styling.backgroundColor.default,
         boxShadow: default_clickable_panel_styling.boxShadow.default,
-        borderRadius: button_fixed_styling.borderRadius,
+        borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.default,
       });
     }
@@ -223,15 +235,11 @@ const ContextItemButton = ({
               position_y + get_context_item_height(unique_tag),
             ],
             [
-              position_x -
-                context_menu_fixed_styling.width +
-                context_menu_fixed_styling.padding * 1.4,
+              position_x - width + context_menu_fixed_styling.padding * 1.4,
               position_y,
             ],
             [
-              position_x -
-                context_menu_fixed_styling.width +
-                context_menu_fixed_styling.padding * 1.4,
+              position_x - width + context_menu_fixed_styling.padding * 1.4,
               position_y + get_context_item_height(unique_tag),
             ],
           ],
@@ -440,7 +448,7 @@ const ContextItemCustomizeComponent = ({ index, unique_tag, top_position }) => {
 
         /* SIZE ------------------ */
         height: get_context_item_height(unique_tag),
-        width: "100%",
+        width: `calc(100% - ${context_menu_fixed_styling.padding * 2}px)`,
       }}
     >
       {ContextItemComponent ? (
@@ -462,6 +470,7 @@ const ContextList = ({
   const {
     contextStructure,
     calculate_context_list_height,
+    calculate_context_list_width,
     calculate_item_top_position,
   } = useContext(ContextMenuContexts);
 
@@ -470,9 +479,11 @@ const ContextList = ({
     `0px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px`
   );
   const [height, setHeight] = useState(context_menu_fixed_styling.minHeight);
+  const [width, setWidth] = useState(calculate_context_list_width(sub_items));
   useEffect(() => {
     setTimeout(() => {
       setHeight(calculate_context_list_height(sub_items));
+      setWidth(calculate_context_list_width(sub_items));
     }, 20);
     if (direction === 3) {
       setListPosition([position_x, position_y]);
@@ -480,10 +491,7 @@ const ContextList = ({
         `0px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px`
       );
     } else if (direction === 2) {
-      setListPosition([
-        position_x - context_menu_fixed_styling.width,
-        position_y,
-      ]);
+      setListPosition([position_x - width, position_y]);
       setBorderRadius(
         `${context_menu_fixed_styling.borderRadius}px 0px ${context_menu_fixed_styling.borderRadius}px ${context_menu_fixed_styling.borderRadius}px`
       );
@@ -497,7 +505,7 @@ const ContextList = ({
       );
     } else {
       setListPosition([
-        position_x - context_menu_fixed_styling.width,
+        position_x - width,
         position_y - calculate_context_list_height(sub_items),
       ]);
       setBorderRadius(
@@ -520,7 +528,7 @@ const ContextList = ({
 
         /*SIZE -------------------- */
         height: height,
-        width: `${context_menu_fixed_styling.width}px`,
+        width: width,
 
         /*STYLE ------------------- */
         border: `${context_menu_fixed_styling.border}px solid #58585896`,
@@ -540,10 +548,11 @@ const ContextList = ({
             return (
               <ContextItemButton
                 key={item}
-                index={index}
+                index={index === sub_items.length - 1 ? -1 : index}
                 unique_tag={item}
+                width={width}
                 top_position={calculate_item_top_position(index, sub_items)}
-                position_x={listPosition[0] + context_menu_fixed_styling.width}
+                position_x={listPosition[0] + width}
                 position_y={
                   listPosition[1] +
                   calculate_item_top_position(index, sub_items)
@@ -593,14 +602,35 @@ const ContextMenu = () => {
   const get_context_item_height = (unique_tag) => {
     switch (contextStructure[unique_tag].type) {
       case "button":
-        return button_fixed_styling.height;
+        if (contextStructure[unique_tag].height) {
+          return contextStructure[unique_tag].height;
+        } else {
+          return button_fixed_styling.height;
+        }
       case "br":
-        return br_fixed_styling.height;
+        if (contextStructure[unique_tag].height) {
+          return contextStructure[unique_tag].height;
+        } else {
+          return br_fixed_styling.height;
+        }
       case "component":
-        return contextStructure[unique_tag].height;
+        if (contextStructure[unique_tag].height) {
+          return contextStructure[unique_tag].height;
+        } else {
+          return customize_component_fixed_styling.height;
+        }
       default:
-        return contextStructure[unique_tag].height;
+        if (contextStructure[unique_tag].height) {
+          return contextStructure[unique_tag].height;
+        } else {
+          return 0;
+        }
     }
+  };
+  const get_context_item_width = (unique_tag) => {
+    return (
+      contextStructure[unique_tag].width || context_menu_fixed_styling.minWidth
+    );
   };
   const calculate_context_list_height = (sub_items) => {
     let height = context_menu_fixed_styling.padding * 2 + 2;
@@ -608,6 +638,13 @@ const ContextMenu = () => {
       height += get_context_item_height(sub_items[i]);
     }
     return height;
+  };
+  const calculate_context_list_width = (sub_items) => {
+    let width = context_menu_fixed_styling.minWidth;
+    for (let i = 0; i < sub_items.length; i++) {
+      width = Math.max(width, get_context_item_width(sub_items[i]));
+    }
+    return width;
   };
   const calculate_item_top_position = (index, sub_items) => {
     let top_position = context_menu_fixed_styling.padding + 1;
@@ -628,6 +665,8 @@ const ContextMenu = () => {
 
       return -> [position, direction] direction will be a index of filters, if top_left is avaliable, return 0
     */
+    const context_liet_width = calculate_context_list_width(sub_items);
+
     for (let i = 0; i < positions.length; i++) {
       const position = positions[i];
       if (
@@ -637,7 +676,7 @@ const ContextMenu = () => {
         avaliable_positions[i][2] = false;
         avaliable_positions[i][3] = false;
       }
-      if (position[0] + context_menu_fixed_styling.width > window.innerWidth) {
+      if (position[0] + context_liet_width > window.innerWidth) {
         avaliable_positions[i][1] = false;
         avaliable_positions[i][3] = false;
       }
@@ -682,24 +721,32 @@ const ContextMenu = () => {
     unloadContextMenu();
   };
   return (
-    <ContextMenuContexts.Provider
-      value={{
-        contextStructure,
-        get_context_item_height,
-        calculate_context_list_height,
-        calculate_item_top_position,
-        progress_context_menu_item,
-        get_context_menu_show_up_direction,
+    <div
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
       }}
     >
-      <ContextList
-        position_x={subListPostion[0][0]}
-        position_y={subListPostion[0][1]}
-        position_z={12}
-        direction={subListPostion[1]}
-        sub_items={contextStructure.root.sub_items}
-      />
-    </ContextMenuContexts.Provider>
+      <ContextMenuContexts.Provider
+        value={{
+          contextStructure,
+          get_context_item_height,
+          calculate_context_list_height,
+          calculate_context_list_width,
+          calculate_item_top_position,
+          progress_context_menu_item,
+          get_context_menu_show_up_direction,
+        }}
+      >
+        <ContextList
+          position_x={subListPostion[0][0]}
+          position_y={subListPostion[0][1]}
+          position_z={12}
+          direction={subListPostion[1]}
+          sub_items={contextStructure.root.sub_items}
+        />
+      </ContextMenuContexts.Provider>
+    </div>
   );
 };
 
