@@ -118,7 +118,7 @@ const HorizontalStack = () => {
     useContext(RootDataContexts);
 
   /* Right Click Menu ================================================================================================================================== */
-  const { unloadContextMenu } = useContext(RootCommandContexts);
+  const { unload_context_menu } = useContext(RootCommandContexts);
   /* Right Click Menu ================================================================================================================================== */
 
   /* Children Item Drag and Drop ----------------------------------------------------------------- */
@@ -173,7 +173,7 @@ const HorizontalStack = () => {
   const [onDropIndex, setOnDropIndex] = useState(-1);
 
   const onStackItemDragStart = (e, index) => {
-    unloadContextMenu();
+    unload_context_menu();
     e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
 
     setOnDragIndex(index);

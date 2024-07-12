@@ -36,6 +36,7 @@ const ContextItemButton = ({
   position_x,
   position_y,
   position_z,
+  list_direction,
 }) => {
   const {
     contextStructure,
@@ -52,8 +53,18 @@ const ContextItemButton = ({
   };
   const setButtonBorderRadius = () => {
     if (index === 0) {
+      if (list_direction === 3) {
+        return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
+      } else if (list_direction === 2) {
+        return `${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
+      }
       return `${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
     } else if (index === -1) {
+      if (list_direction === 1) {
+        return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
+      } else if (list_direction === 0) {
+        return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px`;
+      }
       return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.outterBorderRadius}px`;
     } else {
       return `${button_fixed_styling.innerBorderRadius}px`;
@@ -68,16 +79,22 @@ const ContextItemButton = ({
   useEffect(() => {
     if (onClicked && contextStructure[unique_tag].clickable) {
       setStyle({
-        backgroundColor:
-          default_clickable_panel_styling.backgroundColor.onClick,
+        backgroundColor: `rgba(${
+          context_menu_fixed_styling.backgroundColorR + 64
+        }, ${context_menu_fixed_styling.backgroundColorG + 64}, ${
+          context_menu_fixed_styling.backgroundColorB + 64
+        }, 0.72)`,
         boxShadow: default_clickable_panel_styling.boxShadow.onClick,
         borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.onClick,
       });
     } else if (onHover && contextStructure[unique_tag].clickable) {
       setStyle({
-        backgroundColor:
-          default_clickable_panel_styling.backgroundColor.onHover,
+        backgroundColor: `rgba(${
+          context_menu_fixed_styling.backgroundColorR + 32
+        }, ${context_menu_fixed_styling.backgroundColorG + 32}, ${
+          context_menu_fixed_styling.backgroundColorB + 32
+        }, 0.72)`,
         boxShadow: default_clickable_panel_styling.boxShadow.onHover,
         borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.onHover,
@@ -178,7 +195,7 @@ const ContextItemButton = ({
           /* POSITION -------------- */
           position: "absolute",
           top: "50%",
-          left: 6,
+          left: 5,
           transform: "translate(0%, -50%)",
 
           /* SIZE ------------------ */
@@ -219,6 +236,7 @@ const ContextItemButton = ({
           color: "#CCCCCC",
           transform: "translate(0%, -54%)",
           userSelect: "none",
+          opacity: 0.72,
         }}
       >
         {contextStructure[unique_tag].label}
@@ -276,7 +294,7 @@ const ContextItemButton = ({
         <ContextList
           position_x={subListPostion[0][0]}
           position_y={subListPostion[0][1]}
-          position_z={position_z + 12}
+          position_z={position_z}
           direction={subListPostion[1]}
           sub_items={contextStructure[unique_tag].sub_items}
         />
@@ -412,9 +430,10 @@ const ContextList = ({
 
   return (
     <div
+      className={"context_menu_list_container"}
       style={{
         /*ANIMATION ---------------- */
-        transition: "height 0.24s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+        transition: "height 0.33s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
 
         /*POSITION ---------------- */
         position: "fixed",
@@ -427,8 +446,17 @@ const ContextList = ({
         width: width,
 
         /*STYLE ------------------- */
-        border: `${context_menu_fixed_styling.border}px solid #585858`,
-        backgroundColor: "#202020",
+        border: `${context_menu_fixed_styling.border}px solid rgba(${Math.min(
+          context_menu_fixed_styling.backgroundColorR + 64,
+          255
+        )}, ${Math.min(
+          context_menu_fixed_styling.backgroundColorG + 64,
+          255
+        )}, ${Math.min(
+          context_menu_fixed_styling.backgroundColorB + 64,
+          255
+        )}, 1)`,
+        backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 1)`,
         borderRadius: borderRadius,
         boxShadow: context_menu_fixed_styling.boxShadow,
         overflow: "hidden",
@@ -454,6 +482,7 @@ const ContextList = ({
                   calculate_item_top_position(index, sub_items)
                 }
                 position_z={position_z}
+                list_direction={direction}
               />
             );
           case "br":
@@ -491,7 +520,7 @@ const ContextMenu = () => {
     contextMenuPositionY,
     sourceStackComponentTag,
     contextStructure,
-    unloadContextMenu,
+    unload_context_menu,
   } = useContext(RootCommandContexts);
 
   const get_context_item_height = (unique_tag) => {
@@ -618,7 +647,7 @@ const ContextMenu = () => {
         command_content: content,
       },
     });
-    unloadContextMenu();
+    unload_context_menu();
   };
   return (
     <div

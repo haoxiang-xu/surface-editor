@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  createContext,
+} from "react";
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
@@ -9,6 +15,7 @@ import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropCo
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { MonacoEditorContexts } from "./monaco_editor_contexts";
 import { RootCommandContexts } from "../../../DATA_MANAGERs/root_command_manager/root_command_contexts";
+import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_contexts";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 /* { Import Styling } ---------------------------------------------------------------------------------------- */
@@ -499,29 +506,6 @@ const MonacoEditorGroup = ({
   const { onSelectedMonacoIndex, monacoPaths } =
     useContext(MonacoEditorContexts);
   const [diffContent, setDiffContent] = useState(null);
-  const handleRightClick = (event) => {
-    event.preventDefault();
-    if (onSelectedContent || navigator.clipboard.readText() !== "") {
-      setOnRightClickItem({
-        source:
-          "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-        condition: { paste: true },
-        content: { customizeRequest: customizeRequest },
-        target:
-          "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-      });
-    } else {
-      setOnRightClickItem({
-        source:
-          "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-        condition: { paste: false },
-        content: { customizeRequest: customizeRequest },
-        target:
-          "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-      });
-    }
-  };
-
   return monacoPaths.map((filePath, index) => {
     return (
       <MonacoCore
@@ -550,7 +534,7 @@ const MonacoEditorContextMenuWrapper = ({
   stack_component_unique_tag,
   children,
 }) => {
-  const { loadContextMenu } = useContext(RootCommandContexts);
+  const { load_context_menu } = useContext(RootCommandContexts);
   const {
     command,
     setCommand,
@@ -587,7 +571,7 @@ const MonacoEditorContextMenuWrapper = ({
     paste: {
       type: "button",
       unique_tag: "paste",
-      clickable: true,
+      clickable: false,
       label: "Paste",
       icon: SYSTEM_ICON_MANAGER.paste.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
@@ -687,7 +671,6 @@ const MonacoEditorContextMenuWrapper = ({
       width: 278,
     },
   };
-  const [contextStructure, setContextStructure] = useState(base_context_menu);
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
     if (command && command.source === "context_menu") {
@@ -709,18 +692,43 @@ const MonacoEditorContextMenuWrapper = ({
     }
   };
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
+
+  /* { context menu render } ============================================================================================ */
+  const render_context_menu = async () => {
+    let contextStructure = { ...base_context_menu };
+    const onPaste = await navigator.clipboard.readText();
+    if (onPaste !== "") {
+      contextStructure = {
+        ...base_context_menu,
+        paste: { ...base_context_menu.paste, clickable: true },
+      };
+    } else {
+      contextStructure = {
+        ...base_context_menu,
+        paste: { ...base_context_menu.paste, clickable: false },
+      };
+    }
+    return contextStructure;
+  };
+  const load_editor_context_menu = async (e, source_editor_component) => {
+    if (source_editor_component === "monaco_core") {
+      const contextStructure = await render_context_menu();
+      load_context_menu(e, stack_component_unique_tag, contextStructure);
+    }
+  };
+  /* { context menu render } ============================================================================================ */
+
   useEffect(() => {
     handle_context_menu_command();
   }, [command]);
   return (
-    <div
-      className="code_editor_container1113"
-      onContextMenu={(e) => {
-        loadContextMenu(e, stack_component_unique_tag, contextStructure);
+    <MonacoEditorContextMenuContexts.Provider
+      value={{
+        load_editor_context_menu,
       }}
     >
-      {children}
-    </div>
+      <div className="code_editor_container1113">{children}</div>
+    </MonacoEditorContextMenuContexts.Provider>
   );
 };
 

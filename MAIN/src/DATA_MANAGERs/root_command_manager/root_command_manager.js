@@ -156,7 +156,7 @@ const RootCommandManager = ({ children }) => {
 
   const [contextStructure, setContextStructure] = useState(FAKE_CONTEXT);
 
-  const loadContextMenu = (event, unique_tag, context_menu_structure) => {
+  const load_context_menu = (event, unique_tag, context_menu_structure) => {
     event.preventDefault();
 
     if (!unique_tag) {
@@ -177,7 +177,7 @@ const RootCommandManager = ({ children }) => {
 
     setContextMenuOnLoad(true);
   };
-  const unloadContextMenu = () => {
+  const unload_context_menu = () => {
     setContextMenuOnLoad(false);
     setContextMenuPositionX(-999);
     setContextMenuPositionY(-999);
@@ -231,11 +231,11 @@ const RootCommandManager = ({ children }) => {
         contextMenuPositionY,
         sourceStackComponentTag,
         contextStructure,
-        loadContextMenu,
-        unloadContextMenu,
+        load_context_menu,
+        unload_context_menu,
       }}
     >
-      <div onClick={unloadContextMenu}>
+      <div onClick={unload_context_menu}>
         {children}
         {contextMenuOnLoad ? <ContextMenu /> : null}
       </div>
