@@ -435,7 +435,7 @@ const ContextList = ({
       className={"context_menu_list_container"}
       style={{
         /*ANIMATION ---------------- */
-        transition: "height 0.24s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+        transition: "height 0.33s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
 
         /*POSITION ---------------- */
         position: "fixed",
