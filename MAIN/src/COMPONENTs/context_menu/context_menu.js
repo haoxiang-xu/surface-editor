@@ -427,7 +427,7 @@ const ContextList = ({
         width: width,
 
         /*STYLE ------------------- */
-        border: `${context_menu_fixed_styling.border}px solid #58585896`,
+        border: `${context_menu_fixed_styling.border}px solid #585858`,
         backgroundColor: "#202020",
         borderRadius: borderRadius,
         boxShadow: context_menu_fixed_styling.boxShadow,
