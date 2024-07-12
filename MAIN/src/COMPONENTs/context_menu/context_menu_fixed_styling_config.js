@@ -28,7 +28,7 @@ const context_menu_fixed_styling = {
 
 /* { Button } */
 const button_height = 26;
-const button_outter_borderRadius = 8;
+const button_outter_borderRadius = 7;
 const button_inner_borderRadius = 2;
 const button_fontSize = 12;
 const button_fixed_styling = {

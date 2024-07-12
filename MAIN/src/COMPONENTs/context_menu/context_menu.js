@@ -13,8 +13,6 @@ import { ContextMenuContexts } from "./context_menu_contexts";
 
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
-import "./context_menu.css";
-
 /* Load ICON manager -------------------------------- */
 let SYSTEM_ICON_MANAGER = {
   default: {
