@@ -1,8 +1,10 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
 const path = require("path");
 const axios = require("axios");
-const fs = require('fs').promises;
-const { EXTENSIONS_TO_LANGUAGES_MATCHING_LIST } = require('./src/CONSTs/extensionsToLanguagesMatchingList.js');
+const fs = require("fs").promises;
+const {
+  EXTENSIONS_TO_LANGUAGES_MATCHING_LIST,
+} = require("./src/CONSTs/extensionsToLanguagesMatchingList.js");
 
 let mainWindow;
 const menuTemplate = [
@@ -52,7 +54,7 @@ const createWindow = () => {
         nodeIntegration: false,
       },
       frame: false,
-      hasShadow: false,
+      hasShadow: true,
       titleBarStyle: "hidden",
       trafficLightPosition: { x: 17, y: 15 },
     });
@@ -254,7 +256,8 @@ const readDir = async (dirPath, rootPath = dirPath) => {
   } catch (e) {
     throw e; // Rethrow the error to be caught by the caller
   }
-2};
+  2;
+};
 
 app.whenReady().then(createWindow);
 app.on("activate", () => {
@@ -306,29 +309,30 @@ ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
 ipcMain.on("trigger-read-dir", () => {
   openFolderStructureDialog();
 });
-ipcMain.on('read-file', async (event, absolutePath, relativePath) => {
+ipcMain.on("read-file", async (event, absolutePath, relativePath) => {
   try {
     const stats = await fs.stat(absolutePath);
     if (stats.isFile()) {
-      const content = await fs.readFile(absolutePath, 'utf8');
+      const content = await fs.readFile(absolutePath, "utf8");
       const openedFile = {
         fileName: path.basename(absolutePath),
         filePath: relativePath,
         fileAbsolutePath: absolutePath,
-        fileType: 'file',
-        fileLanguage: EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
+        fileType: "file",
+        fileLanguage:
+          EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
         fileContent: content,
       };
-      event.reply('file-content', openedFile, relativePath);
+      event.reply("file-content", openedFile, relativePath);
     } else {
-      event.reply('file-error', 'The provided path is a directory, not a file');
+      event.reply("file-error", "The provided path is a directory, not a file");
     }
   } catch (error) {
-    console.error('Failed to read file:', error);
-    if (error.code === 'ENOENT') {
-      event.reply('file-error', 'File does not exist');
+    console.error("Failed to read file:", error);
+    if (error.code === "ENOENT") {
+      event.reply("file-error", "File does not exist");
     } else {
-      event.reply('file-error', error.message || 'Failed to read file');
+      event.reply("file-error", error.message || "Failed to read file");
     }
   }
 });

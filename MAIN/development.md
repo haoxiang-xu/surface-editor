@@ -48,9 +48,10 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   - `file` <span style="opacity: 0.64">You can access any file under opened root folder by passing relative path.</span>
   - `storage` <span style="opacity: 0.64">storage allows you to store and reload your component data by the `stack_div_component_unique_tag`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their tag. You can see this</span> [`SAMPLE 000_006`](#000_006) <span style="opacity: 0.64">to have a basic picture of how this useState variable be formatted for `monaco_editor` component.</span>
 
-- `command_data_manager` (inorder to access this variable, you will need to get the premission from the user)
+- `root_command_manager` (inorder to access this variable, you will need to get the premission from the user)
 
   - `cmd` <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
+  - `load_context_menu`
 
 ### STEP 4 DEFINE YOUR OWN CONTEXT MENU (Optional)
 

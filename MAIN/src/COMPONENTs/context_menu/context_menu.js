@@ -324,7 +324,8 @@ const ContextItemBr = ({ index, unique_tag, top_position }) => {
         }px)`,
 
         /* STYLE ----------------- */
-        borderTop: "1px solid #58585896",
+        borderTop: "1px solid #CCCCCC",
+        opacity: 0.16,
       }}
     ></div>
   );
