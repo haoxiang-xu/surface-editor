@@ -1,12 +1,12 @@
 /* { Fixed Context Menu Styling } --------------------------------------------------------------------------------------------------------- */
-const contextMenu_borderRadius = 11;
+const contextMenu_borderRadius = 12;
 const contextMenu_boxShadow = "0 2px 12px rgba(0, 0, 0, 0.2)";
 const contextMenu_backgroundColorR = 32;
 const contextMenu_backgroundColorG = 32;
 const contextMenu_backgroundColorB = 32;
 const backdropFilter = "blur(32px)";
 const contextMenu_border = 1;
-const contextMenu_padding = 4;
+const contextMenu_padding = 5;
 const contextMenu_minWidth = 220;
 const contextMenu_minHeight = 16;
 
@@ -28,8 +28,8 @@ const context_menu_fixed_styling = {
 
 /* { Button } */
 const button_height = 26;
-const button_outter_borderRadius = 7;
-const button_inner_borderRadius = 3;
+const button_outter_borderRadius = 8;
+const button_inner_borderRadius = 2;
 const button_fontSize = 12;
 const button_fixed_styling = {
   height: button_height,

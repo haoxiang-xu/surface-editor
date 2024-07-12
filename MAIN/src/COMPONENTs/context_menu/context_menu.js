@@ -38,6 +38,7 @@ const ContextItemButton = ({
   position_x,
   position_y,
   position_z,
+  list_direction,
 }) => {
   const {
     contextStructure,
@@ -54,8 +55,18 @@ const ContextItemButton = ({
   };
   const setButtonBorderRadius = () => {
     if (index === 0) {
+      if (list_direction === 3) {
+        return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
+      } else if (list_direction === 2) {
+        return `${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
+      }
       return `${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
     } else if (index === -1) {
+      if (list_direction === 1) {
+        return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.innerBorderRadius}px`;
+      } else if (list_direction === 0) {
+        return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px`;
+      }
       return `${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.innerBorderRadius}px ${button_fixed_styling.outterBorderRadius}px ${button_fixed_styling.outterBorderRadius}px`;
     } else {
       return `${button_fixed_styling.innerBorderRadius}px`;
@@ -227,6 +238,7 @@ const ContextItemButton = ({
           color: "#CCCCCC",
           transform: "translate(0%, -54%)",
           userSelect: "none",
+          opacity: 0.72,
         }}
       >
         {contextStructure[unique_tag].label}
@@ -446,7 +458,7 @@ const ContextList = ({
           context_menu_fixed_styling.backgroundColorB + 64,
           255
         )}, 1)`,
-        backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 0.72)`,
+        backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 1)`,
         borderRadius: borderRadius,
         boxShadow: context_menu_fixed_styling.boxShadow,
         overflow: "hidden",
@@ -472,6 +484,7 @@ const ContextList = ({
                   calculate_item_top_position(index, sub_items)
                 }
                 position_z={position_z}
+                list_direction={direction}
               />
             );
           case "br":
