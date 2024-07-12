@@ -22,17 +22,17 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - <span>"horizontal*stack*/\_vertical_mode"</sapn><span style="opacity: 0.64"> (This object is inside a horizontal stack Div and under vertical mode which means width <= the boundary) </span>
 
-  - <span>"vertical_stack_/_horizontal_mode"</sapn>
+  - <span>"vertical*stack*/\_horizontal_mode"</sapn>
 
-  - <span>"vertical_stack_/_vertical_mode"</sapn>
+  - <span>"vertical*stack*/\_vertical_mode"</sapn>
 
-  - <span>"horizontal_space_/_horizontal_mode"</sapn>
+  - <span>"horizontal*space*/\_horizontal_mode"</sapn>
 
-  - <span>"horizontal_space_/_vertical_mode"</sapn>
+  - <span>"horizontal*space*/\_vertical_mode"</sapn>
 
-  - <span>"vertical_space_/_horizontal_mode"</sapn>
+  - <span>"vertical*space*/\_horizontal_mode"</sapn>
 
-  - <span>"vertical_space_/_vertical_mode"</sapn>
+  - <span>"vertical*space*/\_vertical_mode"</sapn>
 
 - `command` (TYPE: List)
 
@@ -45,13 +45,13 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - [`root_data_manager`](#root_data_manager) <span style="opacity: 0.64">Root Data Manager allows you to access, update, delete files under the repository that currently opened by this program.</span>
 
   - [`dir`](#dir) <span style="opacity: 0.64">Opened Folder and all subfolder will store recusively inside this variable as one single JSON structure.</span>
-  - `file` <span style="opacity: 0.64">You can access any file under opened root folder by passing relative path.</span>
-  - `storage` <span style="opacity: 0.64">storage allows you to store and reload your component data by the `stack_div_component_unique_tag`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their tag. You can see this</span> [`SAMPLE 000_006`](#000_006) <span style="opacity: 0.64">to have a basic picture of how this useState variable be formatted for `monaco_editor` component.</span>
+  - [`file`](#file) <span style="opacity: 0.64">You can access any file under opened root folder by passing relative path.</span>
+  - [`storage`](#storage) <span style="opacity: 0.64">storage allows you to store and reload your component data by the `stack_div_component_unique_tag`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their tag. You can see this</span> [`SAMPLE 000_006`](#000_006) <span style="opacity: 0.64">to have a basic picture of how this useState variable be formatted for `monaco_editor` component.</span>
 
-- `root_command_manager` (inorder to access this variable, you will need to get the premission from the user)
+- [`root_command_manager`](#root_command_manager) (inorder to access this variable, you will need to get the premission from the user)
 
-  - `cmd` <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
-  - `load_context_menu`
+  - [`cmd`](#cmd) <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
+  - [`context_menu`](#context_menu)
 
 ### STEP 4 DEFINE YOUR OWN CONTEXT MENU (Optional)
 
@@ -89,6 +89,33 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `update_folder_expand_status_by_path`
 - `access_subfiles_by_path`
 - `access_subfile_length_recusively_by_path`
+
+#### [file] <a id="file"></a>
+
+- `file`
+- `update_file_content_by_path`
+- `access_file_name_by_path_in_file`
+- `access_file_content_by_path`
+- `access_file_language_by_path`
+
+#### [storage] <a id="storage"></a>
+
+- `access_storage_by_tag`
+- `update_storage_by_tag`
+- `remove_storage_by_tag`
+
+### ROOT_COMMAND_MANAGER <a id="root_command_manager"></a>
+
+#### [cmd] <a id="cmd"></a>
+
+- `cmd`
+- `push_command_by_tag`
+- `pop_command_by_tag`
+
+#### [context menu] <a id="context_menu"></a>
+
+- `load_context_menu`
+- `unload_context_menu`
 
 ## [ VARIABLE FORMATING GUIDE ]
 
