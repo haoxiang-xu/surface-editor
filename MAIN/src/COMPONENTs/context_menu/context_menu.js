@@ -197,7 +197,7 @@ const ContextItemButton = ({
           /* POSITION -------------- */
           position: "absolute",
           top: "50%",
-          left: 6,
+          left: 5,
           transform: "translate(0%, -50%)",
 
           /* SIZE ------------------ */
