@@ -134,7 +134,8 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   source: 'context_menu',
   target: 'stack_component_unique_tag_to',
   content: {
-    command_title: 'String'
+    command_title: 'String',
+    command_content: {}
   }
 }
 ```
