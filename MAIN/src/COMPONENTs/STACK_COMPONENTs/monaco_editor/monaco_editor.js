@@ -8,6 +8,7 @@ import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightCli
 import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { MonacoEditorContexts } from "./monaco_editor_contexts";
+import { RootCommandContexts } from "../../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 /* { Import Styling } ---------------------------------------------------------------------------------------- */
@@ -545,11 +546,190 @@ const MonacoEditorGroup = ({
     );
   });
 };
+const MonacoEditorContextMenuWrapper = ({
+  stack_component_unique_tag,
+  children,
+}) => {
+  const { loadContextMenu } = useContext(RootCommandContexts);
+  const {
+    command,
+    setCommand,
+    onSelectedCotent,
+    setOnSelectedCotent,
+    onAppendContent,
+    setOnAppendContent,
+  } = useContext(MonacoEditorContexts);
+  const base_context_menu = {
+    root: {
+      type: "root",
+      sub_items: [
+        "continue",
+        "fix",
+        "br",
+        "customizeInstruction",
+        "customizeAPI",
+        "AST",
+        "br",
+        "moreOptions",
+        "copy",
+        "paste",
+      ],
+    },
+    copy: {
+      type: "button",
+      unique_tag: "copy",
+      clickable: true,
+      label: "Copy",
+      short_cut_label: "Ctrl + C",
+      icon: SYSTEM_ICON_MANAGER.copy.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
+    },
+    paste: {
+      type: "button",
+      unique_tag: "paste",
+      clickable: true,
+      label: "Paste",
+      icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+    },
+    customizeInstruction: {
+      type: "button",
+      unique_tag: "customizeInstruction",
+      clickable: true,
+      label: "Customize Instruction",
+      icon: SYSTEM_ICON_MANAGER.draftingCompass.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.draftingCompass.ICON16,
+    },
+    customizeAPI: {
+      type: "button",
+      unique_tag: "customizeAPI",
+      icon: SYSTEM_ICON_MANAGER.customize.ICON512,
+      label: "Customize API",
+      quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
+      clickable: true,
+      sub_items: ["customizeRequest"],
+    },
+    AST: {
+      type: "button",
+      unique_tag: "AST",
+      label: "AST",
+      icon: SYSTEM_ICON_MANAGER.ast.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.ast.ICON16,
+      clickable: true,
+      sub_items: ["viewAST", "updateAST"],
+    },
+    continue: {
+      type: "button",
+      unique_tag: "continue",
+      clickable: true,
+      label: "Continue...",
+      icon: SYSTEM_ICON_MANAGER.continue.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.continue.ICON16,
+    },
+    fix: {
+      type: "button",
+      unique_tag: "fix",
+      clickable: true,
+      label: "Fix...",
+      icon: SYSTEM_ICON_MANAGER.fix.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.fix.ICON16,
+    },
+    br: {
+      type: "br",
+      unique_tag: "br",
+    },
+    moreOptions: {
+      type: "button",
+      unique_tag: "moreOptions",
+      icon: SYSTEM_ICON_MANAGER.moreOptions.ICON512,
+      label: "More Editor Options...",
+      quick_view_background: SYSTEM_ICON_MANAGER.moreOptions.ICON16,
+      clickable: true,
+      sub_items: ["fold", "unfold"],
+    },
+    fold: {
+      type: "button",
+      unique_tag: "fold",
+      icon: SYSTEM_ICON_MANAGER.fold.ICON512,
+      label: "Fold All",
+      quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
+      clickable: true,
+    },
+    unfold: {
+      type: "button",
+      unique_tag: "unfold",
+      icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
+      label: "Unfold All",
+      quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
+      clickable: true,
+    },
+    viewAST: {
+      type: "button",
+      unique_tag: "viewAST",
+      icon: SYSTEM_ICON_MANAGER.folderTree.ICON512,
+      label: "view AST",
+      quick_view_background: SYSTEM_ICON_MANAGER.folderTree.ICON16,
+      clickable: true,
+    },
+    updateAST: {
+      type: "button",
+      unique_tag: "updateAST",
+      icon: SYSTEM_ICON_MANAGER.update.ICON512,
+      label: "update AST",
+      quick_view_background: SYSTEM_ICON_MANAGER.update.ICON16,
+      clickable: true,
+    },
+    customizeRequest: {
+      unique_tag: "customizeRequest",
+      height: 256,
+      type: "component",
+      path: "monaco_editor/customizeRequestForm/customizeRequestForm",
+      width: 278,
+    },
+  };
+  const [contextStructure, setContextStructure] = useState(base_context_menu);
+  /* { context menu command handler } ----------------------------------------------------------------------------------- */
+  const handle_context_menu_command = async () => {
+    if (command && command.source === "context_menu") {
+      const command_title = command.content.command_title;
+      switch (command_title) {
+        case "copy":
+          if (onSelectedCotent) {
+            await navigator.clipboard.writeText(onSelectedCotent?.selectedText);
+          }
+          break;
+        case "paste":
+          const onPaste = await navigator.clipboard.readText();
+          if (onPaste !== "") {
+            setOnAppendContent(onPaste);
+          }
+          break;
+      }
+      setCommand([]);
+    }
+  };
+  /* { context menu command handler } ----------------------------------------------------------------------------------- */
+  useEffect(() => {
+    handle_context_menu_command();
+  }, [command]);
+  return (
+    <div
+      className="code_editor_container1113"
+      onContextMenu={(e) => {
+        loadContextMenu(e, stack_component_unique_tag, contextStructure);
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 const MonacoEditor = ({
   stack_component_unique_tag,
   mode,
   code_editor_container_ref_index,
+  command,
+  setCommand,
   data,
   setData,
 }) => {
@@ -758,30 +938,40 @@ const MonacoEditor = ({
   /* Context Menu ----------------------------------------------------------------------- */
 
   return (
-    <div
-      className="code_editor_container1113"
-      onClick={(e) => {
-        handleLeftClick(e);
+    <MonacoEditorContexts.Provider
+      value={{
+        command,
+        setCommand,
+        onSelectedMonacoIndex,
+        setOnSelectedMonacoIndex,
+        monacoPaths,
+        setMonacoPaths,
+        monacoCores,
+        setMonacoCores,
+        access_monaco_core_by_path,
+        update_monaco_core_view_state,
+        update_monaco_core_model,
+        onDeleteMonacoEditorPath,
+        setOnDeleteMonacoEditorPath,
+        onSelectedCotent,
+        setOnSelectedCotent,
+        onAppendContent,
+        setOnAppendContent,
       }}
     >
-      <MonacoEditorContexts.Provider
-        value={{
-          onSelectedMonacoIndex,
-          setOnSelectedMonacoIndex,
-          monacoPaths,
-          setMonacoPaths,
-          monacoCores,
-          setMonacoCores,
-          access_monaco_core_by_path,
-          update_monaco_core_view_state,
-          update_monaco_core_model,
-        }}
+      <MonacoEditorContextMenuWrapper
+        stack_component_unique_tag={stack_component_unique_tag}
       >
         <link
           href="https://fonts.googleapis.com/css?family=Roboto"
           rel="stylesheet"
         ></link>
-        <div style={{ height: "100%" }}>
+        <div
+          style={{ height: "100%" }}
+          onClick={(e) => {
+            handleLeftClick(e);
+          }}
+        >
           <MonacoEditorGroup
             code_editor_container_ref_index={code_editor_container_ref_index}
             //CONTEXT MENU
@@ -804,8 +994,8 @@ const MonacoEditor = ({
             setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
           />
         </div>
-      </MonacoEditorContexts.Provider>
-    </div>
+      </MonacoEditorContextMenuWrapper>
+    </MonacoEditorContexts.Provider>
   );
 };
 

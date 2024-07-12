@@ -27,135 +27,6 @@ try {
 }
 /* Load ICON manager -------------------------------- */
 
-const FAKE_CONTEXT = {
-  root: {
-    type: "root",
-    sub_items: [
-      "continue",
-      "fix",
-      "br",
-      "customizeInstruction",
-      "customizeAPI",
-      "AST",
-      "br",
-      "moreOptions",
-      "copy",
-      "paste",
-    ],
-  },
-  copy: {
-    type: "button",
-    unique_tag: "copy",
-    clickable: true,
-    label: "Copy",
-    short_cut_label: "Ctrl + C",
-    icon: SYSTEM_ICON_MANAGER.copy.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
-  },
-  paste: {
-    type: "button",
-    unique_tag: "paste",
-    clickable: true,
-    label: "Paste",
-    icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
-  },
-  customizeInstruction: {
-    type: "button",
-    unique_tag: "customizeInstruction",
-    clickable: true,
-    label: "Customize Instruction",
-    icon: SYSTEM_ICON_MANAGER.draftingCompass.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.draftingCompass.ICON16,
-  },
-  customizeAPI: {
-    type: "button",
-    unique_tag: "customizeAPI",
-    icon: SYSTEM_ICON_MANAGER.customize.ICON512,
-    label: "Customize API",
-    quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
-    clickable: true,
-    sub_items: ["customizeRequest"],
-  },
-  AST: {
-    type: "button",
-    unique_tag: "AST",
-    label: "AST",
-    icon: SYSTEM_ICON_MANAGER.ast.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.ast.ICON16,
-    clickable: true,
-    sub_items: ["viewAST", "updateAST"],
-  },
-  continue: {
-    type: "button",
-    unique_tag: "continue",
-    clickable: true,
-    label: "Continue...",
-    icon: SYSTEM_ICON_MANAGER.continue.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.continue.ICON16,
-  },
-  fix: {
-    type: "button",
-    unique_tag: "fix",
-    clickable: true,
-    label: "Fix...",
-    icon: SYSTEM_ICON_MANAGER.fix.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.fix.ICON16,
-  },
-  br: {
-    type: "br",
-    unique_tag: "br",
-  },
-  moreOptions: {
-    type: "button",
-    unique_tag: "moreOptions",
-    icon: SYSTEM_ICON_MANAGER.moreOptions.ICON512,
-    label: "More Editor Options...",
-    quick_view_background: SYSTEM_ICON_MANAGER.moreOptions.ICON16,
-    clickable: true,
-    sub_items: ["fold", "unfold"],
-  },
-  fold: {
-    type: "button",
-    unique_tag: "fold",
-    icon: SYSTEM_ICON_MANAGER.fold.ICON512,
-    label: "Fold All",
-    quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
-    clickable: true,
-  },
-  unfold: {
-    type: "button",
-    unique_tag: "unfold",
-    icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
-    label: "Unfold All",
-    quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
-    clickable: true,
-  },
-  viewAST: {
-    type: "button",
-    unique_tag: "viewAST",
-    icon: SYSTEM_ICON_MANAGER.folderTree.ICON512,
-    label: "view AST",
-    quick_view_background: SYSTEM_ICON_MANAGER.folderTree.ICON16,
-    clickable: true,
-  },
-  updateAST: {
-    type: "button",
-    unique_tag: "updateAST",
-    icon: SYSTEM_ICON_MANAGER.update.ICON512,
-    label: "update AST",
-    quick_view_background: SYSTEM_ICON_MANAGER.update.ICON16,
-    clickable: true,
-  },
-  customizeRequest: {
-    unique_tag: "customizeRequest",
-    height: 256,
-    type: "component",
-    path: "monaco_editor/customizeRequestForm/customizeRequestForm",
-    width: 278,
-  },
-};
-
 /* { Context Menu Prestyled Component } ======================================================================================================== */
 const ContextItemButton = ({
   index,
@@ -170,6 +41,7 @@ const ContextItemButton = ({
     contextStructure,
     get_context_item_height,
     get_context_menu_show_up_direction,
+    progress_context_menu_item,
   } = useContext(ContextMenuContexts);
 
   const [onHover, setOnHover] = useState(false);
@@ -267,18 +139,38 @@ const ContextItemButton = ({
         width: `calc(100% - ${context_menu_fixed_styling.padding * 2}px)`,
 
         /* STYLE ----------------- */
-        fontSize: "13px",
+        fontSize: button_fixed_styling.fontSize,
         borderRadius: style.borderRadius,
         backgroundColor: style.backgroundColor,
         boxShadow: style.boxShadow,
+        opacity: contextStructure[unique_tag].clickable ? 1 : 0.32,
       }}
       onMouseEnter={() => setOnHover(true)}
       onMouseLeave={() => {
         setOnHover(false);
         setOnClicked(false);
       }}
-      onMouseDown={() => setOnClicked(true)}
-      onMouseUp={() => setOnClicked(false)}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+        if (
+          contextStructure[unique_tag].clickable &&
+          (contextStructure[unique_tag].sub_items === undefined ||
+            contextStructure[unique_tag].sub_items.length === 0)
+        ) {
+          setOnClicked(true);
+        }
+      }}
+      onMouseUp={() => {
+        if (
+          onClicked &&
+          contextStructure[unique_tag].clickable &&
+          (contextStructure[unique_tag].sub_items === undefined ||
+            contextStructure[unique_tag].sub_items.length === 0)
+        ) {
+          progress_context_menu_item(unique_tag, {});
+        }
+        setOnClicked(false);
+      }}
     >
       {/* Context Item Icon render ---------------------------------------------------------- */}
       <div
@@ -343,6 +235,7 @@ const ContextItemButton = ({
             color: "#CCCCCC",
             transform: "translate(0%, -54%)",
             userSelect: "none",
+            fontSize: br_fixed_styling.fontSize,
             opacity: 0.32,
           }}
         >
@@ -449,6 +342,9 @@ const ContextItemCustomizeComponent = ({ index, unique_tag, top_position }) => {
         /* SIZE ------------------ */
         height: get_context_item_height(unique_tag),
         width: `calc(100% - ${context_menu_fixed_styling.padding * 2}px)`,
+      }}
+      onMouseDown={(e) => {
+        e.stopPropagation();
       }}
     >
       {ContextItemComponent ? (
@@ -588,16 +484,15 @@ const ContextList = ({
 
 const ContextMenu = () => {
   const {
-    command,
+    cmd,
     push_command_by_tag,
     pop_command_by_tag,
     contextMenuPositionX,
     contextMenuPositionY,
     sourceStackComponentTag,
+    contextStructure,
     unloadContextMenu,
   } = useContext(RootCommandContexts);
-
-  const [contextStructure, setContextStructure] = useState(FAKE_CONTEXT);
 
   const get_context_item_height = (unique_tag) => {
     switch (contextStructure[unique_tag].type) {
@@ -710,12 +605,17 @@ const ContextMenu = () => {
     );
   }, [contextMenuPositionX, contextMenuPositionY]);
 
-  const progress_context_menu_item = (unique_tag) => {
+  const progress_context_menu_item = (unique_tag, content) => {
+    /* 
+      unique_tag -> unique tag of the command
+      content -> customized josn format variable that contains content of the command
+    */
     push_command_by_tag(sourceStackComponentTag, {
       source: "context_menu",
       target: sourceStackComponentTag,
       content: {
-        command: unique_tag,
+        command_title: unique_tag,
+        command_content: content,
       },
     });
     unloadContextMenu();

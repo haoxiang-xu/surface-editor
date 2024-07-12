@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import HorizontalStackTopLeftSection from "./STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
+import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts.js";
 import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 
 import "./stack_frame.css";
@@ -267,11 +268,33 @@ const HorizontalStackContainer = ({
     update_storage_by_tag,
     delete_storage_by_tag,
   } = useContext(RootDataContexts);
-  const [data, setData] = useState(access_storage_by_tag(stack_component_unique_tag));
+  const [data, setData] = useState(
+    access_storage_by_tag(stack_component_unique_tag)
+  );
   useEffect(() => {
     update_storage_by_tag(String(stack_component_unique_tag), data);
   }, [data]);
   /* { data } ------------------------------------------------------------------------------------------------- */
+
+  /* { command } ============================================================================================== */
+  const { cmd, pop_command_by_tag } = useContext(RootCommandContexts);
+  const [command, setCommand] = useState([]);
+  useEffect(() => {
+    if (
+      cmd[stack_component_unique_tag] &&
+      cmd[stack_component_unique_tag].length > 0 &&
+      command.length === 0
+    ) {
+      setCommand(cmd[stack_component_unique_tag][0]);
+    }
+  }, [cmd]);
+  useEffect(() => {
+    if (command.length === 0) {
+      pop_command_by_tag(stack_component_unique_tag);
+    }
+  }, [command]);
+
+  /* { command } ============================================================================================== */
 
   const onMaximizeOnClick = () => {
     expandContainer(index);
@@ -336,6 +359,8 @@ const HorizontalStackContainer = ({
           <StackFrameComponent
             stack_component_unique_tag={stack_component_unique_tag}
             mode={mode}
+            command={command}
+            setCommand={setCommand}
             data={data}
             setData={setData}
             explorer_width={item.width}

@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { ICON_MANAGER } from "../../../../ICONs/icon_manager";
-import {
-  rightClickContextMenuCommandContexts,
-  rightClickContextMenuInsideContexts,
-} from "../../../../CONTEXTs/rightClickContextMenuContexts";
+import { rightClickContextMenuCommandContexts } from "../../../../CONTEXTs/rightClickContextMenuContexts";
+import { ContextMenuContexts } from "../../../context_menu/context_menu_contexts";
 import "./customizeRequestForm.css";
 import { CUSTOMIZE_REQUEST_FORM_HEIGHT } from "../../../../CONSTs/contextMenuConfig";
 
@@ -21,7 +19,8 @@ try {
 }
 /* Load ICON manager -------------------------------- */
 
-const Form = ({ progress_context_menu_item }) => {
+const CustomizeRequestForm = () => {
+  const { progress_context_menu_item } = useContext(ContextMenuContexts);
   const { onRightClickItem } = useContext(rightClickContextMenuCommandContexts);
   const [requestURL, setRequestURL] = useState(
     onRightClickItem?.content?.customizeRequest?.requestURL
@@ -44,7 +43,7 @@ const Form = ({ progress_context_menu_item }) => {
       : "console"
   );
 
-  const onFormSubmit = () => {
+  const onFormSubmit = (e) => {
     progress_context_menu_item("customizeRequest", {
       requestURL: requestURL,
       requestMethod: requestMethod,
@@ -120,7 +119,9 @@ const Form = ({ progress_context_menu_item }) => {
       </div>
       <button
         className="customizeRequestForm_component_button1120"
-        onClick={onFormSubmit}
+        onClick={(e) => {
+          onFormSubmit(e);
+        }}
       >
         Send Request
       </button>
@@ -128,4 +129,4 @@ const Form = ({ progress_context_menu_item }) => {
   );
 };
 
-export default Form;
+export default CustomizeRequestForm;

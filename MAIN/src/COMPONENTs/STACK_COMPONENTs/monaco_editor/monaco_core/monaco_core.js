@@ -6,6 +6,8 @@ import { globalDragAndDropContexts } from "../../../../CONTEXTs/globalDragAndDro
 import { stackStructureDragAndDropContexts } from "../../../../CONTEXTs/stackStructureDragAndDropContexts";
 import { MonacoEditorContexts } from "../monaco_editor_contexts";
 
+import axios from "axios";
+
 const MonacoCore = ({
   //Editor required parameters
   editor_filePath,
@@ -141,10 +143,10 @@ const MonacoCore = ({
       const editor = monacoRef.current.editor || monacoRef.current;
       const selection = editor.getSelection();
       const range = new monaco.Range(
-        // selection.startLineNumber,
-        // selection.startColumn,
-        selection.endLineNumber,
-        selection.endColumn,
+        selection.startLineNumber,
+        selection.startColumn,
+        // selection.endLineNumber,
+        // selection.endColumn,
         selection.endLineNumber,
         selection.endColumn
       );
@@ -244,8 +246,8 @@ const MonacoCore = ({
             : "none",
       }}
       onContextMenu={(e) => {
+        e.preventDefault();
         getEditorOnSelected(monacoRef);
-        onContextMenu(e);
       }}
     >
       {editor_diffContent ? (
@@ -309,14 +311,13 @@ const registerInlineCompletionProvider = async (monaco) => {
         try {
           const response = await axios.post(
             "http://localhost:8200/openai/continue",
-            requestBody,
+            requestBody
           );
           return response;
-        }
-        catch (e) {
+        } catch (e) {
           console.log(e);
         }
-      }
+      };
 
       return {
         items: [
@@ -422,12 +423,18 @@ const applyEditorOptionsInMemory = (
   dragCommand,
   setDragCommand
 ) => {
-  if (access_monaco_core_by_path(editor_filePath) && access_monaco_core_by_path(editor_filePath).model) {
+  if (
+    access_monaco_core_by_path(editor_filePath) &&
+    access_monaco_core_by_path(editor_filePath).model
+  ) {
     monacoRef.current.setModel(
       access_monaco_core_by_path(editor_filePath).model
     );
   }
-  if (access_monaco_core_by_path(editor_filePath) && access_monaco_core_by_path(editor_filePath)?.viewState) {
+  if (
+    access_monaco_core_by_path(editor_filePath) &&
+    access_monaco_core_by_path(editor_filePath)?.viewState
+  ) {
     editor.restoreViewState(
       access_monaco_core_by_path(editor_filePath).viewState
     );

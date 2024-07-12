@@ -34,7 +34,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - <span>"vertical_space_/_vertical_mode"</sapn>
 
-- `received_command` (TYPE: List)
+- `command` (TYPE: List)
 
 - `data` & `setData` (TYPE: Json) <span style="opacity: 0.64"> data allows you to store and reload your component data, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
 
@@ -50,7 +50,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 - `command_data_manager` (inorder to access this variable, you will need to get the premission from the user)
 
-  - `command` <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
+  - `cmd` <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
 
 ### STEP 4 DEFINE YOUR OWN CONTEXT MENU (Optional)
 
