@@ -491,7 +491,7 @@ const ContextMenu = () => {
     contextMenuPositionY,
     sourceStackComponentTag,
     contextStructure,
-    unloadContextMenu,
+    unload_context_menu,
   } = useContext(RootCommandContexts);
 
   const get_context_item_height = (unique_tag) => {
@@ -618,7 +618,7 @@ const ContextMenu = () => {
         command_content: content,
       },
     });
-    unloadContextMenu();
+    unload_context_menu();
   };
   return (
     <div

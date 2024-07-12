@@ -550,7 +550,7 @@ const MonacoEditorContextMenuWrapper = ({
   stack_component_unique_tag,
   children,
 }) => {
-  const { loadContextMenu } = useContext(RootCommandContexts);
+  const { load_context_menu } = useContext(RootCommandContexts);
   const {
     command,
     setCommand,
@@ -587,7 +587,7 @@ const MonacoEditorContextMenuWrapper = ({
     paste: {
       type: "button",
       unique_tag: "paste",
-      clickable: true,
+      clickable: false,
       label: "Paste",
       icon: SYSTEM_ICON_MANAGER.paste.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
@@ -687,7 +687,6 @@ const MonacoEditorContextMenuWrapper = ({
       width: 278,
     },
   };
-  const [contextStructure, setContextStructure] = useState(base_context_menu);
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
     if (command && command.source === "context_menu") {
@@ -709,15 +708,37 @@ const MonacoEditorContextMenuWrapper = ({
     }
   };
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
+
+  /* { context menu render } ============================================================================================ */
+  const render_context_menu = async () => {
+    let contextStructure = { ...base_context_menu };
+    const onPaste = await navigator.clipboard.readText();
+    if (onPaste !== "") {
+      contextStructure = {
+        ...base_context_menu,
+        paste: { ...base_context_menu.paste, clickable: true },
+      };
+    } else {
+      contextStructure = {
+        ...base_context_menu,
+        paste: { ...base_context_menu.paste, clickable: false },
+      };
+    }
+    return contextStructure;
+  };
+  const load_editor_context_menu = async (e) => {
+    const contextStructure = await render_context_menu();
+    load_context_menu(e, stack_component_unique_tag, contextStructure);
+  };
+  /* { context menu render } ============================================================================================ */
+
   useEffect(() => {
     handle_context_menu_command();
   }, [command]);
   return (
     <div
       className="code_editor_container1113"
-      onContextMenu={(e) => {
-        loadContextMenu(e, stack_component_unique_tag, contextStructure);
-      }}
+      onContextMenu={load_editor_context_menu}
     >
       {children}
     </div>
