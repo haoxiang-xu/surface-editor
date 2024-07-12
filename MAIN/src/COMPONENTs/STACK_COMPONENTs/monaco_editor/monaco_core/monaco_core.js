@@ -5,7 +5,7 @@ import { RootDataContexts } from "../../../../DATA_MANAGERs/root_data_manager/ro
 import { globalDragAndDropContexts } from "../../../../CONTEXTs/globalDragAndDropContexts";
 import { stackStructureDragAndDropContexts } from "../../../../CONTEXTs/stackStructureDragAndDropContexts";
 import { MonacoEditorContexts } from "../monaco_editor_contexts";
-
+import { MonacoEditorContextMenuContexts } from "../monaco_editor_context_menu_contexts";
 import axios from "axios";
 
 const MonacoCore = ({
@@ -49,6 +49,9 @@ const MonacoCore = ({
     update_monaco_core_view_state,
     update_monaco_core_model,
   } = useContext(MonacoEditorContexts);
+  const { load_editor_context_menu } = useContext(
+    MonacoEditorContextMenuContexts
+  );
   const { draggedItem, dragCommand, setDragCommand } = useContext(
     globalDragAndDropContexts
   );
@@ -127,7 +130,7 @@ const MonacoCore = ({
     setIsMonacoEditorMounted(true);
   };
   ////Get monaco editor on selected content
-  const getEditorOnSelected = (monacoRef) => {
+  const getEditorOnSelected = async (monacoRef) => {
     const select_range = monacoRef.current.getSelection();
     const selectedText = monacoRef.current
       .getModel()
@@ -245,9 +248,10 @@ const MonacoCore = ({
             ? "block"
             : "none",
       }}
-      onContextMenu={(e) => {
+      onContextMenu={async (e) => {
         e.preventDefault();
-        getEditorOnSelected(monacoRef);
+        await getEditorOnSelected(monacoRef);
+        load_editor_context_menu(e, "monaco_core");
       }}
     >
       {editor_diffContent ? (

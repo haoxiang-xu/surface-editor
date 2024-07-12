@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  createContext,
+} from "react";
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
@@ -9,6 +15,7 @@ import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropCo
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { MonacoEditorContexts } from "./monaco_editor_contexts";
 import { RootCommandContexts } from "../../../DATA_MANAGERs/root_command_manager/root_command_contexts";
+import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_contexts";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";
 /* { Import Styling } ---------------------------------------------------------------------------------------- */
@@ -499,29 +506,6 @@ const MonacoEditorGroup = ({
   const { onSelectedMonacoIndex, monacoPaths } =
     useContext(MonacoEditorContexts);
   const [diffContent, setDiffContent] = useState(null);
-  const handleRightClick = (event) => {
-    event.preventDefault();
-    if (onSelectedContent || navigator.clipboard.readText() !== "") {
-      setOnRightClickItem({
-        source:
-          "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-        condition: { paste: true },
-        content: { customizeRequest: customizeRequest },
-        target:
-          "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-      });
-    } else {
-      setOnRightClickItem({
-        source:
-          "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-        condition: { paste: false },
-        content: { customizeRequest: customizeRequest },
-        target:
-          "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-      });
-    }
-  };
-
   return monacoPaths.map((filePath, index) => {
     return (
       <MonacoCore
@@ -726,9 +710,11 @@ const MonacoEditorContextMenuWrapper = ({
     }
     return contextStructure;
   };
-  const load_editor_context_menu = async (e) => {
-    const contextStructure = await render_context_menu();
-    load_context_menu(e, stack_component_unique_tag, contextStructure);
+  const load_editor_context_menu = async (e, source_editor_component) => {
+    if (source_editor_component === "monaco_core") {
+      const contextStructure = await render_context_menu();
+      load_context_menu(e, stack_component_unique_tag, contextStructure);
+    }
   };
   /* { context menu render } ============================================================================================ */
 
@@ -736,12 +722,13 @@ const MonacoEditorContextMenuWrapper = ({
     handle_context_menu_command();
   }, [command]);
   return (
-    <div
-      className="code_editor_container1113"
-      onContextMenu={load_editor_context_menu}
+    <MonacoEditorContextMenuContexts.Provider
+      value={{
+        load_editor_context_menu,
+      }}
     >
-      {children}
-    </div>
+      <div className="code_editor_container1113">{children}</div>
+    </MonacoEditorContextMenuContexts.Provider>
   );
 };
 
