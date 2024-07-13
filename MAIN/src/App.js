@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import ChatBox from "./COMPONENTs/chatBox/chatBox";
+import ChatBox from "./DEMO/chatBox/chatBox";
 import Home from "./HOME/home";
 
 import "./App.css";

@@ -53,6 +53,8 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   - [`cmd`](#cmd) <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
   - [`context_menu`](#context_menu)
 
+- [`stack_structure_manager`](#stack_structure_manager)
+
 ### STEP 4 DEFINE YOUR OWN CONTEXT MENU (Optional)
 
 #### STEP 4.1 Declare Context Menu Structure

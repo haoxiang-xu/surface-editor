@@ -803,10 +803,7 @@ const MonacoEditor = ({
   /* API =================================================================================== */
   const continueAPI = async () => {
     const requestBody = {
-      language: access_file_language_by_path(
-        code_editor_container_ref_index,
-        onSelectedMonacoIndex
-      ),
+      language: "js",
       prompt: onSelectedCotent?.selectedText,
     };
 
@@ -824,20 +821,13 @@ const MonacoEditor = ({
   };
   const getAST = async () => {
     const requestBody = {
-      language: access_file_language_by_path(
-        code_editor_container_ref_index,
-        onSelectedMonacoIndex
-      ),
+      language: "js",
       prompt: onSelectedCotent?.selectedText,
     };
 
     try {
       const response = await axios.post(
-        "http://localhost:8200/AST/" +
-          access_file_language_by_path(
-            code_editor_container_ref_index,
-            onSelectedMonacoIndex
-          ),
+        "http://localhost:8200/AST/javascript",
         requestBody
       );
       console.log(response.data);
@@ -859,22 +849,14 @@ const MonacoEditor = ({
         prompt = onSelectedCotent?.selectedText || "";
         break;
       case "entireFile":
-        prompt =
-          access_file_content_by_path(
-            code_editor_container_ref_index,
-            onSelectedMonacoIndex
-          ) || "";
+        prompt = "";
         break;
       default:
         console.log("Invalid input format");
         return;
     }
     const requestBody = {
-      language:
-        access_file_language_by_path(
-          code_editor_container_ref_index,
-          onSelectedMonacoIndex
-        ) || "defaultLanguage",
+      language: "defaultLanguage",
       prompt: prompt,
     };
     switch (rightClickCommand?.content?.requestMethod) {
@@ -913,11 +895,7 @@ const MonacoEditor = ({
     setOnRightClickItem(null);
   };
   useEffect(() => {
-    if (
-      rightClickCommand &&
-      rightClickCommand.target ===
-        "vecoder_editor" + "/" + code_editor_container_ref_index.toString()
-    ) {
+    if (rightClickCommand && rightClickCommand.target === "vecoder_editor") {
       handleRightClickCommand(rightClickCommand.command);
       setRightClickCommand(null);
       setOnRightClickItem(null);
