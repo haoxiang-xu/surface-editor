@@ -149,11 +149,11 @@ const ContextItemButton = ({
         /* POSITION -------------- */
         position: "absolute",
         top: top_position,
-        left: context_menu_fixed_styling.padding,
+        left: context_menu_fixed_styling.padding + 0.5,
 
         /* SIZE ------------------ */
         height: get_context_item_height(unique_tag),
-        width: `calc(100% - ${context_menu_fixed_styling.padding * 2}px)`,
+        width: `calc(100% - ${context_menu_fixed_styling.padding * 2 + 1}px)`,
 
         /* STYLE ----------------- */
         fontSize: button_fixed_styling.fontSize,
@@ -460,6 +460,7 @@ const ContextList = ({
         )}, 1)`,
         backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 1)`,
         borderRadius: borderRadius,
+        boxSizing: "border-box",
         boxShadow: context_menu_fixed_styling.boxShadow,
         overflow: "hidden",
       }}
@@ -559,7 +560,7 @@ const ContextMenu = () => {
     );
   };
   const calculate_context_list_height = (sub_items) => {
-    let height = context_menu_fixed_styling.padding * 2 + 2;
+    let height = context_menu_fixed_styling.padding * 2 + 4;
     for (let i = 0; i < sub_items.length; i++) {
       height += get_context_item_height(sub_items[i]);
     }
