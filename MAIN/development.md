@@ -1,12 +1,27 @@
 # Development Guide
 
+## [ Table of Contents ]
+
+- [Implemented Your own Stack Component](#Implemented_Your_own_Stack_Component)
+  1. [Initilize your component](#Initilize_your_component)
+  2. [Handle component parameters](#Handle_component_parameters)
+  3. [Access to system data and functions (Optional)](#Access_to_system_data_and_functions)
+  4. [Define your own context menu (Optional)](#Define_your_own_context_menu)
+- [Data Manager Variables and Functions](#Data_manager_variables_and_functions)
+- [Variable Formating Guide](#Variable_formating_guide)
+<a id="Implemented_Your_own_Stack_Component"></a>
+
 ## [ Implemented Your own Stack Component ]
+
+<a id="Initilize_your_component"></a>
 
 ### STEP 1 INITILIZE YOUR COMPONENT
 
 ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 <span style="opacity: 0.64">Your Component should be created under `src/COMPONENTs/STACK_COMPONENTs`, under that folder you can create your own folder named as your root component, and under that you should create a same name .js file exporting yout root componet. For example if your component called `test_component`, your component dir path should be `src/COMPONENTs/STACK_COMPONENTs/test_component/test_component`. And then after you have created the component, the next step is to let the system know where your component is. In the file `src/CONSTs/stackComponentConfig.js` you should add a json variable at the end of the `STACK_COMPONENT_CONFIG` list variable like this</span> [`SAMPLE 000_001`](#000_001) <span style="opacity: 0.64">.</span>
+
+<a id="Handle_component_parameters"></a>
 
 ### STEP 2 HANDLE COMPONENT PARAMETERs
 
@@ -38,6 +53,8 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 - `data` & `setData` (TYPE: Json) <span style="opacity: 0.64"> data allows you to store and reload your component data, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
 
+<a id="Access_to_system_data_and_functions"></a>
+
 ### STEP 3 ACCESS TO SYSTEM DATA AND FUNCTIONs (Optional)
 
 ### GLOBAL CONTEXTs & DATA MANAGERs:
@@ -53,7 +70,9 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   - [`cmd`](#cmd) <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
   - [`context_menu`](#context_menu)
 
-- [`stack_structure_manager`](#stack_structure_manager)
+- [`root_stack_manager`](#root_stack_manager)
+
+<a id="Define_your_own_context_menu"></a>
 
 ### STEP 4 DEFINE YOUR OWN CONTEXT MENU (Optional)
 
@@ -71,7 +90,9 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ### STEP 6 DONE
 
-## [ DATA MANAGER VARIABLES AND FUNCTIONS ]
+<a id="Data_manager_variables_and_functions"></a>
+
+## [ Data Manager Variables and Functions ]
 
 ### ROOT_DATA_MANAGER <a id="root_data_manager"></a>
 
@@ -119,7 +140,8 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `load_context_menu`
 - `unload_context_menu`
 
-## [ VARIABLE FORMATING GUIDE ]
+<a id="Variable_formating_guide"></a>
+## [ Variable Formating Guide ]
 
 #### [ variable naming rules ]
 
