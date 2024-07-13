@@ -18,7 +18,7 @@ const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 
 /* CONSTANT VARIABLES ================================================================================================================================== */
 const RESIZER_CONTAINER = {
-  type: "RESIZER",
+  type: "horizontal_stack_resizer",
   min_width: 12,
   width: 12,
   max_width: 12,
@@ -31,55 +31,9 @@ const ENDING_CONTAINER = {
   max_width: 128,
   content: "",
 };
-const TEST_CONTAINER = {
-  type: "TESTING_CONTAINER",
-  min_width: 42,
-  width: 600,
-  max_width: 2048,
-  content: "TEST",
-};
 /* CONSTANT VARIABLES ================================================================================================================================== */
 
 /* CONTAINERS ------------------------------------------------------------------------------------------------------------- */
-const TestingLabelContainer = ({
-  index,
-  //Stack Data
-  item,
-  stackRefs,
-}) => {
-  //Stack Structure Container Drag and Drop
-  const {
-    onDropIndex,
-    onStackItemDragStart,
-    onStackItemDragEnd,
-    resizerOnMouseDown,
-  } = useContext(stackStructureDragAndDropContexts);
-
-  return (
-    <div
-      className={"stack_structure_item_test0128"}
-      ref={(el) => (stackRefs.current[index] = el)}
-      key={index}
-      draggable={resizerOnMouseDown ? false : true}
-      onDragStart={(e) => {
-        onStackItemDragStart(e, index);
-      }}
-      onDragEnd={(e) => {
-        onStackItemDragEnd(e);
-      }}
-      style={{
-        width: item.width,
-      }}
-    >
-      {index === onDropIndex ? (
-        <div className="stack_structure_item_overlay0122"></div>
-      ) : (
-        <div></div>
-      )}
-      <span className="stack_structure_label0116">{item.content}</span>
-    </div>
-  );
-};
 const EndingContainer = ({
   index,
   //Stack Data
@@ -381,21 +335,6 @@ const HorizontalStack = () => {
         >
           {stacks.map((item, index) => {
             switch (item?.type) {
-              case "TESTING_CONTAINER":
-                return (
-                  <TestingLabelContainer
-                    key={"TEST" + index}
-                    index={index}
-                    //Stack Data
-                    item={item}
-                    stackRefs={stackRefs}
-                    //Stack Structure Container Drag and Drop
-                    onStackItemDragStart={onStackItemDragStart}
-                    onStackItemDragEnd={onStackItemDragEnd}
-                    resizerOnMouseDown={resizerOnMouseDown}
-                    onDropIndex={onDropIndex}
-                  />
-                );
               case "surface_explorer":
                 return (
                   <StackFrame
@@ -432,10 +371,10 @@ const HorizontalStack = () => {
                     narrowContainer={narrowContainer}
                   />
                 );
-              case "RESIZER":
+              case "horizontal_stack_resizer":
                 return (
                   <StackFrame
-                    key={"RESIZER" + index}
+                    key={"horizontal_stack_resizer" + index}
                     component_type={"horizontal_stack_resizer"}
                     stack_structure_type={"horizontal_stack"}
                     index={index}

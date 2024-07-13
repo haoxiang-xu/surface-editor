@@ -415,6 +415,8 @@ const StackFrame = ({
           minimizeContainer={minimizeContainer}
         />
       );
+    case "empty_frame":
+      break;
     default:
       return (
         <HorizontalStackContainer

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StackStructureContexts } from "./stack_structure_contexts";
+import { RootStackContexts } from "./root_stack_contexts";
 
 const FAKE_STACK_STRUCTURE = {
   root: {
@@ -21,6 +21,14 @@ const FAKE_STACK_STRUCTURE = {
   },
 };
 
-const StackStructureManager = ({ children }) => {};
+const RootStackManager = ({ children }) => {
+  const [stackStructure, setStackStructure] = useState(FAKE_STACK_STRUCTURE);
 
-export default StackStructureManager;
+  return (
+    <RootStackContexts.Provider value={{ stackStructure, setStackStructure }}>
+      {children}
+    </RootStackContexts.Provider>
+  );
+};
+
+export default RootStackManager;
