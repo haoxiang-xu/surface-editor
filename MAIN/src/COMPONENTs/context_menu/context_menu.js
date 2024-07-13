@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 
-import { default_clickable_panel_styling } from "../../DATA_MANAGERs/global_styling_manager/global_styling_default_consts";
+import { default_clickable_panel_styling } from "../../DATA_MANAGERs/root_styling_manager/root_styling_default_consts";
 import {
   context_menu_fixed_styling,
   button_fixed_styling,
