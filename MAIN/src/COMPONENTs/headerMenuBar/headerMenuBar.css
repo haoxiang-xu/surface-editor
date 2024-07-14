@@ -32,11 +32,11 @@
   width: 12px;
   height: 12px;
   position: absolute;
-  top: 3px;
-  right: 3px;
+  top: 6px;
+  right: 6px;
 
   /*STYLE*/
-  padding: 10px 16px 10px 16px;
+  padding: 8px 20px 8px 12px;
 
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -63,11 +63,12 @@
   width: 12px;
   height: 12px;
   position: absolute;
-  top: 3px;
-  right: 47px;
+  top: 6px;
+  right: 50px;
 
   /*STYLE*/
-  padding: 10px 16px 10px 16px;
+  padding: 8px 16px 8px 16px;
+  border-radius: 3px;
 
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -94,11 +95,12 @@
   width: 12px;
   height: 12px;
   position: absolute;
-  top: 3px;
-  right: 91px;
+  top: 6px;
+  right: 94px;
 
   /*STYLE*/
-  padding: 10px 16px 10px 16px;
+  padding: 8px 16px 8px 16px;
+  border-radius: 3px;
 
   -webkit-user-select: none;
   -moz-user-select: none;

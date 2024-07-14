@@ -75,6 +75,7 @@ const createWindow = () => {
       width: 1200,
       height: 800,
       webSecurity: true,
+      hasShadow: true,
       transparent: true,
       resizable: true,
       maximizable: true,
