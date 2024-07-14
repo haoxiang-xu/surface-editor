@@ -9,7 +9,6 @@
 
   /*STYLE*/
   box-sizing: border-box;
-  border-radius: 11px;
   padding: 44px 8px 8px 4px;
 
   box-sizing: border-box;
@@ -36,7 +35,7 @@
   scroll-behavior: smooth;
 
   /*STYLE*/
-  border-radius: 0px 6px 0px 0px;
+  border-radius: 0px 4px 0px 0px;
   overflow-y: hidden;
 }
 .file_selection_bar_container1114::-webkit-scrollbar {
@@ -98,7 +97,7 @@
 
   /*STYLE*/
   background-color: #252525;
-  border-radius: 6px;
+  border-radius: 4px;
   margin: 0px 6px 4px 0px;
 }
 .file_selection_bar_item1114:hover {
@@ -121,7 +120,7 @@
   color: white;
   overflow: hidden;
 
-  border-radius: 6px;
+  border-radius: 4px;
   margin: 0px 6px 4px 0px;
 }
 .file_selection_bar_file_text1114 {
@@ -188,7 +187,7 @@
   background-color: #252525;
   overflow: hidden;
 
-  border-radius: 6px;
+  border-radius: 4px;
   margin: 0px 0px 5px 0px;
 }
 .file_selection_bar_item_vertical0123:hover {
@@ -208,7 +207,7 @@
   color: white;
   overflow: hidden;
 
-  border-radius: 6px;
+  border-radius: 4px;
   margin: 0px 0px 5px 0px;
 }
 .file_selection_bar_item_filetype_icon_vertical0123 {

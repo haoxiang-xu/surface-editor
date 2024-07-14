@@ -151,7 +151,7 @@ const HorizontalStackLengthAdjustButton = ({
           height: "12px",
 
           /* STYLE ----------------- */
-          borderRadius: "6px",
+          borderRadius: 4,
           padding: MaximizeStyling.padding,
           opacity: MaximizeStyling.opacity,
           backgroundColor: MaximizeStyling.backgroundColor,
@@ -199,7 +199,7 @@ const HorizontalStackLengthAdjustButton = ({
           height: "12px",
 
           /* STYLE ----------------- */
-          borderRadius: "6px",
+          borderRadius: 4,
           padding: MinimizeStyling.padding,
           opacity: MinimizeStyling.opacity,
           backgroundColor: MinimizeStyling.backgroundColor,
@@ -249,7 +249,7 @@ const HorizontalStackLengthAdjustButton = ({
           height: "12px",
 
           /* STYLE ----------------- */
-          borderRadius: "6px",
+          borderRadius: 4,
           padding: "9px",
           opacity: MaximizeStyling.opacity,
           backgroundColor: MaximizeStyling.backgroundColor,

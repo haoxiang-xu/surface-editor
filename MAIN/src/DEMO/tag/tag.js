@@ -27,8 +27,8 @@ const TestingWrapper = ({ children }) => {
   );
 };
 const FAKE_TAG_DATA = {
-  type: "key",
-  value: "tag.js",
+  type: "file",
+  value: `openAI.java`,
 };
 
 /* { Tag types } ================================================================================= */
@@ -142,6 +142,63 @@ const FileTag = ({ type, value }) => {
     </div>
   );
 };
+const StringTag = ({ type, value }) => {
+  const spanRef = useRef(null);
+  const [style, setStyle] = useState({});
+  useEffect(() => {
+    if (!spanRef.current) return;
+    const spanWidth = spanRef.current.offsetWidth;
+    const spanHeight = spanRef.current.offsetHeight;
+    setStyle({
+      width: spanWidth + 9,
+      height: spanHeight + 11,
+    });
+  }, [spanRef]);
+
+  return (
+    <div
+      style={{
+        /* { Tag Position } ------------------------ */
+        position: "absolute",
+        top: 0,
+        left: 0,
+
+        /* { Tag Size } ---------------------------- */
+        width: style.width,
+        maxWidth: 100,
+        height: style.height,
+
+        /* { Tag Styling } ------------------------- */
+        borderRadius: 4,
+        border: "1px solid #4A4A4A",
+        boxSizing: "border-box",
+        display: "inline-block",
+        overflowX: "hidden",
+        overflowY: "hidden",
+      }}
+    >
+      <span
+        ref={spanRef}
+        style={{
+          /* { Tag Position } ------------------------ */
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          color: "#8C8C8C",
+          /* { Font Styling } ---------------------- */
+          fontFamily: "monospace",
+          fontSize: 11,
+          userSelect: "none",
+          whiteSpace: "nowrap",
+          display: "inline-block",
+        }}
+      >
+        {value}
+      </span>
+    </div>
+  );
+};
 /* { Tag types } ================================================================================= */
 
 const Tag = () => {
@@ -151,6 +208,8 @@ const Tag = () => {
         return <KeyTag {...FAKE_TAG_DATA} />;
       case "file":
         return <FileTag {...FAKE_TAG_DATA} />;
+      case "string":
+        return <StringTag {...FAKE_TAG_DATA} />;
       default:
         return null;
     }
