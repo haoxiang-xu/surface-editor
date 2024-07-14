@@ -348,7 +348,7 @@ const HorizontalStackContainer = ({
           border: "1px solid #282828",
           boxSizing: "border-box",
           overflow: "hidden",
-          borderRadius: 6,
+          borderRadius:11,
           backgroundColor: "#1E1E1E",
 
           /* ANIMATION -------------------------- */

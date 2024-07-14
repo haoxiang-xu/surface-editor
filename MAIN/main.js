@@ -53,6 +53,7 @@ const createWindow = () => {
         contextIsolation: true,
         nodeIntegration: false,
       },
+      //vibrancy: "fullscreen-ui",
       frame: false,
       hasShadow: true,
       titleBarStyle: "hidden",
@@ -77,6 +78,7 @@ const createWindow = () => {
       transparent: true,
       resizable: true,
       maximizable: true,
+      backgroundMaterial: "acrylic",
       webPreferences: {
         preload: path.join(__dirname, "preload.js"),
         contextIsolation: true,

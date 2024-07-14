@@ -63,7 +63,7 @@ const HorizontalStackCloseButton = ({}) => {
         height: "12px",
 
         /* STYLE ----------------- */
-        borderRadius: 4,
+        borderRadius: 7,
         padding: "9px",
         backgroundColor: buttonStyle.backgroundColor,
         boxShadow: buttonStyle.boxShadow,

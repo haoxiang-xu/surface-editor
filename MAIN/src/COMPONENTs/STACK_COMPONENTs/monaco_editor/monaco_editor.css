@@ -35,7 +35,7 @@
   scroll-behavior: smooth;
 
   /*STYLE*/
-  border-radius: 0px 4px 0px 0px;
+  border-radius: 0px 6px 0px 0px;
   overflow-y: hidden;
 }
 .file_selection_bar_container1114::-webkit-scrollbar {
@@ -65,7 +65,7 @@
   flex-direction: column;
 
   /*STYLE*/
-  border-radius: 0px 0px 0px 5px;
+  border-radius: 0px 0px 0px 6px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -97,7 +97,7 @@
 
   /*STYLE*/
   background-color: #252525;
-  border-radius: 4px;
+  border-radius: 6px;
   margin: 0px 6px 4px 0px;
 }
 .file_selection_bar_item1114:hover {
@@ -120,7 +120,7 @@
   color: white;
   overflow: hidden;
 
-  border-radius: 4px;
+  border-radius: 6px;
   margin: 0px 6px 4px 0px;
 }
 .file_selection_bar_file_text1114 {
@@ -160,7 +160,7 @@
   /*SIZE*/
   width: 10px;
   height: 10px;
-  border-radius: 3px;
+  border-radius: 4px;
 
   opacity: 1;
 }
@@ -187,7 +187,7 @@
   background-color: #252525;
   overflow: hidden;
 
-  border-radius: 4px;
+  border-radius: 6px;
   margin: 0px 0px 5px 0px;
 }
 .file_selection_bar_item_vertical0123:hover {
@@ -207,7 +207,7 @@
   color: white;
   overflow: hidden;
 
-  border-radius: 4px;
+  border-radius: 6px;
   margin: 0px 0px 5px 0px;
 }
 .file_selection_bar_item_filetype_icon_vertical0123 {
@@ -274,7 +274,7 @@
   left: 0px;
 
   /*STYLE*/
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: #8b2727;
   opacity: 0;
 }
@@ -287,7 +287,7 @@
   left: 0px;
 
   /*STYLE*/
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: #ffffff;
   opacity: 0.12;
 
