@@ -67,7 +67,7 @@
   right: 50px;
 
   /*STYLE*/
-  padding: 8px 16px 8px 16px;
+  padding: 8px 12px 8px 12px;
   border-radius: 3px;
 
   -webkit-user-select: none;
@@ -96,10 +96,10 @@
   height: 12px;
   position: absolute;
   top: 6px;
-  right: 94px;
+  right: 86px;
 
   /*STYLE*/
-  padding: 8px 16px 8px 16px;
+  padding: 8px 12px 8px 12px;
   border-radius: 3px;
 
   -webkit-user-select: none;
