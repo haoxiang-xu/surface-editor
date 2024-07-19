@@ -4,12 +4,21 @@
 
 - `type` (String)
 
-  - `key` Maps to keyboard keys
+  - `key` <span style="opacity: 0.64">Maps to keyboard keys</span>
   - `file`
   - `folder`
   - `command`
   - `customized`
 
-- `label`
+- `label` (String) Label to be displayed
 
-- `clickable`
+- `style`
+
+  - `fontSize` <span style="opacity: 0.64">(int) default value is `11`</span>
+
+```
+{
+  fontSize: 11
+}
+```
+

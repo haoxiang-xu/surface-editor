@@ -28,12 +28,17 @@ const TestingWrapper = ({ children }) => {
 };
 const FAKE_TAG_DATA = {
   type: "file",
-  label: `context_menu_fixed_styling_config.js`,
+  label: `/Users/red/Desktop/GITRepo/surface-editor/MAIN/src/DATA_MANAGERs/command_data_manager/command_data_manager.js`,
+  style: {
+    fontSize: 11,
+  },
 };
 
 const default_max_tag_width = 128;
 const default_tag_padding_x = 6;
 const default_tag_padding_y = 3;
+
+const default_tag_font_size = 11;
 
 /* { Tag types } ================================================================================= */
 const CustomizedTag = ({ label, style }) => {
@@ -100,7 +105,7 @@ const CustomizedTag = ({ label, style }) => {
 
           /* { Font Styling } ---------------------- */
           fontFamily: "monospace",
-          fontSize: 11,
+          fontSize: tagStyle.fontSize || default_tag_font_size,
 
           /* { Tag Styling } ----------------------- */
           color: tagStyle.color,
@@ -123,7 +128,7 @@ const CustomizedTag = ({ label, style }) => {
 
           /* { Font Styling } ---------------------- */
           fontFamily: "monospace",
-          fontSize: 11,
+          fontSize: tagStyle.fontSize || default_tag_font_size,
 
           /* { Tag Styling } ----------------------- */
           padding: "0px 4px",
@@ -139,35 +144,50 @@ const CustomizedTag = ({ label, style }) => {
     </div>
   );
 };
-const KeyTag = ({ label }) => {
+const KeyTag = ({ label, style }) => {
   return (
     <CustomizedTag
       label={label}
       style={{
         backgroundColor: "#4A4A4A",
         color: "#CCCCCC",
+        fontSize: style.fontSize || default_tag_font_size,
       }}
     />
   );
 };
-const FileTag = ({ label }) => {
+const FileTag = ({ label, style }) => {
   return (
     <CustomizedTag
       label={label}
       style={{
         backgroundColor: "#8C8C8C",
         color: "#181818",
+        fontSize: style.fontSize || default_tag_font_size,
       }}
     />
   );
 };
-const StringTag = ({ label }) => {
+const StringTag = ({ label, style }) => {
   return (
     <CustomizedTag
       label={label}
       style={{
         backgroundColor: "#4A4A4A",
         color: "#8C8C8C",
+        fontSize: style.fontSize || default_tag_font_size,
+      }}
+    />
+  );
+};
+const CommandTag = ({ label, style }) => {
+  return (
+    <CustomizedTag
+      label={label}
+      style={{
+        backgroundColor: "#EF6C00",
+        color: "#181818",
+        fontSize: style.fontSize || default_tag_font_size,
       }}
     />
   );
@@ -183,6 +203,8 @@ const Tag = () => {
         return <FileTag {...FAKE_TAG_DATA} />;
       case "string":
         return <StringTag {...FAKE_TAG_DATA} />;
+      case "command":
+        return <CommandTag {...FAKE_TAG_DATA} />;
       default:
         return null;
     }
