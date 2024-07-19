@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import ChatBox from "./DEMO/chatBox/chatBox";
 import Tag from "./DEMO/tag/tag";
 import Home from "./HOME/home";
 
@@ -21,8 +20,6 @@ function App() {
             </RootStackManager>
           }
         />
-        <Route path="/explorer" element={<Home />} />
-        <Route path="/chat" element={<ChatBox />} />
         <Route path="/tag" element={<Tag />} />
         <Route path="/" element={<Home />} />
       </Routes>

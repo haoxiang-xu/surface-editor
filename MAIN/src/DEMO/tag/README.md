@@ -4,8 +4,12 @@
 
 - `type` (String)
 
-    - `key` Maps to keyboard keys
-    - `file`
-    - `folder`
-    - `command`
-    - `customized`
+  - `key` Maps to keyboard keys
+  - `file`
+  - `folder`
+  - `command`
+  - `customized`
+
+- `label`
+
+- `clickable`

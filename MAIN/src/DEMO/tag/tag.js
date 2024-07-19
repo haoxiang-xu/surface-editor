@@ -17,7 +17,7 @@ const TestingWrapper = ({ children }) => {
         style={{
           position: "absolute",
           top: "50%",
-          left: "50%",
+          left: "calc(0% + 20px)",
           transform: "translate(-50%, -50%)",
         }}
       >
@@ -28,175 +28,148 @@ const TestingWrapper = ({ children }) => {
 };
 const FAKE_TAG_DATA = {
   type: "file",
-  value: `openAI.java`,
+  label: `context_menu_fixed_styling_config.js`,
 };
+
+const default_max_tag_width = 128;
+const default_tag_padding_x = 6;
+const default_tag_padding_y = 3;
 
 /* { Tag types } ================================================================================= */
-const KeyTag = ({ type, value }) => {
+const CustomizedTag = ({ label, style }) => {
+  const containerRef = useRef(null);
   const spanRef = useRef(null);
-  const [style, setStyle] = useState({});
+
+  const [tagStyle, setTagStyle] = useState(style);
+  const [tagMaxWidth, setTagMaxWidth] = useState(
+    style.maxWidth || default_max_tag_width
+  );
+  const [onHover, setOnHover] = useState(null);
+
   useEffect(() => {
-    if (!spanRef.current) return;
+    if (!spanRef.current || !containerRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
     const spanHeight = spanRef.current.offsetHeight;
-    setStyle({
-      width: spanWidth + 9,
-      height: spanHeight + 11,
+    const containerWidth = Math.min(spanWidth, tagMaxWidth);
+    setTagStyle((prevData) => {
+      return {
+        ...prevData,
+        width: onHover
+          ? spanWidth + default_tag_padding_x * 2
+          : containerWidth + default_tag_padding_x * 2,
+        height: spanHeight + default_tag_padding_y * 2,
+        left: `calc(0% + ${default_tag_padding_x}px)`,
+        transform: "translate(0%, -50%)",
+        moreOptionLabel: onHover ? false : spanWidth > containerWidth,
+      };
     });
-  }, [spanRef]);
+  }, [spanRef, containerRef, onHover]);
 
   return (
     <div
+      ref={containerRef}
       style={{
+        transition: "width 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+
         /* { Tag Position } ------------------------ */
         position: "absolute",
         top: 0,
         left: 0,
 
         /* { Tag Size } ---------------------------- */
-        width: style.width,
-        height: style.height,
+        width: tagStyle.width,
+        height: tagStyle.height,
 
         /* { Tag Styling } ------------------------- */
-        borderRadius: 4,
+        borderRadius: 7,
         display: "inline-block",
+        backgroundColor: tagStyle.backgroundColor,
+        overflow: "hidden",
+      }}
+      onMouseEnter={() => setOnHover(true)}
+      onMouseLeave={() => setOnHover(false)}
+    >
+      <span
+        ref={spanRef}
+        style={{
+          /* { Tag Position } ---------------------- */
+          position: "absolute",
+          top: "50%",
+          left: tagStyle.left,
+          transform: tagStyle.transform,
+
+          /* { Font Styling } ---------------------- */
+          fontFamily: "monospace",
+          fontSize: 11,
+
+          /* { Tag Styling } ----------------------- */
+          color: tagStyle.color,
+          userSelect: "none",
+          whiteSpace: "nowrap",
+          display: "inline-block",
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{
+          /* { Tag Position } --------------------- */
+          position: "absolute",
+          top: "50%",
+          right: 0,
+          transform: "translate(0%, -50%)",
+
+          maxWidth: tagStyle.moreOptionLabel ? "none" : 0,
+
+          /* { Font Styling } ---------------------- */
+          fontFamily: "monospace",
+          fontSize: 11,
+
+          /* { Tag Styling } ----------------------- */
+          padding: "0px 4px",
+          color: tagStyle.color,
+          backgroundColor: tagStyle.backgroundColor,
+          userSelect: "none",
+          whiteSpace: "nowrap",
+          display: tagStyle.moreOptionLabel ? "inline-block" : "none",
+        }}
+      >
+        {"..."}
+      </span>
+    </div>
+  );
+};
+const KeyTag = ({ label }) => {
+  return (
+    <CustomizedTag
+      label={label}
+      style={{
         backgroundColor: "#4A4A4A",
-        overflow: "hidden",
+        color: "#CCCCCC",
       }}
-    >
-      <span
-        ref={spanRef}
-        style={{
-          /* { Tag Position } ------------------------ */
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-
-          /* { Font Styling } ---------------------- */
-          fontFamily: "monospace",
-          fontSize: 11,
-          color: "#CCCCCC",
-          userSelect: "none",
-          whiteSpace: "nowrap",
-          display: "inline-block",
-        }}
-      >
-        {value}
-      </span>
-    </div>
+    />
   );
 };
-const FileTag = ({ type, value }) => {
-  const spanRef = useRef(null);
-  const [style, setStyle] = useState({});
-  useEffect(() => {
-    if (!spanRef.current) return;
-    const spanWidth = spanRef.current.offsetWidth;
-    const spanHeight = spanRef.current.offsetHeight;
-    setStyle({
-      width: spanWidth + 9,
-      height: spanHeight + 11,
-    });
-  }, [spanRef]);
-
+const FileTag = ({ label }) => {
   return (
-    <div
+    <CustomizedTag
+      label={label}
       style={{
-        /* { Tag Position } ------------------------ */
-        position: "absolute",
-        top: 0,
-        left: 0,
-
-        /* { Tag Size } ---------------------------- */
-        width: style.width,
-        height: style.height,
-
-        /* { Tag Styling } ------------------------- */
-        borderRadius: 4,
-        display: "inline-block",
-        backgroundColor: "#323232",
-        overflow: "hidden",
+        backgroundColor: "#8C8C8C",
+        color: "#181818",
       }}
-    >
-      <span
-        ref={spanRef}
-        style={{
-          /* { Tag Position } ------------------------ */
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-
-          /* { Font Styling } ---------------------- */
-          fontFamily: "monospace",
-          fontSize: 11,
-          color: "#CCCCCC",
-          userSelect: "none",
-          whiteSpace: "nowrap",
-          display: "inline-block",
-        }}
-      >
-        {value}
-      </span>
-    </div>
+    />
   );
 };
-const StringTag = ({ type, value }) => {
-  const spanRef = useRef(null);
-  const [style, setStyle] = useState({});
-  useEffect(() => {
-    if (!spanRef.current) return;
-    const spanWidth = spanRef.current.offsetWidth;
-    const spanHeight = spanRef.current.offsetHeight;
-    setStyle({
-      width: spanWidth + 9,
-      height: spanHeight + 11,
-    });
-  }, [spanRef]);
-
+const StringTag = ({ label }) => {
   return (
-    <div
+    <CustomizedTag
+      label={label}
       style={{
-        /* { Tag Position } ------------------------ */
-        position: "absolute",
-        top: 0,
-        left: 0,
-
-        /* { Tag Size } ---------------------------- */
-        width: style.width,
-        maxWidth: 100,
-        height: style.height,
-
-        /* { Tag Styling } ------------------------- */
-        borderRadius: 4,
-        border: "1px solid #4A4A4A",
-        boxSizing: "border-box",
-        display: "inline-block",
-        overflowX: "hidden",
-        overflowY: "hidden",
+        backgroundColor: "#4A4A4A",
+        color: "#8C8C8C",
       }}
-    >
-      <span
-        ref={spanRef}
-        style={{
-          /* { Tag Position } ------------------------ */
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          color: "#8C8C8C",
-          /* { Font Styling } ---------------------- */
-          fontFamily: "monospace",
-          fontSize: 11,
-          userSelect: "none",
-          whiteSpace: "nowrap",
-          display: "inline-block",
-        }}
-      >
-        {value}
-      </span>
-    </div>
+    />
   );
 };
 /* { Tag types } ================================================================================= */
