@@ -11,21 +11,60 @@ const FAKE_STACK_STRUCTURE = {
     ],
   },
   surface_explorer_0001: {
-    type: "surface_explorer",
+    type: "test_container",
+    width: 128,
   },
   monaco_editor_0002: {
-    type: "monaco_editor",
+    type: "test_container",
+    width: 256,
   },
   monaco_editor_0003: {
-    type: "monaco_editor",
+    type: "test_container",
+    width: 512,
   },
 };
 
 const RootStackManager = ({ children }) => {
   const [stackStructure, setStackStructure] = useState(FAKE_STACK_STRUCTURE);
 
+  const access_sub_items_by_tag = (unique_tag) => {
+    const sub_items = stackStructure[unique_tag].sub_items;
+    if (!sub_items) return [];
+    return sub_items;
+  };
+  const access_type_by_tag = (unique_tag) => {
+    const type = stackStructure[unique_tag].type;
+    if (!type) return null;
+    return type;
+  };
+  const access_width_by_tag = (unique_tag) => {
+    const width = stackStructure[unique_tag].width;
+    if (!width) return "100%";
+    return width;
+  };
+  const update_width_by_tag = (unique_tag, width) => {
+    setStackStructure((prevData) => {
+      return {
+        ...prevData,
+        [unique_tag]: {
+          ...prevData[unique_tag],
+          width: width,
+        },
+      };
+    });
+  };
+
   return (
-    <RootStackContexts.Provider value={{ stackStructure, setStackStructure }}>
+    <RootStackContexts.Provider
+      value={{
+        stackStructure,
+        setStackStructure,
+        access_sub_items_by_tag,
+        access_type_by_tag,
+        access_width_by_tag,
+        update_width_by_tag,
+      }}
+    >
       {children}
     </RootStackContexts.Provider>
   );

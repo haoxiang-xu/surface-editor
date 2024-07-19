@@ -13,7 +13,7 @@ function App() {
     <Router>
       <Routes>
         <Route
-          path="/stack_structure"
+          path="/stack"
           element={
             <RootStackManager>
               <StackStructure />
