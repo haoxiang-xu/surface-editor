@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 //COMPONENTs ---------------------------------------------------------------------------------------
-import StackFrame from "../../stack_frame/stack_frame";
+import StackFrame from "../../COMPONENTs/stack_frame/stack_frame";
 //ICONs --------------------------------------------------------------------------------------------
-import { ICON_MANAGER } from "../../../ICONs/icon_manager";
+import { ICON_MANAGER } from "../../ICONs/icon_manager";
 //CONTEXTs -----------------------------------------------------------------------------------------
-import { stackStructureDragAndDropContexts } from "../../../CONTEXTs/stackStructureDragAndDropContexts";
-import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
-import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
-import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
-import { RootCommandContexts } from "../../../DATA_MANAGERs/root_command_manager/root_command_contexts";
+import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
+import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
+import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
+import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 //CSS ----------------------------------------------------------------------------------------------
 import "./horizontal_stack.css";
 
