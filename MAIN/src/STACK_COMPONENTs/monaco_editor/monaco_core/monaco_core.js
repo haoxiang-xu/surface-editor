@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import MonacoEditor from "@monaco-editor/react";
 import { MonacoDiffEditor, monaco, Range } from "react-monaco-editor";
-import { RootDataContexts } from "../../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
-import { globalDragAndDropContexts } from "../../../../CONTEXTs/globalDragAndDropContexts";
-import { stackStructureDragAndDropContexts } from "../../../../CONTEXTs/stackStructureDragAndDropContexts";
+import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
+import { stackStructureDragAndDropContexts } from "../../../CONTEXTs/stackStructureDragAndDropContexts";
 import { MonacoEditorContexts } from "../monaco_editor_contexts";
 import { MonacoEditorContextMenuContexts } from "../monaco_editor_context_menu_contexts";
 import axios from "axios";

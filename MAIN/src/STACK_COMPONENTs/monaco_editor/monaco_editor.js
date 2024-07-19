@@ -8,16 +8,16 @@ import React, {
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
-import DirItemGhostDragImage from "../../dirItemGhostDragImage/dirItemGhostDragImage";
+import DirItemGhostDragImage from "../../COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
-import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
-import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
-import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
+import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
+import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { MonacoEditorContexts } from "./monaco_editor_contexts";
-import { RootCommandContexts } from "../../../DATA_MANAGERs/root_command_manager/root_command_contexts";
+import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_contexts";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
-import { ICON_MANAGER } from "../../../ICONs/icon_manager";
+import { ICON_MANAGER } from "../../ICONs/icon_manager";
 /* { Import Styling } ---------------------------------------------------------------------------------------- */
 import "./monaco_editor.css";
 

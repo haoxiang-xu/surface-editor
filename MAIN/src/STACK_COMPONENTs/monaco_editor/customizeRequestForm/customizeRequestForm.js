@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { ICON_MANAGER } from "../../../../ICONs/icon_manager";
-import { rightClickContextMenuCommandContexts } from "../../../../CONTEXTs/rightClickContextMenuContexts";
-import { ContextMenuContexts } from "../../../context_menu/context_menu_contexts";
+import { ICON_MANAGER } from "../../../ICONs/icon_manager";
+import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
+import { ContextMenuContexts } from "../../../COMPONENTs/context_menu/context_menu_contexts";
 import "./customizeRequestForm.css";
-import { CUSTOMIZE_REQUEST_FORM_HEIGHT } from "../../../../CONSTs/contextMenuConfig";
+import { CUSTOMIZE_REQUEST_FORM_HEIGHT } from "../../../CONSTs/contextMenuConfig";
 
 /* Load ICON manager -------------------------------- */
 let SYSTEM_ICON_MANAGER = {

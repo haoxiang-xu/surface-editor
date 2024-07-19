@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ICON_MANAGER } from "../../../ICONs/icon_manager.js";
-import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
-import { explorerContexts } from "../../../CONTEXTs/explorerContexts.js";
+import { ICON_MANAGER } from "../../ICONs/icon_manager.js";
+import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
+import { explorerContexts } from "../../CONTEXTs/explorerContexts.js";
 import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
@@ -124,7 +124,13 @@ const Explorer = ({ mode }) => {
       )}
       {isDirLoaded ? null : (
         <div className="dir_list_component_loading_container0404">
-          <BarLoader size={8} color={"#C8C8C864"} height={5} width={32} speed={1} />
+          <BarLoader
+            size={8}
+            color={"#C8C8C864"}
+            height={5}
+            width={32}
+            speed={1}
+          />
         </div>
       )}
     </>
