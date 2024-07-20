@@ -13,14 +13,17 @@ const FAKE_STACK_STRUCTURE = {
   surface_explorer_0001: {
     type: "test_container",
     width: 128,
+    min_width: 50,
   },
   monaco_editor_0002: {
     type: "test_container",
     width: 256,
+    min_width: 50,
   },
   monaco_editor_0003: {
     type: "test_container",
     width: 512,
+    min_width: 50,
   },
 };
 
@@ -53,6 +56,11 @@ const RootStackManager = ({ children }) => {
       };
     });
   };
+  const access_min_width_by_tag = (unique_tag) => {
+    const min_width = stackStructure[unique_tag].min_width;
+    if (!min_width) return 0;
+    return min_width;
+  };
 
   return (
     <RootStackContexts.Provider
@@ -63,6 +71,7 @@ const RootStackManager = ({ children }) => {
         access_type_by_tag,
         access_width_by_tag,
         update_width_by_tag,
+        access_min_width_by_tag,
       }}
     >
       {children}

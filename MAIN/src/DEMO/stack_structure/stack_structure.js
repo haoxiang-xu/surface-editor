@@ -25,6 +25,7 @@ const TestingWrapper = ({ children }) => {
 
 const default_resizer_width = 12;
 const default_resizer_color = "#292929";
+const default_magnetic_range = 16;
 
 /* { Stack Resizer } ======================================================================== */
 const HorizontalStackResizer = ({
@@ -92,7 +93,8 @@ const HorizontalStackResizer = ({
     >
       <div
         style={{
-          transition: "height 0.32s cubic-bezier(0.32, 0.96, 0.32, 1.02)",
+          transition:
+            "height 0.32s cubic-bezier(0.32, 0.96, 0.32, 1.08), background-color 0.32s",
 
           /* { Resizer Handle Position } ------------------- */
           position: "absolute",
@@ -218,6 +220,7 @@ const StackStructure = () => {
     access_type_by_tag,
     access_width_by_tag,
     update_width_by_tag,
+    access_min_width_by_tag,
   } = React.useContext(RootStackContexts);
 
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -226,8 +229,22 @@ const StackStructure = () => {
   const [sizeDiff, setSizeDiff] = useState({});
 
   const calculate_stack_item_width = (unique_tag) => {
+    const min_width = access_min_width_by_tag(unique_tag);
+    const magnetic_width = [min_width];
+
     if (sizeDiff[unique_tag]) {
-      const width = access_width_by_tag(unique_tag) + sizeDiff[unique_tag];
+      const width = Math.max(
+        access_width_by_tag(unique_tag) + sizeDiff[unique_tag],
+        min_width
+      );
+
+      /* { Magnetic } -------------------------------------------------------------------- */
+      for (let i = 0; i < magnetic_width.length; i++) {
+        if (Math.abs(width - magnetic_width[i]) < default_magnetic_range) {
+          return magnetic_width[i];
+        }
+      }
+      /* { Magnetic } -------------------------------------------------------------------- */
       return width;
     }
     return access_width_by_tag(unique_tag);
