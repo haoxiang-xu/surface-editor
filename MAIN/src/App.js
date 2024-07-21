@@ -4,6 +4,7 @@ import Tag from "./DEMO/tag/tag";
 import Home from "./HOME/home";
 
 import StackStructure from "./DEMO/stack_structure/stack_structure";
+import Stack from "./DEMO/stack/stack";
 import RootStackManager from "./DATA_MANAGERs/root_stack_manager/root_stack_manager";
 
 import "./App.css";
@@ -17,6 +18,14 @@ function App() {
           element={
             <RootStackManager>
               <StackStructure />
+            </RootStackManager>
+          }
+        />
+        <Route
+          path="/st"
+          element={
+            <RootStackManager>
+              <Stack />
             </RootStackManager>
           }
         />
