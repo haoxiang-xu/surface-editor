@@ -50,10 +50,9 @@ const HorizontalStackWrapperResizer = ({ unique_tag }) => {
           : default_resizer_color,
     });
   }, [onHover, onClick]);
+  /* { Resizer Styling Update } ------------------------------------------------------------- */
 
-  const [mousePosition, setMousePosition] = useState(
-    access_position_by_tag(unique_tag)
-  );
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
   const [startingPosition, setStartingPosition] = useState(
     access_position_by_tag(unique_tag)
@@ -67,7 +66,10 @@ const HorizontalStackWrapperResizer = ({ unique_tag }) => {
       document.body.style.cursor = "default";
     };
     const handleMouseMove = (event) => {
-      setMousePosition({ x: event.clientX, y: event.clientY });
+      setMousePosition((prevState) => {
+        setPerviousMousePosition(prevState);
+        return { x: event.clientX, y: event.clientY };
+      });
     };
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("mousemove", handleMouseMove);
@@ -84,10 +86,7 @@ const HorizontalStackWrapperResizer = ({ unique_tag }) => {
     let new_x_end =
       startingPosition.x_end + (mousePosition.x - clickPosition.x);
     for (let i = 0; i < magneticPositions.length; i++) {
-      if (
-        Math.abs(new_x_end - magneticPositions[i]) <
-        default_magnetic_range
-      ) {
+      if (Math.abs(new_x_end - magneticPositions[i]) < default_magnetic_range) {
         new_x_end = magneticPositions[i];
         break;
       }
@@ -99,6 +98,24 @@ const HorizontalStackWrapperResizer = ({ unique_tag }) => {
       y_end: pervious_position.y_end,
     });
   }, [mousePosition, onClick]);
+
+  /* { Check If magnetic positions requires update } ---------------------------------------- */
+  const [perviousMousePosition, setPerviousMousePosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [isMovingRight, setIsMovingRight] = useState(false);
+  useEffect(() => {
+    if (perviousMousePosition.x < mousePosition.x) {
+      setIsMovingRight(true);
+    } else {
+      setIsMovingRight(false);
+    }
+  }, [mousePosition]);
+  useEffect(() => {
+    setMagneticPositions(calculate_magnetic_positions_by_tag(unique_tag));
+  }, [isMovingRight]);
+  /* { Check If magnetic positions requires update } ---------------------------------------- */
 
   return (
     <div
@@ -201,7 +218,7 @@ const StackFrameWrapper = ({ unique_tag }) => {
                   backgroundColor: "#3F3F3F32",
                 }}
               >
-                {unique_tag}
+                <span style={{ userSelect: "none" }}>{unique_tag}</span>
               </div>
               <HorizontalStackWrapperResizer unique_tag={unique_tag} />
             </div>
