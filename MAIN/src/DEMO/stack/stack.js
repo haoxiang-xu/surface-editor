@@ -366,12 +366,25 @@ const StackFrameWrapper = ({ unique_tag }) => {
                   left: 0,
 
                   /* { Stack Frame Content Styling } ----------------------- */
+                  borderRadius: 11,
                   boxSizing: "border-box",
                   overflow: "hidden",
                   backgroundColor: "#3F3F3F32",
                 }}
               >
-                <span style={{ userSelect: "none" }}>{unique_tag}</span>
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    opacity: 0.5,
+                    fontSize: 10,
+                    userSelect: "none",
+                  }}
+                >
+                  {unique_tag}
+                </span>
               </div>
               <HorizontalStackWrapperResizer unique_tag={unique_tag} />
             </div>
@@ -404,12 +417,25 @@ const StackFrameWrapper = ({ unique_tag }) => {
                   left: 0,
 
                   /* { Stack Frame Content Styling } ----------------------- */
+                  borderRadius: 11,
                   boxSizing: "border-box",
                   overflow: "hidden",
                   backgroundColor: "#3F3F3F32",
                 }}
               >
-                <span style={{ userSelect: "none" }}>{unique_tag}</span>
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    opacity: 0.5,
+                    fontSize: 10,
+                    userSelect: "none",
+                  }}
+                >
+                  {unique_tag}
+                </span>
               </div>
               {current_index !== sub_item_length - 1 ? (
                 <VerticalStackWrapperResizer unique_tag={unique_tag} />
