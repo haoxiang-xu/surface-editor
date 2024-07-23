@@ -234,6 +234,7 @@ const HorizontalStackContainer = ({
   expandContainer,
   narrowContainer,
 }) => {
+  
   const [StackFrameComponent, setStackFrameComponent] = useState(null);
   useEffect(() => {
     async function loadComponent() {

@@ -753,6 +753,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
           break;
         case "viewAST":
           view_ast_api();
+          break;
         case "copy":
           if (onSelectedCotent) {
             await navigator.clipboard.writeText(onSelectedCotent?.selectedText);
@@ -771,28 +772,41 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
 
   /* { context menu render } ============================================================================================ */
-  const render_context_menu = async () => {
+  const render_context_menu = async (source_editor_component) => {
     let contextStructure = { ...base_context_menu };
-    const onPaste = await navigator.clipboard.readText();
-    if (onPaste !== "") {
-      contextStructure = {
-        ...base_context_menu,
-        paste: { ...base_context_menu.paste, clickable: true },
-      };
-    } else {
-      contextStructure = {
-        ...base_context_menu,
-        paste: { ...base_context_menu.paste, clickable: false },
-      };
+    switch (source_editor_component) {
+      case "monaco_core": {
+        let onPaste = "";
+        try {
+          onPaste = await navigator.clipboard.readText();
+        } catch (error) {
+          console.error(
+            "[Error] Failed to read clipboard contents, ",
+            error,
+            "[ monaco_editor.js / render_context_menu ]"
+          );
+        }
+        if (onPaste !== "") {
+          contextStructure = {
+            ...base_context_menu,
+            paste: { ...base_context_menu.paste, clickable: true },
+          };
+        } else {
+          contextStructure = {
+            ...base_context_menu,
+            paste: { ...base_context_menu.paste, clickable: false },
+          };
+        }
+        return contextStructure;
+      }
+      default:
+        return null;
     }
-    return contextStructure;
   };
   const load_editor_context_menu = async (e, source_editor_component) => {
-    if (source_editor_component === "monaco_core") {
-      console.log("monaco_core");
-      const contextStructure = await render_context_menu();
-      load_contextMenu(e, contextStructure);
-    }
+    const contextStructure = await render_context_menu(source_editor_component);
+    if (!contextStructure) return;
+    load_contextMenu(e, contextStructure);
   };
   /* { context menu render } ============================================================================================ */
 

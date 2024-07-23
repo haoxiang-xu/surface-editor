@@ -281,6 +281,22 @@ const ContextMenuWrapper = ({ children }) => {
       unique_tag: "br",
     },
   };
+
+  /* { context menu command handler } ----------------------------------------------------------------------------------- */
+  const handle_context_menu_command = async () => {
+    if (command && command.source === "context_menu") {
+      const command_title = command.content.command_title;
+      switch (command_title) {
+        case "copy":
+          break;
+        case "paste":
+          break;
+      }
+      setCommand([]);
+    }
+  };
+  /* { context menu command handler } ----------------------------------------------------------------------------------- */
+
   /* { context menu render } ============================================================================================ */
   const render_context_menu = async (source_editor_component) => {
     let contextStructure = { ...default_file_context_menu };
@@ -308,6 +324,10 @@ const ContextMenuWrapper = ({ children }) => {
   };
   /* { context menu render } ============================================================================================ */
 
+  useEffect(() => {
+    handle_context_menu_command();
+  }, [command]);
+
   return (
     <SurfaceExplorerContextMenuContexts.Provider
       value={{
@@ -318,7 +338,17 @@ const ContextMenuWrapper = ({ children }) => {
     </SurfaceExplorerContextMenuContexts.Provider>
   );
 };
-const Explorer = ({ mode, command, setCommand, load_contextMenu }) => {
+const Explorer = ({
+  mode,
+  command,
+  setCommand,
+  load_contextMenu,
+  data,
+  setData,
+}) => {
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
   const { isDirLoaded } = useContext(RootDataContexts);
   return (
     <SurfaceExplorerContexts.Provider
