@@ -532,9 +532,9 @@ const MonacoEditorGroup = ({
 };
 const MonacoEditorContextMenuWrapper = ({
   stack_component_unique_tag,
+  load_contextMenu,
   children,
 }) => {
-  const { load_context_menu } = useContext(RootCommandContexts);
   const {
     command,
     setCommand,
@@ -675,6 +675,7 @@ const MonacoEditorContextMenuWrapper = ({
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
     if (command && command.source === "context_menu") {
+      console.log(command);
       const command_title = command.content.command_title;
       switch (command_title) {
         case "copy":
@@ -714,7 +715,7 @@ const MonacoEditorContextMenuWrapper = ({
   const load_editor_context_menu = async (e, source_editor_component) => {
     if (source_editor_component === "monaco_core") {
       const contextStructure = await render_context_menu();
-      load_context_menu(e, stack_component_unique_tag, contextStructure);
+      load_contextMenu(e, contextStructure);
     }
   };
   /* { context menu render } ============================================================================================ */
@@ -739,6 +740,7 @@ const MonacoEditor = ({
   code_editor_container_ref_index,
   command,
   setCommand,
+  load_contextMenu,
   data,
   setData,
 }) => {
@@ -948,6 +950,7 @@ const MonacoEditor = ({
     >
       <MonacoEditorContextMenuWrapper
         stack_component_unique_tag={stack_component_unique_tag}
+        load_contextMenu={load_contextMenu}
       >
         <link
           href="https://fonts.googleapis.com/css?family=Roboto"

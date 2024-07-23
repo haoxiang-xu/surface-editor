@@ -277,7 +277,8 @@ const HorizontalStackContainer = ({
   /* { data } ------------------------------------------------------------------------------------------------- */
 
   /* { command } ============================================================================================== */
-  const { cmd, pop_command_by_tag } = useContext(RootCommandContexts);
+  const { cmd, pop_command_by_tag, load_context_menu } =
+    useContext(RootCommandContexts);
   const [command, setCommand] = useState([]);
   useEffect(() => {
     if (
@@ -293,6 +294,9 @@ const HorizontalStackContainer = ({
       pop_command_by_tag(stack_component_unique_tag);
     }
   }, [command]);
+  const load_contextMenu = (e, contextStructure) => {
+    load_context_menu(e, stack_component_unique_tag, contextStructure);
+  };
 
   /* { command } ============================================================================================== */
 
@@ -348,7 +352,7 @@ const HorizontalStackContainer = ({
           border: "1px solid #282828",
           boxSizing: "border-box",
           overflow: "hidden",
-          borderRadius:11,
+          borderRadius: 11,
           backgroundColor: "#1E1E1E",
 
           /* ANIMATION -------------------------- */
@@ -361,6 +365,7 @@ const HorizontalStackContainer = ({
             mode={mode}
             command={command}
             setCommand={setCommand}
+            load_contextMenu={load_contextMenu}
             data={data}
             setData={setData}
             explorer_width={item.width}

@@ -49,7 +49,9 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - <span>"vertical*space*/\_vertical_mode"</sapn>
 
-- `command` (TYPE: List)
+- `command` & `setCommand` (TYPE: List) <span style="opacity: 0.64">To receive commands from outside for example the `context_menu` or other kind of `stack_component` you need to keep listening on value that is storing inside `command`, it will store the oldest command that is pending for this `stack_componet` to be execute. You should write your own logic to handle that command and after the command is executed, you should empty the `command` variable like this `setCommand([]);` so that a new pending command will be set into this variable.</span>
+
+- `load_contextMenu()`
 
 - `data` & `setData` (TYPE: Json) <span style="opacity: 0.64"> data allows you to store and reload your component data, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
 
