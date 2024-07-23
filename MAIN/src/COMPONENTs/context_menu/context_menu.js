@@ -395,10 +395,14 @@ const ContextList = ({
   );
   const [height, setHeight] = useState(context_menu_fixed_styling.minHeight);
   const [width, setWidth] = useState(calculate_context_list_width(sub_items));
+  const [transition, setTransition] = useState(null);
   useEffect(() => {
+    setHeight(context_menu_fixed_styling.minHeight);
+    setTransition(null);
     setTimeout(() => {
       setHeight(calculate_context_list_height(sub_items));
       setWidth(calculate_context_list_width(sub_items));
+      setTransition(`height 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)`);
     }, 20);
     if (direction === 3) {
       setListPosition([position_x, position_y]);
@@ -434,8 +438,7 @@ const ContextList = ({
       className={"context_menu_list_container"}
       style={{
         /*ANIMATION ---------------- */
-        transition: `height 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)
-        `,
+        transition: transition,
 
         /*POSITION ---------------- */
         position: "fixed",
