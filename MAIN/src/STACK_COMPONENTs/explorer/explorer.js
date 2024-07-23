@@ -470,6 +470,9 @@ const ContextMenuWrapper = ({ children }) => {
         case "delete": {
           remove_path_under_dir(onConextMenuPath);
         }
+        case "openFolder": {
+          window.electronAPI.triggerReadDir();
+        }
       }
       setOnConextMenuPath(null);
       setCommand([]);
