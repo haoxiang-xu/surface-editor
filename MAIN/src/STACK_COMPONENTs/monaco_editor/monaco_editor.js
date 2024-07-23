@@ -496,28 +496,318 @@ const MonacoEditorGroup = ({
   const [diffContent, setDiffContent] = useState(null);
   return monacoPaths.map((filePath, index) => {
     return (
-      <div className="code_editor_container1113">
-        <MonacoCore
-          key={filePath}
-          //Editor required parameters
-          editor_filePath={filePath}
-          code_editor_container_ref_index={code_editor_container_ref_index}
-          //Editor function parameters
-          onAppendContent={onAppendContent}
-          setOnAppendContent={setOnAppendContent}
-          setOnSelectedContent={setOnSelectedContent}
-          mode={mode}
-          display={
-            filePath === monacoPaths[onSelectedMonacoIndex] ? true : false
-          }
-          //editor_diffContent={diffContent}
-          //editor_setDiffContent={setDiffContent}
-          onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-          setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-        />
-      </div>
+      <MonacoCore
+        key={filePath}
+        //Editor required parameters
+        editor_filePath={filePath}
+        code_editor_container_ref_index={code_editor_container_ref_index}
+        //Editor function parameters
+        onAppendContent={onAppendContent}
+        setOnAppendContent={setOnAppendContent}
+        setOnSelectedContent={setOnSelectedContent}
+        onContextMenu={(e) => {
+          handleRightClick(e);
+        }}
+        mode={mode}
+        display={filePath === monacoPaths[onSelectedMonacoIndex] ? true : false}
+        //editor_diffContent={diffContent}
+        //editor_setDiffContent={setDiffContent}
+        onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
+        setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
+      ></MonacoCore>
     );
   });
+};
+const MonacoEditorContextMenuWrapper = ({ children }) => {
+  const {
+    command,
+    setCommand,
+    load_contextMenu,
+    onSelectedCotent,
+    setOnSelectedCotent,
+    onAppendContent,
+    setOnAppendContent,
+  } = useContext(MonacoEditorContexts);
+  const base_context_menu = {
+    root: {
+      type: "root",
+      sub_items: [
+        "continue",
+        "fix",
+        "br",
+        "customizeInstruction",
+        "customizeAPI",
+        "AST",
+        "br",
+        "moreOptions",
+        "copy",
+        "paste",
+      ],
+    },
+    copy: {
+      type: "button",
+      unique_tag: "copy",
+      clickable: true,
+      label: "Copy",
+      short_cut_label: "Ctrl+C",
+      icon: SYSTEM_ICON_MANAGER.copy.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
+    },
+    paste: {
+      type: "button",
+      unique_tag: "paste",
+      clickable: false,
+      label: "Paste",
+      short_cut_label: "Ctrl+V",
+      icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+    },
+    customizeInstruction: {
+      type: "button",
+      unique_tag: "customizeInstruction",
+      clickable: true,
+      label: "Customize Instruction",
+      icon: SYSTEM_ICON_MANAGER.draftingCompass.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.draftingCompass.ICON16,
+    },
+    customizeAPI: {
+      type: "button",
+      unique_tag: "customizeAPI",
+      icon: SYSTEM_ICON_MANAGER.customize.ICON512,
+      label: "Customize API",
+      quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
+      clickable: true,
+      sub_items: ["customizeRequest"],
+    },
+    AST: {
+      type: "button",
+      unique_tag: "AST",
+      label: "AST",
+      icon: SYSTEM_ICON_MANAGER.ast.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.ast.ICON16,
+      clickable: true,
+      sub_items: ["viewAST", "updateAST"],
+    },
+    continue: {
+      type: "button",
+      unique_tag: "continue",
+      clickable: true,
+      label: "Continue...",
+      icon: SYSTEM_ICON_MANAGER.continue.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.continue.ICON16,
+    },
+    fix: {
+      type: "button",
+      unique_tag: "fix",
+      clickable: true,
+      label: "Fix...",
+      icon: SYSTEM_ICON_MANAGER.fix.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.fix.ICON16,
+    },
+    br: {
+      type: "br",
+      unique_tag: "br",
+    },
+    moreOptions: {
+      type: "button",
+      unique_tag: "moreOptions",
+      icon: SYSTEM_ICON_MANAGER.moreOptions.ICON512,
+      label: "More Editor Options...",
+      quick_view_background: SYSTEM_ICON_MANAGER.moreOptions.ICON16,
+      clickable: true,
+      sub_items: ["fold", "unfold"],
+    },
+    fold: {
+      type: "button",
+      unique_tag: "fold",
+      icon: SYSTEM_ICON_MANAGER.fold.ICON512,
+      label: "Fold All",
+      quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
+      clickable: true,
+    },
+    unfold: {
+      type: "button",
+      unique_tag: "unfold",
+      icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
+      label: "Unfold All",
+      quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
+      clickable: true,
+    },
+    viewAST: {
+      type: "button",
+      unique_tag: "viewAST",
+      icon: SYSTEM_ICON_MANAGER.folderTree.ICON512,
+      label: "view AST",
+      quick_view_background: SYSTEM_ICON_MANAGER.folderTree.ICON16,
+      clickable: true,
+    },
+    updateAST: {
+      type: "button",
+      unique_tag: "updateAST",
+      icon: SYSTEM_ICON_MANAGER.update.ICON512,
+      label: "update AST",
+      quick_view_background: SYSTEM_ICON_MANAGER.update.ICON16,
+      clickable: true,
+    },
+    customizeRequest: {
+      unique_tag: "customizeRequest",
+      height: 256,
+      type: "component",
+      path: "monaco_editor/customizeRequestForm/customizeRequestForm",
+      width: 278,
+    },
+  };
+
+  /* APIs ============================================================================================================== */
+  const continue_api = async () => {
+    const requestBody = {
+      language: "js",
+      prompt: onSelectedCotent?.selectedText,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8200/openai/continue",
+        requestBody
+      );
+      console.log(onSelectedCotent);
+      setOnAppendContent(response.data.data.content);
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const view_ast_api = async () => {
+    const requestBody = {
+      language: "js",
+      prompt: onSelectedCotent?.selectedText,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8200/AST/javascript",
+        requestBody
+      );
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const handle_customized_request_api = async () => {
+    let prompt = "";
+    const requestURL = command?.content?.command_content?.requestURL;
+
+    if (!requestURL) {
+      console.log("requestURL is not defined");
+      return;
+    }
+    switch (command?.content?.command_content?.inputFormat) {
+      case "onSelect":
+        prompt = onSelectedCotent?.selectedText || "";
+        break;
+      case "entireFile":
+        prompt = "";
+        break;
+      default:
+        console.log("Invalid input format");
+        return;
+    }
+    const requestBody = {
+      language: "defaultLanguage",
+      prompt: prompt,
+    };
+    switch (command?.content?.command_content?.requestMethod) {
+      case "GET":
+        try {
+          const response = await axios.get(requestURL, requestBody);
+          console.log(response.data);
+        } catch (e) {
+          console.log("Error in axios request:", e);
+        }
+        break;
+      case "POST":
+        try {
+          const response = await axios.post(requestURL, requestBody);
+          console.log(response.data);
+        } catch (e) {
+          console.log("Error in axios request:", e);
+        }
+        break;
+      default:
+        console.log("Invalid request method");
+        return;
+    }
+  };
+  /* APIs =============================================================================================================== */
+
+  /* { context menu command handler } ----------------------------------------------------------------------------------- */
+  const handle_context_menu_command = async () => {
+    if (command && command.source === "context_menu") {
+      const command_title = command.content.command_title;
+      switch (command_title) {
+        case "continue":
+          continue_api();
+          break;
+        case "customizeRequest":
+          handle_customized_request_api();
+          break;
+        case "viewAST":
+          view_ast_api();
+        case "copy":
+          if (onSelectedCotent) {
+            await navigator.clipboard.writeText(onSelectedCotent?.selectedText);
+          }
+          break;
+        case "paste":
+          const onPaste = await navigator.clipboard.readText();
+          if (onPaste !== "") {
+            setOnAppendContent(onPaste);
+          }
+          break;
+      }
+      setCommand([]);
+    }
+  };
+  /* { context menu command handler } ----------------------------------------------------------------------------------- */
+
+  /* { context menu render } ============================================================================================ */
+  const render_context_menu = async () => {
+    let contextStructure = { ...base_context_menu };
+    const onPaste = await navigator.clipboard.readText();
+    if (onPaste !== "") {
+      contextStructure = {
+        ...base_context_menu,
+        paste: { ...base_context_menu.paste, clickable: true },
+      };
+    } else {
+      contextStructure = {
+        ...base_context_menu,
+        paste: { ...base_context_menu.paste, clickable: false },
+      };
+    }
+    return contextStructure;
+  };
+  const load_editor_context_menu = async (e, source_editor_component) => {
+    if (source_editor_component === "monaco_core") {
+      console.log("monaco_core");
+      const contextStructure = await render_context_menu();
+      load_contextMenu(e, contextStructure);
+    }
+  };
+  /* { context menu render } ============================================================================================ */
+
+  useEffect(() => {
+    handle_context_menu_command();
+  }, [command]);
+  return (
+    <MonacoEditorContextMenuContexts.Provider
+      value={{
+        load_editor_context_menu,
+      }}
+    >
+      <div className="code_editor_container1113">{children}</div>
+    </MonacoEditorContextMenuContexts.Provider>
+  );
 };
 const MonacoEditor = ({
   stack_component_unique_tag,
@@ -608,29 +898,31 @@ const MonacoEditor = ({
         setOnAppendContent,
       }}
     >
-      <link
-        href="https://fonts.googleapis.com/css?family=Roboto"
-        rel="stylesheet"
-      ></link>
-      <div style={{ height: "100%" }}>
-        <MonacoEditorGroup
-          code_editor_container_ref_index={code_editor_container_ref_index}
-          setOnSelectedContent={setOnSelectedCotent}
-          onAppendContent={onAppendContent}
-          setOnAppendContent={setOnAppendContent}
-          //HORIZONTAL OR VERTICAL MODE
-          mode={mode}
-          onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-          setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-        />
-        <FileSelectionBar
-          code_editor_container_ref_index={code_editor_container_ref_index}
-          //HORIZONTAL OR VERTICAL MODE
-          mode={mode}
-          onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-          setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-        />
-      </div>
+      <MonacoEditorContextMenuWrapper>
+        <link
+          href="https://fonts.googleapis.com/css?family=Roboto"
+          rel="stylesheet"
+        ></link>
+        <div style={{ height: "100%" }}>
+          <MonacoEditorGroup
+            code_editor_container_ref_index={code_editor_container_ref_index}
+            setOnSelectedContent={setOnSelectedCotent}
+            onAppendContent={onAppendContent}
+            setOnAppendContent={setOnAppendContent}
+            //HORIZONTAL OR VERTICAL MODE
+            mode={mode}
+            onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
+            setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
+          />
+          <FileSelectionBar
+            code_editor_container_ref_index={code_editor_container_ref_index}
+            //HORIZONTAL OR VERTICAL MODE
+            mode={mode}
+            onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
+            setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
+          />
+        </div>
+      </MonacoEditorContextMenuWrapper>
     </MonacoEditorContexts.Provider>
   );
 };
