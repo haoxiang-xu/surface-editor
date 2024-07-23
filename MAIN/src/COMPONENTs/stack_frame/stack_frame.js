@@ -1,4 +1,6 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, memo } from "react";
+import { stringify } from 'flatted';
+
 import HorizontalStackTopLeftSection from "./STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
@@ -39,7 +41,6 @@ const HorizontalStackFrameInvisibleOverLay = () => {
     ></div>
   );
 };
-
 const HorizontalStackResizer = ({
   index,
   /* Stack Data ------------------------------------ */
@@ -208,6 +209,17 @@ const HorizontalStackResizer = ({
     </div>
   );
 };
+
+const is_stack_frame_rerender_required = (prevProps, nextProps) => {
+  return (
+    prevProps.mode === nextProps.mode &&
+    stringify(prevProps.command) === stringify(nextProps.command) &&
+    stringify(prevProps.data) === stringify(nextProps.data)
+  );
+};
+const StackContainerWrapper = memo(({ children, mode, command, data }) => {
+  return children;
+}, is_stack_frame_rerender_required);
 const HorizontalStackContainer = ({
   index,
   stack_component_unique_tag,
@@ -221,9 +233,6 @@ const HorizontalStackContainer = ({
   /* Expand and Narrow Container ------------------- */
   expandContainer,
   narrowContainer,
-  /* Resizer Double Click Functions ---------------- */
-  maximizeContainer,
-  minimizeContainer,
 }) => {
   const [StackFrameComponent, setStackFrameComponent] = useState(null);
   useEffect(() => {
@@ -297,7 +306,6 @@ const HorizontalStackContainer = ({
   const load_contextMenu = (e, contextStructure) => {
     load_context_menu(e, stack_component_unique_tag, contextStructure);
   };
-
   /* { command } ============================================================================================== */
 
   const onMaximizeOnClick = () => {
@@ -360,22 +368,21 @@ const HorizontalStackContainer = ({
         }}
       >
         {StackFrameComponent ? (
-          <StackFrameComponent
-            stack_component_unique_tag={stack_component_unique_tag}
-            mode={mode}
-            command={command}
-            setCommand={setCommand}
-            load_contextMenu={load_contextMenu}
-            data={data}
-            setData={setData}
-            explorer_width={item.width}
-            code_editor_width={item.width}
-            code_editor_container_ref_index={
-              item.code_editor_container_ref_index
-            }
-            onMaximizeOnClick={onMaximizeOnClick}
-            onMinimizeOnClick={onMinimizeOnClick}
-          />
+          <StackContainerWrapper mode={mode} command={command} data={data}>
+            <StackFrameComponent
+              stack_component_unique_tag={stack_component_unique_tag}
+              mode={mode}
+              command={command}
+              setCommand={setCommand}
+              load_contextMenu={load_contextMenu}
+              data={data}
+              setData={setData}
+              explorer_width={item.width}
+              code_editor_container_ref_index={
+                item.code_editor_container_ref_index
+              }
+            />
+          </StackContainerWrapper>
         ) : null}
         <HorizontalStackTopLeftSection
           mode={mode}

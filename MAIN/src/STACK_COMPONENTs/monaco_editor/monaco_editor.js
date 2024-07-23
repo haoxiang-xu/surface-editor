@@ -1,20 +1,12 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useContext,
-  createContext,
-} from "react";
+import React, { useState, useRef, useEffect, useContext, memo } from "react";
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
 import DirItemGhostDragImage from "../../COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
-import { rightClickContextMenuCommandContexts } from "../../CONTEXTs/rightClickContextMenuContexts";
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { MonacoEditorContexts } from "./monaco_editor_contexts";
-import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_contexts";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
@@ -490,13 +482,9 @@ const FileSelectionBar = ({
 };
 const MonacoEditorGroup = ({
   code_editor_container_ref_index,
-  //CONTEXT MENU
-  setOnRightClickItem,
-  onSelectedContent,
   setOnSelectedContent,
   onAppendContent,
   setOnAppendContent,
-  customizeRequest,
   //HORIZONTAL OR VERTICAL MODE
   mode,
 
@@ -530,14 +518,11 @@ const MonacoEditorGroup = ({
     );
   });
 };
-const MonacoEditorContextMenuWrapper = ({
-  stack_component_unique_tag,
-  load_contextMenu,
-  children,
-}) => {
+const MonacoEditorContextMenuWrapper = ({ children }) => {
   const {
     command,
     setCommand,
+    load_contextMenu,
     onSelectedCotent,
     setOnSelectedCotent,
     onAppendContent,
@@ -672,12 +657,102 @@ const MonacoEditorContextMenuWrapper = ({
       width: 278,
     },
   };
+
+  /* APIs ============================================================================================================== */
+  const continue_api = async () => {
+    const requestBody = {
+      language: "js",
+      prompt: onSelectedCotent?.selectedText,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8200/openai/continue",
+        requestBody
+      );
+      console.log(onSelectedCotent);
+      setOnAppendContent(response.data.data.content);
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const view_ast_api = async () => {
+    const requestBody = {
+      language: "js",
+      prompt: onSelectedCotent?.selectedText,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8200/AST/javascript",
+        requestBody
+      );
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const handle_customized_request_api = async () => {
+    let prompt = "";
+    const requestURL = command?.content?.command_content?.requestURL;
+
+    if (!requestURL) {
+      console.log("requestURL is not defined");
+      return;
+    }
+    switch (command?.content?.command_content?.inputFormat) {
+      case "onSelect":
+        prompt = onSelectedCotent?.selectedText || "";
+        break;
+      case "entireFile":
+        prompt = "";
+        break;
+      default:
+        console.log("Invalid input format");
+        return;
+    }
+    const requestBody = {
+      language: "defaultLanguage",
+      prompt: prompt,
+    };
+    switch (command?.content?.command_content?.requestMethod) {
+      case "GET":
+        try {
+          const response = await axios.get(requestURL, requestBody);
+          console.log(response.data);
+        } catch (e) {
+          console.log("Error in axios request:", e);
+        }
+        break;
+      case "POST":
+        try {
+          const response = await axios.post(requestURL, requestBody);
+          console.log(response.data);
+        } catch (e) {
+          console.log("Error in axios request:", e);
+        }
+        break;
+      default:
+        console.log("Invalid request method");
+        return;
+    }
+  };
+  /* APIs =============================================================================================================== */
+
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
     if (command && command.source === "context_menu") {
-      console.log(command);
       const command_title = command.content.command_title;
       switch (command_title) {
+        case "continue":
+          continue_api();
+          break;
+        case "customizeRequest":
+          handle_customized_request_api();
+          break;
+        case "viewAST":
+          view_ast_api();
         case "copy":
           if (onSelectedCotent) {
             await navigator.clipboard.writeText(onSelectedCotent?.selectedText);
@@ -744,9 +819,6 @@ const MonacoEditor = ({
   data,
   setData,
 }) => {
-  const { access_file_language_by_path, access_file_content_by_path } =
-    useContext(RootDataContexts);
-
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
   const [onSelectedMonacoIndex, setOnSelectedMonacoIndex] = useState(
     data?.on_selected_monaco_core_index
@@ -797,140 +869,18 @@ const MonacoEditor = ({
     });
   }, [monacoCores]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
+
   const [onDeleteMonacoEditorPath, setOnDeleteMonacoEditorPath] =
     useState(null);
   const [onSelectedCotent, setOnSelectedCotent] = useState(null);
   const [onAppendContent, setOnAppendContent] = useState(null);
-
-  /* API =================================================================================== */
-  const continueAPI = async () => {
-    const requestBody = {
-      language: "js",
-      prompt: onSelectedCotent?.selectedText,
-    };
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8200/openai/continue",
-        requestBody
-      );
-      console.log(onSelectedCotent);
-      setOnAppendContent(response.data.data.content);
-      console.log(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const getAST = async () => {
-    const requestBody = {
-      language: "js",
-      prompt: onSelectedCotent?.selectedText,
-    };
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8200/AST/javascript",
-        requestBody
-      );
-      console.log(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const handleCustomizeRequest = async () => {
-    setCustomizeRequest(rightClickCommand.content);
-    let prompt = "";
-    const requestURL = rightClickCommand?.content?.requestURL;
-
-    if (!requestURL) {
-      console.log("requestURL is not defined");
-      return;
-    }
-    switch (rightClickCommand?.content?.inputFormat) {
-      case "onSelect":
-        prompt = onSelectedCotent?.selectedText || "";
-        break;
-      case "entireFile":
-        prompt = "";
-        break;
-      default:
-        console.log("Invalid input format");
-        return;
-    }
-    const requestBody = {
-      language: "defaultLanguage",
-      prompt: prompt,
-    };
-    switch (rightClickCommand?.content?.requestMethod) {
-      case "GET":
-        try {
-          const response = await axios.get(requestURL, requestBody);
-          console.log(response.data);
-        } catch (e) {
-          console.log("Error in axios request:", e);
-        }
-        break;
-      case "POST":
-        try {
-          const response = await axios.post(requestURL, requestBody);
-          console.log(response.data);
-        } catch (e) {
-          console.log("Error in axios request:", e);
-        }
-        break;
-      default:
-        console.log("Invalid request method");
-        return;
-    }
-  };
-  /* API =================================================================================== */
-
-  /* Context Menu ----------------------------------------------------------------------- */
-  const {
-    onRightClickItem,
-    setOnRightClickItem,
-    rightClickCommand,
-    setRightClickCommand,
-  } = useContext(rightClickContextMenuCommandContexts);
-  const [customizeRequest, setCustomizeRequest] = useState(null);
-  const handleLeftClick = (event) => {
-    setOnRightClickItem(null);
-  };
-  useEffect(() => {
-    if (rightClickCommand && rightClickCommand.target === "vecoder_editor") {
-      handleRightClickCommand(rightClickCommand.command);
-      setRightClickCommand(null);
-      setOnRightClickItem(null);
-    }
-  }, [rightClickCommand]);
-  const handleRightClickCommand = async (command) => {
-    switch (command) {
-      case "continue":
-        continueAPI();
-        break;
-      case "viewAST":
-        getAST();
-        break;
-      case "copy":
-        if (onSelectedCotent) {
-          await navigator.clipboard.writeText(onSelectedCotent?.selectedText);
-        }
-        break;
-      case "paste":
-        setOnAppendContent(await navigator.clipboard.readText());
-        break;
-      case "customizeRequest":
-        await handleCustomizeRequest();
-        break;
-    }
-  };
-  /* Context Menu ----------------------------------------------------------------------- */
 
   return (
     <MonacoEditorContexts.Provider
       value={{
         command,
         setCommand,
+        load_contextMenu,
         onSelectedMonacoIndex,
         setOnSelectedMonacoIndex,
         monacoPaths,
@@ -948,29 +898,17 @@ const MonacoEditor = ({
         setOnAppendContent,
       }}
     >
-      <MonacoEditorContextMenuWrapper
-        stack_component_unique_tag={stack_component_unique_tag}
-        load_contextMenu={load_contextMenu}
-      >
+      <MonacoEditorContextMenuWrapper>
         <link
           href="https://fonts.googleapis.com/css?family=Roboto"
           rel="stylesheet"
         ></link>
-        <div
-          style={{ height: "100%" }}
-          onClick={(e) => {
-            handleLeftClick(e);
-          }}
-        >
+        <div style={{ height: "100%" }}>
           <MonacoEditorGroup
             code_editor_container_ref_index={code_editor_container_ref_index}
-            //CONTEXT MENU
-            setOnRightClickItem={setOnRightClickItem}
-            onSelectedContent={onSelectedCotent}
             setOnSelectedContent={setOnSelectedCotent}
             onAppendContent={onAppendContent}
             setOnAppendContent={setOnAppendContent}
-            customizeRequest={customizeRequest}
             //HORIZONTAL OR VERTICAL MODE
             mode={mode}
             onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
