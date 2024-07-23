@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
+import { SurfaceExplorerContexts } from "../surface_explorer_contexts.js";
+import { SurfaceExplorerContextMenuContexts } from "../surface_explorer_context_menu_contexts.js";
 import DirItemGhostDragImage from "../../../COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage";
 import { ICON_MANAGER, ICON_LOADER } from "../../../ICONs/icon_manager";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
@@ -180,6 +182,148 @@ const SubDirList = ({
   );
 };
 
+const ContextMenuWrapper = ({ children }) => {
+  const { command, setCommand, load_contextMenu } = useContext(
+    SurfaceExplorerContexts
+  );
+  const default_folder_context_menu = {
+    root: {
+      type: "root",
+      sub_items: [
+        "newFile",
+        "newFolder",
+        "br",
+        "copy",
+        "paste",
+        "br",
+        "rename",
+        "delete",
+      ],
+    },
+    copy: {
+      type: "button",
+      unique_tag: "copy",
+      clickable: true,
+      label: "Copy",
+      short_cut_label: "Ctrl+C",
+      icon: SYSTEM_ICON_MANAGER.copy.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
+    },
+    rename: {
+      type: "button",
+      unique_tag: "rename",
+      clickable: true,
+      label: "Rename",
+      icon: SYSTEM_ICON_MANAGER.rename.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
+    },
+    delete: {
+      type: "button",
+      unique_tag: "delete",
+      clickable: true,
+      label: "Delete",
+      icon: SYSTEM_ICON_MANAGER.trash.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
+    },
+    br: {
+      type: "br",
+      unique_tag: "br",
+    },
+    newFile: {
+      type: "button",
+      unique_tag: "newFile",
+      clickable: true,
+      label: "New File...",
+      icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
+    },
+    newFolder: {
+      type: "button",
+      unique_tag: "newFolder",
+      clickable: true,
+      label: "New Folder...",
+      icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
+    },
+    paste: {
+      type: "button",
+      unique_tag: "paste",
+      clickable: false,
+      label: "Paste",
+      short_cut_label: "Ctrl+V",
+      icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+    },
+  };
+  const default_file_context_menu = {
+    root: {
+      type: "root",
+      sub_items: ["copy", "br", "rename", "delete"],
+    },
+    copy: {
+      type: "button",
+      unique_tag: "copy",
+      clickable: true,
+      label: "Copy",
+      short_cut_label: "Ctrl+C",
+      icon: SYSTEM_ICON_MANAGER.copy.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
+    },
+    rename: {
+      type: "button",
+      unique_tag: "rename",
+      clickable: true,
+      label: "Rename",
+      icon: SYSTEM_ICON_MANAGER.rename.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
+    },
+    delete: {
+      type: "button",
+      unique_tag: "delete",
+      clickable: true,
+      label: "Delete",
+      icon: SYSTEM_ICON_MANAGER.trash.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
+    },
+    br: {
+      type: "br",
+      unique_tag: "br",
+    },
+  };
+  /* { context menu render } ============================================================================================ */
+  const render_context_menu = async (source_editor_component) => {
+    let contextStructure = { ...default_file_context_menu };
+    switch (source_editor_component) {
+      case "file": {
+        contextStructure = { ...default_file_context_menu };
+        return contextStructure;
+      }
+      case "folder": {
+        contextStructure = { ...default_folder_context_menu };
+        return contextStructure;
+      }
+      default:
+        return null;
+    }
+  };
+  const load_explorer_context_menu = async (e, source_editor_component) => {
+    const contextStructure = await render_context_menu(source_editor_component);
+    if (!contextStructure) return;
+    load_contextMenu(e, contextStructure);
+  };
+  /* { context menu render } ============================================================================================ */
+
+  return (
+    <SurfaceExplorerContextMenuContexts.Provider
+      value={{
+        load_explorer_context_menu,
+      }}
+    >
+      {children}
+    </SurfaceExplorerContextMenuContexts.Provider>
+  );
+};
+
 const DirItem = ({
   index,
   filePath,
@@ -216,6 +360,9 @@ const DirItem = ({
     onDragFiles,
     setOnDragFiles,
   } = useContext(explorerContexts);
+  const { load_explorer_context_menu } = useContext(
+    SurfaceExplorerContextMenuContexts
+  );
   const {
     draggedItem,
     setDraggedItem,
@@ -294,48 +441,6 @@ const DirItem = ({
       setTimeout(() => {
         setUnexpendAnimation({});
       }, unexpandingTime * 1000);
-    }
-  };
-  const handleFolderOnRightClick = () => {
-    if (onCopyFile !== null) {
-      setOnRightClickItem({
-        source: "vecoder_explorer/" + filePath,
-        condition: { paste: onCopyFile.fileName },
-        content: JSON.parse(
-          JSON.stringify(access_file_subfiles_by_path(filePath))
-        ),
-        target: "vecoder_explorer/" + filePath,
-      });
-    } else {
-      setOnRightClickItem({
-        source: "vecoder_explorer/" + filePath,
-        condition: { paste: false },
-        content: JSON.parse(
-          JSON.stringify(access_file_subfiles_by_path(filePath))
-        ),
-        target: "vecoder_explorer/" + filePath,
-      });
-    }
-  };
-  const handleFileOnRightClick = () => {
-    if (onCopyFile !== null) {
-      setOnRightClickItem({
-        source: "vecoder_explorer/" + filePath,
-        condition: { paste: onCopyFile.fileName },
-        content: JSON.parse(
-          JSON.stringify(access_file_subfiles_by_path(filePath))
-        ),
-        target: "vecoder_explorer/" + filePath,
-      });
-    } else {
-      setOnRightClickItem({
-        source: "vecoder_explorer/" + filePath,
-        condition: { paste: false },
-        content: JSON.parse(
-          JSON.stringify(access_file_subfiles_by_path(filePath))
-        ),
-        target: "vecoder_explorer/" + filePath,
-      });
     }
   };
   const handleOnContextMenu = (event) => {
@@ -695,175 +800,185 @@ const DirItem = ({
   /* ON COMMAND -------------------------------------------------------------------------------------------------- */
 
   return (
-    <div draggable={true}>
-      <link
-        href="https://fonts.googleapis.com/css?family=Roboto"
-        rel="stylesheet"
-      ></link>
-      {/* Dir Item ----------------------------------------------------------------------------------------- */}
-      {access_file_type_by_path(filePath) === "folder" ? (
-        /*If file type is folder -> style as folder*/
-        <div
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onMouseMove={handleMouseMove}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          draggable={true}
-        >
-          {access_subfiles_by_path(filePath).length !== 0 ? (
-            /*If file has children -> style as expendable folder*/
-            <div>
-              {onCommand === "rename" ? (
-                /*If file on command is rename -> display rename input box*/
-                <RenameInputBox
-                  filePath={filePath}
-                  dirItemOnHover={dirItemOnHover}
-                  onCommand={onCommand}
-                  setOnCommand={setOnCommand}
-                />
-              ) : (
-                /* SPAN If file not on command -> diplay folder name and expand arrow button>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
-                <span
-                  ref={labelRef}
-                  className={fileNameClassName}
-                  onClick={handleExpandIconOnClick}
-                  onContextMenu={handleOnContextMenu}
-                  style={{
-                    borderRadius: folderItemBorderRadius,
-                    backgroundColor: folderItemBackgroundColor,
-                  }}
-                >
-                  <img
-                    src={SYSTEM_ICON_MANAGER.arrow.ICON512}
-                    className={
-                      access_folder_expand_status_by_path(filePath)
-                        ? "dir_item_component_arrow_icon_down0725"
-                        : "dir_item_component_arrow_icon_right0725"
-                    }
+    <ContextMenuWrapper>
+      <div draggable={true}>
+        <link
+          href="https://fonts.googleapis.com/css?family=Roboto"
+          rel="stylesheet"
+        ></link>
+        {/* Dir Item ----------------------------------------------------------------------------------------- */}
+        {access_file_type_by_path(filePath) === "folder" ? (
+          /*If file type is folder -> style as folder*/
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onMouseMove={handleMouseMove}
+            onContextMenu={(e) => {
+              load_explorer_context_menu(e, root ? "root" : "folder");
+            }}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            draggable={true}
+          >
+            {access_subfiles_by_path(filePath).length !== 0 ? (
+              /*If file has children -> style as expendable folder*/
+              <div>
+                {onCommand === "rename" ? (
+                  /*If file on command is rename -> display rename input box*/
+                  <RenameInputBox
+                    filePath={filePath}
+                    dirItemOnHover={dirItemOnHover}
+                    onCommand={onCommand}
+                    setOnCommand={setOnCommand}
+                  />
+                ) : (
+                  /* SPAN If file not on command -> diplay folder name and expand arrow button>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+                  <span
+                    ref={labelRef}
+                    className={fileNameClassName}
                     onClick={handleExpandIconOnClick}
-                    loading="lazy"
+                    onContextMenu={handleOnContextMenu}
+                    style={{
+                      borderRadius: folderItemBorderRadius,
+                      backgroundColor: folderItemBackgroundColor,
+                    }}
+                  >
+                    <img
+                      src={SYSTEM_ICON_MANAGER.arrow.ICON512}
+                      className={
+                        access_folder_expand_status_by_path(filePath)
+                          ? "dir_item_component_arrow_icon_down0725"
+                          : "dir_item_component_arrow_icon_right0725"
+                      }
+                      onClick={handleExpandIconOnClick}
+                      loading="lazy"
+                    />
+                    {access_file_name_by_path_in_dir(filePath)}
+                  </span>
+                )}
+              </div>
+            ) : (
+              /*If file doesn't has children -> style as unexpendable folder*/
+              <div>
+                {onCommand === "rename" ? (
+                  /*If file on command is rename -> display rename input box*/
+                  <RenameInputBox
+                    filePath={filePath}
+                    dirItemOnHover={dirItemOnHover}
+                    onCommand={onCommand}
+                    setOnCommand={setOnCommand}
                   />
-                  {access_file_name_by_path_in_dir(filePath)}
-                </span>
-              )}
-            </div>
-          ) : (
-            /*If file doesn't has children -> style as unexpendable folder*/
-            <div>
-              {onCommand === "rename" ? (
-                /*If file on command is rename -> display rename input box*/
-                <RenameInputBox
-                  filePath={filePath}
-                  dirItemOnHover={dirItemOnHover}
-                  onCommand={onCommand}
-                  setOnCommand={setOnCommand}
-                />
-              ) : (
-                /* SPAN If file not on command -> diplay folder name and expand arrow button>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
-                <span
-                  ref={labelRef}
-                  className={fileNameClassName}
-                  style={{
-                    borderRadius: folderItemBorderRadius,
-                    backgroundColor: folderItemBackgroundColor,
-                  }}
-                  onClick={(e) => handleOnLeftClick(e)}
-                  onContextMenu={handleOnContextMenu}
-                >
-                  <img
-                    src={SYSTEM_ICON_MANAGER.arrow.ICON512}
-                    className="dir_item_component_unexpendable_arrow_icon_right0826"
-                    loading="lazy"
-                  />
-                  {access_file_name_by_path_in_dir(filePath)}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      ) : (
-        /*If file type is not folder -> style as file*/
-        <div
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onMouseMove={handleMouseMove}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          draggable={true}
-        >
-          {onCommand === "rename" ? (
-            <RenameInputBox
-              filePath={filePath}
-              dirItemOnHover={dirItemOnHover}
-              onCommand={onCommand}
-              setOnCommand={setOnCommand}
-            />
-          ) : (
-            /* SPAN file>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
-            <span
-              ref={labelRef}
-              className={fileNameClassName}
-              onClick={(e) => handleOnLeftClick(e)}
-              style={{
-                color:
-                  onSingleClickFile && onSingleClickFile.filePath === filePath
-                    ? "#CCCCCC"
-                    : FILE_TYPE_ICON_MANAGER[
-                        (access_file_name_by_path_in_dir,
-                        filePath.split(".").pop())
-                      ]?.LABEL_COLOR,
-                borderRadius: fileItemBorderRadius,
-                animation:
-                  "dir_item_component_container_expand_animation " +
-                  expandingTime +
-                  "s",
-                padding:
-                  FILE_TYPE_ICON_MANAGER[
-                    (access_file_name_by_path_in_dir, filePath.split(".").pop())
-                  ]?.ICON512 !== undefined
-                    ? "1px 0px 1px 6px"
-                    : "1px 0px 1px 21px",
-              }}
-              onContextMenu={handleOnContextMenu}
-            >
-              <FileTypeIconLoader
-                fileIcon={
-                  FILE_TYPE_ICON_MANAGER[
-                    (access_file_name_by_path_in_dir, filePath.split(".").pop())
-                  ]?.ICON512
-                }
-                fileIconBackground={
-                  FILE_TYPE_ICON_MANAGER[
-                    (access_file_name_by_path_in_dir, filePath.split(".").pop())
-                  ]?.ICON16
-                }
+                ) : (
+                  /* SPAN If file not on command -> diplay folder name and expand arrow button>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+                  <span
+                    ref={labelRef}
+                    className={fileNameClassName}
+                    style={{
+                      borderRadius: folderItemBorderRadius,
+                      backgroundColor: folderItemBackgroundColor,
+                    }}
+                    onClick={(e) => handleOnLeftClick(e)}
+                    onContextMenu={handleOnContextMenu}
+                  >
+                    <img
+                      src={SYSTEM_ICON_MANAGER.arrow.ICON512}
+                      className="dir_item_component_unexpendable_arrow_icon_right0826"
+                      loading="lazy"
+                    />
+                    {access_file_name_by_path_in_dir(filePath)}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        ) : (
+          /*If file type is not folder -> style as file*/
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onMouseMove={handleMouseMove}
+            onContextMenu={(e) => {
+              load_explorer_context_menu(e, "file");
+            }}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            draggable={true}
+          >
+            {onCommand === "rename" ? (
+              <RenameInputBox
+                filePath={filePath}
+                dirItemOnHover={dirItemOnHover}
+                onCommand={onCommand}
+                setOnCommand={setOnCommand}
               />
-              {access_file_name_by_path_in_dir(filePath)}
-            </span>
-          )}
-        </div>
-      )}
-      {/* Dir Item ----------------------------------------------------------------------------------------- */}
+            ) : (
+              /* SPAN file>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+              <span
+                ref={labelRef}
+                className={fileNameClassName}
+                onClick={(e) => handleOnLeftClick(e)}
+                style={{
+                  color:
+                    onSingleClickFile && onSingleClickFile.filePath === filePath
+                      ? "#CCCCCC"
+                      : FILE_TYPE_ICON_MANAGER[
+                          (access_file_name_by_path_in_dir,
+                          filePath.split(".").pop())
+                        ]?.LABEL_COLOR,
+                  borderRadius: fileItemBorderRadius,
+                  animation:
+                    "dir_item_component_container_expand_animation " +
+                    expandingTime +
+                    "s",
+                  padding:
+                    FILE_TYPE_ICON_MANAGER[
+                      (access_file_name_by_path_in_dir,
+                      filePath.split(".").pop())
+                    ]?.ICON512 !== undefined
+                      ? "1px 0px 1px 6px"
+                      : "1px 0px 1px 21px",
+                }}
+                onContextMenu={handleOnContextMenu}
+              >
+                <FileTypeIconLoader
+                  fileIcon={
+                    FILE_TYPE_ICON_MANAGER[
+                      (access_file_name_by_path_in_dir,
+                      filePath.split(".").pop())
+                    ]?.ICON512
+                  }
+                  fileIconBackground={
+                    FILE_TYPE_ICON_MANAGER[
+                      (access_file_name_by_path_in_dir,
+                      filePath.split(".").pop())
+                    ]?.ICON16
+                  }
+                />
+                {access_file_name_by_path_in_dir(filePath)}
+              </span>
+            )}
+          </div>
+        )}
+        {/* Dir Item ----------------------------------------------------------------------------------------- */}
 
-      {/* SubFiles List -------------------------------------------------------------------------------------------- */}
-      <SubDirList
-        filePath={filePath}
-        dirItemOnHover={dirItemOnHover}
-        dirPathOnHover={dirPathOnHover}
-        expendAnimation={expendAnimation}
-        unexpendAnimation={unexpendAnimation}
-      />
-      {/* SubFiles List -------------------------------------------------------------------------------------------- */}
+        {/* SubFiles List -------------------------------------------------------------------------------------------- */}
+        <SubDirList
+          filePath={filePath}
+          dirItemOnHover={dirItemOnHover}
+          dirPathOnHover={dirPathOnHover}
+          expendAnimation={expendAnimation}
+          unexpendAnimation={unexpendAnimation}
+        />
+        {/* SubFiles List -------------------------------------------------------------------------------------------- */}
 
-      {onDragFiles !== null &&
-      draggedItem !== null &&
-      filePath === draggedItem ? (
-        <DirItemGhostDragImage draggedDirItemPath={draggedItem.content} />
-      ) : null}
+        {onDragFiles !== null &&
+        draggedItem !== null &&
+        filePath === draggedItem ? (
+          <DirItemGhostDragImage draggedDirItemPath={draggedItem.content} />
+        ) : null}
 
-      <style>
-        {`
+        <style>
+          {`
           @keyframes dir_item_component_dir_list_unexpend_animation {
             ${Object.entries(dirListUnexpendKeyframes)
               .map(
@@ -885,8 +1000,9 @@ const DirItem = ({
               .join(" ")}
           }
         `}
-      </style>
-    </div>
+        </style>
+      </div>
+    </ContextMenuWrapper>
   );
 };
 

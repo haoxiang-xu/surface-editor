@@ -16,7 +16,6 @@ const MonacoCore = ({
   onAppendContent,
   setOnAppendContent,
   setOnSelectedContent,
-  onContextMenu,
   mode,
   display,
   //Diff Editor optional parameters
