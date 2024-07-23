@@ -109,15 +109,33 @@ const DirList = ({}) => {
           setOnDragFiles,
         }}
       >
-        <DirItem filePath={dir.filePath} root={true} />
+        <ContextMenuWrapper>
+          <DirItem filePath={dir.filePath} root={true} />
+        </ContextMenuWrapper>
       </explorerContexts.Provider>
     </div>
   );
 };
 const ContextMenuWrapper = ({ children }) => {
-  const { command, setCommand, load_contextMenu } = useContext(
-    SurfaceExplorerContexts
-  );
+  const {
+    dir,
+    update_path_under_dir,
+    remove_path_under_dir,
+    check_is_file_name_exist_under_path,
+    access_file_subfiles_by_path,
+    access_file_name_by_path_in_dir,
+    access_file_type_by_path,
+    access_folder_expand_status_by_path,
+    update_folder_expand_status_by_path,
+    access_subfiles_by_path,
+  } = useContext(RootDataContexts);
+  const { onSingleClickFile, setOnSingleClickFile } =
+    useContext(explorerContexts);
+  const { stack_component_unique_tag, command, setCommand, load_contextMenu } =
+    useContext(SurfaceExplorerContexts);
+  const [onConextMenuPath, setOnConextMenuPath] = useState(null);
+  const [onCopyFile, setOnCopyFile] = useState(null);
+
   const default_root_context_menu = {
     root: {
       type: "root",
@@ -281,6 +299,15 @@ const ContextMenuWrapper = ({ children }) => {
       unique_tag: "br",
     },
   };
+  const clickable_paste = {
+    type: "button",
+    unique_tag: "paste",
+    clickable: true,
+    label: "Paste",
+    short_cut_label: "Ctrl+V",
+    icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+    quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+  };
 
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
@@ -288,10 +315,163 @@ const ContextMenuWrapper = ({ children }) => {
       const command_title = command.content.command_title;
       switch (command_title) {
         case "copy":
+          {
+            setOnCopyFile(
+              JSON.parse(
+                JSON.stringify(access_file_subfiles_by_path(onConextMenuPath))
+              )
+            );
+          }
           break;
         case "paste":
+          {
+            const addPathNameAllChildren = (file, addPath, copyFileIndex) => {
+              const add_path = addPath.split("/");
+
+              for (let i = 0; i < file.files.length; i++) {
+                const path = file.files[i].filePath.split("/");
+                let combinedPath = add_path.concat(path.slice(copyFileIndex));
+                file.files[i].filePath = combinedPath.join("/");
+
+                addPathNameAllChildren(file.files[i], addPath, copyFileIndex);
+              }
+            };
+            let pasteFile = JSON.parse(JSON.stringify(onCopyFile));
+            if (
+              !check_is_file_name_exist_under_path(
+                onConextMenuPath,
+                pasteFile.fileName
+              )
+            ) {
+              pasteFile.expanded = false;
+              setOnSingleClickFile(pasteFile);
+
+              const pasteFileIndex = pasteFile.filePath.split("/").length - 1;
+              addPathNameAllChildren(
+                pasteFile,
+                onConextMenuPath,
+                pasteFileIndex
+              );
+
+              const path = pasteFile.filePath.split("/");
+              const add_path = onConextMenuPath.split("/");
+              const combinedPath = add_path.concat(path.slice(pasteFileIndex));
+              pasteFile.filePath = combinedPath.join("/");
+
+              let editedFile = access_file_subfiles_by_path(onConextMenuPath);
+              editedFile.files.push(pasteFile);
+              update_path_under_dir(onConextMenuPath, editedFile);
+
+              //EXPAND FOLDER
+              update_folder_expand_status_by_path(onConextMenuPath, true);
+            } else {
+              alert("File name already exist");
+            }
+          }
           break;
+        case "newFile": {
+          const getNewFileDefaultName = (filePath) => {
+            let newFileDefaultName = "untitled_file";
+            let newFileDefaultNameIndex = 1;
+            let newFileDefaultNameExist = true;
+            while (newFileDefaultNameExist) {
+              newFileDefaultNameExist = false;
+              const file_list = access_subfiles_by_path(filePath);
+              for (let i = 0; i < file_list.length; i++) {
+                if (file_list[i].fileName === newFileDefaultName) {
+                  newFileDefaultNameExist = true;
+                  break;
+                }
+              }
+              if (newFileDefaultNameExist) {
+                newFileDefaultName = "untitled_file" + newFileDefaultNameIndex;
+                newFileDefaultNameIndex++;
+              }
+            }
+            return newFileDefaultName;
+          };
+          const newFileDefaultName = getNewFileDefaultName(onConextMenuPath);
+
+          const newFile = {
+            fileName: newFileDefaultName,
+            fileType: "file",
+            filePath: onConextMenuPath + "/" + newFileDefaultName,
+            files: [],
+          };
+
+          let editedFile = access_file_subfiles_by_path(onConextMenuPath);
+          editedFile.files.push(newFile);
+          update_path_under_dir(onConextMenuPath, editedFile);
+
+          update_folder_expand_status_by_path(onConextMenuPath, true);
+
+          setCommand({
+            source: "context_menu",
+            target: stack_component_unique_tag,
+            content: {
+              command_title: "rename",
+              command_content: {},
+            },
+          });
+          setOnConextMenuPath(newFile.filePath);
+          return;
+        }
+        case "newFolder": {
+          const getNewFolderDefaultName = (filePath) => {
+            let newFolderDefaultName = "untitled_folder";
+            let newFolderDefaultNameIndex = 1;
+            let newFolderDefaultNameExist = true;
+            while (newFolderDefaultNameExist) {
+              newFolderDefaultNameExist = false;
+              const file_list = access_subfiles_by_path(filePath);
+              for (let i = 0; i < file_list.length; i++) {
+                if (file_list[i].fileName === newFolderDefaultName) {
+                  newFolderDefaultNameExist = true;
+                  break;
+                }
+              }
+              if (newFolderDefaultNameExist) {
+                newFolderDefaultName =
+                  "untitled_folder" + newFolderDefaultNameIndex;
+                newFolderDefaultNameIndex++;
+              }
+            }
+            return newFolderDefaultName;
+          };
+          const newFolderDefaultName =
+            getNewFolderDefaultName(onConextMenuPath);
+          const newFolder = {
+            fileName: newFolderDefaultName,
+            fileType: "folder",
+            filePath: onConextMenuPath + "/" + newFolderDefaultName,
+            files: [],
+          };
+
+          let editedFile = access_file_subfiles_by_path(onConextMenuPath);
+          editedFile.files.push(newFolder);
+          update_path_under_dir(onConextMenuPath, editedFile);
+
+          update_folder_expand_status_by_path(onConextMenuPath, true);
+
+          setCommand({
+            source: "context_menu",
+            target: stack_component_unique_tag,
+            content: {
+              command_title: "rename",
+              command_content: {},
+            },
+          });
+          setOnConextMenuPath(newFolder.filePath);
+          return;
+        }
+        case "rename": {
+          return;
+        }
+        case "delete": {
+          remove_path_under_dir(onConextMenuPath);
+        }
       }
+      setOnConextMenuPath(null);
       setCommand([]);
     }
   };
@@ -307,19 +487,30 @@ const ContextMenuWrapper = ({ children }) => {
       }
       case "folder": {
         contextStructure = { ...default_folder_context_menu };
+        if (onCopyFile) {
+          contextStructure.paste = clickable_paste;
+        }
         return contextStructure;
       }
       case "root": {
         contextStructure = { ...default_root_context_menu };
+        if (onCopyFile) {
+          contextStructure.paste = clickable_paste;
+        }
         return contextStructure;
       }
       default:
         return null;
     }
   };
-  const load_explorer_context_menu = async (e, source_editor_component) => {
+  const load_explorer_context_menu = async (
+    e,
+    source_editor_component,
+    file_path
+  ) => {
     const contextStructure = await render_context_menu(source_editor_component);
     if (!contextStructure) return;
+    setOnConextMenuPath(file_path);
     load_contextMenu(e, contextStructure);
   };
   /* { context menu render } ============================================================================================ */
@@ -331,6 +522,7 @@ const ContextMenuWrapper = ({ children }) => {
   return (
     <SurfaceExplorerContextMenuContexts.Provider
       value={{
+        onConextMenuPath,
         load_explorer_context_menu,
       }}
     >
@@ -339,6 +531,7 @@ const ContextMenuWrapper = ({ children }) => {
   );
 };
 const Explorer = ({
+  stack_component_unique_tag,
   mode,
   command,
   setCommand,
@@ -346,38 +539,34 @@ const Explorer = ({
   data,
   setData,
 }) => {
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
   const { isDirLoaded } = useContext(RootDataContexts);
   return (
     <SurfaceExplorerContexts.Provider
       value={{
+        stack_component_unique_tag,
         mode,
         command,
         setCommand,
         load_contextMenu,
       }}
     >
-      <ContextMenuWrapper>
-        {mode === "horizontal_stack_vertical_mode" ? null : (
-          <div>
-            <DirList />
-            <SearchBar />
-          </div>
-        )}
-        {isDirLoaded ? null : (
-          <div className="dir_list_component_loading_container0404">
-            <BarLoader
-              size={8}
-              color={"#C8C8C864"}
-              height={5}
-              width={32}
-              speed={1}
-            />
-          </div>
-        )}
-      </ContextMenuWrapper>
+      {mode === "horizontal_stack_vertical_mode" ? null : (
+        <div>
+          <DirList />
+          <SearchBar />
+        </div>
+      )}
+      {isDirLoaded ? null : (
+        <div className="dir_list_component_loading_container0404">
+          <BarLoader
+            size={8}
+            color={"#C8C8C864"}
+            height={5}
+            width={32}
+            speed={1}
+          />
+        </div>
+      )}
     </SurfaceExplorerContexts.Provider>
   );
 };

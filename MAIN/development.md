@@ -9,7 +9,7 @@
   4. [Define your own context menu (Optional)](#Define_your_own_context_menu)
 - [Data Manager Variables and Functions](#Data_manager_variables_and_functions)
 - [Variable Formating Guide](#Variable_formating_guide)
-<a id="Implemented_Your_own_Stack_Component"></a>
+  <a id="Implemented_Your_own_Stack_Component"></a>
 
 ## [ Implemented Your own Stack Component ]
 
@@ -29,7 +29,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ### PARAMETERs:
 
-- `stack_component_unique_tag` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, you need this variable. `stack_component_unique_tag` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
+- `stack_component_unique_tag` => `id` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, you need this variable. `stack_component_unique_tag` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
 
 - `mode` (TYPE: String) <span style="opacity: 0.64"> (Basically you can check the value that is stored inside this `mode` variable, and base on the value to render the content inside this Stack Div) </span>
 
@@ -143,6 +143,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `unload_context_menu`
 
 <a id="Variable_formating_guide"></a>
+
 ## [ Variable Formating Guide ]
 
 #### [ variable naming rules ]
@@ -188,7 +189,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   source: 'context_menu',
   target: 'stack_component_unique_tag_to',
   content: {
-    command_title: 'String',
+    command_id: 'String',
     command_content: {}
   }
 }
@@ -252,11 +253,11 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 [
   root: {
     type: 'root',
-    sub_items: ['unique_tag1', 'unique_tag2'],
+    sub_items: ['id1', 'id2'],
   },
   copy: {
     type: 'button'
-    unique_tag: 'copy',
+    id: 'copy',
     clickable: true,
     height: 100,
     width: 512,
@@ -264,11 +265,11 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
     short_cut_label: `Ctrl+C`
     icon: 'url',
     quick_view_background: `url`,
-    sub_items: ['unique_tag1', 'unique_tag2'],
+    sub_items: ['id1', 'id2'],
   },
   component: {
     type: `component`,
-    unique_tag: 'component',
+    id: 'component',
     path: `path_to_that_component`,
   }
 ]
@@ -281,7 +282,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   - `br`
   - `component`
 
-- `unique_tag` (TYPE: String, MAX LENGTH: 256)<span style="opacity: 0.64"> Should be unique, you must define this. This variable will be used in 2 cases:</span>
+- `id` (TYPE: String, MAX LENGTH: 256)<span style="opacity: 0.64"> Should be unique, you must define this. This variable will be used in 2 cases:</span>
   - <span style="opacity: 0.64"> When user click on your some context item, context menu will return to your componet this tag, so that you know how to handle this event</span>
   - <span style="opacity: 0.64"> When you declare a sub context menu, you will use this tag for that. </span>
 - `label` (TYPE: String, MAX LENGTH: 25)<span style="opacity: 0.64"> (Optional) this label is optional since not every type of item will need this. For button type item, label will be the displaying text letting user know what function is this button.</span>
