@@ -520,11 +520,11 @@ const ContextList = ({
 const ContextMenu = () => {
   const {
     cmd,
-    push_command_by_tag,
-    pop_command_by_tag,
+    push_command_by_id,
+    pop_command_by_id,
     contextMenuPositionX,
     contextMenuPositionY,
-    sourceStackComponentTag,
+    sourceComponentId,
     contextStructure,
     unload_context_menu,
   } = useContext(RootCommandContexts);
@@ -645,9 +645,9 @@ const ContextMenu = () => {
       unique_tag -> unique tag of the command
       content -> customized josn format variable that contains content of the command
     */
-    push_command_by_tag(sourceStackComponentTag, {
+    push_command_by_id(sourceComponentId, {
       source: "context_menu",
-      target: sourceStackComponentTag,
+      target: sourceComponentId,
       content: {
         command_title: unique_tag,
         command_content: content,

@@ -546,7 +546,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     copy: {
       type: "button",
-      unique_tag: "copy",
+      id: "copy",
       clickable: true,
       label: "Copy",
       short_cut_label: "Ctrl+C",
@@ -555,7 +555,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     paste: {
       type: "button",
-      unique_tag: "paste",
+      id: "paste",
       clickable: false,
       label: "Paste",
       short_cut_label: "Ctrl+V",
@@ -564,7 +564,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     customizeInstruction: {
       type: "button",
-      unique_tag: "customizeInstruction",
+      id: "customizeInstruction",
       clickable: true,
       label: "Customize Instruction",
       icon: SYSTEM_ICON_MANAGER.draftingCompass.ICON512,
@@ -572,7 +572,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     customizeAPI: {
       type: "button",
-      unique_tag: "customizeAPI",
+      id: "customizeAPI",
       icon: SYSTEM_ICON_MANAGER.customize.ICON512,
       label: "Customize API",
       quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
@@ -581,7 +581,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     AST: {
       type: "button",
-      unique_tag: "AST",
+      id: "AST",
       label: "AST",
       icon: SYSTEM_ICON_MANAGER.ast.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.ast.ICON16,
@@ -590,7 +590,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     continue: {
       type: "button",
-      unique_tag: "continue",
+      id: "continue",
       clickable: true,
       label: "Continue...",
       icon: SYSTEM_ICON_MANAGER.continue.ICON512,
@@ -598,7 +598,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     fix: {
       type: "button",
-      unique_tag: "fix",
+      id: "fix",
       clickable: true,
       label: "Fix...",
       icon: SYSTEM_ICON_MANAGER.fix.ICON512,
@@ -606,11 +606,11 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     br: {
       type: "br",
-      unique_tag: "br",
+      id: "br",
     },
     moreOptions: {
       type: "button",
-      unique_tag: "moreOptions",
+      id: "moreOptions",
       icon: SYSTEM_ICON_MANAGER.moreOptions.ICON512,
       label: "More Editor Options...",
       quick_view_background: SYSTEM_ICON_MANAGER.moreOptions.ICON16,
@@ -619,7 +619,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     fold: {
       type: "button",
-      unique_tag: "fold",
+      id: "fold",
       icon: SYSTEM_ICON_MANAGER.fold.ICON512,
       label: "Fold All",
       quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
@@ -627,7 +627,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     unfold: {
       type: "button",
-      unique_tag: "unfold",
+      id: "unfold",
       icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
       label: "Unfold All",
       quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
@@ -635,7 +635,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     viewAST: {
       type: "button",
-      unique_tag: "viewAST",
+      id: "viewAST",
       icon: SYSTEM_ICON_MANAGER.folderTree.ICON512,
       label: "view AST",
       quick_view_background: SYSTEM_ICON_MANAGER.folderTree.ICON16,
@@ -643,14 +643,14 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     },
     updateAST: {
       type: "button",
-      unique_tag: "updateAST",
+      id: "updateAST",
       icon: SYSTEM_ICON_MANAGER.update.ICON512,
       label: "update AST",
       quick_view_background: SYSTEM_ICON_MANAGER.update.ICON16,
       clickable: true,
     },
     customizeRequest: {
-      unique_tag: "customizeRequest",
+      id: "customizeRequest",
       height: 256,
       type: "component",
       path: "monaco_editor/customizeRequestForm/customizeRequestForm",

@@ -151,7 +151,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     openFolder: {
       type: "button",
-      unique_tag: "openFolder",
+      id: "openFolder",
       clickable: true,
       label: "Open Folder...",
       icon: SYSTEM_ICON_MANAGER.uploadFolder.ICON512,
@@ -159,7 +159,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     openFile: {
       type: "button",
-      unique_tag: "openFile",
+      id: "openFile",
       clickable: true,
       label: "Open File...",
       icon: SYSTEM_ICON_MANAGER.uploadFile.ICON512,
@@ -167,11 +167,11 @@ const ContextMenuWrapper = ({ children }) => {
     },
     br: {
       type: "br",
-      unique_tag: "br",
+      id: "br",
     },
     newFile: {
       type: "button",
-      unique_tag: "newFile",
+      id: "newFile",
       clickable: true,
       label: "New File...",
       icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
@@ -179,7 +179,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     newFolder: {
       type: "button",
-      unique_tag: "newFolder",
+      id: "newFolder",
       clickable: true,
       label: "New Folder...",
       icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
@@ -187,7 +187,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     paste: {
       type: "button",
-      unique_tag: "paste",
+      id: "paste",
       clickable: false,
       label: "Paste",
       short_cut_label: "Ctrl+V",
@@ -211,7 +211,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     copy: {
       type: "button",
-      unique_tag: "copy",
+      id: "copy",
       clickable: true,
       label: "Copy",
       short_cut_label: "Ctrl+C",
@@ -220,7 +220,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     rename: {
       type: "button",
-      unique_tag: "rename",
+      id: "rename",
       clickable: true,
       label: "Rename",
       icon: SYSTEM_ICON_MANAGER.rename.ICON512,
@@ -228,7 +228,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     delete: {
       type: "button",
-      unique_tag: "delete",
+      id: "delete",
       clickable: true,
       label: "Delete",
       icon: SYSTEM_ICON_MANAGER.trash.ICON512,
@@ -236,11 +236,11 @@ const ContextMenuWrapper = ({ children }) => {
     },
     br: {
       type: "br",
-      unique_tag: "br",
+      id: "br",
     },
     newFile: {
       type: "button",
-      unique_tag: "newFile",
+      id: "newFile",
       clickable: true,
       label: "New File...",
       icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
@@ -248,7 +248,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     newFolder: {
       type: "button",
-      unique_tag: "newFolder",
+      id: "newFolder",
       clickable: true,
       label: "New Folder...",
       icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
@@ -256,7 +256,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     paste: {
       type: "button",
-      unique_tag: "paste",
+      id: "paste",
       clickable: false,
       label: "Paste",
       short_cut_label: "Ctrl+V",
@@ -271,7 +271,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     copy: {
       type: "button",
-      unique_tag: "copy",
+      id: "copy",
       clickable: true,
       label: "Copy",
       short_cut_label: "Ctrl+C",
@@ -280,7 +280,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     rename: {
       type: "button",
-      unique_tag: "rename",
+      id: "rename",
       clickable: true,
       label: "Rename",
       icon: SYSTEM_ICON_MANAGER.rename.ICON512,
@@ -288,7 +288,7 @@ const ContextMenuWrapper = ({ children }) => {
     },
     delete: {
       type: "button",
-      unique_tag: "delete",
+      id: "delete",
       clickable: true,
       label: "Delete",
       icon: SYSTEM_ICON_MANAGER.trash.ICON512,
@@ -296,12 +296,12 @@ const ContextMenuWrapper = ({ children }) => {
     },
     br: {
       type: "br",
-      unique_tag: "br",
+      id: "br",
     },
   };
   const clickable_paste = {
     type: "button",
-    unique_tag: "paste",
+    id: "paste",
     clickable: true,
     label: "Paste",
     short_cut_label: "Ctrl+V",

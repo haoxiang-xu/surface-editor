@@ -287,7 +287,7 @@ const HorizontalStackContainer = ({
   /* { data } ------------------------------------------------------------------------------------------------- */
 
   /* { command } ============================================================================================== */
-  const { cmd, pop_command_by_tag, load_context_menu } =
+  const { cmd, pop_command_by_id, load_context_menu } =
     useContext(RootCommandContexts);
   const [command, setCommand] = useState([]);
   useEffect(() => {
@@ -301,7 +301,7 @@ const HorizontalStackContainer = ({
   }, [cmd]);
   useEffect(() => {
     if (command.length === 0) {
-      pop_command_by_tag(id);
+      pop_command_by_id(id);
     }
   }, [command]);
   const load_contextMenu = (e, contextStructure) => {

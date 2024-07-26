@@ -29,7 +29,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ### PARAMETERs:
 
-- `stack_component_unique_tag` => `id` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, you need this variable. `stack_component_unique_tag` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
+- `id` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, you need this variable. `id` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
 
 - `mode` (TYPE: String) <span style="opacity: 0.64"> (Basically you can check the value that is stored inside this `mode` variable, and base on the value to render the content inside this Stack Div) </span>
 
@@ -65,11 +65,11 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - [`dir`](#dir) <span style="opacity: 0.64">Opened Folder and all subfolder will store recusively inside this variable as one single JSON structure.</span>
   - [`file`](#file) <span style="opacity: 0.64">You can access any file under opened root folder by passing relative path.</span>
-  - [`storage`](#storage) <span style="opacity: 0.64">storage allows you to store and reload your component data by the `stack_div_component_unique_tag`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their tag. You can see this</span> [`SAMPLE 000_006`](#000_006) <span style="opacity: 0.64">to have a basic picture of how this useState variable be formatted for `monaco_editor` component.</span>
+  - [`storage`](#storage) <span style="opacity: 0.64">storage allows you to store and reload your component data by the `id`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their id. You can see this</span> [`SAMPLE 000_006`](#000_006) <span style="opacity: 0.64">to have a basic picture of how this useState variable be formatted for `monaco_editor` component.</span>
 
 - [`root_command_manager`](#root_command_manager) (inorder to access this variable, you will need to get the premission from the user)
 
-  - [`cmd`](#cmd) <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `stack_component_unique_tag` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
+  - [`cmd`](#cmd) <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `id` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
   - [`context_menu`](#context_menu)
 
 - [`root_stack_manager`](#root_stack_manager)
@@ -125,9 +125,9 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 #### [storage] <a id="storage"></a>
 
-- `access_storage_by_tag`
-- `update_storage_by_tag`
-- `remove_storage_by_tag`
+- `access_storage_by_id`
+- `update_storage_by_id`
+- `remove_storage_by_id`
 
 ### ROOT_COMMAND_MANAGER <a id="root_command_manager"></a>
 
@@ -170,12 +170,12 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 <span style="opacity: 0.64">`type` should have the same value as the key, and you need to make sure that is unique across the list</span>
 
-#### [ 000_002 ] <a id="000_002"></a> Command are store in a dic, you can access the command received by using your own `stack_component_unique_tag`, and you will get a list of json like below:
+#### [ 000_002 ] <a id="000_002"></a> Command are store in a dic, you can access the command received by using your own `id`, and you will get a list of json like below:
 
 ```
 {
-  source: 'stack_component_unique_tag_from',
-  target: 'stack_component_unique_tag_to',
+  source: 'id_from',
+  target: 'id_to',
   content: {}
 }
 ```
@@ -187,7 +187,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 ```
 {
   source: 'context_menu',
-  target: 'stack_component_unique_tag_to',
+  target: 'id_to',
   content: {
     command_id: 'String',
     command_content: {}
@@ -199,7 +199,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ```
 {
-  source: 'stack_component_unique_tag_from',
+  source: 'id_from',
   content: {}
 }
 ```
@@ -208,7 +208,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ```
 {
-  stack_component_unique_tag: {
+  id: {
     on_selected_monaco_core_index: -1,
     monaco_paths: [
       "demo/src/code_editor.js",
@@ -230,7 +230,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
       },
     },
   },
-  stack_component_unique_tag: {
+  id: {
     on_selected_monaco_core_index: -1,
     monaco_paths: ["demo/index/index.html", "demo/main.java"],
     monaco_cores: {
@@ -283,8 +283,8 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   - `component`
 
 - `id` (TYPE: String, MAX LENGTH: 256)<span style="opacity: 0.64"> Should be unique, you must define this. This variable will be used in 2 cases:</span>
-  - <span style="opacity: 0.64"> When user click on your some context item, context menu will return to your componet this tag, so that you know how to handle this event</span>
-  - <span style="opacity: 0.64"> When you declare a sub context menu, you will use this tag for that. </span>
+  - <span style="opacity: 0.64"> When user click on your some context item, context menu will return to your componet this id, so that you know how to handle this event</span>
+  - <span style="opacity: 0.64"> When you declare a sub context menu, you will use this id for that. </span>
 - `label` (TYPE: String, MAX LENGTH: 25)<span style="opacity: 0.64"> (Optional) this label is optional since not every type of item will need this. For button type item, label will be the displaying text letting user know what function is this button.</span>
 - `sub_label` (TYPE: String) <span style="opacity: 0.64"> (Optional) this variable will displayed as a low opacity text after label</span>
 - `icon` <span style="opacity: 0.64">(Optional)</span>
