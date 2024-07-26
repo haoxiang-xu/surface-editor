@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 
+const FAKE_TAG_DATA = {
+  type: "key",
+  label: `ctrl + v`,
+  style: {
+    fontSize: 11,
+  },
+};
+
 const TestingWrapper = ({ children }) => {
   return (
     <div
@@ -25,13 +33,6 @@ const TestingWrapper = ({ children }) => {
       </div>
     </div>
   );
-};
-const FAKE_TAG_DATA = {
-  type: "file",
-  label: `/Users/red/Desktop/GITRepo/surface-editor/MAIN/src/DATA_MANAGERs/command_data_manager/command_data_manager.js`,
-  style: {
-    fontSize: 11,
-  },
 };
 
 const default_max_tag_width = 128;
@@ -78,8 +79,6 @@ const CustomizedTag = ({ label, style }) => {
 
         /* { Tag Position } ------------------------ */
         position: "absolute",
-        top: 0,
-        left: 0,
 
         /* { Tag Size } ---------------------------- */
         width: tagStyle.width,
@@ -194,23 +193,22 @@ const CommandTag = ({ label, style }) => {
 };
 /* { Tag types } ================================================================================= */
 
-const Tag = () => {
+const Tag = ({ config }) => {
   const render_tag = () => {
-    switch (FAKE_TAG_DATA.type) {
+    switch (config.type) {
       case "key":
-        return <KeyTag {...FAKE_TAG_DATA} />;
+        return <KeyTag {...config} />;
       case "file":
-        return <FileTag {...FAKE_TAG_DATA} />;
+        return <FileTag {...config} />;
       case "string":
-        return <StringTag {...FAKE_TAG_DATA} />;
+        return <StringTag {...config} />;
       case "command":
-        return <CommandTag {...FAKE_TAG_DATA} />;
+        return <CommandTag {...config} />;
       default:
         return null;
     }
   };
-
-  return <TestingWrapper>{render_tag()}</TestingWrapper>;
+  return render_tag();
 };
 
 export default Tag;

@@ -134,8 +134,8 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 #### [cmd] <a id="cmd"></a>
 
 - `cmd`
-- `push_command_by_tag`
-- `pop_command_by_tag`
+- `push_command_by_id`
+- `pop_command_by_id`
 
 #### [context menu] <a id="context_menu"></a>
 

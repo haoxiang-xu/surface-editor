@@ -11,6 +11,8 @@ import {
 import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 import { ContextMenuContexts } from "./context_menu_contexts";
 
+import Tag from "../tag/tag";
+
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
 /* Load ICON manager -------------------------------- */
@@ -259,7 +261,32 @@ const ContextItemButton = ({
         >
           {contextStructure[unique_tag].short_cut_label}
         </span>
-      ) : null}
+      ) : // <div
+      //   style={{
+      //     position: "absolute",
+      //     top: "0%",
+      //     left: 50,
+
+      //     /* { Size } */
+
+      //     color: "#CCCCCC",
+      //     transform: "translate(-50%, 0%)",
+      //     userSelect: "none",
+      //     opacity: 0.32,
+      //     border: "1px solid #FFFFFF",
+      //   }}
+      // >
+      //   <Tag
+      //     config={{
+      //       type: "key",
+      //       label: contextStructure[unique_tag].short_cut_label,
+      //       style: {
+      //         fontSize: 11,
+      //       },
+      //     }}
+      //   ></Tag>
+      // </div>
+      null}
       {/* Context Item Short Cut Label render ----------------------------------------------- */}
 
       {/* Context Item More option Icon render ---------------------------------------------- */}

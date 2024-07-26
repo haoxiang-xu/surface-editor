@@ -3,6 +3,7 @@ import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
+
 /* Load ICON manager -------------------------------- */
 let SYSTEM_ICON_MANAGER = {
   default: {
@@ -19,6 +20,37 @@ try {
 
 const RootCommandManager = ({ children }) => {
   const [cmd, setCmd] = useState({});
+
+  const push_command_by_id = (id, command) => {
+    setCmd((prevCommand) => {
+      const updatedCommand = { ...prevCommand };
+
+      if (updatedCommand[id]) {
+        updatedCommand[id].push(command);
+      } else {
+        updatedCommand[id] = [command];
+      }
+
+      return updatedCommand;
+    });
+  };
+  const pop_command_by_id = (id) => {
+    let popped_command = null;
+
+    setCmd((prevCommand) => {
+      const updatedCommand = { ...prevCommand };
+      if (updatedCommand[id] && updatedCommand[id].length > 0) {
+        popped_command = updatedCommand[id].splice(0, 1)[0];
+
+        if (updatedCommand[id].length === 0) {
+          delete updatedCommand[id];
+        }
+      }
+      return updatedCommand;
+    });
+
+    return popped_command;
+  };
 
   /* { Context Menu } -------------------------------------------------------------------------------- */
   const [contextMenuOnLoad, setContextMenuOnLoad] = useState(false);
@@ -57,42 +89,32 @@ const RootCommandManager = ({ children }) => {
   };
   /* { Context Menu } -------------------------------------------------------------------------------- */
 
-  const push_command_by_id = (id, command) => {
-    setCmd((prevCommand) => {
-      const updatedCommand = { ...prevCommand };
+  /* { Drag and Drop Panel } ========================================================================= */
+  const [dragAndDropPanelOnLoad, setDragAndDropPanelOnLoad] = useState(false);
+  const [dragAndDropPanelPositionX, setDragAndDropPanelPositionX] =
+    useState(-1);
+  const [dragAndDropPanelPositionY, setDragAndDropPanelPositionY] =
+    useState(-1);
 
-      if (updatedCommand[id]) {
-        updatedCommand[id].push(command);
-      } else {
-        updatedCommand[id] = [command];
-      }
+  const load_drap_and_drop_panel = (event) => {
+    const handleMouseUp = (event) => {
+      setDragAndDropPanelOnLoad(false);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+    const handleMouseMove = (event) => {
+      const position_x = event.clientX;
+      const position_y = event.clientY;
 
-      return updatedCommand;
-    });
+      setDragAndDropPanelPositionX(position_x);
+      setDragAndDropPanelPositionY(position_y);
+    };
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousemove", handleMouseMove);
+    document.body.style.cursor = "none";
+    setDragAndDropPanelOnLoad(true);
   };
-  const pop_command_by_id = (id) => {
-    let popped_command = null;
-
-    setCmd((prevCommand) => {
-      const updatedCommand = { ...prevCommand };
-      if (
-        updatedCommand[id] &&
-        updatedCommand[id].length > 0
-      ) {
-        popped_command = updatedCommand[id].splice(
-          0,
-          1
-        )[0];
-
-        if (updatedCommand[id].length === 0) {
-          delete updatedCommand[id];
-        }
-      }
-      return updatedCommand;
-    });
-
-    return popped_command;
-  };
+  /* { Drag and Drop Panel } ========================================================================= */
 
   return (
     <RootCommandContexts.Provider
@@ -108,6 +130,7 @@ const RootCommandManager = ({ children }) => {
         contextStructure,
         load_context_menu,
         unload_context_menu,
+        /* { Context Menu } ------------------------- */
       }}
     >
       <div onClick={unload_context_menu}>

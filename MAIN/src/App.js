@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Tag from "./DEMO/tag/tag";
+import Tag from "./BUILTIN_COMPONENTs/tag/tag";
 import Home from "./HOME/home";
 
 import StackStructure from "./DEMO/stack_structure/stack_structure";
