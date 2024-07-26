@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { RootCommandContexts } from "./root_command_contexts";
-import ContextMenu from "../../COMPONENTs/context_menu/context_menu";
+import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 /* Load ICON manager -------------------------------- */

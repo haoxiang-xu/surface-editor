@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { ICON_MANAGER } from "../../../ICONs/icon_manager";
-import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
-import { ContextMenuContexts } from "../../../COMPONENTs/context_menu/context_menu_contexts";
+import { ContextMenuContexts } from "../../../BUILTIN_COMPONENTs/context_menu/context_menu_contexts";
 import "./customizeRequestForm.css";
 import { CUSTOMIZE_REQUEST_FORM_HEIGHT } from "../../../CONSTs/contextMenuConfig";
 
@@ -21,27 +20,10 @@ try {
 
 const CustomizeRequestForm = () => {
   const { progress_context_menu_item } = useContext(ContextMenuContexts);
-  const { onRightClickItem } = useContext(rightClickContextMenuCommandContexts);
-  const [requestURL, setRequestURL] = useState(
-    onRightClickItem?.content?.customizeRequest?.requestURL
-      ? onRightClickItem?.content?.customizeRequest?.requestURL
-      : ""
-  );
-  const [requestMethod, setRequestMethod] = useState(
-    onRightClickItem?.content?.customizeRequest?.requestMethod
-      ? onRightClickItem?.content?.customizeRequest?.requestMethod
-      : "POST"
-  );
-  const [inputFormat, setInputFormat] = useState(
-    onRightClickItem?.content?.customizeRequest?.inputFormat
-      ? onRightClickItem?.content?.customizeRequest?.inputFormat
-      : "onSelect"
-  );
-  const [outputFormat, setOutputFormat] = useState(
-    onRightClickItem?.content?.customizeRequest?.outputFormat
-      ? onRightClickItem?.content?.customizeRequest?.outputFormat
-      : "console"
-  );
+  const [requestURL, setRequestURL] = useState("");
+  const [requestMethod, setRequestMethod] = useState("POST");
+  const [inputFormat, setInputFormat] = useState("onSelect");
+  const [outputFormat, setOutputFormat] = useState("console");
 
   const onFormSubmit = (e) => {
     progress_context_menu_item("customizeRequest", {

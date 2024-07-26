@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import RootDataManager from "../DATA_MANAGERs/root_data_manager/root_data_manager";
 import RootCommandManager from "../DATA_MANAGERs/root_command_manager/root_command_manager";
-import CommandDataManager from "../DATA_MANAGERs/command_data_manager/command_data_manager";
-import HeaderMenuBar from "../COMPONENTs/headerMenuBar/headerMenuBar";
+import HeaderMenuBar from "../BUILTIN_COMPONENTs/headerMenuBar/headerMenuBar";
 import HorizontalStack from "../STACK_STRUCTUREs/horizontal_stack/horizontal_stack";
 import {
   SYSTEM_FRAME_BORDER,
@@ -55,11 +54,9 @@ const Home = () => {
         style={{ top: isMenuBarHovered || isFrameMaximized ? "29px" : "0px" }}
       >
         <RootDataManager>
-          <CommandDataManager>
             <RootCommandManager>
               <HorizontalStack />
             </RootCommandManager>
-          </CommandDataManager>
         </RootDataManager>
       </div>
     </div>

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext, memo } from "react";
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
-import DirItemGhostDragImage from "../../COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage";
+import DirItemGhostDragImage from "../../BUILTIN_COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";

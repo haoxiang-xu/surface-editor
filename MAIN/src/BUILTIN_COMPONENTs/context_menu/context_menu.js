@@ -342,7 +342,7 @@ const ContextItemCustomizeComponent = ({ index, unique_tag, top_position }) => {
     async function loadComponent() {
       const component_path = contextStructure[unique_tag].path;
       const { default: LoadedComponent } = await import(
-        `../../STACK_COMPONENTs/${component_path}`
+        `../../COMPONENTs/${component_path}`
       );
       setContextItemComponent(() => LoadedComponent);
     }

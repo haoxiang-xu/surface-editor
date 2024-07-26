@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { SurfaceExplorerContexts } from "../surface_explorer_contexts.js";
 import { SurfaceExplorerContextMenuContexts } from "../surface_explorer_context_menu_contexts.js";
-import DirItemGhostDragImage from "../../../COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage";
-import { ICON_MANAGER, ICON_LOADER } from "../../../ICONs/icon_manager";
-import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
-import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts";
-import { explorerContexts } from "../../../CONTEXTs/explorerContexts";
-import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
-import { RootCommandContexts } from "../../../DATA_MANAGERs/root_command_manager/root_command_contexts";
+import DirItemGhostDragImage from "../../../BUILTIN_COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage.js";
+import { ICON_MANAGER, ICON_LOADER } from "../../../ICONs/icon_manager.js";
+import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
+import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts.js";
+import { explorerContexts } from "../../../CONTEXTs/explorerContexts.js";
+import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts.js";
 import "./dirItem.css";
 
 /* Load ICON manager -------------------------------- */
@@ -425,7 +424,7 @@ const DirItem = ({
   }, [onSingleClickFile]);
   useEffect(() => {
     if (onRightClickItem === null) {
-    } else if (onRightClickItem.source === "vecoder_explorer/" + filePath) {
+    } else if (onRightClickItem?.source === "vecoder_explorer/" + filePath) {
       setFileNameClassName("dir_item_component_file_name_on_selected0827");
     } else {
       if (onSingleClickFile !== null) {
