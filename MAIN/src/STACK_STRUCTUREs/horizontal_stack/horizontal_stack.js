@@ -89,6 +89,7 @@ const HorizontalStack = () => {
         const EXPLORER_CONTAINER = {
           type: "surface_explorer",
           tag: stackStructureOptionsData[index].stack_component_unique_tag,
+          id: stackStructureOptionsData[index].id,
           min_width: 42,
           width: 256,
           max_width: 2048,
@@ -102,6 +103,7 @@ const HorizontalStack = () => {
         const CODE_EDITOR = {
           type: "monaco_editor",
           tag: stackStructureOptionsData[index].stack_component_unique_tag,
+          id: stackStructureOptionsData[index].id,
           min_width: 42,
           width: 600,
           max_width: 2048,
@@ -340,6 +342,7 @@ const HorizontalStack = () => {
                   <StackFrame
                     key={"surface_explorer" + item.explorer_container_ref_index}
                     stack_component_unique_tag={item.tag}
+                    id={item.id}
                     stack_structure_type={"horizontal_stack"}
                     component_type={"surface_explorer"}
                     index={index}
@@ -357,6 +360,7 @@ const HorizontalStack = () => {
                 return (
                   <StackFrame
                     key={"monaco_editor" + item.code_editor_container_ref_index}
+                    id={item.id}
                     stack_component_unique_tag={item.tag}
                     stack_structure_type={"horizontal_stack"}
                     index={index}

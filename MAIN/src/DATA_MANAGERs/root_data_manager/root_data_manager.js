@@ -379,16 +379,19 @@ class Car {
 };
 const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
   {
+    id: "surface_explorer_0001",
     type: "surface_explorer",
     stack_component_unique_tag: "surface_explorer_0001",
     explorer_container_ref_index: 0,
   },
   {
+    id: "monaco_editor_0002",
     type: "monaco_editor",
     stack_component_unique_tag: "monaco_editor_0002",
     code_editor_container_ref_index: 1,
   },
   {
+    id: "monaco_editor_0003",
     type: "monaco_editor",
     stack_component_unique_tag: "monaco_editor_0003",
     code_editor_container_ref_index: 2,
@@ -838,18 +841,18 @@ const RootDataManager = ({ children }) => {
 
   /* { STORAGE } ======================================================================================================================= */
   const [storage, setStorage] = useState(FAKE_STORAGE);
-  const access_storage_by_tag = (tag) => {
-    return storage[tag];
+  const access_storage_by_id = (id) => {
+    return storage[id];
   };
-  const update_storage_by_tag = (tag, data) => {
+  const update_storage_by_id = (id, data) => {
     setStorage((prevData) => {
-      return { ...prevData, [tag]: data };
+      return { ...prevData, [id]: data };
     });
   };
-  const remove_storage_by_tag = (tag) => {
+  const remove_storage_by_id = (id) => {
     setStorage((prevData) => {
       const newData = { ...prevData };
-      delete newData[tag];
+      delete newData[id];
       return newData;
     });
   };
@@ -903,9 +906,9 @@ const RootDataManager = ({ children }) => {
         access_file_language_by_path,
 
         storage,
-        access_storage_by_tag,
-        update_storage_by_tag,
-        remove_storage_by_tag,
+        access_storage_by_id,
+        update_storage_by_id,
+        remove_storage_by_id,
 
         stackStructureOptionsData,
         setStackStructureOptionsData,

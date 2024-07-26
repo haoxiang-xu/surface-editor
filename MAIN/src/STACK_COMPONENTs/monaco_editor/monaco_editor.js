@@ -824,7 +824,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
   );
 };
 const MonacoEditor = ({
-  stack_component_unique_tag,
+  id,
   mode,
   code_editor_container_ref_index,
   command,

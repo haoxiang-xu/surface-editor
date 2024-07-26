@@ -222,7 +222,7 @@ const StackContainerWrapper = memo(({ children, mode, command, data }) => {
 }, is_stack_frame_rerender_required);
 const HorizontalStackContainer = ({
   index,
-  stack_component_unique_tag,
+  id,
   component_type,
   stack_structure_type,
   /* Stack Data ------------------------------------ */
@@ -274,15 +274,15 @@ const HorizontalStackContainer = ({
   /* { data } ------------------------------------------------------------------------------------------------- */
   const {
     storage,
-    access_storage_by_tag,
-    update_storage_by_tag,
-    delete_storage_by_tag,
+    access_storage_by_id,
+    update_storage_by_id,
+    delete_storage_by_id,
   } = useContext(RootDataContexts);
   const [data, setData] = useState(
-    access_storage_by_tag(stack_component_unique_tag)
+    access_storage_by_id(id)
   );
   useEffect(() => {
-    update_storage_by_tag(String(stack_component_unique_tag), data);
+    update_storage_by_id(String(id), data);
   }, [data]);
   /* { data } ------------------------------------------------------------------------------------------------- */
 
@@ -292,20 +292,20 @@ const HorizontalStackContainer = ({
   const [command, setCommand] = useState([]);
   useEffect(() => {
     if (
-      cmd[stack_component_unique_tag] &&
-      cmd[stack_component_unique_tag].length > 0 &&
+      cmd[id] &&
+      cmd[id].length > 0 &&
       command.length === 0
     ) {
-      setCommand(cmd[stack_component_unique_tag][0]);
+      setCommand(cmd[id][0]);
     }
   }, [cmd]);
   useEffect(() => {
     if (command.length === 0) {
-      pop_command_by_tag(stack_component_unique_tag);
+      pop_command_by_tag(id);
     }
   }, [command]);
   const load_contextMenu = (e, contextStructure) => {
-    load_context_menu(e, stack_component_unique_tag, contextStructure);
+    load_context_menu(e, id, contextStructure);
   };
   /* { command } ============================================================================================== */
 
@@ -371,7 +371,7 @@ const HorizontalStackContainer = ({
         {StackFrameComponent ? (
           <StackContainerWrapper mode={mode} command={command} data={data}>
             <StackFrameComponent
-              stack_component_unique_tag={stack_component_unique_tag}
+              id={id}
               mode={mode}
               command={command}
               setCommand={setCommand}
@@ -400,7 +400,7 @@ const HorizontalStackContainer = ({
 
 const StackFrame = ({
   index,
-  stack_component_unique_tag,
+  id,
   stack_structure_type,
   component_type,
   /* Stack Data ------------------------------------ */
@@ -434,7 +434,7 @@ const StackFrame = ({
       return (
         <HorizontalStackContainer
           index={index}
-          stack_component_unique_tag={stack_component_unique_tag}
+          id={id}
           component_type={component_type}
           stack_structure_type={stack_structure_type}
           item={item}

@@ -131,7 +131,7 @@ const ContextMenuWrapper = ({ children }) => {
   } = useContext(RootDataContexts);
   const { onSingleClickFile, setOnSingleClickFile } =
     useContext(explorerContexts);
-  const { stack_component_unique_tag, command, setCommand, load_contextMenu } =
+  const { id, command, setCommand, load_contextMenu } =
     useContext(SurfaceExplorerContexts);
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
@@ -407,7 +407,7 @@ const ContextMenuWrapper = ({ children }) => {
 
           setCommand({
             source: "context_menu",
-            target: stack_component_unique_tag,
+            target: id,
             content: {
               command_title: "rename",
               command_content: {},
@@ -455,7 +455,7 @@ const ContextMenuWrapper = ({ children }) => {
 
           setCommand({
             source: "context_menu",
-            target: stack_component_unique_tag,
+            target: id,
             content: {
               command_title: "rename",
               command_content: {},
@@ -471,7 +471,7 @@ const ContextMenuWrapper = ({ children }) => {
           remove_path_under_dir(onConextMenuPath);
         }
         case "openFolder": {
-          window.electronAPI.triggerReadDir();
+                      window.electronAPI.triggerReadDir();
         }
       }
       setOnConextMenuPath(null);
@@ -534,7 +534,7 @@ const ContextMenuWrapper = ({ children }) => {
   );
 };
 const Explorer = ({
-  stack_component_unique_tag,
+  id,
   mode,
   command,
   setCommand,
@@ -546,7 +546,7 @@ const Explorer = ({
   return (
     <SurfaceExplorerContexts.Provider
       value={{
-        stack_component_unique_tag,
+        id,
         mode,
         command,
         setCommand,
