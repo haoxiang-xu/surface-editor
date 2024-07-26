@@ -247,46 +247,40 @@ const ContextItemButton = ({
 
       {/* Context Item Short Cut Label render ----------------------------------------------- */}
       {contextStructure[unique_tag].short_cut_label !== undefined ? (
-        <span
+        <div
           style={{
             position: "absolute",
-            top: "50%",
-            right: 6,
-            color: "#CCCCCC",
-            transform: "translate(0%, -54%)",
+
+            /* { Size } */
+            width: "100%",
+            height: "100%",
+
             userSelect: "none",
-            fontSize: br_fixed_styling.fontSize,
-            opacity: 0.32,
           }}
         >
-          {contextStructure[unique_tag].short_cut_label}
-        </span>
-      ) : // <div
-      //   style={{
-      //     position: "absolute",
-      //     top: "0%",
-      //     left: 50,
-
-      //     /* { Size } */
-
-      //     color: "#CCCCCC",
-      //     transform: "translate(-50%, 0%)",
-      //     userSelect: "none",
-      //     opacity: 0.32,
-      //     border: "1px solid #FFFFFF",
-      //   }}
-      // >
-      //   <Tag
-      //     config={{
-      //       type: "key",
-      //       label: contextStructure[unique_tag].short_cut_label,
-      //       style: {
-      //         fontSize: 11,
-      //       },
-      //     }}
-      //   ></Tag>
-      // </div>
-      null}
+          <Tag
+            config={{
+              type: "shortcut",
+              label: contextStructure[unique_tag].short_cut_label,
+              style: {
+                fontSize: 11,
+                right: 3,
+                top: "50%",
+                transform: "translate(0%, -50%)",
+                borderRadius: (() => {
+                  if (index === 0) {
+                    return "2px 5px 2px 2px";
+                  } else if (index ===  -1) {
+                    return "2px 2px 5px 2px";
+                  } else {
+                    return "2px";
+                  }
+                })(),
+              },
+            }}
+          ></Tag>
+        </div>
+      ) : null}
       {/* Context Item Short Cut Label render ----------------------------------------------- */}
 
       {/* Context Item More option Icon render ---------------------------------------------- */}

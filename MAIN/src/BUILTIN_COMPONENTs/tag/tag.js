@@ -1,40 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const FAKE_TAG_DATA = {
-  type: "key",
-  label: `ctrl + v`,
-  style: {
-    fontSize: 11,
-  },
-};
-
-const TestingWrapper = ({ children }) => {
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-
-        backgroundColor: "#1E1E1E",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "calc(0% + 20px)",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        {children}
-      </div>
-    </div>
-  );
-};
-
 const default_max_tag_width = 128;
 const default_tag_padding_x = 6;
 const default_tag_padding_y = 3;
@@ -79,13 +44,18 @@ const CustomizedTag = ({ label, style }) => {
 
         /* { Tag Position } ------------------------ */
         position: "absolute",
+        right: style.right,
+        left: style.left,
+        top: style.top,
+        bottom: style.bottom,
+        transform: style.transform,
 
         /* { Tag Size } ---------------------------- */
         width: tagStyle.width,
         height: tagStyle.height,
 
         /* { Tag Styling } ------------------------- */
-        borderRadius: 7,
+        borderRadius: style.borderRadius || 7,
         display: "inline-block",
         backgroundColor: tagStyle.backgroundColor,
         overflow: "hidden",
@@ -103,7 +73,6 @@ const CustomizedTag = ({ label, style }) => {
           transform: tagStyle.transform,
 
           /* { Font Styling } ---------------------- */
-          fontFamily: "monospace",
           fontSize: tagStyle.fontSize || default_tag_font_size,
 
           /* { Tag Styling } ----------------------- */
@@ -143,6 +112,24 @@ const CustomizedTag = ({ label, style }) => {
     </div>
   );
 };
+const ShortCutTag = ({ label, style }) => {
+  return (
+    <CustomizedTag
+      label={label}
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.04)",
+        color: "rgba(255, 255, 255, 0.16)",
+        fontSize: style.fontSize || default_tag_font_size,
+        left: style.left,
+        right: style.right,
+        top: style.top,
+        bottom: style.bottom,
+        transform: style.transform || 'none',
+        borderRadius: style.borderRadius || `none`,
+      }}
+    />
+  );
+};
 const KeyTag = ({ label, style }) => {
   return (
     <CustomizedTag
@@ -151,6 +138,12 @@ const KeyTag = ({ label, style }) => {
         backgroundColor: "#4A4A4A",
         color: "#CCCCCC",
         fontSize: style.fontSize || default_tag_font_size,
+        left: style.left || 'none',
+        right: style.right || 'none',
+        top: style.top || 'none',
+        bottom: style.bottom || 'none',
+        transform: style.transform || 'none',
+        borderRadius: style.borderRadius || `none`,
       }}
     />
   );
@@ -163,6 +156,12 @@ const FileTag = ({ label, style }) => {
         backgroundColor: "#8C8C8C",
         color: "#181818",
         fontSize: style.fontSize || default_tag_font_size,
+        left: style.left || 'none',
+        right: style.right || 'none',
+        top: style.top || 'none',
+        bottom: style.bottom || 'none',
+        transform: style.transform || 'none',
+        borderRadius: style.borderRadius || `none`,
       }}
     />
   );
@@ -175,6 +174,12 @@ const StringTag = ({ label, style }) => {
         backgroundColor: "#4A4A4A",
         color: "#8C8C8C",
         fontSize: style.fontSize || default_tag_font_size,
+        left: style.left || 'none',
+        right: style.right || 'none',
+        top: style.top || 'none',
+        bottom: style.bottom || 'none',
+        transform: style.transform || 'none',
+        borderRadius: style.borderRadius || `none`,
       }}
     />
   );
@@ -187,6 +192,12 @@ const CommandTag = ({ label, style }) => {
         backgroundColor: "#EF6C00",
         color: "#181818",
         fontSize: style.fontSize || default_tag_font_size,
+        left: style.left || 'none',
+        right: style.right || 'none',
+        top: style.top || 'none',
+        bottom: style.bottom || 'none',
+        transform: style.transform || 'none',
+        borderRadius: style.borderRadius || `none`,
       }}
     />
   );
@@ -196,6 +207,8 @@ const CommandTag = ({ label, style }) => {
 const Tag = ({ config }) => {
   const render_tag = () => {
     switch (config.type) {
+      case "shortcut":
+        return <ShortCutTag {...config} />;
       case "key":
         return <KeyTag {...config} />;
       case "file":

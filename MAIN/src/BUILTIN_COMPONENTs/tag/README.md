@@ -15,6 +15,8 @@
 - `style`
 
   - `fontSize` <span style="opacity: 0.64">(int) default value is `11`</span>
+  - `top` `right` `left` `bottom` `transform`
+  - `borderRadius`
 
 ```
 {
