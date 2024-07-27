@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import "./dirItemGhostDragImage.css";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
+import Tag from "../tag/tag";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 
 /* Load ICON manager --------------------------------------------------------------------------------- */
@@ -60,16 +61,26 @@ const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
     <>
       {draggedDirItemPath ? (
         <div
-          className="ghost_drag_image_container0207"
           style={{
+            position: "fixed",
+
             left: position.x,
             top: position.y,
             width: containerWidth + 24,
           }}
         >
-          <span className="ghost_drag_image_filetype_label0207" ref={labelRef}>
+          {/* <span className="ghost_drag_image_filetype_label0207" ref={labelRef}>
             {access_file_name_by_path_in_file(draggedDirItemPath)}
-          </span>
+          </span> */}
+          <Tag
+            config={{
+              type: "file",
+              label: access_file_name_by_path_in_file(draggedDirItemPath),
+              style: {
+                fontSize: 11,
+              },
+            }}
+          />
         </div>
       ) : null}
     </>

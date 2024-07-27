@@ -90,15 +90,13 @@ const RootCommandManager = ({ children }) => {
   /* { Context Menu } -------------------------------------------------------------------------------- */
 
   /* { Drag and Drop Panel } ========================================================================= */
-  const [dragAndDropPanelOnLoad, setDragAndDropPanelOnLoad] = useState(false);
-  const [dragAndDropPanelPositionX, setDragAndDropPanelPositionX] =
-    useState(-1);
-  const [dragAndDropPanelPositionY, setDragAndDropPanelPositionY] =
-    useState(-1);
+  const [onDrag, setOnDrag] = useState(false);
+  const [dragPositionX, setDragPositionX] = useState(-1);
+  const [dragPositionY, setDragPositionY] = useState(-1);
 
-  const load_drap_and_drop_panel = (event) => {
+  const item_on_drag = (event) => {
     const handleMouseUp = (event) => {
-      setDragAndDropPanelOnLoad(false);
+      setOnDrag(false);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("mousemove", handleMouseMove);
     };
@@ -106,13 +104,14 @@ const RootCommandManager = ({ children }) => {
       const position_x = event.clientX;
       const position_y = event.clientY;
 
-      setDragAndDropPanelPositionX(position_x);
-      setDragAndDropPanelPositionY(position_y);
+      setDragPositionX(position_x);
+      setDragPositionY(position_y);
     };
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("mousemove", handleMouseMove);
     document.body.style.cursor = "none";
-    setDragAndDropPanelOnLoad(true);
+    unload_context_menu();
+    setOnDrag(true);
   };
   /* { Drag and Drop Panel } ========================================================================= */
 

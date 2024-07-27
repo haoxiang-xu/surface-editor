@@ -5,6 +5,7 @@ const default_tag_padding_x = 6;
 const default_tag_padding_y = 3;
 
 const default_tag_font_size = 11;
+const default_border_radius = 7;
 
 /* { Tag types } ================================================================================= */
 const CustomizedTag = ({ label, style }) => {
@@ -112,111 +113,77 @@ const CustomizedTag = ({ label, style }) => {
     </div>
   );
 };
-const ShortCutTag = ({ label, style }) => {
-  return (
-    <CustomizedTag
-      label={label}
-      style={{
-        backgroundColor: "rgba(255, 255, 255, 0.04)",
-        color: "rgba(255, 255, 255, 0.16)",
-        fontSize: style.fontSize || default_tag_font_size,
-        left: style.left,
-        right: style.right,
-        top: style.top,
-        bottom: style.bottom,
-        transform: style.transform || 'none',
-        borderRadius: style.borderRadius || `none`,
-      }}
-    />
-  );
+const ShortCutTag = ({ config }) => {
+  const process_tag_config = (config) => {
+    let processed_config = { ...config };
+    processed_config.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
+    processed_config.style.color = "rgba(255, 255, 255, 0.16)";
+    return processed_config;
+  };
+  return <CustomizedTag {...process_tag_config(config)} />;
 };
-const KeyTag = ({ label, style }) => {
-  return (
-    <CustomizedTag
-      label={label}
-      style={{
-        backgroundColor: "#4A4A4A",
-        color: "#CCCCCC",
-        fontSize: style.fontSize || default_tag_font_size,
-        left: style.left || 'none',
-        right: style.right || 'none',
-        top: style.top || 'none',
-        bottom: style.bottom || 'none',
-        transform: style.transform || 'none',
-        borderRadius: style.borderRadius || `none`,
-      }}
-    />
-  );
+const KeyTag = ({ config }) => {
+  const process_tag_config = (config) => {
+    let processed_config = { ...config };
+    processed_config.style.backgroundColor = "#4A4A4A";
+    processed_config.style.color = "#CCCCCC";
+    return processed_config;
+  };
+  return <CustomizedTag {...process_tag_config(config)} />;
 };
-const FileTag = ({ label, style }) => {
-  return (
-    <CustomizedTag
-      label={label}
-      style={{
-        backgroundColor: "#8C8C8C",
-        color: "#181818",
-        fontSize: style.fontSize || default_tag_font_size,
-        left: style.left || 'none',
-        right: style.right || 'none',
-        top: style.top || 'none',
-        bottom: style.bottom || 'none',
-        transform: style.transform || 'none',
-        borderRadius: style.borderRadius || `none`,
-      }}
-    />
-  );
+const FileTag = ({ config }) => {
+  const process_tag_config = (config) => {
+    let processed_config = { ...config };
+    processed_config.style.backgroundColor = "#8C8C8C";
+    processed_config.style.color = "#181818";
+    return processed_config;
+  };
+
+  return <CustomizedTag {...process_tag_config(config)} />;
 };
-const StringTag = ({ label, style }) => {
-  return (
-    <CustomizedTag
-      label={label}
-      style={{
-        backgroundColor: "#4A4A4A",
-        color: "#8C8C8C",
-        fontSize: style.fontSize || default_tag_font_size,
-        left: style.left || 'none',
-        right: style.right || 'none',
-        top: style.top || 'none',
-        bottom: style.bottom || 'none',
-        transform: style.transform || 'none',
-        borderRadius: style.borderRadius || `none`,
-      }}
-    />
-  );
+const StringTag = ({ config }) => {
+  const process_tag_config = (config) => {
+    let processed_config = { ...config };
+    processed_config.style.backgroundColor = "#4A4A4A";
+    processed_config.style.color = "#8C8C8C";
+    return processed_config;
+  };
+
+  return <CustomizedTag {...process_tag_config(config)} />;
 };
-const CommandTag = ({ label, style }) => {
-  return (
-    <CustomizedTag
-      label={label}
-      style={{
-        backgroundColor: "#EF6C00",
-        color: "#181818",
-        fontSize: style.fontSize || default_tag_font_size,
-        left: style.left || 'none',
-        right: style.right || 'none',
-        top: style.top || 'none',
-        bottom: style.bottom || 'none',
-        transform: style.transform || 'none',
-        borderRadius: style.borderRadius || `none`,
-      }}
-    />
-  );
+const CommandTag = ({ config }) => {
+  return <CustomizedTag {...config} />;
 };
 /* { Tag types } ================================================================================= */
 
 const Tag = ({ config }) => {
+  const process_tag_config = (config) => {
+    const type = config.type || "default";
+    const label = config.label || "";
+    const style = {
+      fontSize: config.style?.fontSize || default_tag_font_size,
+      left: config.style?.left || "none",
+      right: config.style?.right || "none",
+      top: config.style?.top || "none",
+      bottom: config.style?.bottom || "none",
+      transform: config.style?.transform || "none",
+      borderRadius: config.style?.borderRadius || default_border_radius,
+    };
+    return { type, label, style };
+  };
+
   const render_tag = () => {
     switch (config.type) {
       case "shortcut":
-        return <ShortCutTag {...config} />;
+        return <ShortCutTag config={process_tag_config(config)} />;
       case "key":
-        return <KeyTag {...config} />;
+        return <KeyTag config={process_tag_config(config)} />;
       case "file":
-        return <FileTag {...config} />;
+        return <FileTag config={process_tag_config(config)} />;
       case "string":
-        return <StringTag {...config} />;
+        return <StringTag config={process_tag_config(config)} />;
       case "command":
-        return <CommandTag {...config} />;
+        return <CommandTag config={process_tag_config(config)} />;
       default:
         return null;
     }
