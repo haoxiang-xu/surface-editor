@@ -666,11 +666,11 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     };
 
     try {
+      console.log(onSelectedCotent);
       const response = await axios.post(
         "http://localhost:8200/openai/continue",
         requestBody
       );
-      console.log(onSelectedCotent);
       setOnAppendContent(response.data.data.content);
       console.log(response.data);
     } catch (e) {
