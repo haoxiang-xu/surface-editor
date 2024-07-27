@@ -131,8 +131,9 @@ const ContextMenuWrapper = ({ children }) => {
   } = useContext(RootDataContexts);
   const { onSingleClickFile, setOnSingleClickFile } =
     useContext(explorerContexts);
-  const { id, command, setCommand, load_contextMenu } =
-    useContext(SurfaceExplorerContexts);
+  const { id, command, setCommand, load_contextMenu } = useContext(
+    SurfaceExplorerContexts
+  );
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
 
@@ -471,7 +472,7 @@ const ContextMenuWrapper = ({ children }) => {
           remove_path_under_dir(onConextMenuPath);
         }
         case "openFolder": {
-                      window.electronAPI.triggerReadDir();
+          window.electronAPI.triggerReadDir();
         }
       }
       setOnConextMenuPath(null);
