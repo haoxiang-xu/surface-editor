@@ -129,8 +129,7 @@ const ContextMenuWrapper = ({ children }) => {
     update_folder_expand_status_by_path,
     access_subfiles_by_path,
   } = useContext(RootDataContexts);
-  const { onSingleClickFile, setOnSingleClickFile } =
-    useContext(explorerContexts);
+  const { setOnSingleClickFile } = useContext(explorerContexts);
   const { id, command, setCommand, load_contextMenu } = useContext(
     SurfaceExplorerContexts
   );
@@ -470,6 +469,7 @@ const ContextMenuWrapper = ({ children }) => {
         }
         case "delete": {
           remove_path_under_dir(onConextMenuPath);
+          return;
         }
         case "openFolder": {
           window.electronAPI.triggerReadDir();

@@ -98,7 +98,6 @@ const RenameInputBox = ({ filePath }) => {
     if (event.key === "Enter") {
       if (renameInput === access_file_name_by_path_in_dir(filePath)) {
         setCommand([]);
-        return;
       }
       let parentDirPath = filePath.split("/");
       parentDirPath.pop();
@@ -411,6 +410,7 @@ const DirItem = ({
 
   //SINGLE CLICK
   const handleOnLeftClick = (event) => {
+    setCommand([]); //remove input box when on click
     setOnSingleClickFile(access_file_subfiles_by_path(filePath));
   };
   useEffect(() => {
