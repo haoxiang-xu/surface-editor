@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, memo } from "react";
 
 import { default_clickable_panel_styling } from "../../DATA_MANAGERs/root_styling_manager/root_styling_default_consts";
 import {
@@ -270,7 +270,7 @@ const ContextItemButton = ({
                 borderRadius: (() => {
                   if (index === 0) {
                     return "2px 5px 2px 2px";
-                  } else if (index ===  -1) {
+                  } else if (index === -1) {
                     return "2px 2px 5px 2px";
                   } else {
                     return "2px";
@@ -538,11 +538,9 @@ const ContextList = ({
   );
 };
 
-const ContextMenu = () => {
+const ContextMenu = ({}) => {
   const {
-    cmd,
     push_command_by_id,
-    pop_command_by_id,
     contextMenuPositionX,
     contextMenuPositionY,
     sourceComponentId,

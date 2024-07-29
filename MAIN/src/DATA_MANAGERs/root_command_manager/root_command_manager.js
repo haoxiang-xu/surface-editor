@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 
@@ -21,7 +21,7 @@ try {
 const RootCommandManager = ({ children }) => {
   const [cmd, setCmd] = useState({});
 
-  const push_command_by_id = (id, command) => {
+  const push_command_by_id = useCallback((id, command) => {
     setCmd((prevCommand) => {
       const updatedCommand = { ...prevCommand };
 
@@ -33,8 +33,8 @@ const RootCommandManager = ({ children }) => {
 
       return updatedCommand;
     });
-  };
-  const pop_command_by_id = (id) => {
+  }, []);
+  const pop_command_by_id = useCallback((id) => {
     let popped_command = null;
 
     setCmd((prevCommand) => {
@@ -50,7 +50,7 @@ const RootCommandManager = ({ children }) => {
     });
 
     return popped_command;
-  };
+  }, []);
 
   /* { Context Menu } -------------------------------------------------------------------------------- */
   const [contextMenuOnLoad, setContextMenuOnLoad] = useState(false);
@@ -60,33 +60,36 @@ const RootCommandManager = ({ children }) => {
 
   const [contextStructure, setContextStructure] = useState(null);
 
-  const load_context_menu = (event, unique_tag, context_menu_structure) => {
-    event.preventDefault();
+  const load_context_menu = useCallback(
+    (event, unique_tag, context_menu_structure) => {
+      event.preventDefault();
 
-    if (!unique_tag) {
-      return;
-    }
-    setSourceComponentId(unique_tag);
-    if (!context_menu_structure) {
-      setContextStructure(null);
-    } else {
-      setContextStructure(context_menu_structure);
-    }
+      if (!unique_tag) {
+        return;
+      }
+      setSourceComponentId(unique_tag);
+      if (!context_menu_structure) {
+        setContextStructure(null);
+      } else {
+        setContextStructure(context_menu_structure);
+      }
 
-    const position_x = event.clientX;
-    const position_y = event.clientY;
+      const position_x = event.clientX;
+      const position_y = event.clientY;
 
-    setContextMenuPositionX(position_x);
-    setContextMenuPositionY(position_y);
+      setContextMenuPositionX(position_x);
+      setContextMenuPositionY(position_y);
 
-    setContextMenuOnLoad(true);
-  };
-  const unload_context_menu = () => {
+      setContextMenuOnLoad(true);
+    },
+    []
+  );
+  const unload_context_menu = useCallback(() => {
     setContextMenuOnLoad(false);
     setContextMenuPositionX(-999);
     setContextMenuPositionY(-999);
     setSourceComponentId(null);
-  };
+  }, []);
   /* { Context Menu } -------------------------------------------------------------------------------- */
 
   /* { Drag and Drop Panel } ========================================================================= */
