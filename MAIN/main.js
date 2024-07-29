@@ -208,7 +208,7 @@ const readDir = async (dirPath, rootPath = dirPath) => {
             }
           }
 
-          const insideDir = await readDirNew(res);
+          const insideDir = await readDir(res, rootPath);
           const merged = [thisDir, ...insideDir];
           return merged;
         } else {
