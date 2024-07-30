@@ -142,7 +142,6 @@ const FileSelectionBar = ({
   };
   const fileSelectionBarOnDragOver = (e) => {
     e.preventDefault();
-    console.log("onDragOver");
     const targetElement = e.target.closest(
       ".file_selection_bar_item1114, " +
         ".file_selection_bar_item_selected1114, " +
