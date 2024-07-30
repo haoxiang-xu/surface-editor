@@ -142,6 +142,7 @@ const FileSelectionBar = ({
   };
   const fileSelectionBarOnDragOver = (e) => {
     e.preventDefault();
+    console.log("onDragOver");
     const targetElement = e.target.closest(
       ".file_selection_bar_item1114, " +
         ".file_selection_bar_item_selected1114, " +
@@ -833,6 +834,7 @@ const MonacoEditor = ({
   data,
   setData,
 }) => {
+  //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
   const [onSelectedMonacoIndex, setOnSelectedMonacoIndex] = useState(
     data?.on_selected_monaco_core_index

@@ -77,7 +77,7 @@ const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
               type: "file",
               label: access_file_name_by_path_in_file(draggedDirItemPath),
               style: {
-                fontSize: 11,
+                fontSize: 12,
               },
             }}
           />

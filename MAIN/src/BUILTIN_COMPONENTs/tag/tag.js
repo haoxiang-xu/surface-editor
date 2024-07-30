@@ -23,14 +23,16 @@ const CustomizedTag = ({ label, style }) => {
     const spanWidth = spanRef.current.offsetWidth;
     const spanHeight = spanRef.current.offsetHeight;
     const containerWidth = Math.min(spanWidth, tagMaxWidth);
+    const padding_x = style.padding_x || default_tag_padding_x;
+    const padding_y = style.padding_y || default_tag_padding_y;
     setTagStyle((prevData) => {
       return {
         ...prevData,
         width: onHover
-          ? spanWidth + default_tag_padding_x * 2
-          : containerWidth + default_tag_padding_x * 2,
-        height: spanHeight + default_tag_padding_y * 2,
-        left: `calc(0% + ${default_tag_padding_x}px)`,
+          ? spanWidth + padding_x * 2
+          : containerWidth + padding_x * 2,
+        height: spanHeight + padding_y * 2,
+        left: `calc(0% + ${padding_x}px)`,
         transform: "translate(0%, -50%)",
         moreOptionLabel: onHover ? false : spanWidth > containerWidth,
       };
@@ -134,8 +136,10 @@ const KeyTag = ({ config }) => {
 const FileTag = ({ config }) => {
   const process_tag_config = (config) => {
     let processed_config = { ...config };
-    processed_config.style.backgroundColor = "#8C8C8C";
-    processed_config.style.color = "#181818";
+    processed_config.style.backgroundColor = "#4C4C4C";
+    processed_config.style.color = "#CCCCCC";
+    processed_config.style.padding_x = 16;
+    processed_config.style.padding_y = 3;
     return processed_config;
   };
 
