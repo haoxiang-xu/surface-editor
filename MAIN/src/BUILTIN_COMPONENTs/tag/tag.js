@@ -105,8 +105,12 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         backdropFilter: tagStyle.backdropFilter || "none",
         pointerEvents: tagStyle.pointerEvents || "auto",
       }}
-      onMouseEnter={() => setOnHover(true)}
-      onMouseLeave={() => setOnHover(false)}
+      onMouseEnter={(event) => {
+        setOnHover(true);
+      }}
+      onMouseLeave={(event) => {
+        setOnHover(false);
+      }}
     >
       {icon ? (
         <img
@@ -194,13 +198,14 @@ const FileTag = ({ config }) => {
     let processed_config = { ...config };
     processed_config.style.backgroundColor = "#323232";
     processed_config.style.color = "#CCCCCC";
-    processed_config.style.padding_x = 8;
+    processed_config.style.padding_x = 6;
     processed_config.style.padding_y = 6;
     processed_config.style.borderRadius = 7;
     processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
     processed_config.style.pointerEvents = "false";
     processed_config.icon =
       FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON512;
+    processed_config.style.pointerEvents = "none";
     return processed_config;
   };
 

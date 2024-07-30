@@ -65,12 +65,15 @@ const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
         <div
           style={{
             position: "fixed",
-            transform: "translate(-50%, -50%)",
+            transform: "translate(-50%, -25%)",
 
             left: position.x,
             top: position.y,
             width: containerWidth,
             height: containerHeight,
+            zIndex: 64,
+
+            pointerEvents: "none",
           }}
         >
           {/* <span className="ghost_drag_image_filetype_label0207" ref={tagRef}>
