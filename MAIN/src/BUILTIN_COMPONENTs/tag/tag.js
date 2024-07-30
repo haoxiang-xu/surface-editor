@@ -1,15 +1,41 @@
 import React, { useState, useRef, useEffect } from "react";
+/* { Import ICONs } ------------------------------------------------------------------------------------------ */
+import { ICON_MANAGER } from "../../ICONs/icon_manager";
+
+/* { ICONs } ------------------------------------------------------------------------------------------------- */
+let FILE_TYPE_ICON_MANAGER = {
+  default: {
+    ICON: null,
+    LABEL_COLOR: "#C8C8C8",
+  },
+};
+try {
+  FILE_TYPE_ICON_MANAGER = ICON_MANAGER().FILE_TYPE_ICON_MANAGER;
+} catch (e) {
+  console.log(e);
+}
+let SYSTEM_ICON_MANAGER = {
+  default: {
+    ICON: null,
+    LABEL_COLOR: "#C8C8C8",
+  },
+};
+try {
+  SYSTEM_ICON_MANAGER = ICON_MANAGER().SYSTEM_ICON_MANAGER;
+} catch (e) {
+  console.log(e);
+}
+/* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const default_max_tag_width = 128;
 const default_tag_padding_x = 6;
 const default_tag_padding_y = 3;
 
 const default_tag_font_size = 11;
-const default_border_radius = 7;
+const default_border_radius = 6;
 
 /* { Tag types } ================================================================================= */
-const CustomizedTag = ({ label, style }) => {
-  const containerRef = useRef(null);
+const CustomizedTag = ({ reference, label, style, icon }) => {
   const spanRef = useRef(null);
 
   const [tagStyle, setTagStyle] = useState(style);
@@ -19,29 +45,40 @@ const CustomizedTag = ({ label, style }) => {
   const [onHover, setOnHover] = useState(null);
 
   useEffect(() => {
-    if (!spanRef.current || !containerRef.current) return;
+    if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
     const spanHeight = spanRef.current.offsetHeight;
     const containerWidth = Math.min(spanWidth, tagMaxWidth);
     const padding_x = style.padding_x || default_tag_padding_x;
     const padding_y = style.padding_y || default_tag_padding_y;
+
+    let width = padding_x * 2;
+    let left = padding_x;
+    if (onHover) {
+      width += spanWidth;
+    } else {
+      width += containerWidth;
+    }
+    if (icon) {
+      width += 16 + 4;
+      left += 16 + 4;
+    }
+
     setTagStyle((prevData) => {
       return {
         ...prevData,
-        width: onHover
-          ? spanWidth + padding_x * 2
-          : containerWidth + padding_x * 2,
+        width: width,
         height: spanHeight + padding_y * 2,
-        left: `calc(0% + ${padding_x}px)`,
+        left: `calc(0% + ${left}px)`,
         transform: "translate(0%, -50%)",
         moreOptionLabel: onHover ? false : spanWidth > containerWidth,
       };
     });
-  }, [spanRef, containerRef, onHover]);
+  }, [spanRef, onHover]);
 
   return (
     <div
-      ref={containerRef}
+      ref={reference}
       style={{
         transition: "width 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
 
@@ -62,10 +99,29 @@ const CustomizedTag = ({ label, style }) => {
         display: "inline-block",
         backgroundColor: tagStyle.backgroundColor,
         overflow: "hidden",
+        opacity: tagStyle.opacity || 1,
+        boxShadow: tagStyle.boxShadow || "none",
+        border: tagStyle.border || "none",
+        backdropFilter: tagStyle.backdropFilter || "none",
+        pointerEvents: tagStyle.pointerEvents || "auto",
       }}
       onMouseEnter={() => setOnHover(true)}
       onMouseLeave={() => setOnHover(false)}
     >
+      {icon ? (
+        <img
+          src={icon}
+          style={{
+            position: "absolute",
+            transform: "translate(0%, -50%)",
+            top: "50%",
+            left: style.padding_x || default_tag_padding_x,
+
+            width: 16,
+            height: 16,
+          }}
+        />
+      ) : null}
       <span
         ref={spanRef}
         style={{
@@ -136,10 +192,15 @@ const KeyTag = ({ config }) => {
 const FileTag = ({ config }) => {
   const process_tag_config = (config) => {
     let processed_config = { ...config };
-    processed_config.style.backgroundColor = "#4C4C4C";
+    processed_config.style.backgroundColor = "#323232";
     processed_config.style.color = "#CCCCCC";
-    processed_config.style.padding_x = 16;
-    processed_config.style.padding_y = 3;
+    processed_config.style.padding_x = 8;
+    processed_config.style.padding_y = 6;
+    processed_config.style.borderRadius = 7;
+    processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
+    processed_config.style.pointerEvents = "false";
+    processed_config.icon =
+      FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON512;
     return processed_config;
   };
 
@@ -162,6 +223,7 @@ const CommandTag = ({ config }) => {
 
 const Tag = ({ config }) => {
   const process_tag_config = (config) => {
+    const reference = config.reference || null;
     const type = config.type || "default";
     const label = config.label || "";
     const style = {
@@ -173,7 +235,7 @@ const Tag = ({ config }) => {
       transform: config.style?.transform || "none",
       borderRadius: config.style?.borderRadius || default_border_radius,
     };
-    return { type, label, style };
+    return { reference, type, label, style };
   };
 
   const render_tag = () => {

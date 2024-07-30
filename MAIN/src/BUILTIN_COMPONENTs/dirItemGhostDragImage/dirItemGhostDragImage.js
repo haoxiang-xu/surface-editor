@@ -36,7 +36,8 @@ const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
     y: -9999,
   });
   const [containerWidth, setContainerWidth] = useState(0);
-  const labelRef = useRef(null);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const tagRef = useRef(null);
   useEffect(() => {
     const onDragOver = (e) => {
       e.preventDefault();
@@ -52,10 +53,11 @@ const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
     };
   }, []);
   useEffect(() => {
-    if (labelRef.current) {
-      setContainerWidth(labelRef.current.offsetWidth);
+    if (tagRef.current) {
+      setContainerWidth(tagRef.current.offsetWidth);
+      setContainerHeight(tagRef.current.offsetHeight);
     }
-  }, [labelRef.current]);
+  }, [tagRef.current]);
 
   return (
     <>
@@ -63,20 +65,24 @@ const DirItemGhostDragImage = ({ draggedDirItemPath }) => {
         <div
           style={{
             position: "fixed",
+            transform: "translate(-50%, -50%)",
 
             left: position.x,
             top: position.y,
-            width: containerWidth + 24,
+            width: containerWidth,
+            height: containerHeight,
           }}
         >
-          {/* <span className="ghost_drag_image_filetype_label0207" ref={labelRef}>
+          {/* <span className="ghost_drag_image_filetype_label0207" ref={tagRef}>
             {access_file_name_by_path_in_file(draggedDirItemPath)}
           </span> */}
           <Tag
             config={{
+              reference: tagRef,
               type: "file",
               label: access_file_name_by_path_in_file(draggedDirItemPath),
               style: {
+                borderRadius: 6,
                 fontSize: 12,
               },
             }}

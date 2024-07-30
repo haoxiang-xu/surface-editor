@@ -456,7 +456,6 @@ const ContextList = ({
 
   return (
     <div
-      className={"context_menu_list_container"}
       style={{
         /*ANIMATION ---------------- */
         transition: transition,
