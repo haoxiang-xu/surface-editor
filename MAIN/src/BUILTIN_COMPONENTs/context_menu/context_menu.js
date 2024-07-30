@@ -539,7 +539,7 @@ const ContextList = ({
 };
 
 const ContextMenu = ({}) => {
-  console.log("RDM/RCM/context_menu", new Date().getTime());
+  //console.log("RDM/RCM/context_menu", new Date().getTime());
   const {
     push_command_by_id,
     contextMenuPositionX,

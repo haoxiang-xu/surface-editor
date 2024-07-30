@@ -234,7 +234,7 @@ const HorizontalStackContainer = ({
   expandContainer,
   narrowContainer,
 }) => {
-  console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
+  //console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
   const [StackFrameComponent, setStackFrameComponent] = useState(null);
   useEffect(() => {
     async function loadComponent() {

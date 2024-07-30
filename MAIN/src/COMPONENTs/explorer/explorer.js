@@ -543,7 +543,7 @@ const Explorer = ({
   data,
   setData,
 }) => {
-  console.log("RDM/RCM/stack_frame/explorer", new Date().getTime());
+  //console.log("RDM/RCM/stack_frame/explorer", new Date().getTime());
   const { isDirLoaded } = useContext(RootDataContexts);
   return (
     <SurfaceExplorerContexts.Provider

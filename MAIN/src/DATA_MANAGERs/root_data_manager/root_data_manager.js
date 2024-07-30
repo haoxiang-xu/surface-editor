@@ -551,7 +551,7 @@ const RootDataManager = ({ children }) => {
 
       return updatedData;
     });
-  }, []);
+  }, [dir]);
   const remove_path_under_dir = useCallback((path) => {
     setDir((prevData) => {
       const pathArray = path.split("/");
@@ -580,7 +580,7 @@ const RootDataManager = ({ children }) => {
 
       return removeItemRecursively(prevData);
     });
-  }, []);
+  }, [dir]);
   const rename_file_under_dir = useCallback((original_path, new_name) => {
     const renameAllSubFiles = (file, pathIndex, new_name) => {
       for (let i = 0; i < file.files.length; i++) {
@@ -601,7 +601,7 @@ const RootDataManager = ({ children }) => {
     renameAllSubFiles(target_file, Path.length - 1, new_name);
 
     update_path_under_dir(original_path, target_file);
-  }, []);
+  }, [dir]);
   const check_is_file_name_exist_under_path = useCallback((path, pending_file_name) => {
     const pathArray = path.split("/");
     let currentData = dir;
@@ -624,7 +624,7 @@ const RootDataManager = ({ children }) => {
         }
       }
     }
-  }, []);
+  }, [dir]);
   const access_file_subfiles_by_path = useCallback((path) => {
     const pathArray = path.split("/");
     let currentData = dir;
@@ -641,7 +641,7 @@ const RootDataManager = ({ children }) => {
         }
       }
     }
-  }, []);
+  }, [dir]);
   const access_file_name_by_path_in_dir = useCallback((path) => {
     const pathArray = path.split("/");
     let currentData = dir;
@@ -658,7 +658,7 @@ const RootDataManager = ({ children }) => {
         }
       }
     }
-  }, []);
+  }, [dir]);
   const access_file_type_by_path = useCallback((path) => {
     const pathArray = path.split("/");
     let currentData = dir;
@@ -675,7 +675,7 @@ const RootDataManager = ({ children }) => {
         }
       }
     }
-  }, []);
+  }, [dir]);
   const access_file_absolute_path_by_path = useCallback((path) => {
     const pathArray = path.split("/");
     let currentData = dir;
@@ -696,7 +696,7 @@ const RootDataManager = ({ children }) => {
         }
       }
     }
-  }, []);
+  }, [dir]);
   const access_folder_expand_status_by_path = useCallback((path) => {
     const pathArray = path.split("/");
     let currentData = dir;
@@ -713,7 +713,7 @@ const RootDataManager = ({ children }) => {
         }
       }
     }
-  }, []);
+  }, [dir]);
   const update_folder_expand_status_by_path = useCallback((path, expend) => {
     setDir((prevData) => {
       const updateNestedFiles = (data, pathArray, currentIndex) => {
@@ -732,7 +732,7 @@ const RootDataManager = ({ children }) => {
       const pathArray = path.split("/");
       return updateNestedFiles(prevData, pathArray, 0);
     });
-  }, []);
+  }, [dir]);
   const access_subfiles_by_path = useCallback((path) => {
     const pathArray = path.split("/");
     let currentData = dir;
@@ -749,7 +749,7 @@ const RootDataManager = ({ children }) => {
         }
       }
     }
-  }, []);
+  }, [dir]);
   const access_subfile_length_recusively_by_path = useCallback((path) => {
     const count_provided_file_subfile_length = (data) => {
       let count = 0;
@@ -777,7 +777,7 @@ const RootDataManager = ({ children }) => {
         }
       }
     }
-  }, []);
+  }, [dir]);
   /* { DIR } =========================================================================================================================== */
 
   /* { FILE } ========================================================================================================================== */
@@ -795,7 +795,7 @@ const RootDataManager = ({ children }) => {
     window.electronAPI.onFileError((error) => {
       console.error("Error:", error);
     });
-  }, []);
+  }, [file]);
   const update_file_content_by_path = useCallback((path, data) => {
     setFile((prevData) => {
       if (prevData.hasOwnProperty(path)) {
@@ -811,14 +811,14 @@ const RootDataManager = ({ children }) => {
         return { ...prevData };
       }
     });
-  }, []);
+  }, [file]);
   const access_file_name_by_path_in_file = useCallback((path) => {
     if (path in file) {
       return file[path].fileName;
     } else {
       return path.split("/")[path.split("/").length - 1];
     }
-  }, []);
+  }, [file]);
   const access_file_content_by_path = useCallback((path) => {
     if (path in file) {
       return file[path].fileContent;
@@ -830,33 +830,33 @@ const RootDataManager = ({ children }) => {
       );
       return path;
     }
-  }, []);
+  }, [file]);
   const access_file_language_by_path = useCallback((path) => {
     if (path in file) {
       return file[path].fileLanguage;
     } else {
       return "UNKNOWN LANGUAGE";
     }
-  }, []);
+  }, [file]);
   /* { FILE } ========================================================================================================================== */
 
   /* { STORAGE } ======================================================================================================================= */
   const [storage, setStorage] = useState(FAKE_STORAGE);
   const access_storage_by_id = useCallback((id) => {
     return storage[id];
-  }, []);
+  }, [storage]);
   const update_storage_by_id = useCallback((id, data) => {
     setStorage((prevData) => {
       return { ...prevData, [id]: data };
     });
-  }, []);
+  }, [storage]);
   const remove_storage_by_id = useCallback((id) => {
     setStorage((prevData) => {
       const newData = { ...prevData };
       delete newData[id];
       return newData;
     });
-  }, []);
+  }, [storage]);
   /* { STORAGE } ======================================================================================================================= */
 
   /* Stack Structure Data and Functions ============================================================== */
