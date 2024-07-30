@@ -1,4 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import {
+  useCustomizedState,
+  compareJson,
+} from "../../BUILTIN_COMPONENTs/customized_react/customized_react";
 import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 
@@ -20,37 +24,43 @@ try {
 
 const RootCommandManager = ({ children }) => {
   //console.log("RDM/RCM", new Date().getTime());
-  const [cmd, setCmd] = useState({});
-  const push_command_by_id = useCallback((id, command) => {
-    setCmd((prevCommand) => {
-      const updatedCommand = { ...prevCommand };
+  const [cmd, setCmd] = useCustomizedState({}, compareJson);
+  const push_command_by_id = useCallback(
+    (id, command) => {
+      setCmd((prevCommand) => {
+        const updatedCommand = { ...prevCommand };
 
-      if (updatedCommand[id]) {
-        updatedCommand[id].push(command);
-      } else {
-        updatedCommand[id] = [command];
-      }
-
-      return updatedCommand;
-    });
-  }, []);
-  const pop_command_by_id = useCallback((id) => {
-    let popped_command = null;
-
-    setCmd((prevCommand) => {
-      const updatedCommand = { ...prevCommand };
-      if (updatedCommand[id] && updatedCommand[id].length > 0) {
-        popped_command = updatedCommand[id].splice(0, 1)[0];
-
-        if (updatedCommand[id].length === 0) {
-          delete updatedCommand[id];
+        if (updatedCommand[id]) {
+          updatedCommand[id].push(command);
+        } else {
+          updatedCommand[id] = [command];
         }
-      }
-      return updatedCommand;
-    });
 
-    return popped_command;
-  }, []);
+        return updatedCommand;
+      });
+    },
+    [cmd]
+  );
+  const pop_command_by_id = useCallback(
+    (id) => {
+      let popped_command = null;
+
+      setCmd((prevCommand) => {
+        const updatedCommand = { ...prevCommand };
+        if (updatedCommand[id] && updatedCommand[id].length > 0) {
+          popped_command = updatedCommand[id].splice(0, 1)[0];
+
+          if (updatedCommand[id].length === 0) {
+            delete updatedCommand[id];
+          }
+        }
+        return updatedCommand;
+      });
+
+      return popped_command;
+    },
+    [cmd]
+  );
 
   /* { Context Menu } -------------------------------------------------------------------------------- */
   const [contextMenuOnLoad, setContextMenuOnLoad] = useState(false);
@@ -58,7 +68,10 @@ const RootCommandManager = ({ children }) => {
   const [contextMenuPositionY, setContextMenuPositionY] = useState(-1);
   const [sourceComponentId, setSourceComponentId] = useState(null);
 
-  const [contextStructure, setContextStructure] = useState(null);
+  const [contextStructure, setContextStructure] = useCustomizedState(
+    null,
+    compareJson
+  );
 
   const load_context_menu = useCallback(
     (event, unique_tag, context_menu_structure) => {

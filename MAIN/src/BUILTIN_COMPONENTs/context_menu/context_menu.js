@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, memo } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 
 import { default_clickable_panel_styling } from "../../DATA_MANAGERs/root_styling_manager/root_styling_default_consts";
 import {
@@ -549,99 +549,114 @@ const ContextMenu = ({}) => {
     unload_context_menu,
   } = useContext(RootCommandContexts);
 
-  const get_context_item_height = (unique_tag) => {
-    switch (contextStructure[unique_tag].type) {
-      case "button":
-        if (contextStructure[unique_tag].height) {
-          return contextStructure[unique_tag].height;
-        } else {
-          return button_fixed_styling.height;
-        }
-      case "br":
-        if (contextStructure[unique_tag].height) {
-          return contextStructure[unique_tag].height;
-        } else {
-          return br_fixed_styling.height;
-        }
-      case "component":
-        if (contextStructure[unique_tag].height) {
-          return contextStructure[unique_tag].height;
-        } else {
-          return customize_component_fixed_styling.height;
-        }
-      default:
-        if (contextStructure[unique_tag].height) {
-          return contextStructure[unique_tag].height;
-        } else {
-          return 0;
-        }
-    }
-  };
-  const get_context_item_width = (unique_tag) => {
-    return (
-      contextStructure[unique_tag].width || context_menu_fixed_styling.minWidth
-    );
-  };
-  const calculate_context_list_height = (sub_items) => {
-    let height = context_menu_fixed_styling.padding * 2 + 4;
-    for (let i = 0; i < sub_items.length; i++) {
-      height += get_context_item_height(sub_items[i]);
-    }
-    return height;
-  };
-  const calculate_context_list_width = (sub_items) => {
-    let width = context_menu_fixed_styling.minWidth;
-    for (let i = 0; i < sub_items.length; i++) {
-      width = Math.max(width, get_context_item_width(sub_items[i]));
-    }
-    return width;
-  };
-  const calculate_item_top_position = (index, sub_items) => {
-    let top_position = context_menu_fixed_styling.padding + 1;
-    for (let i = 0; i < index; i++) {
-      top_position += get_context_item_height(sub_items[i]);
-    }
-    return top_position;
-  };
-  const get_context_menu_show_up_direction = (
-    positions,
-    sub_items,
-    filters
-  ) => {
-    let avaliable_positions = [...filters];
-    /* 
+  const get_context_item_height = useCallback(
+    (unique_tag) => {
+      switch (contextStructure[unique_tag].type) {
+        case "button":
+          if (contextStructure[unique_tag].height) {
+            return contextStructure[unique_tag].height;
+          } else {
+            return button_fixed_styling.height;
+          }
+        case "br":
+          if (contextStructure[unique_tag].height) {
+            return contextStructure[unique_tag].height;
+          } else {
+            return br_fixed_styling.height;
+          }
+        case "component":
+          if (contextStructure[unique_tag].height) {
+            return contextStructure[unique_tag].height;
+          } else {
+            return customize_component_fixed_styling.height;
+          }
+        default:
+          if (contextStructure[unique_tag].height) {
+            return contextStructure[unique_tag].height;
+          } else {
+            return 0;
+          }
+      }
+    },
+    [contextStructure]
+  );
+  const get_context_item_width = useCallback(
+    (unique_tag) => {
+      return (
+        contextStructure[unique_tag].width ||
+        context_menu_fixed_styling.minWidth
+      );
+    },
+    [contextStructure]
+  );
+  const calculate_context_list_height = useCallback(
+    (sub_items) => {
+      let height = context_menu_fixed_styling.padding * 2 + 4;
+      for (let i = 0; i < sub_items.length; i++) {
+        height += get_context_item_height(sub_items[i]);
+      }
+      return height;
+    },
+    [contextStructure]
+  );
+  const calculate_context_list_width = useCallback(
+    (sub_items) => {
+      let width = context_menu_fixed_styling.minWidth;
+      for (let i = 0; i < sub_items.length; i++) {
+        width = Math.max(width, get_context_item_width(sub_items[i]));
+      }
+      return width;
+    },
+    [contextStructure]
+  );
+  const calculate_item_top_position = useCallback(
+    (index, sub_items) => {
+      let top_position = context_menu_fixed_styling.padding + 1;
+      for (let i = 0; i < index; i++) {
+        top_position += get_context_item_height(sub_items[i]);
+      }
+      return top_position;
+    },
+    [contextStructure]
+  );
+  const get_context_menu_show_up_direction = useCallback(
+    (positions, sub_items, filters) => {
+      let avaliable_positions = [...filters];
+      /* 
       positions -> array of position values [x, y]
       filters -> array of avaliable directions [top_left, top_right, bottom_left, bottom_right] represented by trues and falses
 
       return -> [position, direction] direction will be a index of filters, if top_left is avaliable, return 0
     */
-    const context_liet_width = calculate_context_list_width(sub_items);
+      const context_liet_width = calculate_context_list_width(sub_items);
 
-    for (let i = 0; i < positions.length; i++) {
-      const position = positions[i];
-      if (
-        position[1] + calculate_context_list_height(sub_items) >
-        window.innerHeight
-      ) {
-        avaliable_positions[i][2] = false;
-        avaliable_positions[i][3] = false;
+      for (let i = 0; i < positions.length; i++) {
+        const position = positions[i];
+        if (
+          position[1] + calculate_context_list_height(sub_items) >
+          window.innerHeight
+        ) {
+          avaliable_positions[i][2] = false;
+          avaliable_positions[i][3] = false;
+        }
+        if (position[0] + context_liet_width > window.innerWidth) {
+          avaliable_positions[i][1] = false;
+          avaliable_positions[i][3] = false;
+        }
+        avaliable_positions[i][0] = true && avaliable_positions[i][0];
       }
-      if (position[0] + context_liet_width > window.innerWidth) {
-        avaliable_positions[i][1] = false;
-        avaliable_positions[i][3] = false;
-      }
-      avaliable_positions[i][0] = true && avaliable_positions[i][0];
-    }
 
-    for (let i = 0; i < avaliable_positions.length; i++) {
-      for (let p = avaliable_positions[i].length - 1; p >= 0; p--) {
-        if (avaliable_positions[i][p]) {
-          return [positions[i], p];
+      for (let i = 0; i < avaliable_positions.length; i++) {
+        for (let p = avaliable_positions[i].length - 1; p >= 0; p--) {
+          if (avaliable_positions[i][p]) {
+            return [positions[i], p];
+          }
         }
       }
-    }
-    return [[-999, -999], 0];
-  };
+      return [[-999, -999], 0];
+    },
+    [contextStructure]
+  );
 
   const [subListPostion, setSubListPosition] = useState(
     get_context_menu_show_up_direction(
@@ -660,7 +675,7 @@ const ContextMenu = ({}) => {
     );
   }, [contextMenuPositionX, contextMenuPositionY]);
 
-  const progress_context_menu_item = (unique_tag, content) => {
+  const progress_context_menu_item = useCallback((unique_tag, content) => {
     /* 
       unique_tag -> unique tag of the command
       content -> customized josn format variable that contains content of the command
@@ -674,7 +689,8 @@ const ContextMenu = ({}) => {
       },
     });
     unload_context_menu();
-  };
+  }, []);
+
   return (
     <div
       onClick={(e) => {
