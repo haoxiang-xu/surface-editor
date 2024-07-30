@@ -234,6 +234,7 @@ const HorizontalStackContainer = ({
   expandContainer,
   narrowContainer,
 }) => {
+  console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
   const [StackFrameComponent, setStackFrameComponent] = useState(null);
   useEffect(() => {
     async function loadComponent() {
@@ -362,7 +363,6 @@ const HorizontalStackContainer = ({
         }}
       >
         {StackFrameComponent ? (
-          // <StackContainerWrapper mode={mode} command={command} data={data}>
           <StackFrameComponent
             id={id}
             mode={mode}
@@ -376,8 +376,7 @@ const HorizontalStackContainer = ({
               item.code_editor_container_ref_index
             }
           />
-        ) : // </StackContainerWrapper>
-        null}
+        ) : null}
         <HorizontalStackTopLeftSection
           mode={mode}
           //Maximize and Minimize Container

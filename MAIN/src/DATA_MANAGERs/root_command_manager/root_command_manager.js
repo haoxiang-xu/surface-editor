@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 
@@ -19,8 +19,8 @@ try {
 /* Load ICON manager -------------------------------- */
 
 const RootCommandManager = ({ children }) => {
+  //console.log("RDM/RCM", new Date().getTime());
   const [cmd, setCmd] = useState({});
-
   const push_command_by_id = useCallback((id, command) => {
     setCmd((prevCommand) => {
       const updatedCommand = { ...prevCommand };
