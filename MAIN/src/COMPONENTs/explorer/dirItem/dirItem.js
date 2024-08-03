@@ -205,8 +205,14 @@ const DirItem = ({
     update_folder_expand_status_by_path,
     access_subfiles_by_path,
   } = useContext(RootDataContexts);
-  const { stack_component_unique_tag, command, setCommand, load_contextMenu } =
-    useContext(SurfaceExplorerContexts);
+  const {
+    id,
+    command,
+    setCommand,
+    load_contextMenu,
+    item_on_drag,
+    item_on_drop,
+  } = useContext(SurfaceExplorerContexts);
   const { onRightClickItem, setRightClickCommand } = useContext(
     rightClickContextMenuCommandContexts
   );
@@ -439,21 +445,24 @@ const DirItem = ({
     }
   }, [onRightClickItem]);
   const onDragStart = (e) => {
-    e.stopPropagation();
     e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
     setDraggedItem({
       source: "vecoder_explorer",
       content: filePath,
     });
+    item_on_drag(e, {
+      source: id,
+      content: filePath,
+    });
   };
   const onDragEnd = (e) => {
-    e.stopPropagation();
     if (draggedOverItem && access_file_type_by_path(filePath) === "file") {
       setDragCommand("APPEND TO TARGET");
     } else {
       setDraggedItem(null);
       setDraggedOverItem(null);
     }
+    item_on_drop(e);
   };
 
   return (

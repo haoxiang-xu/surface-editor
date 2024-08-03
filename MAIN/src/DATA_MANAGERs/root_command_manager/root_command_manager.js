@@ -5,6 +5,7 @@ import {
 } from "../../BUILTIN_COMPONENTs/customized_react/customized_react";
 import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
+import GhostImage from "../../BUILTIN_COMPONENTs/ghost_image/ghost_image";
 
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
@@ -20,6 +21,7 @@ try {
 } catch (e) {
   console.log(e);
 }
+const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* Load ICON manager -------------------------------- */
 
 const RootCommandManager = ({ children }) => {
@@ -105,31 +107,23 @@ const RootCommandManager = ({ children }) => {
   }, []);
   /* { Context Menu } -------------------------------------------------------------------------------- */
 
-  /* { Drag and Drop Panel } ========================================================================= */
+  /* { Drag and Drop } =============================================================================== */
   const [onDrag, setOnDrag] = useState(false);
-  const [dragPositionX, setDragPositionX] = useState(-1);
-  const [dragPositionY, setDragPositionY] = useState(-1);
+  const [onDragItem, setOnDragItem] = useState(null);
 
-  const item_on_drag = (event) => {
-    const handleMouseUp = (event) => {
-      setOnDrag(false);
-      window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-    const handleMouseMove = (event) => {
-      const position_x = event.clientX;
-      const position_y = event.clientY;
-
-      setDragPositionX(position_x);
-      setDragPositionY(position_y);
-    };
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("mousemove", handleMouseMove);
-    document.body.style.cursor = "none";
-    unload_context_menu();
+  const item_on_drag = (event, on_drag_item) => {
+    event.stopPropagation();
+    setOnDragItem(on_drag_item);
     setOnDrag(true);
+
+    unload_context_menu();
   };
-  /* { Drag and Drop Panel } ========================================================================= */
+  const item_on_drop = (event) => {
+    event.stopPropagation();
+    setOnDrag(false);
+    setOnDragItem(null);
+  };
+  /* { Drag and Drop } =============================================================================== */
 
   return (
     <RootCommandContexts.Provider
@@ -146,11 +140,21 @@ const RootCommandManager = ({ children }) => {
         load_context_menu,
         unload_context_menu,
         /* { Context Menu } ------------------------- */
+
+        /* { Drag and Drop } ------------------------ */
+        onDrag,
+        setOnDrag,
+        onDragItem,
+        setOnDragItem,
+        item_on_drag,
+        item_on_drop,
+        /* { Drag and Drop } ------------------------ */
       }}
     >
       <div onClick={unload_context_menu}>
         {children}
         {contextMenuOnLoad ? <ContextMenu /> : null}
+        {onDrag ? <GhostImage /> : null}
       </div>
     </RootCommandContexts.Provider>
   );

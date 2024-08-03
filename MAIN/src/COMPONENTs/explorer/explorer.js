@@ -542,6 +542,8 @@ const Explorer = ({
   load_contextMenu,
   data,
   setData,
+  item_on_drag,
+  item_on_drop,
 }) => {
   //console.log("RDM/RCM/stack_frame/explorer", new Date().getTime());
   const { isDirLoaded } = useContext(RootDataContexts);
@@ -553,6 +555,8 @@ const Explorer = ({
         command,
         setCommand,
         load_contextMenu,
+        item_on_drag,
+        item_on_drop,
       }}
     >
       {mode === "horizontal_stack_vertical_mode" ? null : (

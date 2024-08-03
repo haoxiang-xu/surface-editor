@@ -303,6 +303,10 @@ const HorizontalStackContainer = ({
   };
   /* { command } ============================================================================================== */
 
+  /* { drag and drop } ---------------------------------------------------------------------------------------- */
+  const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
+  /* { drag and drop } ---------------------------------------------------------------------------------------- */
+
   const onMaximizeOnClick = () => {
     expandContainer(index);
   };
@@ -371,7 +375,8 @@ const HorizontalStackContainer = ({
             load_contextMenu={load_contextMenu}
             data={data}
             setData={setData}
-            explorer_width={item.width}
+            item_on_drag={item_on_drag}
+            item_on_drop={item_on_drop}
             code_editor_container_ref_index={
               item.code_editor_container_ref_index
             }

@@ -71,6 +71,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - [`cmd`](#cmd) <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `id` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
   - [`context_menu`](#context_menu)
+  - [`drag and drop`](#drag_and_drop)
 
 - [`root_stack_manager`](#root_stack_manager)
 
@@ -141,6 +142,10 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 - `load_context_menu`
 - `unload_context_menu`
+
+#### [drag and drop] <a id="drag_and_drop"></a>
+
+- `item_on_drag` <span style="opacity: 0.64">when you need to call this function you must declare the `on_drag_item` as one of the input for this function, you can check out the formation of how you should define this json variable by this </span>[`SAMPLE 000_008`](#000_008)<span style="opacity: 0.64">.</span>
 
 <a id="Variable_formating_guide"></a>
 
@@ -291,3 +296,15 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `quick_view_background` <span style="opacity: 0.64">(Optional)</span>
 - `height` <span style="opacity: 0.64">(Optional) A button component default height will be 28, and br componet default height will be 8.</span>
 - `width` <span style="opacity: 0.64">(Optional) `context_menu` default width is 220.</span>
+
+#### [000_008] <a id="000_008"></a> On drag Item Structure
+
+```
+{
+  source: 'component_id',
+  ghost_image: 'url',
+  content: {},
+}
+```
+
+- `ghost_image` on drag image, will be the original item in default, otherwise you can define your own image to display or even component to display.
