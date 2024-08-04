@@ -293,13 +293,63 @@ const registerCompletionProvider = (monaco) => {
     },
   });
 };
-////Register inline completion provider for monaco editor
-const registerInlineCompletionProvider = async (monaco) => {
+// ////Register inline completion provider for monaco editor
+// const registerInlineCompletionProvider = async (monaco) => {
+//   const inlineCompletionProvider = {
+//     provideInlineCompletions: (model, position, context, token) => {
+//       const offset = 5;
+//       const contextText = model.getValueInRange({
+//         startLineNumber: position.lineNumber - offset,
+//         startColumn: 1,
+//         endLineNumber: position.lineNumber,
+//         endColumn: position.column,
+//       });
+
+//       const continueAPI = async () => {
+//         const requestBody = {
+//           language: "javascript",
+//           propmt: contextText,
+//         };
+
+//         try {
+//           const response = await axios.post(
+//             "http://localhost:8200/openai/continue",
+//             requestBody
+//           );
+//           return response;
+//         } catch (e) {
+//           console.log(e);
+//         }
+//       };
+
+//       return {
+//         items: [
+//           {
+//             insertText: continueAPI(),
+//             range: {
+//               startLineNumber: position.lineNumber,
+//               startColumn: position.column,
+//               endLineNumber: position.lineNumber,
+//               endColumn: position.column,
+//             },
+//           },
+//         ],
+//       };
+//     },
+//     freeInlineCompletions: () => {},
+//   };
+//   monaco.languages.registerInlineCompletionsProvider(
+//     "javascript",
+//     inlineCompletionProvider
+//   );
+// };
+
+const registerInlineCompletionProvider = (monaco) => {
   const inlineCompletionProvider = {
-    provideInlineCompletions: (model, position, context, token) => {
+    provideInlineCompletions: async (model, position, context, token) => {
       const offset = 5;
       const contextText = model.getValueInRange({
-        startLineNumber: position.lineNumber - offset,
+        startLineNumber: Math.max(position.lineNumber - offset, 1),
         startColumn: 1,
         endLineNumber: position.lineNumber,
         endColumn: position.column,
@@ -308,7 +358,7 @@ const registerInlineCompletionProvider = async (monaco) => {
       const continueAPI = async () => {
         const requestBody = {
           language: "javascript",
-          propmt: contextText,
+          prompt: contextText,
         };
 
         try {
@@ -316,16 +366,19 @@ const registerInlineCompletionProvider = async (monaco) => {
             "http://localhost:8200/openai/continue",
             requestBody
           );
-          return response;
+          return response.data.text; 
         } catch (e) {
           console.log(e);
+          return ''; 
         }
       };
+
+      const insertText = await continueAPI();
 
       return {
         items: [
           {
-            insertText: continueAPI(),
+            insertText: insertText,
             range: {
               startLineNumber: position.lineNumber,
               startColumn: position.column,
@@ -338,11 +391,14 @@ const registerInlineCompletionProvider = async (monaco) => {
     },
     freeInlineCompletions: () => {},
   };
+
   monaco.languages.registerInlineCompletionsProvider(
     "javascript",
     inlineCompletionProvider
   );
 };
+
+
 ////Get suggestions based on prefix for monaco editor
 const getSuggestionsBasedOnPrefix = (model, position) => {
   const textUntilPosition = model.getValueInRange({
