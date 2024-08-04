@@ -231,6 +231,18 @@ const readDir = async (dirPath, rootPath = dirPath) => {
   }
 };
 
+const getFilesInDir = async (dirPath) => {
+  try {
+    const dirents = await fs.readdir(dirPath, { withFileTypes: true });
+    const fileNames = dirents.map((dirent) => {
+      return dirent.name;
+    });
+    return fileNames;
+  } catch (error) {
+    throw error;
+  }
+};
+
 app.whenReady().then(createWindow);
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
