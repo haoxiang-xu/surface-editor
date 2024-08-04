@@ -57,12 +57,15 @@ const FileSelectionBar = ({
   } = useContext(globalDragAndDropContexts);
   const { access_file_name_by_path_in_file } = useContext(RootDataContexts);
   const {
+    id,
     onSelectedMonacoIndex,
     setOnSelectedMonacoIndex,
     monacoPaths,
     setMonacoPaths,
     monacoCores,
     setMonacoCores,
+    item_on_drag,
+    item_on_drop,
   } = useContext(MonacoEditorContexts);
 
   const [forceRefresh, setForceRefresh] = useState(false);
@@ -109,6 +112,14 @@ const FileSelectionBar = ({
       content: monacoPaths[index],
       monaco_cores: monacoCores[monacoPaths[index]],
     });
+    item_on_drag(e, {
+      source: id,
+      ghost_image: "tag",
+      content: {
+        type: "file",
+        path: monacoPaths[index],
+      },
+    });
   };
   const onFileDragEnd = (e, index) => {
     e.stopPropagation();
@@ -139,6 +150,7 @@ const FileSelectionBar = ({
       setOnSwapIndex(-1);
       setDraggedItem(null);
     }
+    item_on_drop(e);
   };
   const fileSelectionBarOnDragOver = (e) => {
     e.preventDefault();
@@ -474,9 +486,9 @@ const FileSelectionBar = ({
           </div>
         );
       })}
-      {onDragIndex !== -1 || draggedItem !== null ? (
+      {/* {onDragIndex !== -1 || draggedItem !== null ? (
         <DirItemGhostDragImage draggedDirItemPath={draggedItem?.content} />
-      ) : null}
+      ) : null} */}
     </div>
   );
 };
@@ -832,6 +844,8 @@ const MonacoEditor = ({
   load_contextMenu,
   data,
   setData,
+  item_on_drag,
+  item_on_drop,
 }) => {
   //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
@@ -893,6 +907,7 @@ const MonacoEditor = ({
   return (
     <MonacoEditorContexts.Provider
       value={{
+        id,
         command,
         setCommand,
         load_contextMenu,
@@ -911,6 +926,8 @@ const MonacoEditor = ({
         setOnSelectedCotent,
         onAppendContent,
         setOnAppendContent,
+        item_on_drag,
+        item_on_drop,
       }}
     >
       <MonacoEditorContextMenuWrapper>

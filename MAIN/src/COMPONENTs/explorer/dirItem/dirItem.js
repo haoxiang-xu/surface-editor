@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { SurfaceExplorerContexts } from "../surface_explorer_contexts.js";
 import { SurfaceExplorerContextMenuContexts } from "../surface_explorer_context_menu_contexts.js";
-import DirItemGhostDragImage from "../../../BUILTIN_COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage.js";
 import { ICON_MANAGER, ICON_LOADER } from "../../../ICONs/icon_manager.js";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts.js";
@@ -452,7 +451,11 @@ const DirItem = ({
     });
     item_on_drag(e, {
       source: id,
-      content: filePath,
+      ghost_image: 'tag',
+      content: {
+        type: "file",
+        path: filePath,
+      },
     });
   };
   const onDragEnd = (e) => {
@@ -617,12 +620,6 @@ const DirItem = ({
         unexpendAnimation={unexpendAnimation}
       />
       {/* SubFiles List -------------------------------------------------------------------------------------------- */}
-
-      {onDragFiles !== null &&
-      draggedItem !== null &&
-      filePath === draggedItem ? (
-        <DirItemGhostDragImage draggedDirItemPath={draggedItem.content} />
-      ) : null}
 
       <style>
         {`

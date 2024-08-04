@@ -305,6 +305,15 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   ghost_image: 'url',
   content: {},
 }
+
+{
+  source: id,
+  ghost_image: 'tag',
+  content: {
+    type: "file",
+    path: filePath,
+  },
+}
 ```
 
 - `ghost_image` on drag image, will be the original item in default, otherwise you can define your own image to display or even component to display.

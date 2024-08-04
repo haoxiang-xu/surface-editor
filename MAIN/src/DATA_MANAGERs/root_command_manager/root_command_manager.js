@@ -7,23 +7,6 @@ import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 import GhostImage from "../../BUILTIN_COMPONENTs/ghost_image/ghost_image";
 
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
-
-/* Load ICON manager -------------------------------- */
-let SYSTEM_ICON_MANAGER = {
-  default: {
-    ICON: null,
-    LABEL_COLOR: "#C8C8C8",
-  },
-};
-try {
-  SYSTEM_ICON_MANAGER = ICON_MANAGER().SYSTEM_ICON_MANAGER;
-} catch (e) {
-  console.log(e);
-}
-const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
-/* Load ICON manager -------------------------------- */
-
 const RootCommandManager = ({ children }) => {
   //console.log("RDM/RCM", new Date().getTime());
   const [cmd, setCmd] = useCustomizedState({}, compareJson);
@@ -154,7 +137,7 @@ const RootCommandManager = ({ children }) => {
       <div onClick={unload_context_menu}>
         {children}
         {contextMenuOnLoad ? <ContextMenu /> : null}
-        {onDrag ? <GhostImage /> : null}
+        {onDrag ? <GhostImage onDragItem={onDragItem} /> : null}
       </div>
     </RootCommandContexts.Provider>
   );
