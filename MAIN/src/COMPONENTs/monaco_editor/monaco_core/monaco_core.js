@@ -399,6 +399,7 @@ const registerInlineCompletionProvider = (monaco) => {
 };
 
 
+
 ////Get suggestions based on prefix for monaco editor
 const getSuggestionsBasedOnPrefix = (model, position) => {
   const textUntilPosition = model.getValueInRange({
