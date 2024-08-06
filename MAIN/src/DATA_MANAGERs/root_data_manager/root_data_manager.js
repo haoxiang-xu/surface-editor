@@ -508,6 +508,9 @@ const RootDataManager = ({ children }) => {
   //console.log("RDM", new Date().getTime());
   /* { DIR } =========================================================================================================================== */
   const [dir, setDir] = useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
+  useEffect(() => {
+    console.log("DIR:", dir);
+  }, [dir]);
   const [isDirLoaded, setIsDirLoaded] = useState(true);
   useEffect(() => {
     setIsDirLoaded(true);

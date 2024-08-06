@@ -33,6 +33,7 @@ const menuTemplate = [
   // },
   // Other menu items...
 ];
+
 const createWindow = () => {
   // Initialize the browser window.
   if (process.platform === "darwin") {
@@ -160,27 +161,11 @@ const openFolderStructureDialog = () => {
         isDirLoading: true,
       });
       if (!result.canceled) {
-        readDir(result.filePaths[0], result.filePaths[0])
+        read_dir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
-            const rootFolder = result.filePaths[0]
-              .replace(/\\/g, "/")
-              .split("/")
-              .pop();
-            const opendFolder = {
-              fileName: rootFolder,
-              filePath: rootFolder,
-              fileAbsolutePath: result.filePaths[0],
-              fileSize: "0 bytes",
-              fileType: "folder",
-              fileExtname: path.extname(rootFolder),
-              files: dirs,
-              fileExpanded: true,
-            };
-            mainWindow.webContents.send("directory-data", opendFolder);
+            mainWindow.webContents.send("directory-data", dirs);
           })
-          .catch((err) => {
-            console.error("Error reading directory:", err);
-          })
+          .catch((error) => console.error("Error reading directory:", error))
           .finally(() => {
             mainWindow.webContents.send("read-dir-state-changed", {
               isDirLoading: false,
@@ -199,67 +184,81 @@ const openFolderStructureDialog = () => {
       });
     });
 };
-const readDir = async (dirPath, rootPath = dirPath) => {
+const read_dir = async (dirPath, rootPath = dirPath) => {
   try {
     const dirents = await fs.readdir(dirPath, { withFileTypes: true });
-    const files = await Promise.all(
-      dirents.map(async (dirent) => {
-        const res = path.resolve(dirPath, dirent.name);
-        const normalizedResPath = res.replace(/\\/g, "/");
-        const normalizedRootPath = rootPath.replace(/\\/g, "/");
-        const rootFolder = normalizedRootPath.split("/").pop();
-        const relPath =
-          rootFolder +
-          "/" +
-          normalizedResPath
-            .substring(normalizedRootPath.length)
-            .replace(/^\/|\\/, ""); // Ensure the leading slash is removed
+    const files = {};
 
-        const stats = await fs.stat(res); // Use asynchronous stat
+    const rootDir = {
+      file_name: path.basename(rootPath),
+      file_path: path.basename(rootPath),
+      file_absolute_path: path.resolve(rootPath).replace(/\\/g, "/"),
+      file_size: (await fs.stat(rootPath)).size + " bytes",
+      file_type: "folder",
+      sub_items: [],
+    };
 
-        if (dirent.isDirectory()) {
-          return {
-            fileName: dirent.name,
-            filePath: relPath,
-            fileAbsolutePath: res,
-            fileSize: stats.size + " bytes",
-            fileType: "folder",
-            fileExtname: path.extname(dirent.name),
-            files: await readDir(res, rootPath), // Pass the original rootPath for correct relative paths
-            fileExpanded: false,
-          };
-        } else {
-          return {
-            fileName: dirent.name,
-            filePath: relPath,
-            fileAbsolutePath: res,
-            fileSize: stats.size + " bytes",
-            fileType: "file",
-            fileExtname: path.extname(dirent.name),
-            files: [],
-            fileExpanded: false,
-          };
-        }
-      })
-    );
+    for (const dirent of dirents) {
+      const res = path.resolve(dirPath, dirent.name);
+      const normalizedResPath = res.replace(/\\/g, "/");
+      const normalizedRootPath = rootPath.replace(/\\/g, "/");
+      const relativePath = normalizedResPath
+        .substring(normalizedRootPath.length)
+        .replace(/^\/|\\/, "");
+      const stats = await fs.stat(res);
 
-    // First, sort by type (folders first)
-    files.sort((a, b) => {
-      if (a.fileType === b.fileType) return 0; // If both are files or both are folders, don't change order
-      return a.fileType === "folder" ? -1 : 1; // If a is a folder and b is a file, a comes first, and vice versa
-    });
+      if (dirent.isDirectory()) {
+        const dirData = {
+          file_name: dirent.name,
+          file_path: path.basename(rootPath) + "/" + relativePath,
+          file_absolute_path: res,
+          file_size: stats.size + " bytes",
+          file_type: "folder",
+          file_extname: path.extname(dirent.name),
+          sub_items: [],
+        };
+        rootDir.sub_items.push(relativePath);
+        files[path.basename(rootPath) + "/" + relativePath] = dirData;
 
-    // Then, sort alphabetically within each type
-    files.sort((a, b) => {
-      if (a.fileType !== b.fileType) return 0; // Don't sort across types
-      return a.fileName.localeCompare(b.fileName); // Sort alphabetically by fileName
-    });
+        const insideDir = await read_dir(res, rootPath);
+        Object.assign(files, insideDir);
 
-    return files.flat();
-  } catch (e) {
-    throw e; // Rethrow the error to be caught by the caller
+        dirData.sub_items.push(
+          ...Object.keys(insideDir).filter((key) =>
+            key.startsWith(path.basename(rootPath) + "/" + relativePath + "/")
+          )
+        );
+      } else {
+        const fileData = {
+          file_name: dirent.name,
+          file_path: path.basename(rootPath) + "/" + relativePath,
+          file_absolute_path: res,
+          file_size: stats.size + " bytes",
+          file_type: "file",
+          file_extname: path.extname(dirent.name),
+        };
+        rootDir.sub_items.push(path.basename(rootPath) + "/" + relativePath);
+        files[path.basename(rootPath) + "/" + relativePath] = fileData;
+      }
+    }
+
+    files["root"] = rootDir;
+    return files;
+  } catch (error) {
+    throw error;
   }
-  2;
+};
+
+const getFilesInDir = async (dirPath) => {
+  try {
+    const dirents = await fs.readdir(dirPath, { withFileTypes: true });
+    const fileNames = dirents.map((dirent) => {
+      return dirent.name;
+    });
+    return fileNames;
+  } catch (error) {
+    throw error;
+  }
 };
 
 app.whenReady().then(createWindow);
