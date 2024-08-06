@@ -201,9 +201,9 @@ const ContextItemButton = ({
           transform: "translate(0%, -50%)",
 
           /* SIZE ------------------ */
-          width: "16px",
-          height: "16px",
-          backgroundImage: isIconLoaded
+          width: 16,
+          height: 16,
+          backgroundImage: !isIconLoaded
             ? `url(${contextStructure[unique_tag].quick_view_background})`
             : null,
         }}
@@ -217,8 +217,8 @@ const ContextItemButton = ({
             left: "0px",
 
             /* SIZE ------------------ */
-            width: "16px",
-            height: "16px",
+            width: 16,
+            height: 16,
             userSelect: "none",
           }}
           loading="lazy"
