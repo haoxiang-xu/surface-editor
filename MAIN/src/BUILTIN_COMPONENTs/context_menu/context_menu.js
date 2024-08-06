@@ -238,7 +238,7 @@ const ContextItemButton = ({
           color: "#CCCCCC",
           transform: "translate(0%, -54%)",
           userSelect: "none",
-          opacity: 0.72,
+          opacity: 1,
         }}
       >
         {contextStructure[unique_tag].label}

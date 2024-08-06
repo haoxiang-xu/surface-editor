@@ -279,11 +279,10 @@ const Tag = ({ config }) => {
     const type = config.type || "default";
     const label = config.label || "";
     const icon = config.icon || null;
-    let style = config.style;
+    let style = {};
 
     if (config.style) {
-      style = config.style || {};
-
+      style = config.style;
       if (config.style.fontSize === undefined) {
         style.fontSize = default_tag_font_size;
       }

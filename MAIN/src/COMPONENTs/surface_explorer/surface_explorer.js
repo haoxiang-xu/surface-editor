@@ -34,7 +34,7 @@ try {
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const padding = { top: 42, right: 5, bottom: 5, left: 5 };
-const default_explorer_item_height = 18;
+const default_explorer_item_height = 20.5;
 const default_x_axis_offset = 12;
 
 const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
@@ -87,8 +87,9 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
         height: default_explorer_item_height,
 
         /* Style ======================= */
-        borderRadius: 2,
+        borderRadius: 4,
         backgroundColor: style.backgroundColor,
+        boxShadow: onHover ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
       }}
       onMouseEnter={() => {
         setOnHover(true);
@@ -118,9 +119,8 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
           label: access_dir_name_by_path(file_path),
           style: {
             borderRadius: 2,
-            fontSize: 12,
-            padding_x: 1,
-            padding_y: 1,
+            padding_x: 3,
+            padding_y: 3,
             backgroundColor: style.backgroundColor,
             boxShadow: "none",
           },
@@ -175,8 +175,9 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
         height: default_explorer_item_height,
 
         /* Style ======================= */
-        borderRadius: 2,
+        borderRadius: 4,
         backgroundColor: style.backgroundColor,
+        boxShadow: onHover ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
       }}
       onMouseEnter={() => {
         setOnHover(true);
@@ -202,9 +203,8 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
           label: access_dir_name_by_path(file_path),
           style: {
             borderRadius: 2,
-            fontSize: 12,
-            padding_x: 1,
-            padding_y: 1,
+            padding_x: 3,
+            padding_y: 3,
             backgroundColor: style.backgroundColor,
             boxShadow: "none",
           },
@@ -300,7 +300,7 @@ const ExplorerList = () => {
         overflow: "hidden",
       }}
     >
-      {explorer_list.map((item) => {
+      {explorer_list.slice().reverse().map((item) => {
         return item;
       })}
     </div>
