@@ -263,7 +263,7 @@ const ContextItemButton = ({
               type: "shortcut",
               label: contextStructure[unique_tag].short_cut_label,
               style: {
-                fontSize: 11,
+                fontSize: button_fixed_styling.fontSize,
                 right: 3,
                 top: "50%",
                 transform: "translate(0%, -50%)",
