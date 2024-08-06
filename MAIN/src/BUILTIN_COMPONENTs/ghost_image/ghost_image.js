@@ -52,10 +52,6 @@ const GhostImage = ({ onDragItem }) => {
                 label: access_file_name_by_path_in_file(
                   onDragItem.content.path
                 ),
-                style: {
-                  borderRadius: 6,
-                  fontSize: 12,
-                },
               }}
             />
           );

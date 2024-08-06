@@ -379,10 +379,15 @@ class Car {
 };
 const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
   {
-    id: "surface_explorer_0001",
-    type: "surface_explorer",
-    stack_component_unique_tag: "surface_explorer_0001",
+    id: "explorer_0001",
+    type: "explorer",
+    stack_component_unique_tag: "explorer_0001",
     explorer_container_ref_index: 0,
+  },
+  {
+    id: "surface_explorer_0004",
+    type: "surface_explorer",
+    stack_component_unique_tag: "surface_explorer_0004",
   },
   {
     id: "monaco_editor_0002",
@@ -464,6 +469,66 @@ const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
     },
   ],
 };
+const DIRs = {
+  root: {
+    file_name: "demo",
+    file_type: "folder",
+    file_path: "demo",
+    file_expand: false,
+    sub_items: ["demo/index", "demo/src", "demo/main.java", "demo/main.py"],
+  },
+  "demo/index": {
+    file_name: "index",
+    file_type: "folder",
+    file_path: "demo/index",
+    file_expand: false,
+    sub_items: ["demo/index/style", "demo/index/index.html"],
+  },
+  "demo/index/style": {
+    file_name: "style",
+    file_type: "folder",
+    file_path: "demo/index/style",
+    file_expand: false,
+    sub_items: ["demo/index/style/code_editor.css"],
+  },
+  "demo/index/index.html": {
+    file_name: "index.html",
+    file_type: "file",
+    file_path: "demo/index/index.html",
+    file_expand: false,
+  },
+  "demo/index/style/code_editor.css": {
+    file_name: "code_editor.css",
+    file_type: "file",
+    file_path: "demo/index/style/code_editor.css",
+    file_expand: false,
+  },
+  "demo/src": {
+    file_name: "src",
+    file_type: "folder",
+    file_path: "demo/src",
+    file_expand: false,
+    sub_items: ["demo/src/code_editor.js"],
+  },
+  "demo/src/code_editor.js": {
+    file_name: "code_editor.js",
+    file_type: "file",
+    file_path: "demo/src/code_editor.js",
+    file_expand: false,
+  },
+  "demo/main.java": {
+    file_name: "main.java",
+    file_type: "file",
+    file_path: "demo/main.java",
+    file_expand: false,
+  },
+  "demo/main.py": {
+    file_name: "main.py",
+    file_type: "file",
+    file_path: "demo/main.py",
+    file_expand: false,
+  },
+};
 
 const FAKE_STORAGE = {
   monaco_editor_0002: {
@@ -508,9 +573,6 @@ const RootDataManager = ({ children }) => {
   //console.log("RDM", new Date().getTime());
   /* { DIR } =========================================================================================================================== */
   const [dir, setDir] = useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
-  useEffect(() => {
-    console.log("DIR:", dir);
-  }, [dir]);
   const [isDirLoaded, setIsDirLoaded] = useState(true);
   useEffect(() => {
     setIsDirLoaded(true);
@@ -819,6 +881,76 @@ const RootDataManager = ({ children }) => {
   );
   /* { DIR } =========================================================================================================================== */
 
+  /* { DIR } =========================================================================================================================== */
+  const [dir2, setDir2] = useState(DIRs);
+  const [isDirLoaded2, setIsDirLoaded2] = useState(true);
+  const access_dir_name_by_path = useCallback(
+    (path) => {
+      const currentItem = dir2[path];
+      if (currentItem) {
+        return currentItem.file_name;
+      } else {
+        return path.split("/")[path.split("/").length - 1];
+      }
+    },
+    [dir2]
+  );
+  const access_dir_type_by_path = useCallback(
+    (path) => {
+      const currentItem = dir2[path];
+      if (currentItem) {
+        return currentItem.file_type;
+      } else {
+        return "UNKNOWN TYPE";
+      }
+    },
+    [dir2]
+  );
+  const access_dir_absolute_path_by_path = useCallback(
+    (path) => {
+      const currentItem = dir2[path];
+      if (currentItem && currentItem.file_absolute_path) {
+        return currentItem.file_absolute_path;
+      } else {
+        return path;
+      }
+    },
+    [dir2]
+  );
+  const access_dir_expand_status_by_path = useCallback(
+    (path) => {
+      const currentItem = dir2[path];
+      if (currentItem) {
+        return currentItem.file_expand;
+      } else {
+        return false;
+      }
+    },
+    [dir2]
+  );
+  const update_dir_expand_status_by_path = useCallback(
+    (path, expand) => {
+      setDir2((prevData) => {
+        let newDir = { ...prevData };
+        newDir[path] = { ...newDir[path], file_expand: expand };
+        return newDir;
+      });
+    },
+    [dir2]
+  );
+  const access_dir_sub_items_by_path = useCallback(
+    (path) => {
+      const currentItem = dir2[path];
+      if (currentItem) {
+        return currentItem.sub_items;
+      } else {
+        return [];
+      }
+    },
+    [dir2]
+  );
+  /* { DIR } =========================================================================================================================== */
+
   /* { FILE } ========================================================================================================================== */
   const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
   useEffect(() => {
@@ -959,6 +1091,17 @@ const RootDataManager = ({ children }) => {
         update_folder_expand_status_by_path,
         access_subfiles_by_path,
         access_subfile_length_recusively_by_path,
+
+        dir2,
+        setDir2,
+        isDirLoaded2,
+        setIsDirLoaded2,
+        access_dir_name_by_path,
+        access_dir_type_by_path,
+        access_dir_absolute_path_by_path,
+        access_dir_expand_status_by_path,
+        update_dir_expand_status_by_path,
+        access_dir_sub_items_by_path,
 
         file,
         update_file_content_by_path,

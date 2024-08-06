@@ -84,7 +84,22 @@ const HorizontalStack = () => {
   let stacking_structure = [];
   for (let index = 0; index < stackStructureOptionsData.length; index++) {
     switch (stackStructureOptionsData[index].type) {
-      case "surface_explorer":
+      case "explorer": {
+        const EXPLORER_CONTAINER = {
+          type: "explorer",
+          tag: stackStructureOptionsData[index].stack_component_unique_tag,
+          id: stackStructureOptionsData[index].id,
+          min_width: 42,
+          width: 256,
+          max_width: 2048,
+          explorer_container_ref_index:
+            stackStructureOptionsData[index].explorer_container_ref_index,
+        };
+        stacking_structure.push(EXPLORER_CONTAINER);
+        stacking_structure.push(RESIZER_CONTAINER);
+        break;
+      }
+      case "surface_explorer": {
         const EXPLORER_CONTAINER = {
           type: "surface_explorer",
           tag: stackStructureOptionsData[index].stack_component_unique_tag,
@@ -98,6 +113,7 @@ const HorizontalStack = () => {
         stacking_structure.push(EXPLORER_CONTAINER);
         stacking_structure.push(RESIZER_CONTAINER);
         break;
+      }
       case "monaco_editor":
         const CODE_EDITOR = {
           type: "monaco_editor",
@@ -336,6 +352,25 @@ const HorizontalStack = () => {
         >
           {stacks.map((item, index) => {
             switch (item?.type) {
+              case "explorer":
+                return (
+                  <StackFrame
+                    key={"surface_explorer" + item.explorer_container_ref_index}
+                    stack_component_unique_tag={item.tag}
+                    id={item.id}
+                    stack_structure_type={"horizontal_stack"}
+                    component_type={"explorer"}
+                    index={index}
+                    //Stack Data
+                    item={item}
+                    stackRefs={stackRefs}
+                    stacks={stacks}
+                    setStacks={setStacks}
+                    //Expand and Narrow Container
+                    expandContainer={expandContainer}
+                    narrowContainer={narrowContainer}
+                  />
+                );
               case "surface_explorer":
                 return (
                   <StackFrame

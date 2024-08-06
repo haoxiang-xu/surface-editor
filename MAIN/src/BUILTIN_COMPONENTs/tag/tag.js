@@ -31,17 +31,16 @@ const default_max_tag_width = 128;
 const default_tag_padding_x = 6;
 const default_tag_padding_y = 3;
 
-const default_tag_font_size = 11;
+const default_tag_font_size = 12;
 const default_border_radius = 6;
 
 /* { Tag types } ================================================================================= */
 const CustomizedTag = ({ reference, label, style, icon }) => {
   const spanRef = useRef(null);
+  const moreOptionLabelRef = useRef(null);
 
   const [tagStyle, setTagStyle] = useState(style);
-  const [tagMaxWidth, setTagMaxWidth] = useState(
-    style.maxWidth || default_max_tag_width
-  );
+  const [tagMaxWidth, setTagMaxWidth] = useState(style.maxWidth);
   const [onHover, setOnHover] = useState(null);
 
   useEffect(() => {
@@ -71,7 +70,7 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         height: spanHeight + padding_y * 2,
         left: `calc(0% + ${left}px)`,
         transform: "translate(0%, -50%)",
-        moreOptionLabel: onHover ? false : spanWidth > containerWidth,
+        moreOptionLabel: onHover ? false : spanWidth > tagMaxWidth,
       };
     });
   }, [spanRef, onHover]);
@@ -150,6 +149,7 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         {label}
       </span>
       <span
+        ref={moreOptionLabelRef}
         style={{
           /* { Tag Position } --------------------- */
           position: "absolute",
@@ -198,15 +198,60 @@ const KeyTag = ({ config }) => {
 const FileTag = ({ config }) => {
   const process_tag_config = (config) => {
     let processed_config = { ...config };
-    processed_config.style.backgroundColor = "#323232";
-    processed_config.style.color = "#CCCCCC";
-    processed_config.style.padding_x = 6;
-    processed_config.style.padding_y = 6;
-    processed_config.style.borderRadius = 7;
-    processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
-    processed_config.style.pointerEvents = "false";
-    processed_config.icon =
-      FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON512;
+
+    if (config.style.backgroundColor === undefined) {
+      processed_config.style.backgroundColor = "#323232";
+    }
+    if (config.style.color === undefined) {
+      processed_config.style.color = "#CCCCCC";
+    }
+    if (config.style.padding_x === undefined) {
+      processed_config.style.padding_x = 6;
+    }
+    if (config.style.padding_y === undefined) {
+      processed_config.style.padding_y = 6;
+    }
+    if (config.style.borderRadius === undefined) {
+      processed_config.style.borderRadius = 6;
+    }
+    if (config.style.boxShadow === undefined) {
+      processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
+    }
+    if (config.icon === undefined || config.icon === null) {
+      processed_config.icon =
+        FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON512;
+    }
+    processed_config.style.pointerEvents = "none";
+    return processed_config;
+  };
+
+  return <CustomizedTag {...process_tag_config(config)} />;
+};
+const FolderTag = ({ config }) => {
+  const process_tag_config = (config) => {
+    let processed_config = { ...config };
+
+    if (config.style.backgroundColor === undefined) {
+      processed_config.style.backgroundColor = "#323232";
+    }
+    if (config.style.color === undefined) {
+      processed_config.style.color = "#CCCCCC";
+    }
+    if (config.style.padding_x === undefined) {
+      processed_config.style.padding_x = 6;
+    }
+    if (config.style.padding_y === undefined) {
+      processed_config.style.padding_y = 6;
+    }
+    if (config.style.borderRadius === undefined) {
+      processed_config.style.borderRadius = 6;
+    }
+    if (config.style.boxShadow === undefined) {
+      processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
+    }
+    if (config.icon === undefined || config.icon === null) {
+      processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON512;
+    }
     processed_config.style.pointerEvents = "none";
     return processed_config;
   };
@@ -233,18 +278,49 @@ const Tag = ({ config }) => {
     const reference = config.reference || null;
     const type = config.type || "default";
     const label = config.label || "";
-    const style = {
-      fontSize: config.style?.fontSize || default_tag_font_size,
-      left: config.style?.left || "none",
-      right: config.style?.right || "none",
-      top: config.style?.top || "none",
-      bottom: config.style?.bottom || "none",
-      transform: config.style?.transform || "none",
-      borderRadius: config.style?.borderRadius || default_border_radius,
-    };
-    return { reference, type, label, style };
-  };
+    const icon = config.icon || null;
+    let style = config.style;
 
+    if (config.style) {
+      style = config.style || {};
+
+      if (config.style.fontSize === undefined) {
+        style.fontSize = default_tag_font_size;
+      }
+      if (config.style.left === undefined) {
+        style.left = "none";
+      }
+      if (config.style.right === undefined) {
+        style.right = "none";
+      }
+      if (config.style.top === undefined) {
+        style.top = "none";
+      }
+      if (config.style.bottom === undefined) {
+        style.bottom = "none";
+      }
+      if (config.style.transform === undefined) {
+        style.transform = "none";
+      }
+      if (config.style.borderRadius === undefined) {
+        style.borderRadius = default_border_radius;
+      }
+      if (config.style.maxWidth === undefined) {
+        style.maxWidth = default_max_tag_width;
+      }
+    } else {
+      style = {
+        fontSize: default_tag_font_size,
+        right: "none",
+        left: "none",
+        top: "none",
+        bottom: "none",
+        transform: "none",
+        borderRadius: default_border_radius,
+      };
+    }
+    return { reference, type, label, icon, style };
+  };
   const render_tag = () => {
     switch (config.type) {
       case "shortcut":
@@ -253,6 +329,8 @@ const Tag = ({ config }) => {
         return <KeyTag config={process_tag_config(config)} />;
       case "file":
         return <FileTag config={process_tag_config(config)} />;
+      case "folder":
+        return <FolderTag config={process_tag_config(config)} />;
       case "string":
         return <StringTag config={process_tag_config(config)} />;
       case "command":
