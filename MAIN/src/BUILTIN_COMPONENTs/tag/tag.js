@@ -144,7 +144,7 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
             width: 16,
             height: 16,
 
-            borderRadius: 0,
+            borderRadius: 2,
           }}
         />
       ) : null}

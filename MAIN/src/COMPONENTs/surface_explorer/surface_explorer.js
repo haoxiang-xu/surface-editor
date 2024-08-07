@@ -186,7 +186,7 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
         transition:
           "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
-        top: position_y,
+        top: position_y + 1,
         left: position_x,
         /* Size ======================== */
         width:
@@ -280,7 +280,7 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
         transition:
           "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
-        top: position_y,
+        top: position_y + 1,
         left: position_x,
         /* Size ======================== */
         width:
