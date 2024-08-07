@@ -85,7 +85,10 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         backgroundColor: style.backgroundColor,
         icon_transform: style.icon_transform,
         moreOptionLabel:
-          style.fullSizeMode || onHover ? false : spanWidth > tagMaxWidth && tagMaxWidth > more_option_label_font_size,
+          style.fullSizeMode || onHover
+            ? false
+            : spanWidth > tagMaxWidth &&
+              tagMaxWidth > more_option_label_font_size,
       };
     });
   }, [spanRef, onHover, style]);
@@ -178,7 +181,6 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
           maxWidth: tagStyle.moreOptionLabel ? "none" : 0,
 
           /* { Font Styling } ---------------------- */
-          fontFamily: "monospace",
           fontSize: tagStyle.fontSize,
 
           /* { Tag Styling } ----------------------- */

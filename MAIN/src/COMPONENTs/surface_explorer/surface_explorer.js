@@ -224,7 +224,7 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
           type: "folder",
           label: access_dir_name_by_path(file_path),
           style: {
-            borderRadius: 2,
+            borderRadius: 4,
             padding_x: 3,
             padding_y: 3,
             fontSize: default_font_size,
@@ -312,7 +312,7 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
           type: "file",
           label: access_dir_name_by_path(file_path),
           style: {
-            borderRadius: 2,
+            borderRadius: 4,
             padding_x: 3,
             padding_y: 3,
             fontSize: default_font_size,
