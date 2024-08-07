@@ -356,7 +356,6 @@ const HorizontalStack = () => {
                 return (
                   <StackFrame
                     key={"surface_explorer" + item.explorer_container_ref_index}
-                    stack_component_unique_tag={item.tag}
                     id={item.id}
                     stack_structure_type={"horizontal_stack"}
                     component_type={"explorer"}
@@ -375,7 +374,6 @@ const HorizontalStack = () => {
                 return (
                   <StackFrame
                     key={"surface_explorer" + item.explorer_container_ref_index}
-                    stack_component_unique_tag={item.tag}
                     id={item.id}
                     stack_structure_type={"horizontal_stack"}
                     component_type={"surface_explorer"}
@@ -395,7 +393,6 @@ const HorizontalStack = () => {
                   <StackFrame
                     key={"monaco_editor" + item.code_editor_container_ref_index}
                     id={item.id}
-                    stack_component_unique_tag={item.tag}
                     stack_structure_type={"horizontal_stack"}
                     index={index}
                     component_type={"monaco_editor"}

@@ -34,6 +34,9 @@ const default_tag_padding_y = 3;
 const default_tag_font_size = 12;
 const default_border_radius = 6;
 
+const default_tag_layer = 8;
+const more_option_label_font_size = 12;
+
 /* { Tag types } ================================================================================= */
 const CustomizedTag = ({ reference, label, style, icon }) => {
   const spanRef = useRef(null);
@@ -47,9 +50,15 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
     if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
     const spanHeight = spanRef.current.offsetHeight;
-    const containerWidth = Math.min(spanWidth, tagMaxWidth);
-    const padding_x = style.padding_x || default_tag_padding_x;
-    const padding_y = style.padding_y || default_tag_padding_y;
+    setTagMaxWidth(style.maxWidth);
+    let containerWidth = 0;
+    if (style.fullSizeMode) {
+      containerWidth = spanWidth;
+    } else {
+      containerWidth = Math.min(spanWidth, tagMaxWidth);
+    }
+    const padding_x = style.padding_x;
+    const padding_y = style.padding_y;
 
     let width = padding_x * 2;
     let left = padding_x;
@@ -64,17 +73,22 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
     }
 
     setTagStyle((prevData) => {
+      let new_tag_style = { ...prevData };
+
       return {
         ...prevData,
         width: width,
         height: spanHeight + padding_y * 2,
         left: `calc(0% + ${left}px)`,
         transform: "translate(0%, -50%)",
-        moreOptionLabel: onHover ? false : spanWidth > tagMaxWidth,
+        border: style.border,
+        backgroundColor: style.backgroundColor,
+        icon_transform: style.icon_transform,
+        moreOptionLabel:
+          style.fullSizeMode || onHover ? false : spanWidth > tagMaxWidth && tagMaxWidth > more_option_label_font_size,
       };
     });
-  }, [spanRef, onHover]);
-
+  }, [spanRef, onHover, style]);
   return (
     <div
       ref={reference}
@@ -82,12 +96,13 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         transition: "width 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
 
         /* { Tag Position } ------------------------ */
-        position: "absolute",
+        position: style.fullSizeMode ? "fixed" : "absolute",
         right: style.right,
         left: style.left,
         top: style.top,
         bottom: style.bottom,
         transform: style.transform,
+        zIndex: style.fullSizeMode || onHover ? default_tag_layer : 0,
 
         /* { Tag Size } ---------------------------- */
         width: tagStyle.width,
@@ -98,7 +113,7 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         display: "inline-block",
         backgroundColor: tagStyle.backgroundColor,
         overflow: "hidden",
-        opacity: tagStyle.opacity || 1,
+        opacity: tagStyle.opacity !== undefined ? tagStyle.opacity : 1,
         boxShadow: tagStyle.boxShadow || "none",
         border: tagStyle.border || "none",
         backdropFilter: tagStyle.backdropFilter || "none",
@@ -115,15 +130,18 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         <img
           src={icon}
           style={{
+            transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
             position: "absolute",
-            transform: "translate(0%, -50%)",
+            transform: tagStyle.icon_transform
+              ? `translate(0%, -50%) ${tagStyle.icon_transform}`
+              : `translate(0%, -50%)`,
             top: "50%",
             left: style.padding_x || default_tag_padding_x,
 
             width: 16,
             height: 16,
 
-            borderRadius: 2,
+            borderRadius: 0,
           }}
         />
       ) : null}
@@ -137,7 +155,7 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
           transform: tagStyle.transform,
 
           /* { Font Styling } ---------------------- */
-          fontSize: tagStyle.fontSize || default_tag_font_size,
+          fontSize: tagStyle.fontSize,
 
           /* { Tag Styling } ----------------------- */
           color: tagStyle.color,
@@ -161,10 +179,10 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
 
           /* { Font Styling } ---------------------- */
           fontFamily: "monospace",
-          fontSize: tagStyle.fontSize || default_tag_font_size,
+          fontSize: tagStyle.fontSize,
 
           /* { Tag Styling } ----------------------- */
-          padding: "0px 4px",
+          padding: `${tagStyle.fontSize}px 0px`,
           color: tagStyle.color,
           backgroundColor: tagStyle.backgroundColor,
           userSelect: "none",
@@ -180,8 +198,9 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
 const ShortCutTag = ({ config }) => {
   const process_tag_config = (config) => {
     let processed_config = { ...config };
-    processed_config.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-    processed_config.style.color = "rgba(255, 255, 255, 0.16)";
+    processed_config.style.color = "rgba(255, 255, 255, 0.32)";
+    processed_config.style.padding_x = 8;
+    processed_config.style.padding_y = 0;
     return processed_config;
   };
   return <CustomizedTag {...process_tag_config(config)} />;
@@ -249,9 +268,15 @@ const FolderTag = ({ config }) => {
     if (config.style.boxShadow === undefined) {
       processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
     }
+    if (config.style.isExpanded === undefined) {
+      processed_config.style.isExpanded = false;
+    }
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON512;
     }
+    processed_config.style.icon_transform = config.style.isExpanded
+      ? "rotate(90deg)"
+      : "rotate(0deg)";
     processed_config.style.pointerEvents = "none";
     return processed_config;
   };
@@ -307,6 +332,9 @@ const Tag = ({ config }) => {
       if (config.style.maxWidth === undefined) {
         style.maxWidth = default_max_tag_width;
       }
+      if (config.style.fullSizeMode === undefined) {
+        style.fullSizeMode = false;
+      }
     } else {
       style = {
         fontSize: default_tag_font_size,
@@ -316,6 +344,8 @@ const Tag = ({ config }) => {
         bottom: "none",
         transform: "none",
         borderRadius: default_border_radius,
+        maxWidth: default_max_tag_width,
+        fullSizeMode: false,
       };
     }
     return { reference, type, label, icon, style };

@@ -1,6 +1,6 @@
-const surfaceExplorer_backgroundColorR = 32;
-const surfaceExplorer_backgroundColorG = 32;
-const surfaceExplorer_backgroundColorB = 32;
+const surfaceExplorer_backgroundColorR = 30;
+const surfaceExplorer_backgroundColorG = 30;
+const surfaceExplorer_backgroundColorB = 30;
 
 const surface_explorer_fixed_styling = {
   backgroundColorR: surfaceExplorer_backgroundColorR,

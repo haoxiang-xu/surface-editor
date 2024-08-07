@@ -369,6 +369,7 @@ const HorizontalStackContainer = ({
         {StackFrameComponent ? (
           <StackFrameComponent
             id={id}
+            width={item.width}
             mode={mode}
             command={command}
             setCommand={setCommand}

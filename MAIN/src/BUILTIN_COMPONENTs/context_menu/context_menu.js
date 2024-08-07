@@ -29,6 +29,8 @@ try {
 }
 /* Load ICON manager -------------------------------- */
 
+const default_context_menu_layer = 64;
+
 /* { Context Menu Prestyled Component } ======================================================================================================== */
 const ContextItemButton = ({
   index,
@@ -197,12 +199,14 @@ const ContextItemButton = ({
           /* POSITION -------------- */
           position: "absolute",
           top: "50%",
-          left: 5,
+          left: 3,
           transform: "translate(0%, -50%)",
 
           /* SIZE ------------------ */
           width: 16,
           height: 16,
+
+          /* STYLE ----------------- */
           backgroundImage: !isIconLoaded
             ? `url(${contextStructure[unique_tag].quick_view_background})`
             : null,
@@ -264,7 +268,7 @@ const ContextItemButton = ({
               label: contextStructure[unique_tag].short_cut_label,
               style: {
                 fontSize: button_fixed_styling.fontSize,
-                right: 3,
+                right: 2,
                 top: "50%",
                 transform: "translate(0%, -50%)",
                 borderRadius: (() => {
@@ -711,7 +715,7 @@ const ContextMenu = ({}) => {
         <ContextList
           position_x={subListPostion[0][0]}
           position_y={subListPostion[0][1]}
-          position_z={12}
+          position_z={64}
           direction={subListPostion[1]}
           sub_items={contextStructure.root.sub_items}
         />
