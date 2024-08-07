@@ -205,7 +205,8 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
         setOnHover(false);
       }}
       onMouseDown={() => {}}
-      onMouseUp={() => {
+      onMouseUp={(e) => {
+        e.stopPropagation();
         update_dir_expand_status_by_path(
           file_path,
           !access_dir_expand_status_by_path(file_path)
@@ -298,7 +299,8 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
         setOnHover(false);
       }}
       onMouseDown={() => {}}
-      onMouseUp={() => {
+      onMouseUp={(e) => {
+        e.stopPropagation();
         setOnSelectedExplorerItems([file_path]);
       }}
       onContextMenu={(e) => {
@@ -338,6 +340,7 @@ const ExplorerList = () => {
   const {
     explorerListRef,
     onSelectedExplorerItems,
+    setOnSelectedExplorerItems,
     onHoverExplorerItems,
     setOnHoverExplorerItems,
   } = useContext(SurfaceExplorerContexts);
@@ -517,6 +520,9 @@ const ExplorerList = () => {
       onDragStart={(e) => {
         e.stopPropagation();
         e.preventDefault();
+      }}
+      onMouseUp={() => {
+        setOnSelectedExplorerItems([]);
       }}
       onMouseLeave={() => {
         setOnHoverExplorerItems(null);
