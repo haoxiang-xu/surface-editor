@@ -881,6 +881,75 @@ const RootDataManager = ({ children }) => {
   );
   /* { DIR } =========================================================================================================================== */
 
+  /* { FILE } ========================================================================================================================== */
+  const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
+  useEffect(() => {
+    window.electronAPI.onFileContent((content, relativePath) => {
+      const newFile = { [relativePath]: content };
+      setFile((prevData) => {
+        return {
+          ...prevData,
+          ...newFile,
+        };
+      });
+    });
+    window.electronAPI.onFileError((error) => {
+      console.error("Error:", error);
+    });
+  }, [file]);
+  const update_file_content_by_path = useCallback(
+    (path, data) => {
+      setFile((prevData) => {
+        if (prevData.hasOwnProperty(path)) {
+          return {
+            ...prevData,
+            [path]: {
+              ...prevData[path],
+              fileContent: data,
+            },
+          };
+        } else {
+          console.error("File path does not exist:", path);
+          return { ...prevData };
+        }
+      });
+    },
+    [file]
+  );
+  const access_file_name_by_path_in_file = useCallback(
+    (path) => {
+      if (path in file) {
+        return file[path].fileName;
+      } else {
+        return path.split("/")[path.split("/").length - 1];
+      }
+    },
+    [file]
+  );
+  const access_file_content_by_path = (path) => {
+    if (path in file) {
+      return file[path].fileContent;
+    } else {
+      //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
+      window.electronAPI.readFile(
+        access_file_absolute_path_by_path(path),
+        path
+      );
+      return path;
+    }
+  };
+  const access_file_language_by_path = useCallback(
+    (path) => {
+      if (path in file) {
+        return file[path].fileLanguage;
+      } else {
+        return "UNKNOWN LANGUAGE";
+      }
+    },
+    [file]
+  );
+  /* { FILE } ========================================================================================================================== */
+
   /* { DIR } =========================================================================================================================== */
   const [dir2, setDir2] = useState(DIRs);
   const [isDirLoaded2, setIsDirLoaded2] = useState(true);
@@ -950,75 +1019,6 @@ const RootDataManager = ({ children }) => {
     [dir2]
   );
   /* { DIR } =========================================================================================================================== */
-
-  /* { FILE } ========================================================================================================================== */
-  const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
-  useEffect(() => {
-    window.electronAPI.onFileContent((content, relativePath) => {
-      const newFile = { [relativePath]: content };
-      setFile((prevData) => {
-        return {
-          ...prevData,
-          ...newFile,
-        };
-      });
-    });
-    window.electronAPI.onFileError((error) => {
-      console.error("Error:", error);
-    });
-  }, [file]);
-  const update_file_content_by_path = useCallback(
-    (path, data) => {
-      setFile((prevData) => {
-        if (prevData.hasOwnProperty(path)) {
-          return {
-            ...prevData,
-            [path]: {
-              ...prevData[path],
-              fileContent: data,
-            },
-          };
-        } else {
-          console.error("File path does not exist:", path);
-          return { ...prevData };
-        }
-      });
-    },
-    [file]
-  );
-  const access_file_name_by_path_in_file = useCallback(
-    (path) => {
-      if (path in file) {
-        return file[path].fileName;
-      } else {
-        return path.split("/")[path.split("/").length - 1];
-      }
-    },
-    [file]
-  );
-  const access_file_content_by_path = (path) => {
-    if (path in file) {
-      return file[path].fileContent;
-    } else {
-      //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
-      window.electronAPI.readFile(
-        access_file_absolute_path_by_path(path),
-        path
-      );
-      return path;
-    }
-  };
-  const access_file_language_by_path = useCallback(
-    (path) => {
-      if (path in file) {
-        return file[path].fileLanguage;
-      } else {
-        return "UNKNOWN LANGUAGE";
-      }
-    },
-    [file]
-  );
-  /* { FILE } ========================================================================================================================== */
 
   /* { STORAGE } ======================================================================================================================= */
   const [storage, setStorage] = useState(FAKE_STORAGE);
