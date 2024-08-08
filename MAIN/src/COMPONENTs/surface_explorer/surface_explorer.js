@@ -63,35 +63,40 @@ const ExplorerLevelIndicator = ({ position_y, position_x, height }) => {
 
         /* Style ======================= */
         backgroundColor: `rgba( ${
-          surface_explorer_fixed_styling.backgroundColorR + 32
-        }, ${surface_explorer_fixed_styling.backgroundColorG + 32}, ${
-          surface_explorer_fixed_styling.backgroundColorB + 32
+          surface_explorer_fixed_styling.backgroundColorR + 16
+        }, ${surface_explorer_fixed_styling.backgroundColorG + 16}, ${
+          surface_explorer_fixed_styling.backgroundColorB + 16
         }, 1)`,
       }}
     ></div>
   );
 };
 const ExplorerOnSelectedIndicator = ({ file_path, position_y, position_x }) => {
-  const { onHoverExplorerItems } = useContext(SurfaceExplorerContexts);
+  const { onHoverExplorerItem } = useContext(SurfaceExplorerContexts);
+  const on_select_wrapper_border = 1;
 
   return (
     <div
       style={{
         position: "absolute",
         top: position_y,
-        left: position_x,
+        left: position_x - on_select_wrapper_border,
         zIndex: default_indicator_layer,
         /* Size ======================== */
         width:
-          "calc(100% - " + (position_x + 2 + default_indicator_padding) + "px)",
-        height: default_explorer_item_height,
+          "calc(100% - " +
+          (position_x +
+            on_select_wrapper_border * 2 +
+            default_indicator_padding) +
+          "px)",
+        height: default_explorer_item_height + on_select_wrapper_border * 2,
 
         /* Style ======================= */
         borderRadius: 4,
         border:
-          onHoverExplorerItems === file_path
+          onHoverExplorerItem === file_path
             ? "none"
-            : `1px solid rgba( ${
+            : `${on_select_wrapper_border}px solid rgba( ${
                 surface_explorer_fixed_styling.backgroundColorR + 64
               }, ${surface_explorer_fixed_styling.backgroundColorG + 64}, ${
                 surface_explorer_fixed_styling.backgroundColorB + 64
@@ -117,7 +122,7 @@ const ExplorerParentIndicator = ({ position_y, position_x, height }) => {
         /* Size ======================== */
         width:
           "calc(100% - " + (position_x + 2 - default_indicator_padding) + "px)",
-        height: height + default_indicator_padding * 2,
+        height: height + default_indicator_padding * 2 + 2,
 
         /* Style ======================= */
         backgroundColor: `rgba( ${
@@ -142,7 +147,7 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
   const {
     explorerListWidth,
     setOnSelectedExplorerItems,
-    setOnHoverExplorerItems,
+    setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
   const tagRef = useRef(null);
   const [style, setStyle] = useState({
@@ -172,7 +177,7 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
       });
-      setOnHoverExplorerItems(file_path);
+      setOnHoverExplorerItem(file_path);
     } else {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
@@ -246,7 +251,7 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
   const {
     explorerListWidth,
     setOnSelectedExplorerItems,
-    setOnHoverExplorerItems,
+    setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
   const tagRef = useRef(null);
   const [style, setStyle] = useState({
@@ -266,7 +271,7 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
       });
-      setOnHoverExplorerItems(file_path);
+      setOnHoverExplorerItem(file_path);
     } else {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
@@ -760,8 +765,8 @@ const ExplorerList = () => {
     explorerListRef,
     onSelectedExplorerItems,
     setOnSelectedExplorerItems,
-    onHoverExplorerItems,
-    setOnHoverExplorerItems,
+    onHoverExplorerItem,
+    setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
   const [explorerList, setExplorerList] = useState([]);
   const [explorerItemPositions, setExplorerItemPositions] = useState([]);
@@ -865,7 +870,7 @@ const ExplorerList = () => {
         new_on_selected_indicator.push(
           <ExplorerOnSelectedIndicator
             key={item}
-            file_path={item}
+            file_path={position.file_path}
             position_y={position.position_y}
             position_x={position.position_x}
             height={position.height}
@@ -884,6 +889,7 @@ const ExplorerList = () => {
           new_level_indicators.push(
             <ExplorerLevelIndicator
               key={position.file_path}
+              file_path={position.file_path}
               position_y={position.position_y + default_explorer_item_height}
               position_x={position.position_x + default_x_axis_offset}
               height={position.height}
@@ -898,12 +904,12 @@ const ExplorerList = () => {
   }, [explorerItemPositions, onSelectedExplorerItems]);
   useEffect(() => {
     const update_parent_indicator = () => {
-      if (!onHoverExplorerItems || !explorerItemPositions) {
+      if (!onHoverExplorerItem || !explorerItemPositions) {
         setParentIndicator(null);
         return;
       }
-      let path = onHoverExplorerItems.split("/");
-      if (access_dir_type_by_path(onHoverExplorerItems) === "file") {
+      let path = onHoverExplorerItem.split("/");
+      if (access_dir_type_by_path(onHoverExplorerItem) === "file") {
         path.pop();
         if (path.length === 1) {
           path = ["root"];
@@ -920,7 +926,7 @@ const ExplorerList = () => {
         );
       } else {
         const position = explorerItemPositions.find(
-          (element) => element.file_path === onHoverExplorerItems
+          (element) => element.file_path === onHoverExplorerItem
         );
         setParentIndicator(
           <ExplorerParentIndicator
@@ -932,7 +938,7 @@ const ExplorerList = () => {
       }
     };
     update_parent_indicator();
-  }, [explorerItemPositions, onHoverExplorerItems]);
+  }, [explorerItemPositions, onHoverExplorerItem]);
 
   return (
     <div
@@ -946,7 +952,7 @@ const ExplorerList = () => {
         setOnSelectedExplorerItems([]);
       }}
       onMouseLeave={() => {
-        setOnHoverExplorerItems(null);
+        setOnHoverExplorerItem(null);
       }}
       style={{
         /* Position ===================== */
@@ -997,7 +1003,7 @@ const SurfaceExplorer = ({
   const explorerListRef = useRef(null);
   const [explorerListWidth, setExplorerListWidth] = useState(0);
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
-  const [onHoverExplorerItems, setOnHoverExplorerItems] = useState(null);
+  const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
   const check_is_explorer_item_selected = useCallback(
     (file_path) => {
       if (onSelectedExplorerItems.includes(file_path)) {
@@ -1026,8 +1032,8 @@ const SurfaceExplorer = ({
         setExplorerListWidth,
         onSelectedExplorerItems,
         setOnSelectedExplorerItems,
-        onHoverExplorerItems,
-        setOnHoverExplorerItems,
+        onHoverExplorerItem,
+        setOnHoverExplorerItem,
         check_is_explorer_item_selected,
       }}
     >
