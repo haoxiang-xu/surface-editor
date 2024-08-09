@@ -9,6 +9,7 @@ import React, {
 /* Context ------------------------------------------------------------------------------------------------------------------------ */
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { SurfaceExplorerContexts } from "./surface_explorer_contexts.js";
+import { SurfaceExplorerContextMenuContexts } from "./surface_explorer_context_menu_contexts.js";
 /* Sub Components ----------------------------------------------------------------------------------------------------------------- */
 import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
@@ -176,6 +177,9 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
+  const { load_explorer_context_menu } = useContext(
+    SurfaceExplorerContextMenuContexts
+  );
   const tagRef = useRef(null);
   const [style, setStyle] = useState({
     backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
@@ -256,16 +260,23 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
       onMouseDown={() => {}}
       onMouseUp={(e) => {
         e.stopPropagation();
-        update_dir_expand_status_by_path(
-          file_path,
-          !access_dir_expand_status_by_path(file_path)
-        );
+        if (e.button === 0) {
+          update_dir_expand_status_by_path(
+            file_path,
+            !access_dir_expand_status_by_path(file_path)
+          );
+          setIsExpanded(!isExpanded);
+        }
         setOnSelectedExplorerItems([file_path]);
-        setIsExpanded(!isExpanded);
       }}
       onContextMenu={(e) => {
         e.stopPropagation();
         e.preventDefault();
+        if (file_path === "root") {
+          load_explorer_context_menu(e, "root", file_path);
+        } else {
+          load_explorer_context_menu(e, "folder", file_path);
+        }
       }}
     >
       <Tag
@@ -305,6 +316,9 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
+  const { load_explorer_context_menu } = useContext(
+    SurfaceExplorerContextMenuContexts
+  );
   const tagRef = useRef(null);
   const [style, setStyle] = useState({
     backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
@@ -378,6 +392,7 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
       onContextMenu={(e) => {
         e.stopPropagation();
         e.preventDefault();
+        load_explorer_context_menu(e, "file", file_path);
       }}
     >
       <Tag
@@ -412,11 +427,15 @@ const ContextMenuWrapper = ({ children }) => {
   const {
     dir,
     update_path_under_dir,
-    remove_path_under_dir,
+    delete_file_by_path,
     check_is_file_name_exist_under_path,
     access_file_subfiles_by_path,
     update_folder_expand_status_by_path,
+    check_if_file_name_duplicate,
     access_subfiles_by_path,
+    generate_on_copy_file,
+    paste_on_copy_dir,
+    paste_file_by_path,
   } = useContext(RootDataContexts);
   const {
     id,
@@ -445,7 +464,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "openFolder",
       clickable: true,
-      label: "Open Folder...",
+      label: "open folder...",
       icon: SYSTEM_ICON_MANAGER.uploadFolder.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.uploadFolder.ICON16,
     },
@@ -453,7 +472,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "openFile",
       clickable: true,
-      label: "Open File...",
+      label: "open file...",
       icon: SYSTEM_ICON_MANAGER.uploadFile.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.uploadFile.ICON16,
     },
@@ -465,7 +484,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "newFile",
       clickable: true,
-      label: "New File...",
+      label: "new file...",
       icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
     },
@@ -473,7 +492,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "newFolder",
       clickable: true,
-      label: "New Folder...",
+      label: "new folder...",
       icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
     },
@@ -481,7 +500,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "paste",
       clickable: false,
-      label: "Paste",
+      label: "paste",
       short_cut_label: "Ctrl+V",
       icon: SYSTEM_ICON_MANAGER.paste.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
@@ -505,7 +524,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "copy",
       clickable: true,
-      label: "Copy",
+      label: "copy",
       short_cut_label: "Ctrl+C",
       icon: SYSTEM_ICON_MANAGER.copy.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
@@ -514,7 +533,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "rename",
       clickable: true,
-      label: "Rename",
+      label: "rename",
       icon: SYSTEM_ICON_MANAGER.rename.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
     },
@@ -522,7 +541,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "delete",
       clickable: true,
-      label: "Delete",
+      label: "delete",
       icon: SYSTEM_ICON_MANAGER.trash.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
     },
@@ -534,7 +553,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "newFile",
       clickable: true,
-      label: "New File...",
+      label: "new file...",
       icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
     },
@@ -542,7 +561,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "newFolder",
       clickable: true,
-      label: "New Folder...",
+      label: "new folder...",
       icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
     },
@@ -550,7 +569,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "paste",
       clickable: false,
-      label: "Paste",
+      label: "paste",
       short_cut_label: "Ctrl+V",
       icon: SYSTEM_ICON_MANAGER.paste.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
@@ -565,7 +584,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "copy",
       clickable: true,
-      label: "Copy",
+      label: "copy",
       short_cut_label: "Ctrl+C",
       icon: SYSTEM_ICON_MANAGER.copy.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
@@ -574,7 +593,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "rename",
       clickable: true,
-      label: "Rename",
+      label: "rename",
       icon: SYSTEM_ICON_MANAGER.rename.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
     },
@@ -582,7 +601,7 @@ const ContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "delete",
       clickable: true,
-      label: "Delete",
+      label: "delete",
       icon: SYSTEM_ICON_MANAGER.trash.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
     },
@@ -595,7 +614,7 @@ const ContextMenuWrapper = ({ children }) => {
     type: "button",
     id: "paste",
     clickable: true,
-    label: "Paste",
+    label: "paste",
     short_cut_label: "Ctrl+V",
     icon: SYSTEM_ICON_MANAGER.paste.ICON512,
     quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
@@ -608,54 +627,15 @@ const ContextMenuWrapper = ({ children }) => {
       switch (command_title) {
         case "copy":
           {
-            setOnCopyFile(
-              JSON.parse(
-                JSON.stringify(access_file_subfiles_by_path(onConextMenuPath))
-              )
-            );
+            setOnCopyFile(generate_on_copy_file(onConextMenuPath));
           }
           break;
         case "paste":
           {
-            const addPathNameAllChildren = (file, addPath, copyFileIndex) => {
-              const add_path = addPath.split("/");
-
-              for (let i = 0; i < file.files.length; i++) {
-                const path = file.files[i].filePath.split("/");
-                let combinedPath = add_path.concat(path.slice(copyFileIndex));
-                file.files[i].filePath = combinedPath.join("/");
-
-                addPathNameAllChildren(file.files[i], addPath, copyFileIndex);
-              }
-            };
-            let pasteFile = JSON.parse(JSON.stringify(onCopyFile));
-            if (
-              !check_is_file_name_exist_under_path(
-                onConextMenuPath,
-                pasteFile.fileName
-              )
-            ) {
-              pasteFile.expanded = false;
-              setOnSelectedExplorerItems([pasteFile]);
-
-              const pasteFileIndex = pasteFile.filePath.split("/").length - 1;
-              addPathNameAllChildren(
-                pasteFile,
-                onConextMenuPath,
-                pasteFileIndex
-              );
-
-              const path = pasteFile.filePath.split("/");
-              const add_path = onConextMenuPath.split("/");
-              const combinedPath = add_path.concat(path.slice(pasteFileIndex));
-              pasteFile.filePath = combinedPath.join("/");
-
-              let editedFile = access_file_subfiles_by_path(onConextMenuPath);
-              editedFile.files.push(pasteFile);
-              update_path_under_dir(onConextMenuPath, editedFile);
-
-              //EXPAND FOLDER
-              update_folder_expand_status_by_path(onConextMenuPath, true);
+            if (onCopyFile === null) return;
+            const file_name = Object.keys(onCopyFile)[0].split("/")[1];
+            if (!check_if_file_name_duplicate(onConextMenuPath, file_name)) {
+              paste_on_copy_dir(onCopyFile, onConextMenuPath);
             } else {
               alert("File name already exist");
             }
@@ -760,8 +740,8 @@ const ContextMenuWrapper = ({ children }) => {
           return;
         }
         case "delete": {
-          remove_path_under_dir(onConextMenuPath);
-          return;
+          delete_file_by_path(onConextMenuPath);
+          break;
         }
         case "openFolder": {
           window.electronAPI.triggerReadDir();
@@ -879,6 +859,7 @@ const ExplorerList = () => {
 
   useEffect(() => {
     const update_explorer_list = async () => {
+      if (!dir2) return;
       const update_explorer_structure = await render_explorer_structure(
         "root",
         default_indicator_padding,
@@ -972,7 +953,8 @@ const ExplorerList = () => {
   useEffect(() => {
     const update_on_selected_indicator = () => {
       const new_on_selected_indicator = [];
-      if (!onSelectedExplorerItems || !explorerItemPositions) return;
+      if (!onSelectedExplorerItems || !explorerItemPositions || !explorerList)
+        return;
       onSelectedExplorerItems.forEach((item) => {
         const position = explorerItemPositions.find(
           (element) => element.file_path === item
@@ -992,7 +974,7 @@ const ExplorerList = () => {
     };
     const update_level_indicators = () => {
       const new_level_indicators = [];
-      if (!onSelectedExplorerItems) return;
+      if (!explorerItemPositions || !explorerList) return;
       explorerItemPositions.forEach((item) => {
         if (!item) return;
         if (access_dir_type_by_path(item.file_path) === "folder") {
@@ -1015,7 +997,12 @@ const ExplorerList = () => {
   }, [explorerItemPositions, onSelectedExplorerItems]);
   useEffect(() => {
     const update_parent_indicator = () => {
-      if (!onHoverExplorerItem || !explorerItemPositions) {
+      if (
+        !onSelectedExplorerItems ||
+        !onHoverExplorerItem ||
+        !explorerItemPositions ||
+        !explorerList
+      ) {
         setParentIndicator(null);
         return;
       }
@@ -1028,6 +1015,7 @@ const ExplorerList = () => {
         const position = explorerItemPositions.find(
           (element) => element.file_path === path.join("/")
         );
+        if (!position) return;
         setParentIndicator(
           <ExplorerParentIndicator
             position_y={position.position_y}
@@ -1171,7 +1159,9 @@ const SurfaceExplorer = ({
         check_is_explorer_item_selected,
       }}
     >
-      <ExplorerList />
+      <ContextMenuWrapper>
+        <ExplorerList />
+      </ContextMenuWrapper>
     </SurfaceExplorerContexts.Provider>
   );
 };

@@ -953,6 +953,7 @@ const RootDataManager = ({ children }) => {
   /* { DIR } =========================================================================================================================== */
   const [dir2, setDir2] = useState(DIRs);
   const [isDirLoaded2, setIsDirLoaded2] = useState(true);
+
   const access_dir_name_by_path = useCallback(
     (path) => {
       const currentItem = dir2[path];
@@ -1018,6 +1019,114 @@ const RootDataManager = ({ children }) => {
     },
     [dir2]
   );
+  const delete_file_by_path = useCallback(
+    (path) => {
+      if (path === "root") return;
+      let parentPath = path.split("/").slice(0, -1);
+      if (parentPath.length === 1) {
+        parentPath = ["root"];
+      }
+      parentPath = parentPath.join("/");
+
+      let newDir = { ...dir2 };
+      const new_parent_sub_items = newDir[parentPath].sub_items.filter(
+        (item) => item !== path
+      );
+      newDir[parentPath].sub_items = new_parent_sub_items;
+      for (let key in newDir) {
+        if (key.includes(path)) {
+          delete newDir[key];
+        }
+      }
+      setDir2(newDir);
+    },
+    [dir2]
+  );
+  const check_if_file_name_duplicate = useCallback(
+    (parent_path, new_name) => {
+      const parent_sub_items = dir2[parent_path].sub_items;
+      for (let i = 0; i < parent_sub_items.length; i++) {
+        if (parent_sub_items[i].split("/").pop() === new_name) {
+          return true;
+        }
+      }
+      return false;
+    },
+    [dir2]
+  );
+  const generate_on_copy_file = useCallback(
+    (on_copy_path) => {
+      const recursive_get_all_subitems = (path) => {
+        const currentItem = dir2[path];
+        if (currentItem.file_type === "file") {
+          return [path];
+        } else {
+          let subItems = [path];
+          for (let i = 0; i < currentItem.sub_items.length; i++) {
+            subItems = subItems.concat(
+              recursive_get_all_subitems(currentItem.sub_items[i])
+            );
+          }
+          return subItems;
+        }
+      };
+      let to_remove_path = on_copy_path.split("/");
+      to_remove_path.pop();
+      to_remove_path = to_remove_path.join("/");
+
+      let new_dir = {};
+      const all_subitems = recursive_get_all_subitems(on_copy_path);
+      for (let i = 0; i < all_subitems.length; i++) {
+        const path = all_subitems[i];
+        const currentItem = dir2[path];
+        const new_path = path.replace(to_remove_path, "");
+        let sub_items = [];
+        if (dir2[path].file_type === "folder") {
+          sub_items = currentItem.sub_items.map((item) => {
+            return item.replace(to_remove_path, "");
+          });
+        }
+        new_dir[new_path] = {
+          file_name: currentItem.file_name,
+          file_type: currentItem.file_type,
+          file_path: new_path,
+          file_expand: currentItem.file_expand,
+          sub_items: sub_items,
+        };
+      }
+      new_dir["root"] = {
+        file_path: on_copy_path.replace(to_remove_path, ""),
+      };
+      return new_dir;
+    },
+    [dir2]
+  );
+  const paste_on_copy_dir = useCallback(
+    (on_copy_dir, under_path) => {
+      let newDir = { ...dir2 };
+      for (let key in on_copy_dir) {
+        if (key === "root") continue;
+        let new_path = under_path + key;
+        let new_sub_items = [];
+        if (on_copy_dir[key].file_type === "folder") {
+          new_sub_items = on_copy_dir[key].sub_items.map((item) => {
+            return under_path + item;
+          });
+        }
+        newDir[new_path] = {
+          ...on_copy_dir[key],
+          file_path: new_path,
+          sub_items: new_sub_items,
+        };
+      }
+      newDir[under_path].sub_items = newDir[under_path].sub_items.concat(
+        under_path + on_copy_dir["root"].file_path
+      );
+      setDir2(newDir);
+    },
+    [dir2]
+  );
+
   /* { DIR } =========================================================================================================================== */
 
   /* { STORAGE } ======================================================================================================================= */
@@ -1102,6 +1211,10 @@ const RootDataManager = ({ children }) => {
         access_dir_expand_status_by_path,
         update_dir_expand_status_by_path,
         access_dir_sub_items_by_path,
+        delete_file_by_path,
+        check_if_file_name_duplicate,
+        generate_on_copy_file,
+        paste_on_copy_dir,
 
         file,
         update_file_content_by_path,
