@@ -6,6 +6,7 @@ import {
 import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 import GhostImage from "../../BUILTIN_COMPONENTs/ghost_image/ghost_image";
+import Alert from "../../BUILTIN_COMPONENTs/alert/alert";
 
 const RootCommandManager = ({ children }) => {
   //console.log("RDM/RCM", new Date().getTime());
@@ -108,6 +109,13 @@ const RootCommandManager = ({ children }) => {
   };
   /* { Drag and Drop } =============================================================================== */
 
+  const [display, setDisplay] = useState(true);
+  const [alertPosition, setAlertPosition] = useState({ x: "50%", y: "50%" });
+  const load_alert = () => {
+    setDisplay(true);
+  };
+
+
   return (
     <RootCommandContexts.Provider
       value={{
@@ -139,6 +147,12 @@ const RootCommandManager = ({ children }) => {
         {contextMenuOnLoad ? <ContextMenu /> : null}
         {onDrag ? <GhostImage onDragItem={onDragItem} /> : null}
       </div>
+      <Alert
+        display={display}
+        alertPosition={alertPosition}
+        setDisplay={setDisplay}
+        label={"Error Message!!!"}
+      />
     </RootCommandContexts.Provider>
   );
 };
