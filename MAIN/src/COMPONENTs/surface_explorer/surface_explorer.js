@@ -46,6 +46,7 @@ const default_explorer_item_height = 22;
 const default_x_axis_offset = 10;
 const default_font_size = 12;
 const default_indicator_padding = 4;
+const default_border_width = 1;
 
 const default_indicator_layer = 12;
 
@@ -73,7 +74,7 @@ const ExplorerLevelIndicator = ({ position_y, position_x, height }) => {
 };
 const ExplorerOnSelectedIndicator = ({ file_path, position_y, position_x }) => {
   const { onHoverExplorerItem } = useContext(SurfaceExplorerContexts);
-  const on_select_wrapper_border = 1;
+  const on_select_wrapper_border = default_border_width;
 
   return (
     <div
@@ -138,6 +139,30 @@ const ExplorerParentIndicator = ({ position_y, position_x, height }) => {
     ></div>
   );
 };
+const ExplorerEndingIndicator = ({ position_y, position_x }) => {
+  const { setOnHoverExplorerItem } = useContext(SurfaceExplorerContexts);
+  return (
+    <div
+      style={{
+        transition: "all 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+        position: "absolute",
+        top: position_y,
+        left: position_x,
+        zIndex: default_indicator_layer,
+
+        /* Size ======================== */
+        width:
+          "calc(100% - " + (position_x + 2 + default_indicator_padding) + "px)",
+        height: default_explorer_item_height,
+
+        /* Style ======================= */
+      }}
+      onMouseEnter={() => {
+        setOnHoverExplorerItem(null);
+      }}
+    ></div>
+  );
+};
 const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
   const {
     access_dir_name_by_path,
@@ -146,6 +171,8 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
   } = useContext(RootDataContexts);
   const {
     explorerListWidth,
+    explorerListTop,
+    explorerScrollPosition,
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
@@ -159,7 +186,7 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
   const [isExpanded, setIsExpanded] = useState(
     access_dir_expand_status_by_path(file_path)
   );
-
+  const [fullSizeMode, setFullSizeMode] = useState(false);
   const [onHover, setOnHover] = useState(false);
 
   useEffect(() => {
@@ -184,6 +211,21 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
       });
     }
   }, [onHover]);
+  useEffect(() => {
+    if (tagRef.current) {
+      if (
+        tagRef.current.offsetWidth >
+        explorerListWidth -
+          position_x -
+          8 * default_indicator_padding -
+          2 * default_border_width
+      ) {
+        setFullSizeMode(onHover);
+      } else {
+        setFullSizeMode(false);
+      }
+    }
+  }, [explorerListWidth, onHover]);
 
   return (
     <div
@@ -191,11 +233,13 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
         transition:
           "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
-        top: position_y + 1,
+        top: position_y,
         left: position_x,
         /* Size ======================== */
         width:
-          "calc(100% - " + (position_x + 2 + default_indicator_padding) + "px)",
+          "calc(100% - " +
+          (position_x + 2 * default_border_width + default_indicator_padding) +
+          "px)",
         height: default_explorer_item_height,
 
         /* Style ======================= */
@@ -230,6 +274,9 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
           type: "folder",
           label: access_dir_name_by_path(file_path),
           style: {
+            top: fullSizeMode
+              ? position_y + explorerListTop - explorerScrollPosition
+              : 0,
             borderRadius: 4,
             padding_x: 3,
             padding_y: 3,
@@ -238,8 +285,11 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
             boxShadow: "none",
             isExpanded: isExpanded,
             maxWidth:
-              explorerListWidth - position_x - 8 * default_indicator_padding,
-            fullSizeMode: onHover,
+              explorerListWidth -
+              position_x -
+              8 * default_indicator_padding -
+              2 * default_border_width,
+            fullSizeMode: fullSizeMode,
           },
         }}
       />
@@ -250,6 +300,8 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
   const { access_dir_name_by_path } = useContext(RootDataContexts);
   const {
     explorerListWidth,
+    explorerListTop,
+    explorerScrollPosition,
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
@@ -257,9 +309,7 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
   const [style, setStyle] = useState({
     backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
   });
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [containerHeight, setContainerHeight] = useState(0);
-
+  const [fullSizeMode, setFullSizeMode] = useState(false);
   const [onHover, setOnHover] = useState(false);
 
   useEffect(() => {
@@ -278,6 +328,21 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
       });
     }
   }, [onHover]);
+  useEffect(() => {
+    if (tagRef.current) {
+      if (
+        tagRef.current.offsetWidth >
+        explorerListWidth -
+          position_x -
+          8 * default_indicator_padding -
+          2 * default_border_width
+      ) {
+        setFullSizeMode(onHover);
+      } else {
+        setFullSizeMode(false);
+      }
+    }
+  }, [explorerListWidth, onHover]);
 
   return (
     <div
@@ -285,11 +350,13 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
         transition:
           "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
-        top: position_y + 1,
+        top: position_y,
         left: position_x,
         /* Size ======================== */
         width:
-          "calc(100% - " + (position_x + 2 + default_indicator_padding) + "px)",
+          "calc(100% - " +
+          (position_x + 2 * default_border_width + default_indicator_padding) +
+          "px)",
         height: default_explorer_item_height,
 
         /* Style ======================= */
@@ -319,6 +386,9 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
           type: "file",
           label: access_dir_name_by_path(file_path),
           style: {
+            top: fullSizeMode
+              ? position_y + explorerListTop - explorerScrollPosition
+              : 0,
             borderRadius: 4,
             padding_x: 3,
             padding_y: 3,
@@ -326,8 +396,11 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
             backgroundColor: style.backgroundColor,
             boxShadow: "none",
             maxWidth:
-              explorerListWidth - position_x - 8 * default_indicator_padding,
-            fullSizeMode: onHover,
+              explorerListWidth -
+              position_x -
+              8 * default_indicator_padding -
+              2 * default_border_width,
+            fullSizeMode: fullSizeMode,
           },
         }}
       />
@@ -775,6 +848,35 @@ const ExplorerList = () => {
   const [onSelectedIndicators, setOnSelectedIndicators] = useState([]);
   const [ParentIndicator, setParentIndicator] = useState(null);
 
+  const style = document.createElement("style");
+  style.innerHTML = `
+  .scrollable-element::-webkit-scrollbar {
+    width: 10px;
+  }
+  .scrollable-element::-webkit-scrollbar-track {
+    background: rgba( ${
+      surface_explorer_fixed_styling.backgroundColorR + 12
+    }, ${surface_explorer_fixed_styling.backgroundColorG + 12}, ${
+    surface_explorer_fixed_styling.backgroundColorB + 12
+  }, 1);
+    border-radius: 10px;
+  }
+  .scrollable-element::-webkit-scrollbar-thumb {
+    background-color:rgba( ${
+      surface_explorer_fixed_styling.backgroundColorR + 64
+    }, ${surface_explorer_fixed_styling.backgroundColorG + 64}, ${
+    surface_explorer_fixed_styling.backgroundColorB + 64
+  }, 1);
+    border-radius: 10px;
+    border: 3px solid rgba( ${
+      surface_explorer_fixed_styling.backgroundColorR + 12
+    }, ${surface_explorer_fixed_styling.backgroundColorG + 12}, ${
+    surface_explorer_fixed_styling.backgroundColorB + 12
+  }, 1);
+  }
+`;
+  document.head.appendChild(style);
+
   useEffect(() => {
     const update_explorer_list = async () => {
       const update_explorer_structure = await render_explorer_structure(
@@ -851,6 +953,15 @@ const ExplorerList = () => {
         position_x: position_x,
         height: next_position_y - position_y,
       });
+      if (path === "root") {
+        explorer_structure.push(
+          <ExplorerEndingIndicator
+            key={"explorer_endingIndicator"}
+            position_y={next_position_y}
+            position_x={position_x}
+          />
+        );
+      }
       return {
         explorer_structure: explorer_structure,
         explorer_structure_positions: explorer_structure_positions,
@@ -942,6 +1053,7 @@ const ExplorerList = () => {
 
   return (
     <div
+      className="scrollable-element"
       ref={explorerListRef}
       draggable={true}
       onDragStart={(e) => {
@@ -968,7 +1080,7 @@ const ExplorerList = () => {
 
         /* Style ======================= */
         boxSizing: "border-box",
-        overflow: "hidden",
+        overflowX: "hidden",
       }}
     >
       {explorerList
@@ -1002,6 +1114,8 @@ const SurfaceExplorer = ({
 }) => {
   const explorerListRef = useRef(null);
   const [explorerListWidth, setExplorerListWidth] = useState(0);
+  const [explorerListTop, setExplorerListTop] = useState(0);
+  const [explorerScrollPosition, setExplorerScrollPosition] = useState(0);
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
   const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
   const check_is_explorer_item_selected = useCallback(
@@ -1014,6 +1128,22 @@ const SurfaceExplorer = ({
     },
     [onSelectedExplorerItems]
   );
+  useEffect(() => {
+    const update_explorer_scroll_position = () => {
+      if (explorerListRef.current) {
+        setExplorerScrollPosition(explorerListRef.current.scrollTop);
+        setExplorerListTop(explorerListRef.current.getBoundingClientRect().top);
+      }
+    };
+    explorerListRef.current.addEventListener(
+      "scroll",
+      update_explorer_scroll_position
+    );
+    if (explorerListRef.current) {
+      setExplorerListWidth(explorerListRef.current.offsetWidth);
+      setExplorerListTop(explorerListRef.current.getBoundingClientRect().top);
+    }
+  }, []);
   useEffect(() => {
     if (explorerListRef.current) {
       setExplorerListWidth(explorerListRef.current.offsetWidth);
@@ -1030,6 +1160,10 @@ const SurfaceExplorer = ({
         explorerListRef,
         explorerListWidth,
         setExplorerListWidth,
+        explorerListTop,
+        setExplorerListTop,
+        explorerScrollPosition,
+        setExplorerScrollPosition,
         onSelectedExplorerItems,
         setOnSelectedExplorerItems,
         onHoverExplorerItem,
