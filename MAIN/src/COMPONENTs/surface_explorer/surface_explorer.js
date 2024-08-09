@@ -50,6 +50,7 @@ const default_indicator_padding = 4;
 const default_border_width = 1;
 
 const default_indicator_layer = 12;
+const default_input_box_layer = 14;
 
 const ExplorerLevelIndicator = ({ position_y, position_x, height }) => {
   return (
@@ -435,7 +436,6 @@ const ContextMenuWrapper = ({ children }) => {
     access_subfiles_by_path,
     generate_on_copy_file,
     paste_on_copy_dir,
-    paste_file_by_path,
   } = useContext(RootDataContexts);
   const {
     id,
@@ -625,22 +625,20 @@ const ContextMenuWrapper = ({ children }) => {
     if (command && command.source === "context_menu") {
       const command_title = command.content.command_title;
       switch (command_title) {
-        case "copy":
-          {
-            setOnCopyFile(generate_on_copy_file(onConextMenuPath));
+        case "copy": {
+          setOnCopyFile(generate_on_copy_file(onConextMenuPath));
+          break;
+        }
+        case "paste": {
+          if (onCopyFile === null) return;
+          const file_name = Object.keys(onCopyFile)[0].split("/")[1];
+          if (!check_if_file_name_duplicate(onConextMenuPath, file_name)) {
+            paste_on_copy_dir(onCopyFile, onConextMenuPath);
+          } else {
+            alert("File name already exist");
           }
           break;
-        case "paste":
-          {
-            if (onCopyFile === null) return;
-            const file_name = Object.keys(onCopyFile)[0].split("/")[1];
-            if (!check_if_file_name_duplicate(onConextMenuPath, file_name)) {
-              paste_on_copy_dir(onCopyFile, onConextMenuPath);
-            } else {
-              alert("File name already exist");
-            }
-          }
-          break;
+        }
         case "newFile": {
           const getNewFileDefaultName = (filePath) => {
             let newFileDefaultName = "untitled_file";

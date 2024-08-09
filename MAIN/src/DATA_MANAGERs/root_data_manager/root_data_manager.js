@@ -1019,6 +1019,22 @@ const RootDataManager = ({ children }) => {
     },
     [dir2]
   );
+  const order_sub_items = useCallback(
+    (path) => {
+      let newDir = { ...dir2 };
+      let sub_items = newDir[path].sub_items;
+      sub_items.sort((a, b) => {
+        if (newDir[a].file_type === newDir[b].file_type) {
+          return newDir[a].file_name.localeCompare(newDir[b].file_name);
+        } else {
+          return newDir[a].file_type === "folder" ? -1 : 1;
+        }
+      });
+      newDir[path].sub_items = sub_items;
+      setDir2(newDir);
+    },
+    [dir2]
+  );
   const delete_file_by_path = useCallback(
     (path) => {
       if (path === "root") return;
@@ -1119,9 +1135,18 @@ const RootDataManager = ({ children }) => {
           sub_items: new_sub_items,
         };
       }
-      newDir[under_path].sub_items = newDir[under_path].sub_items.concat(
+      let new_sub_items = newDir[under_path].sub_items.concat(
         under_path + on_copy_dir["root"].file_path
       );
+      new_sub_items.sort((a, b) => {
+        if (newDir[a].file_type === newDir[b].file_type) {
+          return newDir[a].file_name.localeCompare(newDir[b].file_name);
+        } else {
+          return newDir[a].file_type === "folder" ? -1 : 1;
+        }
+      });
+      newDir[under_path].sub_items = new_sub_items;
+
       setDir2(newDir);
     },
     [dir2]
@@ -1215,6 +1240,7 @@ const RootDataManager = ({ children }) => {
         check_if_file_name_duplicate,
         generate_on_copy_file,
         paste_on_copy_dir,
+        order_sub_items,
 
         file,
         update_file_content_by_path,
