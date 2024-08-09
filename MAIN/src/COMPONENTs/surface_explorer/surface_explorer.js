@@ -50,7 +50,6 @@ const default_indicator_padding = 4;
 const default_border_width = 1;
 
 const default_indicator_layer = 12;
-const default_input_box_layer = 14;
 
 const ExplorerLevelIndicator = ({ position_y, position_x, height }) => {
   return (
