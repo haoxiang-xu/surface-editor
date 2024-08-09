@@ -79,7 +79,7 @@ const ExplorerOnSelectedIndicator = ({ file_path, position_y, position_x }) => {
     <div
       style={{
         position: "absolute",
-        top: position_y,
+        top: position_y - on_select_wrapper_border,
         left: position_x - on_select_wrapper_border,
         zIndex: default_indicator_layer,
         /* Size ======================== */
