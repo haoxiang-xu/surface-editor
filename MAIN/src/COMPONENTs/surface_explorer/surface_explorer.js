@@ -43,7 +43,7 @@ try {
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const padding = { top: 42, right: 5, bottom: 5, left: 5 };
-const default_explorer_item_height = 22;
+const default_explorer_item_height = 20;
 const default_x_axis_offset = 10;
 const default_font_size = 12;
 const default_indicator_padding = 4;
@@ -124,7 +124,8 @@ const ExplorerParentIndicator = ({ position_y, position_x, height }) => {
         /* Size ======================== */
         width:
           "calc(100% - " + (position_x + 2 - default_indicator_padding) + "px)",
-        height: height + default_indicator_padding * 2 + 2,
+        height:
+          height + default_indicator_padding * 2,
 
         /* Style ======================= */
         backgroundColor: `rgba( ${
