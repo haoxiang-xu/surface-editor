@@ -163,6 +163,7 @@ const openFolderStructureDialog = () => {
       if (!result.canceled) {
         read_dir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
+            //console.log("Directory data:", dirs);
             mainWindow.webContents.send("directory-data", dirs);
           })
           .catch((error) => console.error("Error reading directory:", error))
@@ -189,60 +190,69 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
     const dirents = await fs.readdir(dirPath, { withFileTypes: true });
     const files = {};
 
-    const rootDir = {
-      file_name: path.basename(rootPath),
-      file_path: path.basename(rootPath),
-      file_absolute_path: path.resolve(rootPath).replace(/\\/g, "/"),
-      file_size: (await fs.stat(rootPath)).size + " bytes",
+    const rootFile = rootPath.replace(/\\/g, "/").split("/").pop();
+
+    const basename = path.basename(dirPath);
+    let file_path = "";
+    if (dirPath === rootPath) {
+      file_path = `${rootFile}`;
+    } else {
+      const relativePath = path.relative(rootPath, dirPath).replace(/\\/g, "/");
+      file_path = `${rootFile}/${relativePath}`;
+    }
+    let dir = {
+      file_name: basename,
       file_type: "folder",
+      file_path: file_path,
+      absolute_path: dirPath,
+      file_expand: false,
       sub_items: [],
     };
 
     for (const dirent of dirents) {
       const res = path.resolve(dirPath, dirent.name);
-      const normalizedResPath = res.replace(/\\/g, "/");
-      const normalizedRootPath = rootPath.replace(/\\/g, "/");
-      const relativePath = normalizedResPath
-        .substring(normalizedRootPath.length)
-        .replace(/^\/|\\/, "");
-      const stats = await fs.stat(res);
+      const relativePath = path.relative(rootPath, res).replace(/\\/g, "/");
+      const filePath = `${rootFile}/${relativePath}`;
 
       if (dirent.isDirectory()) {
-        const dirData = {
-          file_name: dirent.name,
-          file_path: path.basename(rootPath) + "/" + relativePath,
-          file_absolute_path: res,
-          file_size: stats.size + " bytes",
-          file_type: "folder",
-          file_extname: path.extname(dirent.name),
-          sub_items: [],
-        };
-        rootDir.sub_items.push(relativePath);
-        files[path.basename(rootPath) + "/" + relativePath] = dirData;
+        dir.sub_items.push(filePath);
 
         const insideDir = await read_dir(res, rootPath);
         Object.assign(files, insideDir);
-
-        dirData.sub_items.push(
-          ...Object.keys(insideDir).filter((key) =>
-            key.startsWith(path.basename(rootPath) + "/" + relativePath + "/")
-          )
+        files[filePath].sub_items = Object.keys(insideDir).filter((key) =>
+          key.startsWith(filePath + "/")
         );
       } else {
-        const fileData = {
+        files[filePath] = {
           file_name: dirent.name,
-          file_path: path.basename(rootPath) + "/" + relativePath,
-          file_absolute_path: res,
-          file_size: stats.size + " bytes",
           file_type: "file",
-          file_extname: path.extname(dirent.name),
+          file_path: filePath,
+          absolute_path: res,
+          file_expand: false,
+          sub_items: [],
         };
-        rootDir.sub_items.push(path.basename(rootPath) + "/" + relativePath);
-        files[path.basename(rootPath) + "/" + relativePath] = fileData;
+        dir.sub_items.push(filePath);
       }
     }
 
-    files["root"] = rootDir;
+    dir.sub_items = dir.sub_items.sort((a, b) => {
+      if (files[a].file_type === "folder" && files[b].file_type === "file") {
+        return -1;
+      } else if (
+        files[a].file_type === "file" &&
+        files[b].file_type === "folder"
+      ) {
+        return 1;
+      } else {
+        return files[a].file_name.localeCompare(files[b].file_name);
+      }
+    });
+
+    if (dirPath === rootPath) {
+      files["root"] = dir;
+    } else {
+      files[file_path] = dir;
+    }
     return files;
   } catch (error) {
     throw error;

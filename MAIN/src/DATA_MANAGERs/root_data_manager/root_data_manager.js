@@ -379,12 +379,6 @@ class Car {
 };
 const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
   {
-    id: "explorer_0001",
-    type: "explorer",
-    stack_component_unique_tag: "explorer_0001",
-    explorer_container_ref_index: 0,
-  },
-  {
     id: "surface_explorer_0004",
     type: "surface_explorer",
     stack_component_unique_tag: "surface_explorer_0004",
@@ -953,7 +947,14 @@ const RootDataManager = ({ children }) => {
   /* { DIR } =========================================================================================================================== */
   const [dir2, setDir2] = useState(DIRs);
   const [isDirLoaded2, setIsDirLoaded2] = useState(true);
-
+  useEffect(() => {
+    setIsDirLoaded2(true);
+  }, [dir.filePath]);
+  useEffect(() => {
+    window.electron.receive("directory-data", (data) => {
+      setDir2(data);
+    });
+  }, []);
   const access_dir_name_by_path = useCallback(
     (path) => {
       const currentItem = dir2[path];

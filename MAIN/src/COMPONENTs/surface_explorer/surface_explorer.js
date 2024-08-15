@@ -166,6 +166,7 @@ const ExplorerEndingIndicator = ({ position_y, position_x }) => {
 };
 const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
   const {
+    dir2,
     access_dir_name_by_path,
     access_dir_expand_status_by_path,
     update_dir_expand_status_by_path,
@@ -196,6 +197,9 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
   const [isExpanded, setIsExpanded] = useState(
     access_dir_expand_status_by_path(file_path)
   );
+  useEffect(() => {
+    setIsExpanded(access_dir_expand_status_by_path(file_path));
+  }, [dir2]);
   const [fullSizeMode, setFullSizeMode] = useState(false);
   const [onHover, setOnHover] = useState(false);
 
@@ -297,7 +301,6 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
             file_path,
             !access_dir_expand_status_by_path(file_path)
           );
-          setIsExpanded(!isExpanded);
         }
         setOnSelectedExplorerItems([file_path]);
       }}
@@ -501,8 +504,6 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
 
 const ContextMenuWrapper = ({ children }) => {
   const {
-    dir,
-    update_path_under_dir,
     delete_file_by_path,
     check_if_file_name_duplicate,
     generate_on_copy_file,
