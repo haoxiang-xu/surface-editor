@@ -39,14 +39,6 @@ const CustomizeRequestForm = () => {
       className="customizeRequestForm_component_container1120"
       style={{ height: CUSTOMIZE_REQUEST_FORM_HEIGHT }}
     >
-      <link
-        href="https://fonts.googleapis.com/css?family=Roboto"
-        rel="stylesheet"
-      ></link>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;700&display=swap"
-        rel="stylesheet"
-      ></link>
       <img
         className="customizeRequestForm_component_title_icon0129"
         src={SYSTEM_ICON_MANAGER.customize.ICON512}

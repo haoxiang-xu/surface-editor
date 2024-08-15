@@ -1199,6 +1199,38 @@ const RootDataManager = ({ children }) => {
           return item.replace(path, new_path);
         }
       );
+      newDir[parent_path].sub_items.sort((a, b) => {
+        if (newDir[a].file_type === newDir[b].file_type) {
+          return newDir[a].file_name.localeCompare(newDir[b].file_name);
+        } else {
+          return newDir[a].file_type === "folder" ? -1 : 1;
+        }
+      });
+      setDir2(newDir);
+    },
+    [dir2]
+  );
+  const create_file_by_path = useCallback(
+    (path, file_name, file_type) => {
+      let newDir = { ...dir2 };
+      let new_path = path + "/" + file_name;
+
+      newDir[new_path] = {
+        file_name: file_name,
+        file_type: file_type,
+        file_path: new_path,
+        file_expand: false,
+        sub_items: [],
+      };
+      newDir[path].sub_items.push(new_path);
+      newDir[path].file_expand = true;
+      newDir[path].sub_items.sort((a, b) => {
+        if (newDir[a].file_type === newDir[b].file_type) {
+          return newDir[a].file_name.localeCompare(newDir[b].file_name);
+        } else {
+          return newDir[a].file_type === "folder" ? -1 : 1;
+        }
+      });
       setDir2(newDir);
     },
     [dir2]
@@ -1294,6 +1326,7 @@ const RootDataManager = ({ children }) => {
         paste_on_copy_dir,
         order_sub_items,
         rename_file_by_path,
+        create_file_by_path,
 
         file,
         update_file_content_by_path,

@@ -292,7 +292,7 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
       onMouseDown={() => {}}
       onMouseUp={(e) => {
         e.stopPropagation();
-        if (e.button === 0) {
+        if (e.button === 0 && !onRenameMode) {
           update_dir_expand_status_by_path(
             file_path,
             !access_dir_expand_status_by_path(file_path)
@@ -504,13 +504,10 @@ const ContextMenuWrapper = ({ children }) => {
     dir,
     update_path_under_dir,
     delete_file_by_path,
-    check_is_file_name_exist_under_path,
-    access_file_subfiles_by_path,
-    update_folder_expand_status_by_path,
     check_if_file_name_duplicate,
-    access_subfiles_by_path,
     generate_on_copy_file,
     paste_on_copy_dir,
+    create_file_by_path,
   } = useContext(RootDataContexts);
   const {
     id,
@@ -715,98 +712,45 @@ const ContextMenuWrapper = ({ children }) => {
           break;
         }
         case "newFile": {
-          const getNewFileDefaultName = (filePath) => {
-            let newFileDefaultName = "untitled_file";
-            let newFileDefaultNameIndex = 1;
-            let newFileDefaultNameExist = true;
-            while (newFileDefaultNameExist) {
-              newFileDefaultNameExist = false;
-              const file_list = access_subfiles_by_path(filePath);
-              for (let i = 0; i < file_list.length; i++) {
-                if (file_list[i].fileName === newFileDefaultName) {
-                  newFileDefaultNameExist = true;
-                  break;
-                }
-              }
-              if (newFileDefaultNameExist) {
-                newFileDefaultName = "untitled_file" + newFileDefaultNameIndex;
-                newFileDefaultNameIndex++;
-              }
+          const generate_new_file_name = (path) => {
+            let index = 1;
+            let new_file_name = "new_file";
+            while (check_if_file_name_duplicate(path, new_file_name)) {
+              new_file_name = "new_file_" + index;
+              index++;
             }
-            return newFileDefaultName;
+            return new_file_name;
           };
-          const newFileDefaultName = getNewFileDefaultName(onConextMenuPath);
-
-          const newFile = {
-            fileName: newFileDefaultName,
-            fileType: "file",
-            filePath: onConextMenuPath + "/" + newFileDefaultName,
-            files: [],
-          };
-
-          let editedFile = access_file_subfiles_by_path(onConextMenuPath);
-          editedFile.files.push(newFile);
-          update_path_under_dir(onConextMenuPath, editedFile);
-
-          update_folder_expand_status_by_path(onConextMenuPath, true);
-
+          const new_file_name = generate_new_file_name(onConextMenuPath);
+          const new_file_path = onConextMenuPath + "/" + new_file_name;
+          create_file_by_path(onConextMenuPath, new_file_name, "file");
+          setOnConextMenuPath(new_file_path);
           setCommand({
             source: "context_menu",
             target: id,
-            content: {
-              command_title: "rename",
-              command_content: {},
-            },
+            content: { command_title: "rename", command_content: {} },
           });
-          setOnConextMenuPath(newFile.filePath);
           return;
         }
         case "newFolder": {
-          const getNewFolderDefaultName = (filePath) => {
-            let newFolderDefaultName = "untitled_folder";
-            let newFolderDefaultNameIndex = 1;
-            let newFolderDefaultNameExist = true;
-            while (newFolderDefaultNameExist) {
-              newFolderDefaultNameExist = false;
-              const file_list = access_subfiles_by_path(filePath);
-              for (let i = 0; i < file_list.length; i++) {
-                if (file_list[i].fileName === newFolderDefaultName) {
-                  newFolderDefaultNameExist = true;
-                  break;
-                }
-              }
-              if (newFolderDefaultNameExist) {
-                newFolderDefaultName =
-                  "untitled_folder" + newFolderDefaultNameIndex;
-                newFolderDefaultNameIndex++;
-              }
+          const generate_new_file_name = (path) => {
+            let index = 1;
+            let new_file_name = "new_folder";
+            while (check_if_file_name_duplicate(path, new_file_name)) {
+              new_file_name = "new_folder_" + index;
+              index++;
             }
-            return newFolderDefaultName;
+            return new_file_name;
           };
-          const newFolderDefaultName =
-            getNewFolderDefaultName(onConextMenuPath);
-          const newFolder = {
-            fileName: newFolderDefaultName,
-            fileType: "folder",
-            filePath: onConextMenuPath + "/" + newFolderDefaultName,
-            files: [],
-          };
-
-          let editedFile = access_file_subfiles_by_path(onConextMenuPath);
-          editedFile.files.push(newFolder);
-          update_path_under_dir(onConextMenuPath, editedFile);
-
-          update_folder_expand_status_by_path(onConextMenuPath, true);
-
+          const new_file_name = generate_new_file_name(onConextMenuPath);
+          const new_file_path = onConextMenuPath + "/" + new_file_name;
+          create_file_by_path(onConextMenuPath, new_file_name, "folder");
+          setOnConextMenuPath(new_file_path);
           setCommand({
             source: "context_menu",
             target: id,
-            content: {
-              command_title: "rename",
-              command_content: {},
-            },
+            content: { command_title: "rename", command_content: {} },
           });
-          setOnConextMenuPath(newFolder.filePath);
           return;
         }
         case "rename": {
