@@ -155,7 +155,7 @@ const CustomizedTag = ({
         boxShadow: tagStyle.boxShadow || "none",
         border: tagStyle.border || "none",
         backdropFilter: tagStyle.backdropFilter || "none",
-        pointerEvents: "auto",
+        pointerEvents: inputMode? "auto" : "none",
       }}
       onMouseEnter={(event) => {
         setOnHover(true);
@@ -312,7 +312,7 @@ const FileTag = ({ config }) => {
     }
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon =
-        FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON512;
+        FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON16;
     }
     processed_config.style.pointerEvents = "none";
     return processed_config;
@@ -346,7 +346,7 @@ const FolderTag = ({ config }) => {
       processed_config.style.isExpanded = false;
     }
     if (config.icon === undefined || config.icon === null) {
-      processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON512;
+      processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON16;
     }
     processed_config.style.icon_transform = config.style.isExpanded
       ? "rotate(90deg)"

@@ -49,6 +49,8 @@ const default_font_size = 12;
 const default_indicator_padding = 4;
 const default_border_width = 1;
 
+const max_render_range = 1024;
+
 const default_indicator_layer = 12;
 
 const ExplorerLevelIndicator = ({ position_y, position_x, height }) => {
@@ -181,12 +183,28 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
+  if (
+    explorerScrollPosition - max_render_range > position_y ||
+    explorerScrollPosition + max_render_range < position_y
+  ) {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: position_y,
+          left: position_x,
+          height: default_explorer_item_height,
+        }}
+      ></div>
+    );
+  }
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
   );
   const { load_explorer_context_menu } = useContext(
     SurfaceExplorerContextMenuContexts
   );
+
   const tagRef = useRef(null);
   const [style, setStyle] = useState({
     backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
@@ -271,7 +289,7 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
     <div
       style={{
         transition:
-          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
         top: position_y,
         left: position_x,
@@ -360,6 +378,23 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
+
+  if (
+    explorerScrollPosition - max_render_range > position_y ||
+    explorerScrollPosition + max_render_range < position_y
+  ) {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: position_y,
+          left: position_x,
+          height: default_explorer_item_height,
+        }}
+      ></div>
+    );
+  }
+
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
   );
@@ -430,12 +465,11 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onHover]);
-
   return (
     <div
       style={{
         transition:
-          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
         top: position_y,
         left: position_x,
@@ -835,6 +869,7 @@ const ExplorerList = () => {
   } = useContext(RootDataContexts);
   const {
     explorerListRef,
+    explorerScrollPosition,
     onSelectedExplorerItems,
     setOnSelectedExplorerItems,
     onHoverExplorerItem,
@@ -897,6 +932,7 @@ const ExplorerList = () => {
       let explorer_structure_positions = [];
       let next_position_y = position_y;
       let next_position_x = position_x;
+
       explorer_structure.push(
         <ExplorerItemFolder
           key={path}

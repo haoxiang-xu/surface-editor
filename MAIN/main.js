@@ -208,7 +208,6 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
       file_expand: false,
       sub_items: [],
     };
-
     for (const dirent of dirents) {
       const res = path.resolve(dirPath, dirent.name);
       const relativePath = path.relative(rootPath, res).replace(/\\/g, "/");
@@ -216,12 +215,8 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
 
       if (dirent.isDirectory()) {
         dir.sub_items.push(filePath);
-
-        const insideDir = await read_dir(res, rootPath);
-        Object.assign(files, insideDir);
-        files[filePath].sub_items = Object.keys(insideDir).filter((key) =>
-          key.startsWith(filePath + "/")
-        );
+        const sub_dir = await read_dir(res, rootPath);
+        Object.assign(files, sub_dir);
       } else {
         files[filePath] = {
           file_name: dirent.name,
