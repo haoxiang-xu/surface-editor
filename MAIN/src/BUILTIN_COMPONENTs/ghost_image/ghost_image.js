@@ -53,9 +53,9 @@ const GhostImage = ({ onDragItem }) => {
                   onDragItem.content.path
                 ),
                 style: {
-                  borderRadius: 4,
-                  padding_x: 3,
-                  padding_y: 2,
+                  borderRadius: 6,
+                  padding_x: 5,
+                  padding_y: 4,
                 },
               }}
             />

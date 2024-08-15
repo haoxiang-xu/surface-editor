@@ -52,6 +52,7 @@ const CustomizedTag = ({
 
   const [tagStyle, setTagStyle] = useState(style);
   const [tagMaxWidth, setTagMaxWidth] = useState(style.maxWidth);
+  const [inputMode, setInputMode] = useState(style.inputMode);
   const [onHover, setOnHover] = useState(null);
 
   useEffect(() => {
@@ -87,7 +88,9 @@ const CustomizedTag = ({
       width += 16 + 4;
       left += 16 + 4;
     }
-
+    if (style.inputMode !== inputMode) {
+      setInputMode(style.inputMode);
+    }
     setTagStyle((prevData) => {
       return {
         ...prevData,
@@ -108,6 +111,18 @@ const CustomizedTag = ({
       };
     });
   }, [spanRef, onHover, style]);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+
+      const dot_position = label.lastIndexOf(".");
+      if (dot_position !== -1) {
+        inputRef.current.setSelectionRange(0, dot_position);
+      } else {
+        inputRef.current.setSelectionRange(0, label.length);
+      }
+    }
+  }, [inputMode]);
   return (
     <div
       ref={reference}
