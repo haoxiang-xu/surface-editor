@@ -53,7 +53,28 @@ const max_render_range = 1024;
 
 const default_indicator_layer = 12;
 
-const ExplorerLevelIndicator = ({ position_y, position_x, height }) => {
+const ExplorerLevelIndicatorFilter = ({ position_y, position_x, height }) => {
+  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
+  if (
+    position_y + height < explorerScrollPosition ||
+    position_y > explorerScrollPosition + max_render_range
+  ) {
+    return null;
+  } else {
+    return (
+      <ExplorerLevelIndicatorComponent
+        position_y={position_y}
+        position_x={position_x}
+        height={height}
+      />
+    );
+  }
+};
+const ExplorerLevelIndicatorComponent = ({
+  position_y,
+  position_x,
+  height,
+}) => {
   return (
     <div
       style={{
@@ -77,6 +98,7 @@ const ExplorerLevelIndicator = ({ position_y, position_x, height }) => {
 };
 const ExplorerOnSelectedIndicator = ({ file_path, position_y, position_x }) => {
   const { onHoverExplorerItem } = useContext(SurfaceExplorerContexts);
+  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
   const on_select_wrapper_border = default_border_width;
 
   return (
@@ -114,19 +136,26 @@ const ExplorerOnSelectedIndicator = ({ file_path, position_y, position_x }) => {
   );
 };
 const ExplorerParentIndicator = ({ position_y, position_x, height }) => {
+  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
   return (
     <div
       style={{
         transition: "all 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
-        top: Math.max(position_y - default_indicator_padding, 0),
+        top: Math.max(
+          position_y - default_indicator_padding,
+          explorerScrollPosition - max_render_range
+        ),
         left: Math.max(position_x - default_indicator_padding, 0),
         zIndex: default_indicator_layer,
 
         /* Size ======================== */
         width:
           "calc(100% - " + (position_x + 2 - default_indicator_padding) + "px)",
-        height: height + default_indicator_padding * 2,
+        height: Math.min(
+          height + default_indicator_padding * 2,
+          max_render_range
+        ),
 
         /* Style ======================= */
         backgroundColor: `rgba( ${
@@ -166,7 +195,23 @@ const ExplorerEndingIndicator = ({ position_y, position_x }) => {
     ></div>
   );
 };
-const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
+const ExplorerItemFolderFilter = ({ file_path, position_y, position_x }) => {
+  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
+  if (explorerScrollPosition - max_render_range > position_y) {
+    return;
+  } else if (explorerScrollPosition + max_render_range < position_y) {
+    return;
+  } else {
+    return (
+      <ExplorerItemFolderComponent
+        file_path={file_path}
+        position_y={position_y}
+        position_x={position_x}
+      />
+    );
+  }
+};
+const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const {
     dir2,
     access_dir_name_by_path,
@@ -183,21 +228,6 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
-  if (
-    explorerScrollPosition - max_render_range > position_y ||
-    explorerScrollPosition + max_render_range < position_y
-  ) {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          top: position_y,
-          left: position_x,
-          height: default_explorer_item_height,
-        }}
-      ></div>
-    );
-  }
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
   );
@@ -366,7 +396,23 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
     </div>
   );
 };
-const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
+const ExplorerItemFileFilter = ({ file_path, position_y, position_x }) => {
+  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
+  if (explorerScrollPosition - max_render_range > position_y) {
+    return;
+  } else if (explorerScrollPosition + max_render_range < position_y) {
+    return;
+  } else {
+    return (
+      <ExplorerItemFileComponent
+        file_path={file_path}
+        position_y={position_y}
+        position_x={position_x}
+      />
+    );
+  }
+};
+const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   const { access_dir_name_by_path, rename_file_by_path } =
     useContext(RootDataContexts);
   const {
@@ -378,22 +424,6 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
-
-  if (
-    explorerScrollPosition - max_render_range > position_y ||
-    explorerScrollPosition + max_render_range < position_y
-  ) {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          top: position_y,
-          left: position_x,
-          height: default_explorer_item_height,
-        }}
-      ></div>
-    );
-  }
 
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
@@ -465,6 +495,7 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onHover]);
+
   return (
     <div
       style={{
@@ -877,6 +908,11 @@ const ExplorerList = () => {
   } = useContext(SurfaceExplorerContexts);
   const [explorerList, setExplorerList] = useState([]);
   const [explorerItemPositions, setExplorerItemPositions] = useState([]);
+  const [explorerListVisibleIndexRange, setExplorerListVisibleIndexRange] =
+    useState({
+      startIndex: -1,
+      endIndex: -1,
+    });
 
   const [levelIndicators, setLevelIndicators] = useState([]);
   const [onSelectedIndicators, setOnSelectedIndicators] = useState([]);
@@ -934,7 +970,7 @@ const ExplorerList = () => {
       let next_position_x = position_x;
 
       explorer_structure.push(
-        <ExplorerItemFolder
+        <ExplorerItemFolderFilter
           key={path}
           file_path={path}
           position_y={next_position_y}
@@ -966,7 +1002,7 @@ const ExplorerList = () => {
               default_explorer_item_height * sub_explorer_structure.length;
           } else {
             explorer_structure.push(
-              <ExplorerItemFile
+              <ExplorerItemFileFilter
                 key={sub_items[index]}
                 file_path={sub_items[index]}
                 position_y={next_position_y}
@@ -1035,7 +1071,7 @@ const ExplorerList = () => {
         if (access_dir_type_by_path(item.file_path) === "folder") {
           const position = item;
           new_level_indicators.push(
-            <ExplorerLevelIndicator
+            <ExplorerLevelIndicatorFilter
               key={position.file_path}
               file_path={position.file_path}
               position_y={position.position_y + default_explorer_item_height}
@@ -1050,6 +1086,22 @@ const ExplorerList = () => {
     update_on_selected_indicator();
     update_level_indicators();
   }, [explorerItemPositions, onSelectedExplorerItems]);
+  useEffect(() => {
+    const calculate_visible_index_range = () => {
+      if (!explorerItemPositions || !explorerList) return;
+      const startIndex = parseInt(
+        explorerScrollPosition / default_explorer_item_height
+      );
+      const endIndex =
+        parseInt(max_render_range / default_explorer_item_height) + startIndex;
+
+      setExplorerListVisibleIndexRange({
+        startIndex: startIndex,
+        endIndex: endIndex,
+      });
+    };
+    calculate_visible_index_range();
+  }, [explorerScrollPosition]);
   useEffect(() => {
     const update_parent_indicator = () => {
       if (
@@ -1127,8 +1179,12 @@ const ExplorerList = () => {
         overflowX: "hidden",
       }}
     >
+      
       {explorerList
-        .slice()
+        .slice(
+          explorerListVisibleIndexRange.startIndex,
+          explorerListVisibleIndexRange.endIndex
+        )
         .reverse()
         .map((item) => {
           return item;
