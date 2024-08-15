@@ -38,8 +38,16 @@ const default_tag_layer = 8;
 const more_option_label_font_size = 12;
 
 /* { Tag types } ================================================================================= */
-const CustomizedTag = ({ reference, label, style, icon }) => {
+const CustomizedTag = ({
+  reference,
+  label,
+  label_on_change,
+  label_on_submit,
+  style,
+  icon,
+}) => {
   const spanRef = useRef(null);
+  const inputRef = useRef(null);
   const moreOptionLabelRef = useRef(null);
 
   const [tagStyle, setTagStyle] = useState(style);
@@ -50,9 +58,15 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
     if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
     const spanHeight = spanRef.current.offsetHeight;
+    let inputHeight = 0;
+    if (style.inputMode && inputRef.current) {
+      inputHeight = inputRef.current.offsetHeight;
+    }
     setTagMaxWidth(style.maxWidth);
     let containerWidth = 0;
-    if (style.fullSizeMode) {
+    if (style.inputMode) {
+      containerWidth = tagMaxWidth;
+    } else if (style.fullSizeMode) {
       containerWidth = spanWidth;
     } else {
       containerWidth = Math.min(spanWidth, tagMaxWidth);
@@ -62,7 +76,9 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
 
     let width = padding_x * 2;
     let left = padding_x;
-    if (onHover) {
+    if (style.inputMode) {
+      width += containerWidth;
+    } else if (style.fullSizeMode) {
       width += spanWidth;
     } else {
       width += containerWidth;
@@ -73,22 +89,22 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
     }
 
     setTagStyle((prevData) => {
-      let new_tag_style = { ...prevData };
-
       return {
         ...prevData,
         width: width,
-        height: spanHeight + padding_y * 2,
+        height: style.inputMode ? inputHeight : spanHeight + padding_y * 2,
         left: `calc(0% + ${left}px)`,
         transform: "translate(0%, -50%)",
         border: style.border,
         backgroundColor: style.backgroundColor,
         icon_transform: style.icon_transform,
-        moreOptionLabel:
-          style.fullSizeMode || onHover
-            ? false
-            : spanWidth > tagMaxWidth &&
-              tagMaxWidth > more_option_label_font_size,
+        moreOptionLabel: style.fullSizeMode
+          ? false
+          : spanWidth > tagMaxWidth &&
+            tagMaxWidth > more_option_label_font_size,
+        fullSizeMode: style.fullSizeMode,
+        transparentMode: style.transparentMode,
+        inputMode: style.inputMode,
       };
     });
   }, [spanRef, onHover, style]);
@@ -105,7 +121,7 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         top: style.top,
         bottom: style.bottom,
         transform: style.transform,
-        zIndex: style.fullSizeMode || onHover ? default_tag_layer : 0,
+        zIndex: style.fullSizeMode ? default_tag_layer : 0,
 
         /* { Tag Size } ---------------------------- */
         width: tagStyle.width,
@@ -114,13 +130,17 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
         /* { Tag Styling } ------------------------- */
         borderRadius: style.borderRadius || 7,
         display: "inline-block",
-        backgroundColor: tagStyle.backgroundColor,
+        backgroundColor: style.transparentMode
+          ? style.fullSizeMode
+            ? tagStyle.backgroundColor
+            : "transparent"
+          : tagStyle.backgroundColor,
         overflow: "hidden",
         opacity: tagStyle.opacity !== undefined ? tagStyle.opacity : 1,
         boxShadow: tagStyle.boxShadow || "none",
         border: tagStyle.border || "none",
         backdropFilter: tagStyle.backdropFilter || "none",
-        pointerEvents: tagStyle.pointerEvents || "auto",
+        pointerEvents: "auto",
       }}
       onMouseEnter={(event) => {
         setOnHover(true);
@@ -165,35 +185,72 @@ const CustomizedTag = ({ reference, label, style, icon }) => {
           userSelect: "none",
           whiteSpace: "nowrap",
           display: "inline-block",
+          opacity: tagStyle.inputMode ? 0 : 1,
         }}
       >
         {label}
       </span>
-      <span
-        ref={moreOptionLabelRef}
-        style={{
-          /* { Tag Position } --------------------- */
-          position: "absolute",
-          top: "50%",
-          right: 0,
-          transform: "translate(0%, -50%)",
+      {tagStyle.inputMode ? (
+        <input
+          ref={inputRef}
+          type="text"
+          value={label}
+          onChange={(event) => {
+            if (label_on_change) {
+              label_on_change(event.target.value);
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              inputRef.current.blur();
+              label_on_submit();
+            }
+          }}
+          style={{
+            /* { Input Position } ---------------------- */
+            position: "absolute",
+            top: "50%",
+            left: tagStyle.left,
+            right: tagStyle.right,
+            transform: tagStyle.transform,
 
-          maxWidth: tagStyle.moreOptionLabel ? "none" : 0,
+            /* { Font Styling } ---------------------- */
+            padding: `${tagStyle.padding_y}px ${0}px`,
+            font: "inherit",
+            fontSize: tagStyle.fontSize,
+            color: tagStyle.color,
+            background: "transparent",
+            border: "none",
+            outline: "none",
+          }}
+        />
+      ) : (
+        <span
+          ref={moreOptionLabelRef}
+          style={{
+            /* { Tag Position } --------------------- */
+            position: "absolute",
+            top: "50%",
+            right: 0,
+            transform: "translate(0%, -50%)",
 
-          /* { Font Styling } ---------------------- */
-          fontSize: tagStyle.fontSize,
+            maxWidth: tagStyle.moreOptionLabel ? "none" : 0,
 
-          /* { Tag Styling } ----------------------- */
-          padding: `${tagStyle.fontSize}px 0px`,
-          color: tagStyle.color,
-          backgroundColor: tagStyle.backgroundColor,
-          userSelect: "none",
-          whiteSpace: "nowrap",
-          display: tagStyle.moreOptionLabel ? "inline-block" : "none",
-        }}
-      >
-        {"..."}
-      </span>
+            /* { Font Styling } ---------------------- */
+            fontSize: tagStyle.fontSize,
+
+            /* { Tag Styling } ----------------------- */
+            padding: `${tagStyle.fontSize}px 0px`,
+            color: tagStyle.color,
+            backgroundColor: tagStyle.backgroundColor,
+            userSelect: "none",
+            whiteSpace: "nowrap",
+            display: tagStyle.moreOptionLabel ? "inline-block" : "none",
+          }}
+        >
+          {"..."}
+        </span>
+      )}
     </div>
   );
 };
@@ -305,6 +362,8 @@ const Tag = ({ config }) => {
     const reference = config.reference || null;
     const type = config.type || "default";
     const label = config.label || "";
+    const label_on_change = config.label_on_change || null;
+    const label_on_submit = config.label_on_submit || null;
     const icon = config.icon || null;
     let style = {};
 
@@ -337,6 +396,12 @@ const Tag = ({ config }) => {
       if (config.style.fullSizeMode === undefined) {
         style.fullSizeMode = false;
       }
+      if (config.style.transparentMode === undefined) {
+        style.transparentMode = false;
+      }
+      if (config.style.inputMode === undefined) {
+        style.inputMode = false;
+      }
     } else {
       style = {
         fontSize: default_tag_font_size,
@@ -348,9 +413,19 @@ const Tag = ({ config }) => {
         borderRadius: default_border_radius,
         maxWidth: default_max_tag_width,
         fullSizeMode: false,
+        transparentMode: false,
+        inputMode: false,
       };
     }
-    return { reference, type, label, icon, style };
+    return {
+      reference,
+      type,
+      label,
+      label_on_change,
+      label_on_submit,
+      icon,
+      style,
+    };
   };
   const render_tag = () => {
     switch (config.type) {

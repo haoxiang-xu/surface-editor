@@ -1151,6 +1151,58 @@ const RootDataManager = ({ children }) => {
     },
     [dir2]
   );
+  const rename_file_by_path = useCallback(
+    (path, new_name) => {
+      const recursive_replace_path = (dir, original_path, new_path) => {
+        let newDir = { ...dir };
+        let current_item = newDir[original_path];
+        if (current_item.file_type === "file") {
+          const new_name = new_path.split("/").pop();
+          current_item.file_name = new_name;
+          current_item.file_path = new_path;
+          delete newDir[original_path];
+          newDir[new_path] = current_item;
+        } else {
+          const new_name = new_path.split("/").pop();
+          current_item.file_name = new_name;
+          current_item.file_path = new_path;
+          current_item.sub_items = current_item.sub_items.map((item) => {
+            const sub_item_original_path = item;
+            let sub_item_new_path = item.replace(original_path, new_path);
+            newDir = recursive_replace_path(
+              newDir,
+              sub_item_original_path,
+              sub_item_new_path
+            );
+            return item.replace(original_path, new_path);
+          });
+          delete newDir[original_path];
+          newDir[new_path] = current_item;
+        }
+        return newDir;
+      };
+      let new_path = path.split("/");
+      new_path.pop();
+      let parent_path = "";
+      if (new_path.length === 1) {
+        parent_path = "root";
+      } else {
+        parent_path = new_path.join("/");
+      }
+      new_path.push(new_name);
+      new_path = new_path.join("/");
+
+      let newDir = { ...dir2 };
+      newDir = recursive_replace_path(newDir, path, new_path);
+      newDir[parent_path].sub_items = newDir[parent_path].sub_items.map(
+        (item) => {
+          return item.replace(path, new_path);
+        }
+      );
+      setDir2(newDir);
+    },
+    [dir2]
+  );
 
   /* { DIR } =========================================================================================================================== */
 
@@ -1241,6 +1293,7 @@ const RootDataManager = ({ children }) => {
         generate_on_copy_file,
         paste_on_copy_dir,
         order_sub_items,
+        rename_file_by_path,
 
         file,
         update_file_content_by_path,

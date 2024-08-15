@@ -169,14 +169,20 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
     access_dir_name_by_path,
     access_dir_expand_status_by_path,
     update_dir_expand_status_by_path,
+    rename_file_by_path,
   } = useContext(RootDataContexts);
   const {
+    command,
+    setCommand,
     explorerListWidth,
     explorerListTop,
     explorerScrollPosition,
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
+  const { onConextMenuPath, setOnConextMenuPath } = useContext(
+    SurfaceExplorerContextMenuContexts
+  );
   const { load_explorer_context_menu } = useContext(
     SurfaceExplorerContextMenuContexts
   );
@@ -193,6 +199,24 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
   const [fullSizeMode, setFullSizeMode] = useState(false);
   const [onHover, setOnHover] = useState(false);
 
+  const [renameValue, setRenameValue] = useState(
+    access_dir_name_by_path(file_path)
+  );
+  const [onRenameMode, setOnRenameMode] = useState(false);
+  const handle_rename_on_sumbit = () => {
+    rename_file_by_path(onConextMenuPath, renameValue);
+    setCommand([]);
+    setOnConextMenuPath(null);
+  };
+  useEffect(() => {
+    setOnRenameMode(
+      command.content?.command_title === "rename" &&
+        file_path === onConextMenuPath
+        ? true
+        : false
+    );
+  }, [command, onConextMenuPath]);
+
   useEffect(() => {
     if (tagRef.current) {
       setContainerWidth(tagRef.current.offsetWidth);
@@ -200,7 +224,15 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
     }
   }, [tagRef.current]);
   useEffect(() => {
-    if (onHover) {
+    if (onRenameMode) {
+      setStyle({
+        backgroundColor: `rgba( ${
+          surface_explorer_fixed_styling.backgroundColorR + 16
+        }, ${surface_explorer_fixed_styling.backgroundColorG + 16}, ${
+          surface_explorer_fixed_styling.backgroundColorB + 32
+        }, 1)`,
+      });
+    } else if (onHover) {
       setStyle({
         backgroundColor: `rgba( ${
           surface_explorer_fixed_styling.backgroundColorR + 32
@@ -214,7 +246,7 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
       });
     }
-  }, [onHover]);
+  }, [onHover, onRenameMode]);
   useEffect(() => {
     if (tagRef.current) {
       if (
@@ -283,7 +315,11 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
         config={{
           reference: tagRef,
           type: "folder",
-          label: access_dir_name_by_path(file_path),
+          label: renameValue,
+          label_on_change: (value) => {
+            setRenameValue(value);
+          },
+          label_on_submit: handle_rename_on_sumbit,
           style: {
             top: fullSizeMode
               ? position_y + explorerListTop - explorerScrollPosition
@@ -301,6 +337,8 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
               8 * default_indicator_padding -
               2 * default_border_width,
             fullSizeMode: fullSizeMode,
+            transparentMode: true,
+            inputMode: onRenameMode,
           },
         }}
       />
@@ -308,14 +346,20 @@ const ExplorerItemFolder = ({ file_path, position_y, position_x }) => {
   );
 };
 const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
-  const { access_dir_name_by_path } = useContext(RootDataContexts);
+  const { access_dir_name_by_path, rename_file_by_path } =
+    useContext(RootDataContexts);
   const {
+    command,
+    setCommand,
     explorerListWidth,
     explorerListTop,
     explorerScrollPosition,
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
+  const { onConextMenuPath, setOnConextMenuPath } = useContext(
+    SurfaceExplorerContextMenuContexts
+  );
   const { load_explorer_context_menu } = useContext(
     SurfaceExplorerContextMenuContexts
   );
@@ -326,8 +370,34 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
   const [fullSizeMode, setFullSizeMode] = useState(false);
   const [onHover, setOnHover] = useState(false);
 
+  const [renameValue, setRenameValue] = useState(
+    access_dir_name_by_path(file_path)
+  );
+  const [onRenameMode, setOnRenameMode] = useState(false);
+  const handle_rename_on_sumbit = () => {
+    rename_file_by_path(onConextMenuPath, renameValue);
+    setCommand([]);
+    setOnConextMenuPath(null);
+  };
   useEffect(() => {
-    if (onHover) {
+    setOnRenameMode(
+      command.content?.command_title === "rename" &&
+        file_path === onConextMenuPath
+        ? true
+        : false
+    );
+  }, [command, onConextMenuPath]);
+
+  useEffect(() => {
+    if (onRenameMode) {
+      setStyle({
+        backgroundColor: `rgba( ${
+          surface_explorer_fixed_styling.backgroundColorR + 16
+        }, ${surface_explorer_fixed_styling.backgroundColorG + 16}, ${
+          surface_explorer_fixed_styling.backgroundColorB + 32
+        }, 1)`,
+      });
+    } else if (onHover) {
       setStyle({
         backgroundColor: `rgba( ${
           surface_explorer_fixed_styling.backgroundColorR + 32
@@ -341,7 +411,7 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
       });
     }
-  }, [onHover]);
+  }, [onHover, onRenameMode]);
   useEffect(() => {
     if (tagRef.current) {
       if (
@@ -399,7 +469,11 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
         config={{
           reference: tagRef,
           type: "file",
-          label: access_dir_name_by_path(file_path),
+          label: renameValue,
+          label_on_change: (value) => {
+            setRenameValue(value);
+          },
+          label_on_submit: handle_rename_on_sumbit,
           style: {
             top: fullSizeMode
               ? position_y + explorerListTop - explorerScrollPosition
@@ -416,6 +490,8 @@ const ExplorerItemFile = ({ file_path, position_y, position_x }) => {
               8 * default_indicator_padding -
               2 * default_border_width,
             fullSizeMode: fullSizeMode,
+            transparentMode: true,
+            inputMode: onRenameMode,
           },
         }}
       />
@@ -796,6 +872,7 @@ const ContextMenuWrapper = ({ children }) => {
     <SurfaceExplorerContextMenuContexts.Provider
       value={{
         onConextMenuPath,
+        setOnConextMenuPath,
         load_explorer_context_menu,
       }}
     >
@@ -1024,6 +1101,7 @@ const ExplorerList = () => {
         const position = explorerItemPositions.find(
           (element) => element.file_path === onHoverExplorerItem
         );
+        if (!position) return;
         setParentIndicator(
           <ExplorerParentIndicator
             position_y={position.position_y}
