@@ -136,26 +136,20 @@ const ExplorerOnSelectedIndicator = ({ file_path, position_y, position_x }) => {
   );
 };
 const ExplorerParentIndicator = ({ position_y, position_x, height }) => {
-  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
   return (
     <div
       style={{
         transition: "all 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
-        top: Math.max(
-          position_y - default_indicator_padding,
-          explorerScrollPosition - max_render_range
-        ),
+        top: position_y - default_indicator_padding,
+
         left: Math.max(position_x - default_indicator_padding, 0),
         zIndex: default_indicator_layer,
 
         /* Size ======================== */
         width:
           "calc(100% - " + (position_x + 2 - default_indicator_padding) + "px)",
-        height: Math.min(
-          height + default_indicator_padding * 2,
-          max_render_range
-        ),
+        height: height + default_indicator_padding * 2,
 
         /* Style ======================= */
         backgroundColor: `rgba( ${
@@ -1179,7 +1173,6 @@ const ExplorerList = () => {
         overflowX: "hidden",
       }}
     >
-      
       {explorerList
         .slice(
           explorerListVisibleIndexRange.startIndex,
