@@ -1046,6 +1046,62 @@ const ContextMenuWrapper = ({ children }) => {
   } = useContext(SurfaceExplorerContexts);
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
+  const [clickablePaste, setClickablePaste] = useState({
+    type: "button",
+    id: "paste",
+    clickable: true,
+    label: "paste",
+    short_cut_label: "Ctrl+V",
+    icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+    quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+  });
+  useEffect(() => {
+    if (onCopyFile) {
+      const root_file_path = onCopyFile.root.file_path;
+      const target_file_name = onCopyFile[root_file_path].file_name;
+      setClickablePaste({
+        type: "button",
+        id: "paste",
+        clickable: true,
+        label: "paste",
+        customized_tag: {
+          type: "file",
+          label: target_file_name,
+          style: {
+            right: 6,
+            top: "50%",
+            borderRadius: 4,
+            transform: "translate(0%, -50%)",
+            padding_x: 4,
+            padding_y: 0,
+            border: `1px solid rgba(${
+              surface_explorer_fixed_styling.backgroundColorR + 32
+            }, ${surface_explorer_fixed_styling.backgroundColorG + 32}, ${
+              surface_explorer_fixed_styling.backgroundColorB + 32
+            }, 0.96)`,
+            backgroundColor: `rgba(${
+              surface_explorer_fixed_styling.backgroundColorR + 16
+            }, ${surface_explorer_fixed_styling.backgroundColorG + 16}, ${
+              surface_explorer_fixed_styling.backgroundColorB + 16
+            }, 0.64)`,
+            boxShadow: "none",
+          },
+        },
+        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+      });
+    } else {
+      setClickablePaste({
+        type: "button",
+        id: "paste",
+        clickable: false,
+        label: "paste",
+        short_cut_label: "Ctrl+V",
+        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+      });
+    }
+  }, [onCopyFile]);
 
   const default_explorer_context_menu = {
     root: {
@@ -1232,15 +1288,6 @@ const ContextMenuWrapper = ({ children }) => {
       id: "br",
     },
   };
-  const clickable_paste = {
-    type: "button",
-    id: "paste",
-    clickable: true,
-    label: "paste",
-    short_cut_label: "Ctrl+V",
-    icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
-  };
 
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
@@ -1332,14 +1379,14 @@ const ContextMenuWrapper = ({ children }) => {
       case "folder": {
         contextStructure = { ...default_folder_context_menu };
         if (onCopyFile) {
-          contextStructure.paste = clickable_paste;
+          contextStructure.paste = clickablePaste;
         }
         return contextStructure;
       }
       case "root": {
         contextStructure = { ...default_root_context_menu };
         if (onCopyFile) {
-          contextStructure.paste = clickable_paste;
+          contextStructure.paste = clickablePaste;
         }
         return contextStructure;
       }

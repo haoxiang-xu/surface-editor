@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from "react";
+import React, { useState, useContext, useEffect, useCallback, useRef } from "react";
 
 import { default_clickable_panel_styling } from "../../DATA_MANAGERs/root_styling_manager/root_styling_default_consts";
 import {
@@ -49,6 +49,7 @@ const ContextItemButton = ({
     progress_context_menu_item,
   } = useContext(ContextMenuContexts);
 
+  const tagRef = useRef(null);
   const [onHover, setOnHover] = useState(false);
   const [onClicked, setOnClicked] = useState(false);
   const [isIconLoaded, setIsIconLoaded] = useState(false);
@@ -249,8 +250,32 @@ const ContextItemButton = ({
       </span>
       {/* Context Item Label render --------------------------------------------------------- */}
 
+      {/* Context Item Customized Tag render ------------------------------------------------ */}
+      {contextStructure[unique_tag].customized_tag !== undefined ? (
+        <div
+          style={{
+            position: "absolute",
+            /* { Size } */
+            width: "100%",
+            height: "100%",
+            userSelect: "none",
+          }}
+        >
+          <Tag
+            config={{
+              reference: tagRef,
+              type: contextStructure[unique_tag].customized_tag?.type,
+              label: contextStructure[unique_tag].customized_tag?.label,
+              style: contextStructure[unique_tag].customized_tag?.style || {},
+            }}
+          />
+        </div>
+      ) : null}
+      {/* Context Item Customized Tag render ------------------------------------------------ */}
+
       {/* Context Item Short Cut Label render ----------------------------------------------- */}
-      {contextStructure[unique_tag].short_cut_label !== undefined ? (
+      {contextStructure[unique_tag].customized_tag === undefined &&
+      contextStructure[unique_tag].short_cut_label !== undefined ? (
         <div
           style={{
             position: "absolute",
@@ -264,6 +289,7 @@ const ContextItemButton = ({
         >
           <Tag
             config={{
+              reference: tagRef,
               type: "shortcut",
               label: contextStructure[unique_tag].short_cut_label,
               style: {
@@ -295,7 +321,7 @@ const ContextItemButton = ({
             position: "absolute",
             top: "50%",
             right: "8px",
-            transform: "translate(0%, -45%)",
+            transform: "translate(0%, -40%)",
             draggable: false,
           }}
         >

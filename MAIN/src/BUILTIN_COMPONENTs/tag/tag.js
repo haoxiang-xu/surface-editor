@@ -96,15 +96,30 @@ const CustomizedTag = ({
         ...prevData,
         width: width,
         height: style.inputMode ? inputHeight : spanHeight + padding_y * 2,
+        
+        top: style.top,
         left: `calc(0% + ${left}px)`,
+        right: style.right,
+        bottom: style.bottom,
+
+        fontSize: style.fontSize,
+
+        padding_x: padding_x,
+        padding_y: padding_y,
+
         transform: "translate(0%, -50%)",
         border: style.border,
+        borderRadius: style.borderRadius,
         backgroundColor: style.backgroundColor,
+        color: style.color,
+        boxShadow: style.boxShadow,
+
         icon_transform: style.icon_transform,
         moreOptionLabel: style.fullSizeMode
           ? false
           : spanWidth > tagMaxWidth &&
             tagMaxWidth > more_option_label_font_size,
+
         fullSizeMode: style.fullSizeMode,
         transparentMode: style.transparentMode,
         inputMode: style.inputMode,
@@ -311,13 +326,13 @@ const FileTag = ({ config }) => {
       processed_config.style.color = "#CCCCCC";
     }
     if (config.style.padding_x === undefined) {
-      processed_config.style.padding_x = 6;
+      processed_config.style.padding_x = 5;
     }
     if (config.style.padding_y === undefined) {
-      processed_config.style.padding_y = 6;
+      processed_config.style.padding_y = 4;
     }
     if (config.style.borderRadius === undefined) {
-      processed_config.style.borderRadius = 6;
+      processed_config.style.borderRadius = 4;
     }
     if (config.style.boxShadow === undefined) {
       processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
@@ -348,13 +363,13 @@ const FolderTag = ({ config }) => {
       processed_config.style.color = "#CCCCCC";
     }
     if (config.style.padding_x === undefined) {
-      processed_config.style.padding_x = 6;
+      processed_config.style.padding_x = 5;
     }
     if (config.style.padding_y === undefined) {
-      processed_config.style.padding_y = 6;
+      processed_config.style.padding_y = 4;
     }
     if (config.style.borderRadius === undefined) {
-      processed_config.style.borderRadius = 6;
+      processed_config.style.borderRadius = 4;
     }
     if (config.style.boxShadow === undefined) {
       processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
