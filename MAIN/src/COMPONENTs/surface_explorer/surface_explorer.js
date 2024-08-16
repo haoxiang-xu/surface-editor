@@ -10,6 +10,7 @@ import React, {
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { SurfaceExplorerContexts } from "./surface_explorer_contexts.js";
 import { SurfaceExplorerContextMenuContexts } from "./surface_explorer_context_menu_contexts.js";
+import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts.js";
 /* Sub Components ----------------------------------------------------------------------------------------------------------------- */
 import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
 import BarLoader from "react-spinners/BarLoader";
@@ -41,6 +42,7 @@ try {
 } catch (e) {
   console.log(e);
 }
+const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const padding = { top: 42, right: 5, bottom: 5, left: 5 };
@@ -257,8 +259,11 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     rename_file_by_path,
   } = useContext(RootDataContexts);
   const {
+    id,
     command,
     setCommand,
+    item_on_drag,
+    item_on_drop,
     explorerListWidth,
     explorerListTop,
     explorerScrollPosition,
@@ -365,6 +370,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
 
   return (
     <div
+      draggable={true}
       style={{
         transition:
           "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
@@ -416,6 +422,20 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         } else {
           load_explorer_context_menu(e, "folder", file_path);
         }
+      }}
+      onDragStart={(e) => {
+        e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+        item_on_drag(e, {
+          source: id,
+          ghost_image: "tag",
+          content: {
+            type: "folder",
+            path: file_path,
+          },
+        });
+      }}
+      onDragEnd={(e) => {
+        item_on_drop(e);
       }}
     >
       <Tag
@@ -469,11 +489,24 @@ const ExplorerItemFileFilter = ({ file_path, position_y, position_x }) => {
   }
 };
 const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
+
+  const {
+    draggedItem,
+    setDraggedItem,
+    draggedOverItem,
+    setDraggedOverItem,
+    dragCommand,
+    setDragCommand,
+  } = useContext(globalDragAndDropContexts);
+
   const { access_dir_name_by_path, rename_file_by_path } =
     useContext(RootDataContexts);
   const {
+    id,
     command,
     setCommand,
+    item_on_drag,
+    item_on_drop,
     explorerListWidth,
     explorerListTop,
     explorerScrollPosition,
@@ -564,6 +597,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   }, [explorerScrollPosition]);
   return (
     <div
+      draggable={true}
       style={{
         transition:
           "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
@@ -605,6 +639,30 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         e.stopPropagation();
         e.preventDefault();
         load_explorer_context_menu(e, "file", file_path);
+      }}
+      onDragStart={(e) => {
+        e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+        setDraggedItem({
+          source: "vecoder_explorer",
+          content: file_path,
+        });
+        item_on_drag(e, {
+          source: id,
+          ghost_image: "tag",
+          content: {
+            type: "file",
+            path: file_path,
+          },
+        });
+      }}
+      onDragEnd={(e) => {
+        if (draggedOverItem) {
+          setDragCommand("APPEND TO TARGET");
+        } else {
+          setDraggedItem(null);
+          setDraggedOverItem(null);
+        }
+        item_on_drop(e);
       }}
     >
       <Tag
@@ -778,7 +836,7 @@ const ExplorerList = () => {
         position_x: position_x,
         height: next_position_y - position_y,
       });
-      
+
       if (path === "root") {
         explorer_structure.push(
           <ExplorerEndingIndicator
@@ -1329,9 +1387,6 @@ const SurfaceExplorer = ({
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
   const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
   const [firstVisibleItem, setFirstVisibleItem] = useState(null);
-  useEffect(() => {
-    console.log(firstVisibleItem);
-  }, [firstVisibleItem]);
 
   const check_is_explorer_item_selected = useCallback(
     (file_path) => {
@@ -1374,6 +1429,8 @@ const SurfaceExplorer = ({
         command,
         setCommand,
         load_contextMenu,
+        item_on_drag,
+        item_on_drop,
         explorerListRef,
         explorerListWidth,
         setExplorerListWidth,

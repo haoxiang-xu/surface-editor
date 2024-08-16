@@ -925,6 +925,17 @@ const RootDataManager = ({ children }) => {
     },
     [dir]
   );
+  const access_file_absolute_path_by_path = useCallback(
+    (path) => {
+      const currentItem = dir[path];
+      if (currentItem && currentItem.absolute_path) {
+        return currentItem.absolute_path;
+      } else {
+        return path;
+      }
+    },
+    [dir]
+  );
   /* { DIR } =========================================================================================================================== */
 
   /* { STORAGE } ======================================================================================================================= */
@@ -1000,6 +1011,7 @@ const RootDataManager = ({ children }) => {
         order_sub_items,
         rename_file_by_path,
         create_file_by_path,
+        access_file_absolute_path_by_path,
 
         file,
         update_file_content_by_path,

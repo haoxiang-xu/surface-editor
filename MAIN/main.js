@@ -200,11 +200,12 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
       const relativePath = path.relative(rootPath, dirPath).replace(/\\/g, "/");
       file_path = `${rootFile}/${relativePath}`;
     }
+
     let dir = {
       file_name: basename,
       file_type: "folder",
       file_path: file_path,
-      absolute_path: dirPath,
+      absolute_path: path.resolve(dirPath),
       file_expand: false,
       sub_items: [],
     };
@@ -222,7 +223,7 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
           file_name: dirent.name,
           file_type: "file",
           file_path: filePath,
-          absolute_path: res,
+          absolute_path: path.resolve(dirPath, dirent.name),
           file_expand: false,
           sub_items: [],
         };
