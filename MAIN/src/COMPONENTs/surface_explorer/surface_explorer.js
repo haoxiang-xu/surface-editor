@@ -300,8 +300,12 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     access_dir_name_by_path(file_path)
   );
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = () => {
-    rename_file_by_path(onConextMenuPath, renameValue);
+  const handle_rename_on_sumbit = (change_or_not) => {
+    if (change_or_not) {
+      rename_file_by_path(onConextMenuPath, renameValue);
+    } else {
+      setRenameValue(access_dir_name_by_path(onConextMenuPath));
+    }
     setCommand([]);
     setOnConextMenuPath(null);
   };
@@ -370,7 +374,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
 
   return (
     <div
-      draggable={true}
+      draggable={!onRenameMode}
       style={{
         transition:
           "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
@@ -489,7 +493,6 @@ const ExplorerItemFileFilter = ({ file_path, position_y, position_x }) => {
   }
 };
 const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
-
   const {
     draggedItem,
     setDraggedItem,
@@ -597,7 +600,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   }, [explorerScrollPosition]);
   return (
     <div
-      draggable={true}
+      draggable={!onRenameMode}
       style={{
         transition:
           "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",

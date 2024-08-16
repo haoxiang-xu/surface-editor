@@ -155,7 +155,7 @@ const CustomizedTag = ({
         boxShadow: tagStyle.boxShadow || "none",
         border: tagStyle.border || "none",
         backdropFilter: tagStyle.backdropFilter || "none",
-        pointerEvents: inputMode? "auto" : "none",
+        pointerEvents: inputMode ? "auto" : "none",
       }}
       onMouseEnter={(event) => {
         setOnHover(true);
@@ -219,8 +219,16 @@ const CustomizedTag = ({
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               inputRef.current.blur();
-              label_on_submit();
+              label_on_submit(true);
             }
+            if (event.key === "Escape") {
+              inputRef.current.blur();
+              label_on_submit(false);
+            }
+          }}
+          onDragStart={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
           }}
           style={{
             /* { Input Position } ---------------------- */
