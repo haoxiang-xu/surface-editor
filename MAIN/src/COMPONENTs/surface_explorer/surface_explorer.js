@@ -193,7 +193,7 @@ const ExplorerItemFolderFilter = ({ file_path, position_y, position_x }) => {
   const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
   if (explorerScrollPosition - max_render_range > position_y) {
     return;
-  } else if (explorerScrollPosition + max_render_range < position_y) {
+  } else if (explorerScrollPosition + 2 * max_render_range < position_y) {
     return;
   } else {
     return (
@@ -394,7 +394,7 @@ const ExplorerItemFileFilter = ({ file_path, position_y, position_x }) => {
   const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
   if (explorerScrollPosition - max_render_range > position_y) {
     return;
-  } else if (explorerScrollPosition + max_render_range < position_y) {
+  } else if (explorerScrollPosition + 2 * max_render_range < position_y) {
     return;
   } else {
     return (
@@ -1083,11 +1083,14 @@ const ExplorerList = () => {
   useEffect(() => {
     const calculate_visible_index_range = () => {
       if (!explorerItemPositions || !explorerList) return;
-      const startIndex = parseInt(
-        explorerScrollPosition / default_explorer_item_height
+      const startIndex = Math.max(
+        parseInt(explorerScrollPosition / default_explorer_item_height) -
+          parseInt(max_render_range / default_explorer_item_height),
+        0
       );
       const endIndex =
-        parseInt(max_render_range / default_explorer_item_height) + startIndex;
+        3 * parseInt(max_render_range / default_explorer_item_height) +
+        startIndex;
 
       setExplorerListVisibleIndexRange({
         startIndex: startIndex,
