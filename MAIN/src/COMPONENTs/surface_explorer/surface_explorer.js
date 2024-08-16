@@ -17,7 +17,6 @@ import BarLoader from "react-spinners/BarLoader";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 /* { Import Styling } ------------------------------------------------------------------------------------------ */
 import { surface_explorer_fixed_styling } from "./surface_explorer_fixed_styling_config.js";
-import Explorer from "../explorer/explorer.js";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -87,7 +86,7 @@ const ExplorerLoadingIndicator = ({ width }) => {
         }, ${surface_explorer_fixed_styling.backgroundColorG + 64}, ${
           surface_explorer_fixed_styling.backgroundColorB + 64
         }, 1)`}
-        height={4}
+        height={3}
         width={width}
         speed={1}
       />
@@ -265,6 +264,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     explorerScrollPosition,
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
+    setFirstVisibleItem,
   } = useContext(SurfaceExplorerContexts);
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
@@ -354,6 +354,14 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onPause]);
+  useEffect(() => {
+    if (
+      explorerScrollPosition < position_y &&
+      position_y < explorerScrollPosition + default_explorer_item_height
+    ) {
+      setFirstVisibleItem(file_path);
+    }
+  }, [explorerScrollPosition]);
 
   return (
     <div
@@ -471,6 +479,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     explorerScrollPosition,
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
+    setFirstVisibleItem,
   } = useContext(SurfaceExplorerContexts);
 
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
@@ -545,7 +554,14 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onPause]);
-
+  useEffect(() => {
+    if (
+      explorerScrollPosition < position_y &&
+      position_y < explorerScrollPosition + default_explorer_item_height
+    ) {
+      setFirstVisibleItem(file_path);
+    }
+  }, [explorerScrollPosition]);
   return (
     <div
       style={{
@@ -645,11 +661,11 @@ const ExplorerList = () => {
   );
   const [explorerList, setExplorerList] = useState([]);
   const [explorerItemPositions, setExplorerItemPositions] = useState([]);
-  const [explorerListVisibleIndexRange, setExplorerListVisibleIndexRange] =
-    useState({
-      startIndex: -1,
-      endIndex: -1,
-    });
+  const [visibleIndexRange, setVisibleIndexRange] = useState({
+    startIndex: -1,
+    endIndex: -1,
+  });
+  const [visibleIndexes, setVisibleIndexes] = useState([]);
 
   const [levelIndicators, setLevelIndicators] = useState([]);
   const [onSelectedIndicators, setOnSelectedIndicators] = useState([]);
@@ -762,6 +778,7 @@ const ExplorerList = () => {
         position_x: position_x,
         height: next_position_y - position_y,
       });
+      
       if (path === "root") {
         explorer_structure.push(
           <ExplorerEndingIndicator
@@ -835,7 +852,7 @@ const ExplorerList = () => {
         2 * parseInt(max_render_range / default_explorer_item_height) +
         startIndex;
 
-      setExplorerListVisibleIndexRange({
+      setVisibleIndexRange({
         startIndex: startIndex,
         endIndex: endIndex,
       });
@@ -925,10 +942,7 @@ const ExplorerList = () => {
       }}
     >
       {explorerList
-        .slice(
-          explorerListVisibleIndexRange.startIndex,
-          explorerListVisibleIndexRange.endIndex
-        )
+        .slice(visibleIndexRange.startIndex, visibleIndexRange.endIndex)
         .map((item) => {
           return item;
         })}
@@ -1314,6 +1328,10 @@ const SurfaceExplorer = ({
   const [explorerScrollPosition, setExplorerScrollPosition] = useState(0);
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
   const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
+  const [firstVisibleItem, setFirstVisibleItem] = useState(null);
+  useEffect(() => {
+    console.log(firstVisibleItem);
+  }, [firstVisibleItem]);
 
   const check_is_explorer_item_selected = useCallback(
     (file_path) => {
@@ -1367,6 +1385,8 @@ const SurfaceExplorer = ({
         setOnSelectedExplorerItems,
         onHoverExplorerItem,
         setOnHoverExplorerItem,
+        firstVisibleItem,
+        setFirstVisibleItem,
         check_is_explorer_item_selected,
       }}
     >
