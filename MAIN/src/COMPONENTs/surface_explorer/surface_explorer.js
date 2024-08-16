@@ -12,10 +12,12 @@ import { SurfaceExplorerContexts } from "./surface_explorer_contexts.js";
 import { SurfaceExplorerContextMenuContexts } from "./surface_explorer_context_menu_contexts.js";
 /* Sub Components ----------------------------------------------------------------------------------------------------------------- */
 import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
+import BarLoader from "react-spinners/BarLoader";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 /* { Import Styling } ------------------------------------------------------------------------------------------ */
 import { surface_explorer_fixed_styling } from "./surface_explorer_fixed_styling_config.js";
+import Explorer from "../explorer/explorer.js";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -53,6 +55,48 @@ const max_render_range = 1024;
 
 const default_indicator_layer = 12;
 
+/* { Explorer Loading Sub Components } =============================================================================================================================== */
+const ExplorerLoadingIndicator = ({ width }) => {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: padding.top,
+        left: padding.left,
+        right: padding.right,
+
+        /* Size ======================== */
+        borderRadius: 10,
+        border: ` 3px solid rgba( ${
+          surface_explorer_fixed_styling.backgroundColorR + 12
+        }, ${surface_explorer_fixed_styling.backgroundColorG + 12}, ${
+          surface_explorer_fixed_styling.backgroundColorB + 12
+        }, 1)`,
+        overflow: "hidden",
+        backgroundColor: `rgba( ${
+          surface_explorer_fixed_styling.backgroundColorR + 12
+        }, ${surface_explorer_fixed_styling.backgroundColorG + 12}, ${
+          surface_explorer_fixed_styling.backgroundColorB + 12
+        }, 1)`,
+      }}
+    >
+      <BarLoader
+        size={8}
+        color={`rgba( ${
+          surface_explorer_fixed_styling.backgroundColorR + 64
+        }, ${surface_explorer_fixed_styling.backgroundColorG + 64}, ${
+          surface_explorer_fixed_styling.backgroundColorB + 64
+        }, 1)`}
+        height={4}
+        width={width}
+        speed={1}
+      />
+    </div>
+  );
+};
+/* { Explorer Loading Sub Components } =============================================================================================================================== */
+
+/* { Explorer List Sub Components } ================================================================================================================================== */
 const ExplorerLevelIndicatorFilter = ({ position_y, position_x, height }) => {
   const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
   if (
@@ -207,7 +251,7 @@ const ExplorerItemFolderFilter = ({ file_path, position_y, position_x }) => {
 };
 const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const {
-    dir2,
+    dir,
     access_dir_name_by_path,
     access_dir_expand_status_by_path,
     update_dir_expand_status_by_path,
@@ -241,7 +285,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   );
   useEffect(() => {
     setIsExpanded(access_dir_expand_status_by_path(file_path));
-  }, [dir2]);
+  }, [dir]);
   const [fullSizeMode, setFullSizeMode] = useState(false);
   const [onPause, setOnPause] = useState(false);
   const [onHover, setOnHover] = useState(false);
@@ -581,8 +625,328 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   );
 };
 
+const ExplorerList = () => {
+  const {
+    dir,
+    access_dir_type_by_path,
+    access_dir_sub_items_by_path,
+    access_dir_expand_status_by_path,
+  } = useContext(RootDataContexts);
+  const {
+    explorerListRef,
+    explorerScrollPosition,
+    onSelectedExplorerItems,
+    setOnSelectedExplorerItems,
+    onHoverExplorerItem,
+    setOnHoverExplorerItem,
+  } = useContext(SurfaceExplorerContexts);
+  const { load_explorer_context_menu } = useContext(
+    SurfaceExplorerContextMenuContexts
+  );
+  const [explorerList, setExplorerList] = useState([]);
+  const [explorerItemPositions, setExplorerItemPositions] = useState([]);
+  const [explorerListVisibleIndexRange, setExplorerListVisibleIndexRange] =
+    useState({
+      startIndex: -1,
+      endIndex: -1,
+    });
+
+  const [levelIndicators, setLevelIndicators] = useState([]);
+  const [onSelectedIndicators, setOnSelectedIndicators] = useState([]);
+  const [ParentIndicator, setParentIndicator] = useState(null);
+
+  const style = document.createElement("style");
+  style.innerHTML = `
+  .scrollable-element::-webkit-scrollbar {
+    width: 10px;
+  }
+  .scrollable-element::-webkit-scrollbar-track {
+    background: rgba( ${
+      surface_explorer_fixed_styling.backgroundColorR + 12
+    }, ${surface_explorer_fixed_styling.backgroundColorG + 12}, ${
+    surface_explorer_fixed_styling.backgroundColorB + 12
+  }, 1);
+    border-radius: 10px;
+  }
+  .scrollable-element::-webkit-scrollbar-thumb {
+    background-color:rgba( ${
+      surface_explorer_fixed_styling.backgroundColorR + 64
+    }, ${surface_explorer_fixed_styling.backgroundColorG + 64}, ${
+    surface_explorer_fixed_styling.backgroundColorB + 64
+  }, 1);
+    border-radius: 10px;
+    border: 3px solid rgba( ${
+      surface_explorer_fixed_styling.backgroundColorR + 12
+    }, ${surface_explorer_fixed_styling.backgroundColorG + 12}, ${
+    surface_explorer_fixed_styling.backgroundColorB + 12
+  }, 1);
+  }
+`;
+  document.head.appendChild(style);
+
+  useEffect(() => {
+    const update_explorer_list = async () => {
+      if (!dir) return;
+      const update_explorer_structure = await render_explorer_structure(
+        "root",
+        default_indicator_padding,
+        default_indicator_padding
+      );
+      const new_explorer_list = update_explorer_structure.explorer_structure;
+      const new_explorer_structure_positions =
+        update_explorer_structure.explorer_structure_positions;
+
+      setExplorerList(new_explorer_list);
+      setExplorerItemPositions(new_explorer_structure_positions);
+    };
+    const render_explorer_structure = async (path, position_y, position_x) => {
+      const sub_items = access_dir_sub_items_by_path(path);
+      let explorer_structure = [];
+      let explorer_structure_positions = [];
+      let next_position_y = position_y;
+      let next_position_x = position_x;
+
+      explorer_structure.push(
+        <ExplorerItemFolderFilter
+          key={path}
+          file_path={path}
+          position_y={next_position_y}
+          position_x={position_x}
+        />
+      );
+      next_position_y += default_explorer_item_height;
+      next_position_x += default_x_axis_offset;
+
+      if (sub_items && access_dir_expand_status_by_path(path)) {
+        for (let index = 0; index < sub_items.length; index++) {
+          const type = access_dir_type_by_path(sub_items[index]);
+          if (type === "folder") {
+            const updated_structure = await render_explorer_structure(
+              sub_items[index],
+              next_position_y,
+              next_position_x
+            );
+            const sub_explorer_structure = updated_structure.explorer_structure;
+            const sub_explorer_structure_positions =
+              updated_structure.explorer_structure_positions;
+            explorer_structure = explorer_structure.concat(
+              sub_explorer_structure
+            );
+            explorer_structure_positions = explorer_structure_positions.concat(
+              sub_explorer_structure_positions
+            );
+            next_position_y +=
+              default_explorer_item_height * sub_explorer_structure.length;
+          } else {
+            explorer_structure.push(
+              <ExplorerItemFileFilter
+                key={sub_items[index]}
+                file_path={sub_items[index]}
+                position_y={next_position_y}
+                position_x={next_position_x}
+              />
+            );
+            explorer_structure_positions.push({
+              file_path: sub_items[index],
+              position_y: next_position_y,
+              position_x: next_position_x,
+              height: default_explorer_item_height,
+            });
+            next_position_y += default_explorer_item_height;
+          }
+        }
+      }
+      explorer_structure_positions.push({
+        file_path: path,
+        position_y: position_y,
+        position_x: position_x,
+        height: next_position_y - position_y,
+      });
+      if (path === "root") {
+        explorer_structure.push(
+          <ExplorerEndingIndicator
+            key={"explorer_endingIndicator"}
+            position_y={next_position_y}
+            position_x={position_x}
+          />
+        );
+      }
+      return {
+        explorer_structure: explorer_structure,
+        explorer_structure_positions: explorer_structure_positions,
+      };
+    };
+    update_explorer_list();
+  }, [dir]);
+  useEffect(() => {
+    const update_on_selected_indicator = () => {
+      const new_on_selected_indicator = [];
+      if (!onSelectedExplorerItems || !explorerItemPositions || !explorerList)
+        return;
+      onSelectedExplorerItems.forEach((item) => {
+        const position = explorerItemPositions.find(
+          (element) => element.file_path === item
+        );
+        if (!position) return;
+        new_on_selected_indicator.push(
+          <ExplorerOnSelectedIndicator
+            key={item}
+            file_path={position.file_path}
+            position_y={position.position_y}
+            position_x={position.position_x}
+            height={position.height}
+          />
+        );
+      });
+      setOnSelectedIndicators(new_on_selected_indicator);
+    };
+    const update_level_indicators = () => {
+      const new_level_indicators = [];
+      if (!explorerItemPositions || !explorerList) return;
+      explorerItemPositions.forEach((item) => {
+        if (!item) return;
+        if (access_dir_type_by_path(item.file_path) === "folder") {
+          const position = item;
+          new_level_indicators.push(
+            <ExplorerLevelIndicatorFilter
+              key={position.file_path}
+              file_path={position.file_path}
+              position_y={position.position_y + default_explorer_item_height}
+              position_x={position.position_x + default_x_axis_offset}
+              height={position.height}
+            />
+          );
+        }
+      });
+      setLevelIndicators(new_level_indicators);
+    };
+    update_on_selected_indicator();
+    update_level_indicators();
+  }, [explorerItemPositions, onSelectedExplorerItems]);
+  useEffect(() => {
+    const calculate_visible_index_range = () => {
+      if (!explorerItemPositions || !explorerList) return;
+      const startIndex = Math.max(
+        parseInt(explorerScrollPosition / default_explorer_item_height) -
+          parseInt(max_render_range / default_explorer_item_height / 2),
+        0
+      );
+      const endIndex =
+        2 * parseInt(max_render_range / default_explorer_item_height) +
+        startIndex;
+
+      setExplorerListVisibleIndexRange({
+        startIndex: startIndex,
+        endIndex: endIndex,
+      });
+    };
+    calculate_visible_index_range();
+  }, [explorerScrollPosition]);
+  useEffect(() => {
+    const update_parent_indicator = () => {
+      if (
+        !onSelectedExplorerItems ||
+        !onHoverExplorerItem ||
+        !explorerItemPositions ||
+        !explorerList
+      ) {
+        setParentIndicator(null);
+        return;
+      }
+      let path = onHoverExplorerItem.split("/");
+      if (access_dir_type_by_path(onHoverExplorerItem) === "file") {
+        path.pop();
+        if (path.length === 1) {
+          path = ["root"];
+        }
+        const position = explorerItemPositions.find(
+          (element) => element.file_path === path.join("/")
+        );
+        if (!position) return;
+        setParentIndicator(
+          <ExplorerParentIndicator
+            position_y={position.position_y}
+            position_x={position.position_x}
+            height={position.height}
+          />
+        );
+      } else {
+        const position = explorerItemPositions.find(
+          (element) => element.file_path === onHoverExplorerItem
+        );
+        if (!position) return;
+        setParentIndicator(
+          <ExplorerParentIndicator
+            position_y={position.position_y}
+            position_x={position.position_x}
+            height={position.height}
+          />
+        );
+      }
+    };
+    update_parent_indicator();
+  }, [explorerItemPositions, onHoverExplorerItem]);
+
+  return (
+    <div
+      className="scrollable-element"
+      ref={explorerListRef}
+      draggable={true}
+      onDragStart={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+      }}
+      onMouseUp={() => {
+        setOnSelectedExplorerItems([]);
+      }}
+      onMouseLeave={() => {
+        setOnHoverExplorerItem(null);
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        load_explorer_context_menu(e, "explorer", "root");
+      }}
+      style={{
+        /* Position ===================== */
+        position: "absolute",
+        top: padding.top,
+        right: padding.right,
+        bottom: padding.bottom,
+        left: padding.left,
+
+        /* Size ======================== */
+        width: "calc(100% - " + (padding.left + padding.right) + "px)",
+        height: "calc(100% - " + (padding.top + padding.bottom) + "px",
+
+        /* Style ======================= */
+        boxSizing: "border-box",
+        overflowX: "hidden",
+      }}
+    >
+      {explorerList
+        .slice(
+          explorerListVisibleIndexRange.startIndex,
+          explorerListVisibleIndexRange.endIndex
+        )
+        .map((item) => {
+          return item;
+        })}
+      {ParentIndicator}
+      {levelIndicators.map((item) => {
+        return item;
+      })}
+      {onSelectedIndicators.map((item) => {
+        return item;
+      })}
+    </div>
+  );
+};
+/* { Explorer List Sub Components } ================================================================================================================================== */
+
 const ContextMenuWrapper = ({ children }) => {
   const {
+    setIsDirLoaded,
     delete_file_by_path,
     check_if_file_name_duplicate,
     generate_on_copy_file,
@@ -864,6 +1228,7 @@ const ContextMenuWrapper = ({ children }) => {
         }
         case "openFolder": {
           window.electronAPI.triggerReadDir();
+          setIsDirLoaded(false);
         }
       }
       setOnConextMenuPath(null);
@@ -930,325 +1295,6 @@ const ContextMenuWrapper = ({ children }) => {
     </SurfaceExplorerContextMenuContexts.Provider>
   );
 };
-
-const ExplorerList = () => {
-  const {
-    dir2,
-    access_dir_type_by_path,
-    access_dir_sub_items_by_path,
-    access_dir_expand_status_by_path,
-  } = useContext(RootDataContexts);
-  const {
-    explorerListRef,
-    explorerScrollPosition,
-    onSelectedExplorerItems,
-    setOnSelectedExplorerItems,
-    onHoverExplorerItem,
-    setOnHoverExplorerItem,
-  } = useContext(SurfaceExplorerContexts);
-  const { load_explorer_context_menu } = useContext(
-    SurfaceExplorerContextMenuContexts
-  );
-  const [explorerList, setExplorerList] = useState([]);
-  const [explorerItemPositions, setExplorerItemPositions] = useState([]);
-  const [explorerListVisibleIndexRange, setExplorerListVisibleIndexRange] =
-    useState({
-      startIndex: -1,
-      endIndex: -1,
-    });
-
-  const [levelIndicators, setLevelIndicators] = useState([]);
-  const [onSelectedIndicators, setOnSelectedIndicators] = useState([]);
-  const [ParentIndicator, setParentIndicator] = useState(null);
-
-  const style = document.createElement("style");
-  style.innerHTML = `
-  .scrollable-element::-webkit-scrollbar {
-    width: 10px;
-  }
-  .scrollable-element::-webkit-scrollbar-track {
-    background: rgba( ${
-      surface_explorer_fixed_styling.backgroundColorR + 12
-    }, ${surface_explorer_fixed_styling.backgroundColorG + 12}, ${
-    surface_explorer_fixed_styling.backgroundColorB + 12
-  }, 1);
-    border-radius: 10px;
-  }
-  .scrollable-element::-webkit-scrollbar-thumb {
-    background-color:rgba( ${
-      surface_explorer_fixed_styling.backgroundColorR + 64
-    }, ${surface_explorer_fixed_styling.backgroundColorG + 64}, ${
-    surface_explorer_fixed_styling.backgroundColorB + 64
-  }, 1);
-    border-radius: 10px;
-    border: 3px solid rgba( ${
-      surface_explorer_fixed_styling.backgroundColorR + 12
-    }, ${surface_explorer_fixed_styling.backgroundColorG + 12}, ${
-    surface_explorer_fixed_styling.backgroundColorB + 12
-  }, 1);
-  }
-`;
-  document.head.appendChild(style);
-
-  useEffect(() => {
-    const update_explorer_list = async () => {
-      if (!dir2) return;
-      const update_explorer_structure = await render_explorer_structure(
-        "root",
-        default_indicator_padding,
-        default_indicator_padding
-      );
-      const new_explorer_list = update_explorer_structure.explorer_structure;
-      const new_explorer_structure_positions =
-        update_explorer_structure.explorer_structure_positions;
-
-      setExplorerList(new_explorer_list);
-      setExplorerItemPositions(new_explorer_structure_positions);
-    };
-    const render_explorer_structure = async (path, position_y, position_x) => {
-      const sub_items = access_dir_sub_items_by_path(path);
-      let explorer_structure = [];
-      let explorer_structure_positions = [];
-      let next_position_y = position_y;
-      let next_position_x = position_x;
-
-      explorer_structure.push(
-        <ExplorerItemFolderFilter
-          key={path}
-          file_path={path}
-          position_y={next_position_y}
-          position_x={position_x}
-        />
-      );
-      next_position_y += default_explorer_item_height;
-      next_position_x += default_x_axis_offset;
-
-      if (sub_items && access_dir_expand_status_by_path(path)) {
-        for (let index = 0; index < sub_items.length; index++) {
-          const type = access_dir_type_by_path(sub_items[index]);
-          if (type === "folder") {
-            const updated_structure = await render_explorer_structure(
-              sub_items[index],
-              next_position_y,
-              next_position_x
-            );
-            const sub_explorer_structure = updated_structure.explorer_structure;
-            const sub_explorer_structure_positions =
-              updated_structure.explorer_structure_positions;
-            explorer_structure = explorer_structure.concat(
-              sub_explorer_structure
-            );
-            explorer_structure_positions = explorer_structure_positions.concat(
-              sub_explorer_structure_positions
-            );
-            next_position_y +=
-              default_explorer_item_height * sub_explorer_structure.length;
-          } else {
-            explorer_structure.push(
-              <ExplorerItemFileFilter
-                key={sub_items[index]}
-                file_path={sub_items[index]}
-                position_y={next_position_y}
-                position_x={next_position_x}
-              />
-            );
-            explorer_structure_positions.push({
-              file_path: sub_items[index],
-              position_y: next_position_y,
-              position_x: next_position_x,
-              height: default_explorer_item_height,
-            });
-            next_position_y += default_explorer_item_height;
-          }
-        }
-      }
-      explorer_structure_positions.push({
-        file_path: path,
-        position_y: position_y,
-        position_x: position_x,
-        height: next_position_y - position_y,
-      });
-      if (path === "root") {
-        explorer_structure.push(
-          <ExplorerEndingIndicator
-            key={"explorer_endingIndicator"}
-            position_y={next_position_y}
-            position_x={position_x}
-          />
-        );
-      }
-      return {
-        explorer_structure: explorer_structure,
-        explorer_structure_positions: explorer_structure_positions,
-      };
-    };
-    update_explorer_list();
-  }, [dir2]);
-  useEffect(() => {
-    const update_on_selected_indicator = () => {
-      const new_on_selected_indicator = [];
-      if (!onSelectedExplorerItems || !explorerItemPositions || !explorerList)
-        return;
-      onSelectedExplorerItems.forEach((item) => {
-        const position = explorerItemPositions.find(
-          (element) => element.file_path === item
-        );
-        if (!position) return;
-        new_on_selected_indicator.push(
-          <ExplorerOnSelectedIndicator
-            key={item}
-            file_path={position.file_path}
-            position_y={position.position_y}
-            position_x={position.position_x}
-            height={position.height}
-          />
-        );
-      });
-      setOnSelectedIndicators(new_on_selected_indicator);
-    };
-    const update_level_indicators = () => {
-      const new_level_indicators = [];
-      if (!explorerItemPositions || !explorerList) return;
-      explorerItemPositions.forEach((item) => {
-        if (!item) return;
-        if (access_dir_type_by_path(item.file_path) === "folder") {
-          const position = item;
-          new_level_indicators.push(
-            <ExplorerLevelIndicatorFilter
-              key={position.file_path}
-              file_path={position.file_path}
-              position_y={position.position_y + default_explorer_item_height}
-              position_x={position.position_x + default_x_axis_offset}
-              height={position.height}
-            />
-          );
-        }
-      });
-      setLevelIndicators(new_level_indicators);
-    };
-    update_on_selected_indicator();
-    update_level_indicators();
-  }, [explorerItemPositions, onSelectedExplorerItems]);
-  useEffect(() => {
-    const calculate_visible_index_range = () => {
-      if (!explorerItemPositions || !explorerList) return;
-      const startIndex = Math.max(
-        parseInt(explorerScrollPosition / default_explorer_item_height) -
-          parseInt(max_render_range / default_explorer_item_height),
-        0
-      );
-      const endIndex =
-        3 * parseInt(max_render_range / default_explorer_item_height) +
-        startIndex;
-
-      setExplorerListVisibleIndexRange({
-        startIndex: startIndex,
-        endIndex: endIndex,
-      });
-    };
-    calculate_visible_index_range();
-  }, [explorerScrollPosition]);
-  useEffect(() => {
-    const update_parent_indicator = () => {
-      if (
-        !onSelectedExplorerItems ||
-        !onHoverExplorerItem ||
-        !explorerItemPositions ||
-        !explorerList
-      ) {
-        setParentIndicator(null);
-        return;
-      }
-      let path = onHoverExplorerItem.split("/");
-      if (access_dir_type_by_path(onHoverExplorerItem) === "file") {
-        path.pop();
-        if (path.length === 1) {
-          path = ["root"];
-        }
-        const position = explorerItemPositions.find(
-          (element) => element.file_path === path.join("/")
-        );
-        if (!position) return;
-        setParentIndicator(
-          <ExplorerParentIndicator
-            position_y={position.position_y}
-            position_x={position.position_x}
-            height={position.height}
-          />
-        );
-      } else {
-        const position = explorerItemPositions.find(
-          (element) => element.file_path === onHoverExplorerItem
-        );
-        if (!position) return;
-        setParentIndicator(
-          <ExplorerParentIndicator
-            position_y={position.position_y}
-            position_x={position.position_x}
-            height={position.height}
-          />
-        );
-      }
-    };
-    update_parent_indicator();
-  }, [explorerItemPositions, onHoverExplorerItem]);
-
-  return (
-    <div
-      className="scrollable-element"
-      ref={explorerListRef}
-      draggable={true}
-      onDragStart={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-      }}
-      onMouseUp={() => {
-        setOnSelectedExplorerItems([]);
-      }}
-      onMouseLeave={() => {
-        setOnHoverExplorerItem(null);
-      }}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        load_explorer_context_menu(e, "explorer", "root");
-      }}
-      style={{
-        /* Position ===================== */
-        position: "absolute",
-        top: padding.top,
-        right: padding.right,
-        bottom: padding.bottom,
-        left: padding.left,
-
-        /* Size ======================== */
-        width: "calc(100% - " + (padding.left + padding.right) + "px)",
-        height: "calc(100% - " + (padding.top + padding.bottom) + "px",
-
-        /* Style ======================= */
-        boxSizing: "border-box",
-        overflowX: "hidden",
-      }}
-    >
-      {explorerList
-        .slice(
-          explorerListVisibleIndexRange.startIndex,
-          explorerListVisibleIndexRange.endIndex
-        )
-        .map((item) => {
-          return item;
-        })}
-      {ParentIndicator}
-      {levelIndicators.map((item) => {
-        return item;
-      })}
-      {onSelectedIndicators.map((item) => {
-        return item;
-      })}
-    </div>
-  );
-};
-
 const SurfaceExplorer = ({
   id,
   width,
@@ -1261,6 +1307,7 @@ const SurfaceExplorer = ({
   item_on_drag,
   item_on_drop,
 }) => {
+  const { isDirLoaded } = useContext(RootDataContexts);
   const explorerListRef = useRef(null);
   const [explorerListWidth, setExplorerListWidth] = useState(0);
   const [explorerListTop, setExplorerListTop] = useState(0);
@@ -1270,6 +1317,7 @@ const SurfaceExplorer = ({
 
   const check_is_explorer_item_selected = useCallback(
     (file_path) => {
+      if (!onSelectedExplorerItems) return false;
       if (onSelectedExplorerItems.includes(file_path)) {
         return true;
       } else {
@@ -1285,6 +1333,7 @@ const SurfaceExplorer = ({
         setExplorerListTop(explorerListRef.current.getBoundingClientRect().top);
       }
     };
+    if (!explorerListRef.current) return;
     explorerListRef.current.addEventListener(
       "scroll",
       update_explorer_scroll_position
@@ -1322,7 +1371,11 @@ const SurfaceExplorer = ({
       }}
     >
       <ContextMenuWrapper>
-        <ExplorerList />
+        {isDirLoaded ? (
+          <ExplorerList />
+        ) : (
+          <ExplorerLoadingIndicator width={width} />
+        )}
       </ContextMenuWrapper>
     </SurfaceExplorerContexts.Provider>
   );

@@ -180,6 +180,7 @@ const CustomizedTag = ({
             height: 16,
 
             borderRadius: 2,
+            load: "lazy",
           }}
         />
       ) : null}

@@ -565,315 +565,6 @@ const FAKE_STORAGE = {
 
 const RootDataManager = ({ children }) => {
   //console.log("RDM", new Date().getTime());
-  /* { DIR } =========================================================================================================================== */
-  const [dir, setDir] = useState(DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA);
-  const [isDirLoaded, setIsDirLoaded] = useState(true);
-  useEffect(() => {
-    setIsDirLoaded(true);
-  }, [dir.filePath]);
-  useEffect(() => {
-    window.electron.receive("directory-data", (data) => {
-      setDir(data);
-    });
-  }, []);
-  const update_path_under_dir = useCallback(
-    (path, data) => {
-      setDir((prevData) => {
-        const updateNestedFiles = (currentData, pathArray, currentIndex) => {
-          if (currentIndex === pathArray.length - 1) {
-            return data;
-          }
-          const files = currentData.files ? [...currentData.files] : [];
-          const nextIndex = files.findIndex(
-            (file) => file.fileName === pathArray[currentIndex + 1]
-          );
-          if (nextIndex !== -1) {
-            files[nextIndex] = updateNestedFiles(
-              files[nextIndex],
-              pathArray,
-              currentIndex + 1
-            );
-          }
-          if (currentIndex === pathArray.length - 2) {
-            files.sort((a, b) => {
-              if (a.fileType === b.fileType) {
-                return a.fileName.localeCompare(b.fileName);
-              }
-              return a.fileType === "folder" ? -1 : 1;
-            });
-          }
-
-          return { ...currentData, files };
-        };
-
-        const pathArray = path.split("/");
-        const updatedData = updateNestedFiles(prevData, pathArray, 0);
-
-        return updatedData;
-      });
-    },
-    [dir]
-  );
-  const remove_path_under_dir = useCallback(
-    (path) => {
-      setDir((prevData) => {
-        const pathArray = path.split("/");
-        const removeItemRecursively = (data, index = 0) => {
-          if (index === pathArray.length - 2) {
-            const filteredFiles = data.files.filter(
-              (item) => item.fileName !== pathArray[pathArray.length - 1]
-            );
-            return { ...data, files: filteredFiles };
-          }
-          const nextIndex = data.files.findIndex(
-            (item) => item.fileName === pathArray[index]
-          );
-          if (nextIndex === -1) {
-            return data;
-          }
-
-          const updatedFiles = [...data.files];
-          updatedFiles[nextIndex] = removeItemRecursively(
-            updatedFiles[nextIndex],
-            index + 1
-          );
-
-          return { ...data, files: updatedFiles };
-        };
-
-        return removeItemRecursively(prevData);
-      });
-    },
-    [dir]
-  );
-  const rename_file_under_dir = useCallback(
-    (original_path, new_name) => {
-      const renameAllSubFiles = (file, pathIndex, new_name) => {
-        for (let i = 0; i < file.files.length; i++) {
-          const path = file.files[i].filePath.split("/");
-          path[pathIndex] = new_name;
-          file.files[i].filePath = path.join("/");
-
-          renameAllSubFiles(file.files[i], pathIndex, new_name);
-        }
-      };
-      let target_file = access_file_subfiles_by_path(original_path);
-
-      target_file.fileName = new_name;
-      let Path = target_file.filePath.split("/");
-      Path[Path.length - 1] = new_name;
-      target_file.filePath = Path.join("/");
-
-      renameAllSubFiles(target_file, Path.length - 1, new_name);
-
-      update_path_under_dir(original_path, target_file);
-    },
-    [dir]
-  );
-  const check_is_file_name_exist_under_path = useCallback(
-    (path, pending_file_name) => {
-      const pathArray = path.split("/");
-      let currentData = dir;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pending_file_name) {
-              return true;
-            }
-          }
-          return false;
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
-        }
-      }
-    },
-    [dir]
-  );
-  const access_file_subfiles_by_path = useCallback(
-    (path) => {
-      const pathArray = path.split("/");
-      let currentData = dir;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          return currentData;
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
-        }
-      }
-    },
-    [dir]
-  );
-  const access_file_name_by_path_in_dir = useCallback(
-    (path) => {
-      const pathArray = path.split("/");
-      let currentData = dir;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          return currentData.fileName;
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
-        }
-      }
-    },
-    [dir]
-  );
-  const access_file_type_by_path = useCallback(
-    (path) => {
-      const pathArray = path.split("/");
-      let currentData = dir;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          return currentData.fileType;
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
-        }
-      }
-    },
-    [dir]
-  );
-  const access_file_absolute_path_by_path = useCallback(
-    (path) => {
-      const pathArray = path.split("/");
-      let currentData = dir;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          if (currentData.fileAbsolutePath) {
-            return currentData.fileAbsolutePath;
-          } else {
-            return currentData.filePath;
-          }
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
-        }
-      }
-    },
-    [dir]
-  );
-  const access_folder_expand_status_by_path = useCallback(
-    (path) => {
-      const pathArray = path.split("/");
-      let currentData = dir;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          return currentData.fileExpend;
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
-        }
-      }
-    },
-    [dir]
-  );
-  const update_folder_expand_status_by_path = useCallback(
-    (path, expend) => {
-      setDir((prevData) => {
-        const updateNestedFiles = (data, pathArray, currentIndex) => {
-          if (currentIndex === pathArray.length - 1) {
-            return { ...data, fileExpend: expend };
-          }
-          const nextIndex = currentIndex + 1;
-          const updatedFiles = data.files.map((file) => {
-            if (file.fileName === pathArray[nextIndex]) {
-              return updateNestedFiles(file, pathArray, nextIndex);
-            }
-            return file;
-          });
-          return { ...data, files: updatedFiles };
-        };
-        const pathArray = path.split("/");
-        return updateNestedFiles(prevData, pathArray, 0);
-      });
-    },
-    [dir]
-  );
-  const access_subfiles_by_path = useCallback(
-    (path) => {
-      const pathArray = path.split("/");
-      let currentData = dir;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          return currentData.files;
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
-        }
-      }
-    },
-    [dir]
-  );
-  const access_subfile_length_recusively_by_path = useCallback(
-    (path) => {
-      const count_provided_file_subfile_length = (data) => {
-        let count = 0;
-        for (let i = 0; i < data.files.length; i++) {
-          if (data.files[i].fileType === "folder" && data.files[i].fileExpend) {
-            count += count_provided_file_subfile_length(data.files[i]) + 1;
-          } else {
-            count++;
-          }
-        }
-        return count;
-      };
-      const pathArray = path.split("/");
-      let currentData = dir;
-      for (let i = 0; i < pathArray.length; i++) {
-        if (i === pathArray.length - 1) {
-          return count_provided_file_subfile_length(currentData);
-        } else {
-          currentData = currentData.files;
-          for (let j = 0; j < currentData.length; j++) {
-            if (currentData[j].fileName === pathArray[i + 1]) {
-              currentData = currentData[j];
-              break;
-            }
-          }
-        }
-      }
-    },
-    [dir]
-  );
-  /* { DIR } =========================================================================================================================== */
 
   /* { FILE } ========================================================================================================================== */
   const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
@@ -945,84 +636,82 @@ const RootDataManager = ({ children }) => {
   /* { FILE } ========================================================================================================================== */
 
   /* { DIR } =========================================================================================================================== */
-  const [dir2, setDir2] = useState(DIRs);
-  const [isDirLoaded2, setIsDirLoaded2] = useState(true);
-  useEffect(() => {
-    setIsDirLoaded2(true);
-  }, [dir.filePath]);
+  const [dir, setDir] = useState(DIRs);
+  const [isDirLoaded, setIsDirLoaded] = useState(true);
   useEffect(() => {
     window.electron.receive("directory-data", (data) => {
-      setDir2(data);
+      setDir(data);
+      setIsDirLoaded(true);
     });
   }, []);
   const access_dir_name_by_path = useCallback(
     (path) => {
-      const currentItem = dir2[path];
+      const currentItem = dir[path];
       if (currentItem) {
         return currentItem.file_name;
       } else {
         return path.split("/")[path.split("/").length - 1];
       }
     },
-    [dir2]
+    [dir]
   );
   const access_dir_type_by_path = useCallback(
     (path) => {
-      const currentItem = dir2[path];
+      const currentItem = dir[path];
       if (currentItem) {
         return currentItem.file_type;
       } else {
         return "UNKNOWN TYPE";
       }
     },
-    [dir2]
+    [dir]
   );
   const access_dir_absolute_path_by_path = useCallback(
     (path) => {
-      const currentItem = dir2[path];
+      const currentItem = dir[path];
       if (currentItem && currentItem.file_absolute_path) {
         return currentItem.file_absolute_path;
       } else {
         return path;
       }
     },
-    [dir2]
+    [dir]
   );
   const access_dir_expand_status_by_path = useCallback(
     (path) => {
-      const currentItem = dir2[path];
+      const currentItem = dir[path];
       if (currentItem) {
         return currentItem.file_expand;
       } else {
         return false;
       }
     },
-    [dir2]
+    [dir]
   );
   const update_dir_expand_status_by_path = useCallback(
     (path, expand) => {
-      setDir2((prevData) => {
+      setDir((prevData) => {
         let newDir = { ...prevData };
         newDir[path] = { ...newDir[path], file_expand: expand };
         return newDir;
       });
     },
-    [dir2]
+    [dir]
   );
   const access_dir_sub_items_by_path = useCallback(
     (path) => {
-      const currentItem = dir2[path];
+      const currentItem = dir[path];
       if (currentItem) {
         return currentItem.sub_items;
       } else {
         return [];
       }
     },
-    [dir2]
+    [dir]
   );
   const order_sub_items = useCallback(
     (path) => {
-      let newDir = { ...dir2 };
+      let newDir = { ...dir };
       let sub_items = newDir[path].sub_items;
       sub_items.sort((a, b) => {
         if (newDir[a].file_type === newDir[b].file_type) {
@@ -1032,9 +721,9 @@ const RootDataManager = ({ children }) => {
         }
       });
       newDir[path].sub_items = sub_items;
-      setDir2(newDir);
+      setDir(newDir);
     },
-    [dir2]
+    [dir]
   );
   const delete_file_by_path = useCallback(
     (path) => {
@@ -1045,7 +734,7 @@ const RootDataManager = ({ children }) => {
       }
       parentPath = parentPath.join("/");
 
-      let newDir = { ...dir2 };
+      let newDir = { ...dir };
       const new_parent_sub_items = newDir[parentPath].sub_items.filter(
         (item) => item !== path
       );
@@ -1055,13 +744,13 @@ const RootDataManager = ({ children }) => {
           delete newDir[key];
         }
       }
-      setDir2(newDir);
+      setDir(newDir);
     },
-    [dir2]
+    [dir]
   );
   const check_if_file_name_duplicate = useCallback(
     (parent_path, new_name) => {
-      const parent_sub_items = dir2[parent_path].sub_items;
+      const parent_sub_items = dir[parent_path].sub_items;
       for (let i = 0; i < parent_sub_items.length; i++) {
         if (parent_sub_items[i].split("/").pop() === new_name) {
           return true;
@@ -1069,12 +758,12 @@ const RootDataManager = ({ children }) => {
       }
       return false;
     },
-    [dir2]
+    [dir]
   );
   const generate_on_copy_file = useCallback(
     (on_copy_path) => {
       const recursive_get_all_subitems = (path) => {
-        const currentItem = dir2[path];
+        const currentItem = dir[path];
         if (currentItem.file_type === "file") {
           return [path];
         } else {
@@ -1095,10 +784,10 @@ const RootDataManager = ({ children }) => {
       const all_subitems = recursive_get_all_subitems(on_copy_path);
       for (let i = 0; i < all_subitems.length; i++) {
         const path = all_subitems[i];
-        const currentItem = dir2[path];
+        const currentItem = dir[path];
         const new_path = path.replace(to_remove_path, "");
         let sub_items = [];
-        if (dir2[path].file_type === "folder") {
+        if (dir[path].file_type === "folder") {
           sub_items = currentItem.sub_items.map((item) => {
             return item.replace(to_remove_path, "");
           });
@@ -1116,11 +805,11 @@ const RootDataManager = ({ children }) => {
       };
       return new_dir;
     },
-    [dir2]
+    [dir]
   );
   const paste_on_copy_dir = useCallback(
     (on_copy_dir, under_path) => {
-      let newDir = { ...dir2 };
+      let newDir = { ...dir };
       for (let key in on_copy_dir) {
         if (key === "root") continue;
         let new_path = under_path + key;
@@ -1148,9 +837,9 @@ const RootDataManager = ({ children }) => {
       });
       newDir[under_path].sub_items = new_sub_items;
 
-      setDir2(newDir);
+      setDir(newDir);
     },
-    [dir2]
+    [dir]
   );
   const rename_file_by_path = useCallback(
     (path, new_name) => {
@@ -1193,7 +882,7 @@ const RootDataManager = ({ children }) => {
       new_path.push(new_name);
       new_path = new_path.join("/");
 
-      let newDir = { ...dir2 };
+      let newDir = { ...dir };
       newDir = recursive_replace_path(newDir, path, new_path);
       newDir[parent_path].sub_items = newDir[parent_path].sub_items.map(
         (item) => {
@@ -1207,13 +896,13 @@ const RootDataManager = ({ children }) => {
           return newDir[a].file_type === "folder" ? -1 : 1;
         }
       });
-      setDir2(newDir);
+      setDir(newDir);
     },
-    [dir2]
+    [dir]
   );
   const create_file_by_path = useCallback(
     (path, file_name, file_type) => {
-      let newDir = { ...dir2 };
+      let newDir = { ...dir };
       let new_path = path + "/" + file_name;
 
       newDir[new_path] = {
@@ -1232,11 +921,10 @@ const RootDataManager = ({ children }) => {
           return newDir[a].file_type === "folder" ? -1 : 1;
         }
       });
-      setDir2(newDir);
+      setDir(newDir);
     },
-    [dir2]
+    [dir]
   );
-
   /* { DIR } =========================================================================================================================== */
 
   /* { STORAGE } ======================================================================================================================= */
@@ -1296,25 +984,9 @@ const RootDataManager = ({ children }) => {
     <RootDataContexts.Provider
       value={{
         dir,
+        setDir,
         isDirLoaded,
         setIsDirLoaded,
-        update_path_under_dir,
-        remove_path_under_dir,
-        rename_file_under_dir,
-        check_is_file_name_exist_under_path,
-        access_file_subfiles_by_path,
-        access_file_name_by_path_in_dir,
-        access_file_type_by_path,
-        access_file_absolute_path_by_path,
-        access_folder_expand_status_by_path,
-        update_folder_expand_status_by_path,
-        access_subfiles_by_path,
-        access_subfile_length_recusively_by_path,
-
-        dir2,
-        setDir2,
-        isDirLoaded2,
-        setIsDirLoaded2,
         access_dir_name_by_path,
         access_dir_type_by_path,
         access_dir_absolute_path_by_path,
