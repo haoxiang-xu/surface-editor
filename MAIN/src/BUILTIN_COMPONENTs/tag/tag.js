@@ -235,7 +235,10 @@ const CustomizedTag = ({
             position: "absolute",
             top: "50%",
             left: tagStyle.left,
-            right: tagStyle.right,
+            width:
+              tagStyle.width -
+              3 * (style.padding_x || default_tag_padding_x) -
+              (icon ? 16 : 0),
             transform: tagStyle.transform,
 
             /* { Font Styling } ---------------------- */
@@ -322,6 +325,11 @@ const FileTag = ({ config }) => {
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon =
         FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON16;
+      if (processed_config.icon !== undefined) {
+        processed_config.style.maxWidth = config.style.maxWidth - 12;
+      } else {
+        processed_config.style.maxWidth = config.style.maxWidth - 2;
+      }
     }
     processed_config.style.pointerEvents = "none";
     return processed_config;
@@ -357,6 +365,7 @@ const FolderTag = ({ config }) => {
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON16;
     }
+    processed_config.style.maxWidth = config.style.maxWidth - 12;
     processed_config.style.icon_transform = config.style.isExpanded
       ? "rotate(90deg)"
       : "rotate(0deg)";

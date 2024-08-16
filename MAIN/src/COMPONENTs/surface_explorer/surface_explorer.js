@@ -302,7 +302,9 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const [onRenameMode, setOnRenameMode] = useState(false);
   const handle_rename_on_sumbit = (change_or_not) => {
     if (change_or_not) {
-      rename_file_by_path(onConextMenuPath, renameValue);
+      if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
+        rename_file_by_path(onConextMenuPath, renameValue);
+      }
     } else {
       setRenameValue(access_dir_name_by_path(onConextMenuPath));
     }
@@ -356,7 +358,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           position_x -
           2 * default_indicator_padding -
           2 * default_border_width -
-          24
+          12
       ) {
         setFullSizeMode(onPause);
       } else {
@@ -466,7 +468,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
             maxWidth:
               explorerListWidth -
               position_x -
-              8 * default_indicator_padding -
+              2 * default_indicator_padding -
               2 * default_border_width,
             fullSizeMode: fullSizeMode,
             transparentMode: true,
@@ -538,8 +540,14 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     access_dir_name_by_path(file_path)
   );
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = () => {
-    rename_file_by_path(onConextMenuPath, renameValue);
+  const handle_rename_on_sumbit = (change_or_not) => {
+    if (change_or_not) {
+      if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
+        rename_file_by_path(onConextMenuPath, renameValue);
+      }
+    } else {
+      setRenameValue(access_dir_name_by_path(onConextMenuPath));
+    }
     setCommand([]);
     setOnConextMenuPath(null);
   };
@@ -584,7 +592,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           position_x -
           2 * default_indicator_padding -
           2 * default_border_width -
-          24
+          12
       ) {
         setFullSizeMode(onPause);
       } else {
@@ -692,7 +700,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
             maxWidth:
               explorerListWidth -
               position_x -
-              8 * default_indicator_padding -
+              2 * default_indicator_padding -
               2 * default_border_width,
             fullSizeMode: fullSizeMode,
             transparentMode: true,
