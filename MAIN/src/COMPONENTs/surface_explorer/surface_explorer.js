@@ -726,7 +726,6 @@ const ExplorerList = () => {
     startIndex: -1,
     endIndex: -1,
   });
-  const [visibleIndexes, setVisibleIndexes] = useState([]);
 
   const [levelIndicators, setLevelIndicators] = useState([]);
   const [onSelectedIndicators, setOnSelectedIndicators] = useState([]);
@@ -1418,7 +1417,7 @@ const SurfaceExplorer = ({
       setExplorerListWidth(explorerListRef.current.offsetWidth);
       setExplorerListTop(explorerListRef.current.getBoundingClientRect().top);
     }
-  }, []);
+  }, [isDirLoaded]);
   useEffect(() => {
     if (explorerListRef.current) {
       setExplorerListWidth(explorerListRef.current.offsetWidth);
