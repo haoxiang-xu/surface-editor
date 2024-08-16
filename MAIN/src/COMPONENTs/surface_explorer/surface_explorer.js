@@ -139,7 +139,7 @@ const ExplorerParentIndicator = ({ position_y, position_x, height }) => {
   return (
     <div
       style={{
-        transition: "all 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+        transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: position_y - default_indicator_padding,
 
@@ -243,7 +243,9 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     setIsExpanded(access_dir_expand_status_by_path(file_path));
   }, [dir2]);
   const [fullSizeMode, setFullSizeMode] = useState(false);
+  const [onPause, setOnPause] = useState(false);
   const [onHover, setOnHover] = useState(false);
+  const hoverTimeout = useRef(null);
 
   const [renameValue, setRenameValue] = useState(
     access_dir_name_by_path(file_path)
@@ -302,12 +304,12 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           8 * default_indicator_padding -
           2 * default_border_width
       ) {
-        setFullSizeMode(onHover);
+        setFullSizeMode(onPause);
       } else {
         setFullSizeMode(false);
       }
     }
-  }, [explorerListWidth, onHover]);
+  }, [explorerListWidth, onPause]);
 
   return (
     <div
@@ -327,13 +329,21 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         /* Style ======================= */
         borderRadius: 4,
         backgroundColor: style.backgroundColor,
-        boxShadow: onHover ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
+        boxShadow: onPause ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
       }}
       onMouseEnter={() => {
         setOnHover(true);
+        hoverTimeout.current = setTimeout(() => {
+          setOnPause(true);
+        }, 200);
       }}
       onMouseLeave={() => {
         setOnHover(false);
+        clearTimeout(hoverTimeout.current);
+        if (hoverTimeout.current) {
+          setOnPause(false);
+        }
+        hoverTimeout.current = null;
       }}
       onMouseDown={() => {}}
       onMouseUp={(e) => {
@@ -431,6 +441,8 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   });
   const [fullSizeMode, setFullSizeMode] = useState(false);
   const [onHover, setOnHover] = useState(false);
+  const [onPause, setOnPause] = useState(false);
+  const hoverTimeout = useRef(null);
 
   const [renameValue, setRenameValue] = useState(
     access_dir_name_by_path(file_path)
@@ -483,12 +495,12 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           8 * default_indicator_padding -
           2 * default_border_width
       ) {
-        setFullSizeMode(onHover);
+        setFullSizeMode(onPause);
       } else {
         setFullSizeMode(false);
       }
     }
-  }, [explorerListWidth, onHover]);
+  }, [explorerListWidth, onPause]);
 
   return (
     <div
@@ -508,13 +520,21 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         /* Style ======================= */
         borderRadius: 4,
         backgroundColor: style.backgroundColor,
-        boxShadow: onHover ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
+        boxShadow: onPause ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
       }}
       onMouseEnter={() => {
         setOnHover(true);
+        hoverTimeout.current = setTimeout(() => {
+          setOnPause(true);
+        }, 200);
       }}
       onMouseLeave={() => {
         setOnHover(false);
+        clearTimeout(hoverTimeout.current);
+        if (hoverTimeout.current) {
+          setOnPause(false);
+        }
+        hoverTimeout.current = null;
       }}
       onMouseDown={() => {}}
       onMouseUp={(e) => {
@@ -579,6 +599,28 @@ const ContextMenuWrapper = ({ children }) => {
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
 
+  const default_explorer_context_menu = {
+    root: {
+      type: "root",
+      sub_items: ["openFolder", "openFile"],
+    },
+    openFolder: {
+      type: "button",
+      id: "openFolder",
+      clickable: true,
+      label: "open folder...",
+      icon: SYSTEM_ICON_MANAGER.uploadFolder.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.uploadFolder.ICON16,
+    },
+    openFile: {
+      type: "button",
+      id: "openFile",
+      clickable: true,
+      label: "open file...",
+      icon: SYSTEM_ICON_MANAGER.uploadFile.ICON512,
+      quick_view_background: SYSTEM_ICON_MANAGER.uploadFile.ICON16,
+    },
+  };
   const default_root_context_menu = {
     root: {
       type: "root",
@@ -852,6 +894,10 @@ const ContextMenuWrapper = ({ children }) => {
         }
         return contextStructure;
       }
+      case "explorer": {
+        contextStructure = { ...default_explorer_context_menu };
+        return contextStructure;
+      }
       default:
         return null;
     }
@@ -900,6 +946,9 @@ const ExplorerList = () => {
     onHoverExplorerItem,
     setOnHoverExplorerItem,
   } = useContext(SurfaceExplorerContexts);
+  const { load_explorer_context_menu } = useContext(
+    SurfaceExplorerContextMenuContexts
+  );
   const [explorerList, setExplorerList] = useState([]);
   const [explorerItemPositions, setExplorerItemPositions] = useState([]);
   const [explorerListVisibleIndexRange, setExplorerListVisibleIndexRange] =
@@ -1159,6 +1208,11 @@ const ExplorerList = () => {
       onMouseLeave={() => {
         setOnHoverExplorerItem(null);
       }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        load_explorer_context_menu(e, "explorer", "root");
+      }}
       style={{
         /* Position ===================== */
         position: "absolute",
@@ -1181,7 +1235,6 @@ const ExplorerList = () => {
           explorerListVisibleIndexRange.startIndex,
           explorerListVisibleIndexRange.endIndex
         )
-        .reverse()
         .map((item) => {
           return item;
         })}
@@ -1214,6 +1267,7 @@ const SurfaceExplorer = ({
   const [explorerScrollPosition, setExplorerScrollPosition] = useState(0);
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
   const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
+
   const check_is_explorer_item_selected = useCallback(
     (file_path) => {
       if (onSelectedExplorerItems.includes(file_path)) {

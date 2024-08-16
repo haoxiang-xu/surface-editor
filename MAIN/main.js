@@ -205,7 +205,7 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
       file_type: "folder",
       file_path: file_path,
       absolute_path: dirPath,
-      file_expand: true,
+      file_expand: false,
       sub_items: [],
     };
     for (const dirent of dirents) {
