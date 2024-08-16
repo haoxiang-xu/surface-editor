@@ -54,7 +54,25 @@ const GhostImage = ({ onDragItem }) => {
                 ),
                 style: {
                   borderRadius: 6,
-                  fontSize: 12,
+                  padding_x: 5,
+                  padding_y: 4,
+                },
+              }}
+            />
+          );
+        case "folder":
+          return (
+            <Tag
+              config={{
+                reference: tagRef,
+                type: "file",
+                label: access_file_name_by_path_in_file(
+                  onDragItem.content.path
+                ),
+                style: {
+                  borderRadius: 6,
+                  padding_x: 5,
+                  padding_y: 4,
                 },
               }}
             />

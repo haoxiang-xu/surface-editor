@@ -3,9 +3,13 @@ const STACK_COMPONENT_CONFIG = {
     type: "monaco_editor",
     path: "monaco_editor/monaco_editor",
   },
+  explorer: {
+    type: "explorer",
+    path: "explorer/explorer",
+  },
   surface_explorer: {
     type: "surface_explorer",
-    path: "explorer/explorer",
+    path: "surface_explorer/surface_explorer",
   },
   horizontal_stack_resizer: {
     type: "horizontal_stack_resizer",
