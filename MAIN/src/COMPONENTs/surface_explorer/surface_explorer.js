@@ -1046,6 +1046,7 @@ const ContextMenuWrapper = ({ children }) => {
   } = useContext(SurfaceExplorerContexts);
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
+  const tagRef = useRef(null);
   const [clickablePaste, setClickablePaste] = useState({
     type: "button",
     id: "paste",
@@ -1060,6 +1061,7 @@ const ContextMenuWrapper = ({ children }) => {
       const root_file_path = onCopyFile.root.file_path;
       const target_file_name = onCopyFile[root_file_path].file_name;
       setClickablePaste({
+        reference: tagRef,
         type: "button",
         id: "paste",
         clickable: true,
@@ -1068,6 +1070,7 @@ const ContextMenuWrapper = ({ children }) => {
           type: "file",
           label: target_file_name,
           style: {
+            fontSize: default_font_size - 1,
             right: 6,
             top: "50%",
             borderRadius: 4,

@@ -1,4 +1,10 @@
-import React, { useState, useContext, useEffect, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 
 import { default_clickable_panel_styling } from "../../DATA_MANAGERs/root_styling_manager/root_styling_default_consts";
 import {
@@ -49,7 +55,6 @@ const ContextItemButton = ({
     progress_context_menu_item,
   } = useContext(ContextMenuContexts);
 
-  const tagRef = useRef(null);
   const [onHover, setOnHover] = useState(false);
   const [onClicked, setOnClicked] = useState(false);
   const [isIconLoaded, setIsIconLoaded] = useState(false);
@@ -252,24 +257,14 @@ const ContextItemButton = ({
 
       {/* Context Item Customized Tag render ------------------------------------------------ */}
       {contextStructure[unique_tag].customized_tag !== undefined ? (
-        <div
-          style={{
-            position: "absolute",
-            /* { Size } */
-            width: "100%",
-            height: "100%",
-            userSelect: "none",
+        <Tag
+          config={{
+            reference: contextStructure[unique_tag].customized_tag?.reference,
+            type: contextStructure[unique_tag].customized_tag?.type,
+            label: contextStructure[unique_tag].customized_tag?.label,
+            style: contextStructure[unique_tag].customized_tag?.style || {},
           }}
-        >
-          <Tag
-            config={{
-              reference: tagRef,
-              type: contextStructure[unique_tag].customized_tag?.type,
-              label: contextStructure[unique_tag].customized_tag?.label,
-              style: contextStructure[unique_tag].customized_tag?.style || {},
-            }}
-          />
-        </div>
+        />
       ) : null}
       {/* Context Item Customized Tag render ------------------------------------------------ */}
 
@@ -289,7 +284,6 @@ const ContextItemButton = ({
         >
           <Tag
             config={{
-              reference: tagRef,
               type: "shortcut",
               label: contextStructure[unique_tag].short_cut_label,
               style: {
