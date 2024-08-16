@@ -354,8 +354,9 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         tagRef.current.offsetWidth >
         explorerListWidth -
           position_x -
-          8 * default_indicator_padding -
-          2 * default_border_width
+          2 * default_indicator_padding -
+          2 * default_border_width -
+          24
       ) {
         setFullSizeMode(onPause);
       } else {
@@ -581,8 +582,9 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         tagRef.current.offsetWidth >
         explorerListWidth -
           position_x -
-          8 * default_indicator_padding -
-          2 * default_border_width
+          2 * default_indicator_padding -
+          2 * default_border_width -
+          24
       ) {
         setFullSizeMode(onPause);
       } else {
