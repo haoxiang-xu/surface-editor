@@ -9,7 +9,7 @@ import {
 } from "../CONSTs/systemFrameStyling";
 import "./home.css";
 
-const MainWrapper = memo(({}) => {
+const MainWrapper = () => {
   return (
     <RootDataManager>
       <RootCommandManager>
@@ -17,26 +17,26 @@ const MainWrapper = memo(({}) => {
       </RootCommandManager>
     </RootDataManager>
   );
-});
+};
 
 const Home = () => {
   const [isFrameMaximized, setIsFrameMaximized] = useState(false);
-  const [isMenuBarHovered, setIsMenuBarHovered] = useState(false);
+  const [isMenuBarHovered, setIsMenuBarHovered] = useState(true);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    if (cursorPosition.y > 48) {
-      setIsMenuBarHovered(false);
-    }
-    if (cursorPosition.y < 16 && cursorPosition.y > 0) {
-      setIsMenuBarHovered(true);
-    }
-  }, [cursorPosition]);
-  const handleMouseMove = (event) => {
-    setCursorPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-  };
+  // useEffect(() => {
+  //   if (cursorPosition.y > 48) {
+  //     setIsMenuBarHovered(false);
+  //   }
+  //   if (cursorPosition.y < 16 && cursorPosition.y > 0) {
+  //     setIsMenuBarHovered(true);
+  //   }
+  // }, [cursorPosition]);
+  // const handleMouseMove = (event) => {
+  //   setCursorPosition({
+  //     x: event.clientX,
+  //     y: event.clientY,
+  //   });
+  // };
   useEffect(() => {
     window.electronAPI.subscribeToWindowStateChange(({ isMaximized }) => {
       setIsFrameMaximized(isMaximized);
@@ -45,7 +45,7 @@ const Home = () => {
   return (
     <div
       className="main_container0315"
-      onMouseMove={handleMouseMove}
+      //onMouseMove={handleMouseMove}
       style={{
         transition: "border-radius 0.12s, border 0.12s",
         borderRadius: isFrameMaximized ? "0px" : SYSTEM_FRAME_BORDER_RADIUS,

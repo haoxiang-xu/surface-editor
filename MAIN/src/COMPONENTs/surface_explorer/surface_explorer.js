@@ -6,6 +6,10 @@ import React, {
   useContext,
   useMemo,
 } from "react";
+import {
+  useCustomizedState,
+  compareJson,
+} from "../../BUILTIN_COMPONENTs/customized_react/customized_react";
 /* Context ------------------------------------------------------------------------------------------------------------------------ */
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { SurfaceExplorerContexts } from "./surface_explorer_contexts.js";
@@ -1327,6 +1331,8 @@ const ContextMenuWrapper = ({ children }) => {
       switch (command_title) {
         case "copy": {
           setOnCopyFile(generate_on_copy_file(onConextMenuPath));
+          setOnConextMenuPath(null);
+          setCommand([]);
           break;
         }
         case "paste": {
@@ -1338,6 +1344,8 @@ const ContextMenuWrapper = ({ children }) => {
           } else {
             alert("File name already exist");
           }
+          setOnConextMenuPath(null);
+          setCommand([]);
           break;
         }
         case "newFile": {
@@ -1359,7 +1367,7 @@ const ContextMenuWrapper = ({ children }) => {
             target: id,
             content: { command_title: "rename", command_content: {} },
           });
-          return;
+          break;
         }
         case "newFolder": {
           const generate_new_file_name = (path) => {
@@ -1380,22 +1388,25 @@ const ContextMenuWrapper = ({ children }) => {
             target: id,
             content: { command_title: "rename", command_content: {} },
           });
-          return;
+          break;
         }
         case "rename": {
-          return;
+          break;
         }
         case "delete": {
           delete_file_by_path(onConextMenuPath);
+          setOnConextMenuPath(null);
+          setCommand([]);
           break;
         }
         case "openFolder": {
           window.electronAPI.triggerReadDir();
           setIsDirLoaded(false);
+          setOnConextMenuPath(null);
+          setCommand([]);
+          break;
         }
       }
-      setOnConextMenuPath(null);
-      setCommand([]);
     }
   };
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
@@ -1498,14 +1509,22 @@ const SurfaceExplorer = ({
       }
     };
     if (!explorerListRef.current) return;
-    explorerListRef.current.addEventListener(
-      "scroll",
-      update_explorer_scroll_position
-    );
     if (explorerListRef.current) {
       setExplorerListWidth(explorerListRef.current.offsetWidth);
       setExplorerListTop(explorerListRef.current.getBoundingClientRect().top);
     }
+    explorerListRef.current.addEventListener(
+      "scroll",
+      update_explorer_scroll_position
+    );
+    return () => {
+      if (explorerListRef.current) {
+        explorerListRef.current.removeEventListener(
+          "scroll",
+          update_explorer_scroll_position
+        );
+      }
+    };
   }, [isDirLoaded]);
   useEffect(() => {
     if (explorerListRef.current) {

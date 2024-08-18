@@ -1,5 +1,8 @@
 import React, { useState, useContext, useEffect, memo } from "react";
-import { stringify } from "flatted";
+import {
+  useCustomizedState,
+  compareJson,
+} from "../../BUILTIN_COMPONENTs/customized_react/customized_react";
 
 import HorizontalStackTopLeftSection from "./STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
@@ -241,12 +244,10 @@ const HorizontalStackContainer = ({
   /* { Stack Frame Drag and Drop } ---------------------------------------------------------------------------- */
   const {
     onDropIndex,
-    setOnDropIndex,
     onDragIndex,
     onStackItemDragStart,
     onStackItemDragEnd,
     resizerOnMouseDown,
-    setResizerOnMouseDown,
   } = useContext(stackStructureDragAndDropContexts);
   /* { Stack Frame Drag and Drop } ---------------------------------------------------------------------------- */
 
@@ -262,11 +263,9 @@ const HorizontalStackContainer = ({
   /* { mode } ================================================================================================= */
 
   /* { data } ------------------------------------------------------------------------------------------------- */
-  const {
-    access_storage_by_id,
-    update_storage_by_id,
-  } = useContext(RootDataContexts);
-  const [data, setData] = useState(access_storage_by_id(id));
+  const { access_storage_by_id, update_storage_by_id } =
+    useContext(RootDataContexts);
+  const [data, setData] = useCustomizedState(access_storage_by_id(id), compareJson);
   useEffect(() => {
     update_storage_by_id(String(id), data);
   }, [data]);
@@ -275,7 +274,7 @@ const HorizontalStackContainer = ({
   /* { command } ============================================================================================== */
   const { cmd, pop_command_by_id, load_context_menu } =
     useContext(RootCommandContexts);
-  const [command, setCommand] = useState([]);
+  const [command, setCommand] = useCustomizedState([], compareJson);
   useEffect(() => {
     if (cmd[id] && cmd[id].length > 0 && command.length === 0) {
       setCommand(cmd[id][0]);

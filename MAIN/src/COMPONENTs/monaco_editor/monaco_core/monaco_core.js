@@ -305,27 +305,27 @@ const registerInlineCompletionProvider = async (monaco) => {
         endColumn: position.column,
       });
 
-      const continueAPI = async () => {
-        const requestBody = {
-          language: "javascript",
-          propmt: contextText,
-        };
+      // const continueAPI = async () => {
+      //   const requestBody = {
+      //     language: "javascript",
+      //     propmt: contextText,
+      //   };
 
-        try {
-          const response = await axios.post(
-            "http://localhost:8200/openai/continue",
-            requestBody
-          );
-          return response;
-        } catch (e) {
-          console.log(e);
-        }
-      };
+      //   try {
+      //     const response = await axios.post(
+      //       "http://localhost:8200/openai/continue",
+      //       requestBody
+      //     );
+      //     return response;
+      //   } catch (e) {
+      //     console.log(e);
+      //   }
+      // };
 
       return {
         items: [
           {
-            insertText: continueAPI(),
+            insertText: "continueAPI()",
             range: {
               startLineNumber: position.lineNumber,
               startColumn: position.column,
