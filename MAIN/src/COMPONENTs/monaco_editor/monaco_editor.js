@@ -845,7 +845,7 @@ const FileSelectionListItem = ({ reference, file_path, tag_position }) => {
   return (
     <div
       style={{
-        transition: "left 0.16s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+        transition: "left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
         top: "0px",
         left: tag_position + "px",

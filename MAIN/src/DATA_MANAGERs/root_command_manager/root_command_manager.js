@@ -30,6 +30,10 @@ const RootCommandManager = ({ children }) => {
     (id) => {
       let popped_command = null;
 
+      if (!cmd[id] || cmd[id].length === 0) {
+        return popped_command;
+      }
+
       setCmd((prevCommand) => {
         const updatedCommand = { ...prevCommand };
         if (updatedCommand[id] && updatedCommand[id].length > 0) {

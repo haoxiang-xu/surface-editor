@@ -210,16 +210,6 @@ const HorizontalStackResizer = ({
   );
 };
 
-const is_stack_frame_rerender_required = (prevProps, nextProps) => {
-  return (
-    prevProps.mode === nextProps.mode &&
-    stringify(prevProps.command) === stringify(nextProps.command) &&
-    stringify(prevProps.data) === stringify(nextProps.data)
-  );
-};
-const StackContainerWrapper = memo(({ children, mode, command, data }) => {
-  return children;
-}, is_stack_frame_rerender_required);
 const HorizontalStackContainer = ({
   index,
   id,
@@ -273,10 +263,8 @@ const HorizontalStackContainer = ({
 
   /* { data } ------------------------------------------------------------------------------------------------- */
   const {
-    storage,
     access_storage_by_id,
     update_storage_by_id,
-    delete_storage_by_id,
   } = useContext(RootDataContexts);
   const [data, setData] = useState(access_storage_by_id(id));
   useEffect(() => {
