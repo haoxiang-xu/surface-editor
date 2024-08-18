@@ -683,7 +683,10 @@ const RootDataManager = ({ children }) => {
   );
   const check_if_file_name_duplicate = useCallback(
     (parent_path, new_name) => {
-      const parent_sub_items = dir[parent_path].sub_items;
+      const parent_sub_items = dir[parent_path]?.sub_items;
+      if (!parent_sub_items) {
+        return true;
+      }
       for (let i = 0; i < parent_sub_items.length; i++) {
         if (parent_sub_items[i].split("/").pop() === new_name) {
           return true;

@@ -304,9 +304,14 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const handle_rename_on_sumbit = (change_or_not) => {
     if (change_or_not) {
       if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
-        const parent_path = onConextMenuPath.split("/").slice(0, -1).join("/");
+        let parent_path = onConextMenuPath.split("/").slice(0, -1);
+        if (parent_path.length === 1) {
+          parent_path = "root";
+        } else {
+          parent_path = parent_path.join("/");
+        }
         if (check_if_file_name_duplicate(parent_path, renameValue)) {
-          console.log("Duplicate Name Detected");
+          alert("Duplicate Name Detected");
         } else {
           rename_file_by_path(onConextMenuPath, renameValue);
         }
@@ -513,8 +518,11 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     setDragCommand,
   } = useContext(globalDragAndDropContexts);
 
-  const { access_dir_name_by_path, rename_file_by_path } =
-    useContext(RootDataContexts);
+  const {
+    access_dir_name_by_path,
+    rename_file_by_path,
+    check_if_file_name_duplicate,
+  } = useContext(RootDataContexts);
   const {
     id,
     command,
@@ -551,7 +559,17 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   const handle_rename_on_sumbit = (change_or_not) => {
     if (change_or_not) {
       if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
-        rename_file_by_path(onConextMenuPath, renameValue);
+        let parent_path = onConextMenuPath.split("/").slice(0, -1);
+        if (parent_path.length === 1) {
+          parent_path = "root";
+        } else {
+          parent_path = parent_path.join("/");
+        }
+        if (check_if_file_name_duplicate(parent_path, renameValue)) {
+          alert("Duplicate Name Detected");
+        } else {
+          rename_file_by_path(onConextMenuPath, renameValue);
+        }
       }
     } else {
       setRenameValue(access_dir_name_by_path(onConextMenuPath));
