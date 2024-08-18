@@ -56,13 +56,6 @@ const CustomizedTag = ({
   const [onHover, setOnHover] = useState(null);
 
   useEffect(() => {
-    if (label === "DATA_MANAGERs" && spanRef.current) {
-      console.log("maxWidth", tagStyle.maxWidth);
-      console.log("width", tagStyle.width);
-    }
-  }, [label, spanRef, tagStyle]);
-
-  useEffect(() => {
     if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
     const spanHeight = spanRef.current.offsetHeight;
@@ -347,10 +340,14 @@ const FileTag = ({ config }) => {
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon =
         FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON16;
-      if (processed_config.icon !== undefined) {
-        processed_config.style.maxWidth = config.style.maxWidth - 12;
+      if (!config.style.noWidthLimitMode) {
+        if (processed_config.icon !== undefined) {
+          processed_config.style.maxWidth = config.style.maxWidth - 12;
+        } else {
+          processed_config.style.maxWidth = config.style.maxWidth - 2;
+        }
       } else {
-        processed_config.style.maxWidth = config.style.maxWidth - 2;
+        processed_config.style.maxWidth = config.style.maxWidth;
       }
     }
     processed_config.style.pointerEvents = "none";
@@ -387,7 +384,11 @@ const FolderTag = ({ config }) => {
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON16;
     }
-    processed_config.style.maxWidth = config.style.maxWidth - 12;
+    if (!config.style.noWidthLimitMode) {
+      processed_config.style.maxWidth = config.style.maxWidth - 12;
+    } else {
+      processed_config.style.maxWidth = config.style.maxWidth;
+    }
     processed_config.style.icon_transform = config.style.isExpanded
       ? "rotate(90deg)"
       : "rotate(0deg)";
@@ -459,6 +460,9 @@ const Tag = ({ config }) => {
       if (processed_config.style.inputMode === undefined) {
         style.inputMode = false;
       }
+      if (processed_config.style.noWidthLimitMode === undefined) {
+        style.noWidthLimitMode = false;
+      }
     } else {
       style = {
         fontSize: default_tag_font_size,
@@ -472,6 +476,7 @@ const Tag = ({ config }) => {
         fullSizeMode: false,
         transparentMode: false,
         inputMode: false,
+        noWidthLimitMode: false,
       };
     }
     return {

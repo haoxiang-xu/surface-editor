@@ -1087,6 +1087,7 @@ const ContextMenuWrapper = ({ children }) => {
               surface_explorer_fixed_styling.backgroundColorB + 16
             }, 0.64)`,
             boxShadow: "none",
+            noWidthLimitMode: true,
           },
         },
         icon: SYSTEM_ICON_MANAGER.paste.ICON512,
