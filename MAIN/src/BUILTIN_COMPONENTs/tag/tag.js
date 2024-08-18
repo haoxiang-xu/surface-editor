@@ -56,6 +56,13 @@ const CustomizedTag = ({
   const [onHover, setOnHover] = useState(null);
 
   useEffect(() => {
+    if (label === "DATA_MANAGERs" && spanRef.current) {
+      console.log("maxWidth", tagStyle.maxWidth);
+      console.log("width", tagStyle.width);
+    }
+  }, [label, spanRef, tagStyle]);
+
+  useEffect(() => {
     if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
     const spanHeight = spanRef.current.offsetHeight;
@@ -96,7 +103,7 @@ const CustomizedTag = ({
         ...prevData,
         width: width,
         height: style.inputMode ? inputHeight : spanHeight + padding_y * 2,
-        
+
         top: style.top,
         left: `calc(0% + ${left}px)`,
         right: style.right,
@@ -407,47 +414,49 @@ const CommandTag = ({ config }) => {
 
 const Tag = ({ config }) => {
   const process_tag_config = (config) => {
-    const reference = config.reference || null;
-    const type = config.type || "default";
-    const label = config.label || "";
-    const label_on_change = config.label_on_change || null;
-    const label_on_submit = config.label_on_submit || null;
-    const icon = config.icon || null;
+    let processed_config = { ...config };
+
+    const reference = processed_config.reference || null;
+    const type = processed_config.type || "default";
+    const label = processed_config.label || "";
+    const label_on_change = processed_config.label_on_change || null;
+    const label_on_submit = processed_config.label_on_submit || null;
+    const icon = processed_config.icon || null;
     let style = {};
 
-    if (config.style) {
-      style = config.style;
-      if (config.style.fontSize === undefined) {
+    if (processed_config.style) {
+      style = processed_config.style;
+      if (processed_config.style.fontSize === undefined) {
         style.fontSize = default_tag_font_size;
       }
-      if (config.style.left === undefined) {
+      if (processed_config.style.left === undefined) {
         style.left = "none";
       }
-      if (config.style.right === undefined) {
+      if (processed_config.style.right === undefined) {
         style.right = "none";
       }
-      if (config.style.top === undefined) {
+      if (processed_config.style.top === undefined) {
         style.top = "none";
       }
-      if (config.style.bottom === undefined) {
+      if (processed_config.style.bottom === undefined) {
         style.bottom = "none";
       }
-      if (config.style.transform === undefined) {
+      if (processed_config.style.transform === undefined) {
         style.transform = "none";
       }
-      if (config.style.borderRadius === undefined) {
+      if (processed_config.style.borderRadius === undefined) {
         style.borderRadius = default_border_radius;
       }
-      if (config.style.maxWidth === undefined) {
+      if (processed_config.style.maxWidth === undefined) {
         style.maxWidth = default_max_tag_width;
       }
-      if (config.style.fullSizeMode === undefined) {
+      if (processed_config.style.fullSizeMode === undefined) {
         style.fullSizeMode = false;
       }
-      if (config.style.transparentMode === undefined) {
+      if (processed_config.style.transparentMode === undefined) {
         style.transparentMode = false;
       }
-      if (config.style.inputMode === undefined) {
+      if (processed_config.style.inputMode === undefined) {
         style.inputMode = false;
       }
     } else {

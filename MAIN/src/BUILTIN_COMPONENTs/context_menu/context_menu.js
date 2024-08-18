@@ -257,14 +257,26 @@ const ContextItemButton = ({
 
       {/* Context Item Customized Tag render ------------------------------------------------ */}
       {contextStructure[unique_tag].customized_tag !== undefined ? (
-        <Tag
-          config={{
-            reference: contextStructure[unique_tag].customized_tag?.reference,
-            type: contextStructure[unique_tag].customized_tag?.type,
-            label: contextStructure[unique_tag].customized_tag?.label,
-            style: contextStructure[unique_tag].customized_tag?.style || {},
+        <div
+          style={{
+            position: "absolute",
+
+            /* { Size } */
+            width: "100%",
+            height: "100%",
+
+            userSelect: "none",
           }}
-        />
+        >
+          <Tag
+            config={{
+              reference: contextStructure[unique_tag].customized_tag?.reference,
+              type: contextStructure[unique_tag].customized_tag?.type,
+              label: contextStructure[unique_tag].customized_tag?.label,
+              style: contextStructure[unique_tag].customized_tag?.style || {},
+            }}
+          />
+        </div>
       ) : null}
       {/* Context Item Customized Tag render ------------------------------------------------ */}
 

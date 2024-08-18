@@ -1061,22 +1061,21 @@ const ContextMenuWrapper = ({ children }) => {
       const root_file_path = onCopyFile.root.file_path;
       const target_file_name = onCopyFile[root_file_path].file_name;
       setClickablePaste({
-        reference: tagRef,
         type: "button",
         id: "paste",
         clickable: true,
         label: "paste",
         customized_tag: {
+          reference: tagRef,
           type: "file",
           label: target_file_name,
           style: {
             fontSize: default_font_size - 1,
-            right: 6,
-            top: "50%",
+            right: 5,
+            top: 0,
             borderRadius: 4,
-            transform: "translate(0%, -50%)",
-            padding_x: 4,
-            padding_y: 0,
+            padding_x: 2,
+            padding_y: 2,
             border: `1px solid rgba(${
               surface_explorer_fixed_styling.backgroundColorR + 32
             }, ${surface_explorer_fixed_styling.backgroundColorG + 32}, ${
