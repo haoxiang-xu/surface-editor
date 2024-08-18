@@ -332,7 +332,7 @@ const FileTag = ({ config }) => {
       processed_config.style.padding_y = 4;
     }
     if (config.style.borderRadius === undefined) {
-      processed_config.style.borderRadius = 4;
+      processed_config.style.borderRadius = 3;
     }
     if (config.style.boxShadow === undefined) {
       processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";

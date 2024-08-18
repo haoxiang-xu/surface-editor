@@ -1045,6 +1045,7 @@ const ContextMenuWrapper = ({ children }) => {
     generate_on_copy_file,
     paste_on_copy_dir,
     create_file_by_path,
+    update_dir_expand_status_by_path,
   } = useContext(RootDataContexts);
   const {
     id,
@@ -1315,6 +1316,7 @@ const ContextMenuWrapper = ({ children }) => {
           const file_name = Object.keys(onCopyFile)[0].split("/")[1];
           if (!check_if_file_name_duplicate(onConextMenuPath, file_name)) {
             paste_on_copy_dir(onCopyFile, onConextMenuPath);
+            update_dir_expand_status_by_path(onConextMenuPath, true);
           } else {
             alert("File name already exist");
           }
