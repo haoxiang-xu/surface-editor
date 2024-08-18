@@ -39,7 +39,7 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
-const default_selecion_list_item_padding = 6;
+const default_selecion_list_item_padding = 12;
 
 const FileSelectionBar = ({
   code_editor_container_ref_index,
@@ -845,6 +845,7 @@ const FileSelectionListItem = ({ reference, file_path, tag_position }) => {
   return (
     <div
       style={{
+        transition: "left 0.16s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
         position: "absolute",
         top: "0px",
         left: tag_position + "px",
@@ -871,6 +872,13 @@ const FileSelectionListContainer = ({}) => {
   const [tagPositions, setTagPositions] = useState([]);
 
   useEffect(() => {
+    tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
+    for (let i = 0; i < monacoPaths.length; i++) {
+      tagRefs.current[i] = React.createRef();
+    }
+  }, [monacoPaths]);
+
+  useEffect(() => {
     const render_tag_positions = () => {
       const tagPositions = [];
       let position_x = 0;
@@ -878,25 +886,25 @@ const FileSelectionListContainer = ({}) => {
       for (let i = 0; i < monacoPaths.length; i++) {
         tagPositions.push(position_x);
         position_x +=
-          tagRefs.current[i].current.offsetWidth +
+          tagRefs.current[i]?.current?.offsetWidth +
           default_selecion_list_item_padding;
       }
       setTagPositions(tagPositions);
     };
     render_tag_positions();
-  }, [width]);
+  }, [width, monacoPaths, tagRefs.current]);
 
   return (
     <div
       style={{
         position: "absolute",
         top: "128px",
-        left: "0px",
+        left: "64px",
+        right: "64px",
 
-        width: width + "px",
         height: "32px",
 
-        border: "1px solid #252525",
+        //border: "1px solid #252525",
       }}
     >
       {monacoPaths.map((filePath, index) => {
@@ -1034,7 +1042,7 @@ const MonacoEditor = ({
             onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
             setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
           />
-          {/* <FileSelectionListContainer /> */}
+          <FileSelectionListContainer />
         </div>
       </MonacoEditorContextMenuWrapper>
     </MonacoEditorContexts.Provider>
