@@ -271,6 +271,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
     setFirstVisibleItem,
+    load_alert,
   } = useContext(SurfaceExplorerContexts);
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
@@ -311,7 +312,8 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           parent_path = parent_path.join("/");
         }
         if (check_if_file_name_duplicate(parent_path, renameValue)) {
-          alert("Duplicate Name Detected");
+          //alert("Duplicate Name Detected");
+          load_alert("Duplicate Name Detected");
         } else {
           rename_file_by_path(onConextMenuPath, renameValue);
         }
@@ -1465,6 +1467,7 @@ const SurfaceExplorer = ({
   command,
   setCommand,
   load_contextMenu,
+  load_alert,
   data,
   setData,
   item_on_drag,
@@ -1520,6 +1523,7 @@ const SurfaceExplorer = ({
         command,
         setCommand,
         load_contextMenu,
+        load_alert,
         item_on_drag,
         item_on_drop,
         explorerListRef,

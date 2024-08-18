@@ -6,6 +6,7 @@ import {
 import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 import GhostImage from "../../BUILTIN_COMPONENTs/ghost_image/ghost_image";
+import Alert from "../../BUILTIN_COMPONENTs/alert/alert";
 
 const RootCommandManager = ({ children }) => {
   //console.log("RDM/RCM", new Date().getTime());
@@ -130,6 +131,24 @@ const RootCommandManager = ({ children }) => {
   }, []);
   /* { Global Key Event Listener } =================================================================== */
 
+  /* { Alert } --------------------------------------------------------------------------------------- */
+  const [alertOnLoad, setAlertOnLoad] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("Error Message");
+
+  const load_alert = (error_message) => {
+    setAlertOnLoad(true);
+    setAlertMessage(error_message);
+  };
+  const unload_alert = () => {
+    setAlertOnLoad(false);
+  };
+
+  useEffect(() => {
+    console.log("alertOnLoad", alertOnLoad);
+    console.log("alertMessage", alertMessage);
+  }, [alertOnLoad]);
+  /* { Alert } --------------------------------------------------------------------------------------- */
+
   return (
     <RootCommandContexts.Provider
       value={{
@@ -158,12 +177,19 @@ const RootCommandManager = ({ children }) => {
         /* { Global Key Event Listener } ------------ */
         pressedKeys,
         /* { Global Key Event Listener } ------------ */
+
+        /* { Alert } ------------------------------- */
+        alertOnLoad,
+        load_alert,
+        unload_alert,
+        /* { Alert } ------------------------------- */
       }}
     >
       <div onClick={unload_context_menu}>
         {children}
         {contextMenuOnLoad ? <ContextMenu /> : null}
         {onDrag ? <GhostImage onDragItem={onDragItem} /> : null}
+        {alertOnLoad ? <Alert error_message={alertMessage} /> : null}
       </div>
     </RootCommandContexts.Provider>
   );

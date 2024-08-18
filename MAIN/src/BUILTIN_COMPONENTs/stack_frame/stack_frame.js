@@ -307,6 +307,10 @@ const HorizontalStackContainer = ({
   const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
   /* { drag and drop } ---------------------------------------------------------------------------------------- */
 
+  /* { alert } ------------------------------------------------------------------------------------------------ */
+  const { alertOnLoad, load_alert } = useContext(RootCommandContexts);
+  /* { alert } ------------------------------------------------------------------------------------------------ */
+
   const onMaximizeOnClick = () => {
     expandContainer(index);
   };
@@ -381,6 +385,7 @@ const HorizontalStackContainer = ({
             code_editor_container_ref_index={
               item.code_editor_container_ref_index
             }
+            load_alert={load_alert}
           />
         ) : null}
         <HorizontalStackTopLeftSection
