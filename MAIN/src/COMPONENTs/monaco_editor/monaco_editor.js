@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext, memo } from "react";
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
+import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
@@ -37,6 +38,8 @@ try {
 }
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
+
+const default_selecion_list_item_padding = 6;
 
 const FileSelectionBar = ({
   code_editor_container_ref_index,
@@ -834,8 +837,86 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     </MonacoEditorContextMenuContexts.Provider>
   );
 };
+
+/* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
+const FileSelectionListItem = ({ reference, file_path, tag_position }) => {
+  const { access_dir_name_by_path } = useContext(RootDataContexts);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "0px",
+        left: tag_position + "px",
+      }}
+    >
+      <Tag
+        config={{
+          reference: reference,
+          type: "file",
+          label: access_dir_name_by_path(file_path),
+          style: {
+            boxShadow: "none",
+          },
+        }}
+      />
+    </div>
+  );
+};
+const FileSelectionListContainer = ({}) => {
+  const { width, monacoPaths, setMonacoPaths } =
+    useContext(MonacoEditorContexts);
+
+  const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
+  const [tagPositions, setTagPositions] = useState([]);
+
+  useEffect(() => {
+    const render_tag_positions = () => {
+      const tagPositions = [];
+      let position_x = 0;
+
+      for (let i = 0; i < monacoPaths.length; i++) {
+        tagPositions.push(position_x);
+        position_x +=
+          tagRefs.current[i].current.offsetWidth +
+          default_selecion_list_item_padding;
+      }
+      setTagPositions(tagPositions);
+    };
+    render_tag_positions();
+  }, [width]);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "128px",
+        left: "0px",
+
+        width: width + "px",
+        height: "32px",
+
+        border: "1px solid #252525",
+      }}
+    >
+      {monacoPaths.map((filePath, index) => {
+        return (
+          <FileSelectionListItem
+            key={filePath}
+            reference={tagRefs.current[index]}
+            file_path={filePath}
+            tag_position={tagPositions[index]}
+          />
+        );
+      })}
+    </div>
+  );
+};
+/* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
+
 const MonacoEditor = ({
   id,
+  width,
   mode,
   code_editor_container_ref_index,
   command,
@@ -907,6 +988,7 @@ const MonacoEditor = ({
     <MonacoEditorContexts.Provider
       value={{
         id,
+        width,
         command,
         setCommand,
         load_contextMenu,
@@ -952,6 +1034,7 @@ const MonacoEditor = ({
             onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
             setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
           />
+          {/* <FileSelectionListContainer /> */}
         </div>
       </MonacoEditorContextMenuWrapper>
     </MonacoEditorContexts.Provider>

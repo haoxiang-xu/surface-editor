@@ -257,6 +257,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     access_dir_expand_status_by_path,
     update_dir_expand_status_by_path,
     rename_file_by_path,
+    check_if_file_name_duplicate,
   } = useContext(RootDataContexts);
   const {
     id,
@@ -302,7 +303,19 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const [onRenameMode, setOnRenameMode] = useState(false);
   const handle_rename_on_sumbit = (change_or_not) => {
     if (change_or_not) {
-      rename_file_by_path(onConextMenuPath, renameValue);
+      if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
+        let parent_path = onConextMenuPath.split("/").slice(0, -1);
+        if (parent_path.length === 1) {
+          parent_path = "root";
+        } else {
+          parent_path = parent_path.join("/");
+        }
+        if (check_if_file_name_duplicate(parent_path, renameValue)) {
+          alert("Duplicate Name Detected");
+        } else {
+          rename_file_by_path(onConextMenuPath, renameValue);
+        }
+      }
     } else {
       setRenameValue(access_dir_name_by_path(onConextMenuPath));
     }
@@ -354,8 +367,9 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         tagRef.current.offsetWidth >
         explorerListWidth -
           position_x -
-          8 * default_indicator_padding -
-          2 * default_border_width
+          2 * default_indicator_padding -
+          2 * default_border_width -
+          12
       ) {
         setFullSizeMode(onPause);
       } else {
@@ -423,8 +437,10 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         e.preventDefault();
         if (file_path === "root") {
           load_explorer_context_menu(e, "root", file_path);
+          setOnSelectedExplorerItems(["root"]);
         } else {
           load_explorer_context_menu(e, "folder", file_path);
+          setOnSelectedExplorerItems([file_path]);
         }
       }}
       onDragStart={(e) => {
@@ -465,7 +481,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
             maxWidth:
               explorerListWidth -
               position_x -
-              8 * default_indicator_padding -
+              2 * default_indicator_padding -
               2 * default_border_width,
             fullSizeMode: fullSizeMode,
             transparentMode: true,
@@ -502,8 +518,11 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     setDragCommand,
   } = useContext(globalDragAndDropContexts);
 
-  const { access_dir_name_by_path, rename_file_by_path } =
-    useContext(RootDataContexts);
+  const {
+    access_dir_name_by_path,
+    rename_file_by_path,
+    check_if_file_name_duplicate,
+  } = useContext(RootDataContexts);
   const {
     id,
     command,
@@ -537,8 +556,24 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     access_dir_name_by_path(file_path)
   );
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = () => {
-    rename_file_by_path(onConextMenuPath, renameValue);
+  const handle_rename_on_sumbit = (change_or_not) => {
+    if (change_or_not) {
+      if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
+        let parent_path = onConextMenuPath.split("/").slice(0, -1);
+        if (parent_path.length === 1) {
+          parent_path = "root";
+        } else {
+          parent_path = parent_path.join("/");
+        }
+        if (check_if_file_name_duplicate(parent_path, renameValue)) {
+          alert("Duplicate Name Detected");
+        } else {
+          rename_file_by_path(onConextMenuPath, renameValue);
+        }
+      }
+    } else {
+      setRenameValue(access_dir_name_by_path(onConextMenuPath));
+    }
     setCommand([]);
     setOnConextMenuPath(null);
   };
@@ -581,8 +616,9 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         tagRef.current.offsetWidth >
         explorerListWidth -
           position_x -
-          8 * default_indicator_padding -
-          2 * default_border_width
+          2 * default_indicator_padding -
+          2 * default_border_width -
+          12
       ) {
         setFullSizeMode(onPause);
       } else {
@@ -642,6 +678,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         e.stopPropagation();
         e.preventDefault();
         load_explorer_context_menu(e, "file", file_path);
+        setOnSelectedExplorerItems([file_path]);
       }}
       onDragStart={(e) => {
         e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
@@ -690,7 +727,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
             maxWidth:
               explorerListWidth -
               position_x -
-              8 * default_indicator_padding -
+              2 * default_indicator_padding -
               2 * default_border_width,
             fullSizeMode: fullSizeMode,
             transparentMode: true,
@@ -1026,6 +1063,7 @@ const ContextMenuWrapper = ({ children }) => {
     generate_on_copy_file,
     paste_on_copy_dir,
     create_file_by_path,
+    update_dir_expand_status_by_path,
   } = useContext(RootDataContexts);
   const {
     id,
@@ -1036,6 +1074,65 @@ const ContextMenuWrapper = ({ children }) => {
   } = useContext(SurfaceExplorerContexts);
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
+  const tagRef = useRef(null);
+  const [clickablePaste, setClickablePaste] = useState({
+    type: "button",
+    id: "paste",
+    clickable: true,
+    label: "paste",
+    short_cut_label: "Ctrl+V",
+    icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+    quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+  });
+  useEffect(() => {
+    if (onCopyFile) {
+      const root_file_path = onCopyFile.root.file_path;
+      const target_file_name = onCopyFile[root_file_path].file_name;
+      setClickablePaste({
+        type: "button",
+        id: "paste",
+        clickable: true,
+        label: "paste",
+        customized_tag: {
+          reference: tagRef,
+          type: "file",
+          label: target_file_name,
+          style: {
+            fontSize: default_font_size - 1,
+            right: 5,
+            top: 0,
+            borderRadius: 4,
+            padding_x: 2,
+            padding_y: 2,
+            border: `1px solid rgba(${
+              surface_explorer_fixed_styling.backgroundColorR + 32
+            }, ${surface_explorer_fixed_styling.backgroundColorG + 32}, ${
+              surface_explorer_fixed_styling.backgroundColorB + 32
+            }, 0.96)`,
+            backgroundColor: `rgba(${
+              surface_explorer_fixed_styling.backgroundColorR + 16
+            }, ${surface_explorer_fixed_styling.backgroundColorG + 16}, ${
+              surface_explorer_fixed_styling.backgroundColorB + 16
+            }, 0.64)`,
+            boxShadow: "none",
+            noWidthLimitMode: true,
+          },
+        },
+        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+      });
+    } else {
+      setClickablePaste({
+        type: "button",
+        id: "paste",
+        clickable: false,
+        label: "paste",
+        short_cut_label: "Ctrl+V",
+        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+      });
+    }
+  }, [onCopyFile]);
 
   const default_explorer_context_menu = {
     root: {
@@ -1222,15 +1319,6 @@ const ContextMenuWrapper = ({ children }) => {
       id: "br",
     },
   };
-  const clickable_paste = {
-    type: "button",
-    id: "paste",
-    clickable: true,
-    label: "paste",
-    short_cut_label: "Ctrl+V",
-    icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
-  };
 
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
@@ -1246,6 +1334,7 @@ const ContextMenuWrapper = ({ children }) => {
           const file_name = Object.keys(onCopyFile)[0].split("/")[1];
           if (!check_if_file_name_duplicate(onConextMenuPath, file_name)) {
             paste_on_copy_dir(onCopyFile, onConextMenuPath);
+            update_dir_expand_status_by_path(onConextMenuPath, true);
           } else {
             alert("File name already exist");
           }
@@ -1322,14 +1411,14 @@ const ContextMenuWrapper = ({ children }) => {
       case "folder": {
         contextStructure = { ...default_folder_context_menu };
         if (onCopyFile) {
-          contextStructure.paste = clickable_paste;
+          contextStructure.paste = clickablePaste;
         }
         return contextStructure;
       }
       case "root": {
         contextStructure = { ...default_root_context_menu };
         if (onCopyFile) {
-          contextStructure.paste = clickable_paste;
+          contextStructure.paste = clickablePaste;
         }
         return contextStructure;
       }

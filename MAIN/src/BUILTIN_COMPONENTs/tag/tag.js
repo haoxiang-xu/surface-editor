@@ -96,15 +96,30 @@ const CustomizedTag = ({
         ...prevData,
         width: width,
         height: style.inputMode ? inputHeight : spanHeight + padding_y * 2,
+
+        top: style.top,
         left: `calc(0% + ${left}px)`,
+        right: style.right,
+        bottom: style.bottom,
+
+        fontSize: style.fontSize,
+
+        padding_x: padding_x,
+        padding_y: padding_y,
+
         transform: "translate(0%, -50%)",
         border: style.border,
+        borderRadius: style.borderRadius,
         backgroundColor: style.backgroundColor,
+        color: style.color,
+        boxShadow: style.boxShadow,
+
         icon_transform: style.icon_transform,
         moreOptionLabel: style.fullSizeMode
           ? false
           : spanWidth > tagMaxWidth &&
             tagMaxWidth > more_option_label_font_size,
+
         fullSizeMode: style.fullSizeMode,
         transparentMode: style.transparentMode,
         inputMode: style.inputMode,
@@ -235,7 +250,10 @@ const CustomizedTag = ({
             position: "absolute",
             top: "50%",
             left: tagStyle.left,
-            right: tagStyle.right,
+            width:
+              tagStyle.width -
+              3 * (style.padding_x || default_tag_padding_x) -
+              (icon ? 16 : 0),
             transform: tagStyle.transform,
 
             /* { Font Styling } ---------------------- */
@@ -308,13 +326,13 @@ const FileTag = ({ config }) => {
       processed_config.style.color = "#CCCCCC";
     }
     if (config.style.padding_x === undefined) {
-      processed_config.style.padding_x = 6;
+      processed_config.style.padding_x = 5;
     }
     if (config.style.padding_y === undefined) {
-      processed_config.style.padding_y = 6;
+      processed_config.style.padding_y = 4;
     }
     if (config.style.borderRadius === undefined) {
-      processed_config.style.borderRadius = 6;
+      processed_config.style.borderRadius = 3;
     }
     if (config.style.boxShadow === undefined) {
       processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
@@ -322,6 +340,15 @@ const FileTag = ({ config }) => {
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon =
         FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON16;
+      if (!config.style.noWidthLimitMode) {
+        if (processed_config.icon !== undefined) {
+          processed_config.style.maxWidth = config.style.maxWidth - 12;
+        } else {
+          processed_config.style.maxWidth = config.style.maxWidth - 2;
+        }
+      } else {
+        processed_config.style.maxWidth = config.style.maxWidth;
+      }
     }
     processed_config.style.pointerEvents = "none";
     return processed_config;
@@ -340,13 +367,13 @@ const FolderTag = ({ config }) => {
       processed_config.style.color = "#CCCCCC";
     }
     if (config.style.padding_x === undefined) {
-      processed_config.style.padding_x = 6;
+      processed_config.style.padding_x = 5;
     }
     if (config.style.padding_y === undefined) {
-      processed_config.style.padding_y = 6;
+      processed_config.style.padding_y = 4;
     }
     if (config.style.borderRadius === undefined) {
-      processed_config.style.borderRadius = 6;
+      processed_config.style.borderRadius = 4;
     }
     if (config.style.boxShadow === undefined) {
       processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
@@ -356,6 +383,11 @@ const FolderTag = ({ config }) => {
     }
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON16;
+    }
+    if (!config.style.noWidthLimitMode) {
+      processed_config.style.maxWidth = config.style.maxWidth - 12;
+    } else {
+      processed_config.style.maxWidth = config.style.maxWidth;
     }
     processed_config.style.icon_transform = config.style.isExpanded
       ? "rotate(90deg)"
@@ -383,48 +415,53 @@ const CommandTag = ({ config }) => {
 
 const Tag = ({ config }) => {
   const process_tag_config = (config) => {
-    const reference = config.reference || null;
-    const type = config.type || "default";
-    const label = config.label || "";
-    const label_on_change = config.label_on_change || null;
-    const label_on_submit = config.label_on_submit || null;
-    const icon = config.icon || null;
+    let processed_config = { ...config };
+
+    const reference = processed_config.reference || null;
+    const type = processed_config.type || "default";
+    const label = processed_config.label || "";
+    const label_on_change = processed_config.label_on_change || null;
+    const label_on_submit = processed_config.label_on_submit || null;
+    const icon = processed_config.icon || null;
     let style = {};
 
-    if (config.style) {
-      style = config.style;
-      if (config.style.fontSize === undefined) {
+    if (processed_config.style) {
+      style = processed_config.style;
+      if (processed_config.style.fontSize === undefined) {
         style.fontSize = default_tag_font_size;
       }
-      if (config.style.left === undefined) {
+      if (processed_config.style.left === undefined) {
         style.left = "none";
       }
-      if (config.style.right === undefined) {
+      if (processed_config.style.right === undefined) {
         style.right = "none";
       }
-      if (config.style.top === undefined) {
+      if (processed_config.style.top === undefined) {
         style.top = "none";
       }
-      if (config.style.bottom === undefined) {
+      if (processed_config.style.bottom === undefined) {
         style.bottom = "none";
       }
-      if (config.style.transform === undefined) {
+      if (processed_config.style.transform === undefined) {
         style.transform = "none";
       }
-      if (config.style.borderRadius === undefined) {
+      if (processed_config.style.borderRadius === undefined) {
         style.borderRadius = default_border_radius;
       }
-      if (config.style.maxWidth === undefined) {
+      if (processed_config.style.maxWidth === undefined) {
         style.maxWidth = default_max_tag_width;
       }
-      if (config.style.fullSizeMode === undefined) {
+      if (processed_config.style.fullSizeMode === undefined) {
         style.fullSizeMode = false;
       }
-      if (config.style.transparentMode === undefined) {
+      if (processed_config.style.transparentMode === undefined) {
         style.transparentMode = false;
       }
-      if (config.style.inputMode === undefined) {
+      if (processed_config.style.inputMode === undefined) {
         style.inputMode = false;
+      }
+      if (processed_config.style.noWidthLimitMode === undefined) {
+        style.noWidthLimitMode = false;
       }
     } else {
       style = {
@@ -439,6 +476,7 @@ const Tag = ({ config }) => {
         fullSizeMode: false,
         transparentMode: false,
         inputMode: false,
+        noWidthLimitMode: false,
       };
     }
     return {

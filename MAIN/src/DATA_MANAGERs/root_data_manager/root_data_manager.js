@@ -396,73 +396,6 @@ const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
     code_editor_container_ref_index: 2,
   },
 ];
-const DEFAULT_EXPLORE_OPTIONS_AND_CONTENT_DATA = {
-  fileName: "demo",
-  fileType: "folder",
-  filePath: "demo",
-  fileExpend: false,
-  files: [
-    {
-      fileName: "index",
-      fileType: "folder",
-      filePath: "demo/index",
-      fileExpend: false,
-      files: [
-        {
-          fileName: "style",
-          fileType: "folder",
-          filePath: "demo/index/style",
-          fileExpend: false,
-          files: [
-            {
-              fileName: "code_editor.css",
-              fileType: "file",
-              filePath: "demo/index/style/code_editor.css",
-              fileExpend: false,
-              files: [],
-            },
-          ],
-        },
-        {
-          fileName: "index.html",
-          fileType: "file",
-          filePath: "demo/index/index.html",
-          fileExpend: false,
-          files: [],
-        },
-      ],
-    },
-    {
-      fileName: "src",
-      fileType: "folder",
-      filePath: "demo/src",
-      fileExpend: false,
-      files: [
-        {
-          fileName: "code_editor.js",
-          fileType: "file",
-          filePath: "demo/src/code_editor.js",
-          fileExpend: false,
-          files: [],
-        },
-      ],
-    },
-    {
-      fileName: "main.java",
-      fileType: "file",
-      filePath: "demo/main.java",
-      fileExpend: false,
-      files: [],
-    },
-    {
-      fileName: "main.py",
-      fileType: "file",
-      filePath: "demo/main.py",
-      fileExpend: false,
-      files: [],
-    },
-  ],
-};
 const DIRs = {
   root: {
     file_name: "demo",
@@ -750,7 +683,10 @@ const RootDataManager = ({ children }) => {
   );
   const check_if_file_name_duplicate = useCallback(
     (parent_path, new_name) => {
-      const parent_sub_items = dir[parent_path].sub_items;
+      const parent_sub_items = dir[parent_path]?.sub_items;
+      if (!parent_sub_items) {
+        return true;
+      }
       for (let i = 0; i < parent_sub_items.length; i++) {
         if (parent_sub_items[i].split("/").pop() === new_name) {
           return true;
