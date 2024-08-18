@@ -257,6 +257,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     access_dir_expand_status_by_path,
     update_dir_expand_status_by_path,
     rename_file_by_path,
+    check_if_file_name_duplicate,
   } = useContext(RootDataContexts);
   const {
     id,
@@ -303,7 +304,12 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const handle_rename_on_sumbit = (change_or_not) => {
     if (change_or_not) {
       if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
-        rename_file_by_path(onConextMenuPath, renameValue);
+        const parent_path = onConextMenuPath.split("/").slice(0, -1).join("/");
+        if (check_if_file_name_duplicate(parent_path, renameValue)) {
+          console.log("Duplicate Name Detected");
+        } else {
+          rename_file_by_path(onConextMenuPath, renameValue);
+        }
       }
     } else {
       setRenameValue(access_dir_name_by_path(onConextMenuPath));
@@ -426,8 +432,10 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         e.preventDefault();
         if (file_path === "root") {
           load_explorer_context_menu(e, "root", file_path);
+          setOnSelectedExplorerItems(["root"]);
         } else {
           load_explorer_context_menu(e, "folder", file_path);
+          setOnSelectedExplorerItems([file_path]);
         }
       }}
       onDragStart={(e) => {
@@ -652,6 +660,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         e.stopPropagation();
         e.preventDefault();
         load_explorer_context_menu(e, "file", file_path);
+        setOnSelectedExplorerItems([file_path]);
       }}
       onDragStart={(e) => {
         e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
