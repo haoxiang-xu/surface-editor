@@ -39,7 +39,13 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
-const default_selecion_list_item_padding = 12;
+const default_selecion_list_padding = 5;
+const default_selecion_list_item_padding = 0;
+const default_border_radius = 6;
+
+const R = 30;
+const G = 30;
+const B = 30;
 
 const FileSelectionBar = ({
   code_editor_container_ref_index,
@@ -839,16 +845,120 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
 };
 
 /* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
-const FileSelectionListItem = ({ reference, file_path, tag_position }) => {
+const FileSelectionOnSelectedIndicator = ({ indicatorPosition }) => {
+  const outer_curve_offset = 16;
+  const fill_in_offset = 8;
+
+  return (
+    <>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          /* POSITION ------------------------------------- */
+          position: "absolute",
+          left: indicatorPosition.left,
+          top: default_selecion_list_padding,
+
+          /* SIZE ----------------------------------------- */
+          width: indicatorPosition.width,
+          height: `calc(100% - ${2 * default_selecion_list_padding}px)`,
+
+          /* STYLE ---------------------------------------- */
+          backgroundColor: `rgba(${R + 24}, ${G + 24}, ${B + 24}, 1)`,
+          borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          /* POSITION ------------------------------------- */
+          position: "absolute",
+          left: indicatorPosition.left - outer_curve_offset,
+          top: `calc(50% - ${default_selecion_list_padding}px)`,
+
+          /* SIZE ----------------------------------------- */
+          width: outer_curve_offset + fill_in_offset,
+          height: "50%",
+
+          /* STYLE ---------------------------------------- */
+          backgroundColor: `rgba(${R + 24}, ${G + 24}, ${B + 24}, 1)`,
+          borderRadius: 0,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          /* POSITION ------------------------------------- */
+          position: "absolute",
+          left: indicatorPosition.left - outer_curve_offset,
+          top: `calc(50% - ${default_selecion_list_padding}px)`,
+
+          /* SIZE ----------------------------------------- */
+          width: outer_curve_offset,
+          height: "50%",
+
+          /* STYLE ---------------------------------------- */
+          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
+          borderRadius: `0px 0px ${default_border_radius}px 0px`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          /* POSITION ------------------------------------- */
+          position: "absolute",
+          left:
+            indicatorPosition.left + indicatorPosition.width - fill_in_offset,
+          top: `calc(50% - ${default_selecion_list_padding}px)`,
+
+          /* SIZE ----------------------------------------- */
+          width: outer_curve_offset + fill_in_offset,
+          height: "50%",
+
+          /* STYLE ---------------------------------------- */
+          backgroundColor: `rgba(${R + 24}, ${G + 24}, ${B + 24}, 1)`,
+          borderRadius: 0,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          /* POSITION ------------------------------------- */
+          position: "absolute",
+          left: indicatorPosition.left + indicatorPosition.width,
+          top: `calc(50% - ${default_selecion_list_padding}px)`,
+
+          /* SIZE ----------------------------------------- */
+          width: outer_curve_offset,
+          height: "50%",
+
+          /* STYLE ---------------------------------------- */
+          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
+          borderRadius: `0px 0px 0px ${default_border_radius}px`,
+        }}
+      ></div>
+    </>
+  );
+};
+const FileSelectionListItem = ({
+  reference,
+  index,
+  file_path,
+  tag_position,
+}) => {
   const { access_dir_name_by_path } = useContext(RootDataContexts);
+  const { setOnSelectedMonacoIndex } = useContext(MonacoEditorContexts);
 
   return (
     <div
       style={{
-        transition: "left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+        transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
-        top: "0px",
+        top: default_selecion_list_padding,
         left: tag_position + "px",
+      }}
+      onMouseUp={() => {
+        setOnSelectedMonacoIndex(index);
       }}
     >
       <Tag
@@ -857,7 +967,9 @@ const FileSelectionListItem = ({ reference, file_path, tag_position }) => {
           type: "file",
           label: access_dir_name_by_path(file_path),
           style: {
+            transparentMode: true,
             boxShadow: "none",
+            pointerEvents: "none",
           },
         }}
       />
@@ -865,11 +977,15 @@ const FileSelectionListItem = ({ reference, file_path, tag_position }) => {
   );
 };
 const FileSelectionListContainer = ({}) => {
-  const { width, monacoPaths, setMonacoPaths } =
+  const { width, onSelectedMonacoIndex, monacoPaths, setMonacoPaths } =
     useContext(MonacoEditorContexts);
 
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
   const [tagPositions, setTagPositions] = useState([]);
+  const [indicatorPosition, setIndicatorPosition] = useState({
+    left: 0,
+    width: 0,
+  });
 
   useEffect(() => {
     tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
@@ -877,22 +993,27 @@ const FileSelectionListContainer = ({}) => {
       tagRefs.current[i] = React.createRef();
     }
   }, [monacoPaths]);
-
   useEffect(() => {
     const render_tag_positions = () => {
       const tagPositions = [];
-      let position_x = 0;
+      let position_x = default_selecion_list_padding;
 
       for (let i = 0; i < monacoPaths.length; i++) {
         tagPositions.push(position_x);
         position_x +=
           tagRefs.current[i]?.current?.offsetWidth +
           default_selecion_list_item_padding;
+        if (i === onSelectedMonacoIndex) {
+          setIndicatorPosition({
+            left: tagPositions[i],
+            width: tagRefs.current[i]?.current?.offsetWidth,
+          });
+        }
       }
       setTagPositions(tagPositions);
     };
     render_tag_positions();
-  }, [width, monacoPaths, tagRefs.current]);
+  }, [monacoPaths, tagRefs.current, onSelectedMonacoIndex]);
 
   return (
     <div
@@ -904,13 +1025,18 @@ const FileSelectionListContainer = ({}) => {
 
         height: "32px",
 
-        //border: "1px solid #252525",
+        // border: "1px solid rgba(0, 0, 0, 0.16)",
+        backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+        overflow: "hidden",
+        padding: default_selecion_list_padding,
       }}
     >
+      <FileSelectionOnSelectedIndicator indicatorPosition={indicatorPosition} />
       {monacoPaths.map((filePath, index) => {
         return (
           <FileSelectionListItem
             key={filePath}
+            index={index}
             reference={tagRefs.current[index]}
             file_path={filePath}
             tag_position={tagPositions[index]}
