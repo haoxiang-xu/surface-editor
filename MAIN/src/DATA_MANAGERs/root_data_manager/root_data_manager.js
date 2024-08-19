@@ -383,18 +383,18 @@ const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
     type: "surface_explorer",
     stack_component_unique_tag: "surface_explorer_0004",
   },
-  {
-    id: "monaco_editor_0002",
-    type: "monaco_editor",
-    stack_component_unique_tag: "monaco_editor_0002",
-    code_editor_container_ref_index: 1,
-  },
-  {
-    id: "monaco_editor_0003",
-    type: "monaco_editor",
-    stack_component_unique_tag: "monaco_editor_0003",
-    code_editor_container_ref_index: 2,
-  },
+  // {
+  //   id: "monaco_editor_0002",
+  //   type: "monaco_editor",
+  //   stack_component_unique_tag: "monaco_editor_0002",
+  //   code_editor_container_ref_index: 1,
+  // },
+  // {
+  //   id: "monaco_editor_0003",
+  //   type: "monaco_editor",
+  //   stack_component_unique_tag: "monaco_editor_0003",
+  //   code_editor_container_ref_index: 2,
+  // },
 ];
 const DIRs = {
   root: {

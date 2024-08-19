@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext, memo } from "react";
 import RootDataManager from "../DATA_MANAGERs/root_data_manager/root_data_manager";
 import RootCommandManager from "../DATA_MANAGERs/root_command_manager/root_command_manager";
+import RootStylingManager from "../DATA_MANAGERs/root_styling_manager/root_styling_manager";
 import HeaderMenuBar from "../BUILTIN_COMPONENTs/headerMenuBar/headerMenuBar";
 import HorizontalStack from "../STACK_STRUCTUREs/horizontal_stack/horizontal_stack";
 import {
@@ -13,7 +14,9 @@ const MainWrapper = () => {
   return (
     <RootDataManager>
       <RootCommandManager>
-        <HorizontalStack />
+        <RootStylingManager>
+          <HorizontalStack />
+        </RootStylingManager>
       </RootCommandManager>
     </RootDataManager>
   );

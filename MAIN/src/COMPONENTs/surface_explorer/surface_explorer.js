@@ -239,20 +239,13 @@ const ExplorerEndingIndicator = ({ position_y, position_x }) => {
   );
 };
 const ExplorerItemFolderFilter = ({ file_path, position_y, position_x }) => {
-  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
-  if (explorerScrollPosition - max_render_range > position_y) {
-    return;
-  } else if (explorerScrollPosition + 2 * max_render_range < position_y) {
-    return;
-  } else {
-    return (
-      <ExplorerItemFolderComponent
-        file_path={file_path}
-        position_y={position_y}
-        position_x={position_x}
-      />
-    );
-  }
+  return (
+    <ExplorerItemFolderComponent
+      file_path={file_path}
+      position_y={position_y}
+      position_x={position_x}
+    />
+  );
 };
 const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const {
@@ -497,20 +490,13 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   );
 };
 const ExplorerItemFileFilter = ({ file_path, position_y, position_x }) => {
-  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
-  if (explorerScrollPosition - max_render_range > position_y) {
-    return;
-  } else if (explorerScrollPosition + 2 * max_render_range < position_y) {
-    return;
-  } else {
-    return (
-      <ExplorerItemFileComponent
-        file_path={file_path}
-        position_y={position_y}
-        position_x={position_x}
-      />
-    );
-  }
+  return (
+    <ExplorerItemFileComponent
+      file_path={file_path}
+      position_y={position_y}
+      position_x={position_x}
+    />
+  );
 };
 const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   const {
@@ -742,6 +728,28 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     </div>
   );
 };
+const ExplorerTestingItem = ({ file_path, position_y, position_x }) => {
+  const { update_dir_expand_status_by_path, access_dir_expand_status_by_path } =
+    useContext(RootDataContexts);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: position_y,
+        left: position_x,
+      }}
+      onClick={() => {
+        update_dir_expand_status_by_path(
+          file_path,
+          !access_dir_expand_status_by_path(file_path)
+        );
+      }}
+    >
+      {file_path}
+    </div>
+  );
+};
 
 const ExplorerList = () => {
   const {
@@ -830,6 +838,12 @@ const ExplorerList = () => {
           position_y={next_position_y}
           position_x={position_x}
         />
+        // <ExplorerTestingItem
+        //   key={path}
+        //   file_path={path}
+        //   position_y={next_position_y}
+        //   position_x={position_x}
+        // />
       );
       next_position_y += default_explorer_item_height;
       next_position_x += default_x_axis_offset;
@@ -862,6 +876,12 @@ const ExplorerList = () => {
                 position_y={next_position_y}
                 position_x={next_position_x}
               />
+              // <ExplorerTestingItem
+              //   key={sub_items[index]}
+              //   file_path={sub_items[index]}
+              //   position_y={next_position_y}
+              //   position_x={next_position_x}
+              // />
             );
             explorer_structure_positions.push({
               file_path: sub_items[index],
@@ -896,6 +916,25 @@ const ExplorerList = () => {
     };
     update_explorer_list();
   }, [dir]);
+  useEffect(() => {
+    const calculate_visible_index_range = () => {
+      if (!explorerItemPositions || !explorerList) return;
+      const startIndex = Math.max(
+        parseInt(explorerScrollPosition / default_explorer_item_height) -
+          parseInt(max_render_range / default_explorer_item_height / 2),
+        0
+      );
+      const endIndex =
+        2 * parseInt(max_render_range / default_explorer_item_height) +
+        startIndex;
+
+      setVisibleIndexRange({
+        startIndex: startIndex,
+        endIndex: endIndex,
+      });
+    };
+    calculate_visible_index_range();
+  }, [explorerScrollPosition]);
   useEffect(() => {
     const update_on_selected_indicator = () => {
       const new_on_selected_indicator = [];
@@ -941,25 +980,6 @@ const ExplorerList = () => {
     update_on_selected_indicator();
     update_level_indicators();
   }, [explorerItemPositions, onSelectedExplorerItems]);
-  useEffect(() => {
-    const calculate_visible_index_range = () => {
-      if (!explorerItemPositions || !explorerList) return;
-      const startIndex = Math.max(
-        parseInt(explorerScrollPosition / default_explorer_item_height) -
-          parseInt(max_render_range / default_explorer_item_height / 2),
-        0
-      );
-      const endIndex =
-        2 * parseInt(max_render_range / default_explorer_item_height) +
-        startIndex;
-
-      setVisibleIndexRange({
-        startIndex: startIndex,
-        endIndex: endIndex,
-      });
-    };
-    calculate_visible_index_range();
-  }, [explorerScrollPosition]);
   useEffect(() => {
     const update_parent_indicator = () => {
       if (
@@ -1526,11 +1546,11 @@ const SurfaceExplorer = ({
       }
     };
   }, [isDirLoaded]);
-  useEffect(() => {
-    if (explorerListRef.current) {
-      setExplorerListWidth(explorerListRef.current.offsetWidth);
-    }
-  }, [width]);
+  // useEffect(() => {
+  //   if (explorerListRef.current) {
+  //     setExplorerListWidth(explorerListRef.current.offsetWidth);
+  //   }
+  // }, [width]);
 
   return (
     <SurfaceExplorerContexts.Provider

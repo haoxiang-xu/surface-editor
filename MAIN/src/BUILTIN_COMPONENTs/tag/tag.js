@@ -91,11 +91,14 @@ const CustomizedTag = ({
     if (style.inputMode !== inputMode) {
       setInputMode(style.inputMode);
     }
+
     setTagStyle((prevData) => {
       return {
         ...prevData,
         width: width,
         height: style.inputMode ? inputHeight : spanHeight + padding_y * 2,
+
+        position_x: style.left,
 
         top: style.top,
         left: `calc(0% + ${left}px)`,
@@ -107,7 +110,7 @@ const CustomizedTag = ({
         padding_x: padding_x,
         padding_y: padding_y,
 
-        transform: "translate(0%, -50%)",
+        transform: style.transform,
         border: style.border,
         borderRadius: style.borderRadius,
         backgroundColor: style.backgroundColor,
@@ -138,6 +141,7 @@ const CustomizedTag = ({
       }
     }
   }, [inputMode]);
+
   return (
     <div
       ref={reference}
@@ -145,23 +149,23 @@ const CustomizedTag = ({
         transition: "width 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
 
         /* { Tag Position } ------------------------ */
-        position: style.fullSizeMode ? "fixed" : "absolute",
-        right: style.right,
-        left: style.left,
-        top: style.top,
-        bottom: style.bottom,
-        transform: style.transform,
-        zIndex: style.fullSizeMode ? default_tag_layer : 0,
+        position: tagStyle.fullSizeMode ? "fixed" : "absolute",
+        right: tagStyle.right,
+        left: tagStyle.position_x,
+        top: tagStyle.top,
+        bottom: tagStyle.bottom,
+        transform: tagStyle.transform,
+        zIndex: tagStyle.fullSizeMode ? default_tag_layer : 0,
 
         /* { Tag Size } ---------------------------- */
         width: tagStyle.width,
         height: tagStyle.height,
 
         /* { Tag Styling } ------------------------- */
-        borderRadius: style.borderRadius || 7,
+        borderRadius: tagStyle.borderRadius || 7,
         display: "inline-block",
-        backgroundColor: style.transparentMode
-          ? style.fullSizeMode
+        backgroundColor: tagStyle.transparentMode
+          ? tagStyle.fullSizeMode
             ? tagStyle.backgroundColor
             : "transparent"
           : tagStyle.backgroundColor,
@@ -189,7 +193,7 @@ const CustomizedTag = ({
               ? `translate(0%, -50%) ${tagStyle.icon_transform}`
               : `translate(0%, -50%)`,
             top: "50%",
-            left: style.padding_x || default_tag_padding_x,
+            left: tagStyle.padding_x || default_tag_padding_x,
 
             width: 16,
             height: 16,
@@ -206,7 +210,7 @@ const CustomizedTag = ({
           position: "absolute",
           top: "50%",
           left: tagStyle.left,
-          transform: tagStyle.transform,
+          transform: "translate(0%, -50%)",
 
           /* { Font Styling } ---------------------- */
           fontSize: tagStyle.fontSize,
@@ -252,7 +256,7 @@ const CustomizedTag = ({
             left: tagStyle.left,
             width:
               tagStyle.width -
-              3 * (style.padding_x || default_tag_padding_x) -
+              3 * (tagStyle.padding_x || default_tag_padding_x) -
               (icon ? 16 : 0),
             transform: tagStyle.transform,
 

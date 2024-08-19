@@ -15,6 +15,7 @@ import {
 } from "./context_menu_fixed_styling_config";
 
 import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
+import { RootStylingContexts } from "../../DATA_MANAGERs/root_styling_manager/root_styling_contexts";
 import { ContextMenuContexts } from "./context_menu_contexts";
 
 import Tag from "../tag/tag";
@@ -54,6 +55,7 @@ const ContextItemButton = ({
     get_context_menu_show_up_direction,
     progress_context_menu_item,
   } = useContext(ContextMenuContexts);
+  const { globalR, globalG, globalB } = useContext(RootStylingContexts);
 
   const [onHover, setOnHover] = useState(false);
   const [onClicked, setOnClicked] = useState(false);
@@ -89,10 +91,8 @@ const ContextItemButton = ({
   useEffect(() => {
     if (onClicked && contextStructure[unique_tag].clickable) {
       setStyle({
-        backgroundColor: `rgba(${
-          context_menu_fixed_styling.backgroundColorR + 64
-        }, ${context_menu_fixed_styling.backgroundColorG + 64}, ${
-          context_menu_fixed_styling.backgroundColorB + 64
+        backgroundColor: `rgba(${globalR + 64}, ${globalG + 64}, ${
+          globalB + 64
         }, 0.72)`,
         boxShadow: default_clickable_panel_styling.boxShadow.onClick,
         borderRadius: setButtonBorderRadius(),
@@ -100,10 +100,8 @@ const ContextItemButton = ({
       });
     } else if (onHover && contextStructure[unique_tag].clickable) {
       setStyle({
-        backgroundColor: `rgba(${
-          context_menu_fixed_styling.backgroundColorR + 32
-        }, ${context_menu_fixed_styling.backgroundColorG + 32}, ${
-          context_menu_fixed_styling.backgroundColorB + 32
+        backgroundColor: `rgba(${globalR + 32}, ${globalG + 32}, ${
+          globalB + 32
         }, 0.72)`,
         boxShadow: default_clickable_panel_styling.boxShadow.onHover,
         borderRadius: setButtonBorderRadius(),
@@ -445,6 +443,7 @@ const ContextList = ({
     calculate_context_list_width,
     calculate_item_top_position,
   } = useContext(ContextMenuContexts);
+  const { globalR, globalG, globalB } = useContext(RootStylingContexts);
 
   const [listPosition, setListPosition] = useState([-999, -999]);
   const [borderRadius, setBorderRadius] = useState(
@@ -508,16 +507,10 @@ const ContextList = ({
 
         /*STYLE ------------------- */
         border: `${context_menu_fixed_styling.border}px solid rgba(${Math.min(
-          context_menu_fixed_styling.backgroundColorR + 64,
+          globalR + 64,
           255
-        )}, ${Math.min(
-          context_menu_fixed_styling.backgroundColorG + 64,
-          255
-        )}, ${Math.min(
-          context_menu_fixed_styling.backgroundColorB + 64,
-          255
-        )}, 1)`,
-        backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 1)`,
+        )}, ${Math.min(globalG + 64, 255)}, ${Math.min(globalB + 64, 255)}, 1)`,
+        backgroundColor: `rgba(${globalR}, ${globalG}, ${globalB}, 1)`,
         borderRadius: borderRadius,
         boxSizing: "border-box",
         boxShadow: context_menu_fixed_styling.boxShadow,
