@@ -879,7 +879,7 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
         right_border: 0,
         right_cover: 0,
       });
-      setTop(default_selecion_list_item_padding);
+      setTop(0);
       setLeft(0);
     }
   }, [onSelectedMonacoIndex]);
@@ -986,6 +986,7 @@ const FileSelectionListItem = ({
   } = useContext(MonacoEditorContexts);
   const [zIndex, setZIndex] = useState(6);
   const [tagSize, setTagSize] = useState({ width: 0, height: 0 });
+  const [tagColorOffset, setTagColorOffset] = useState(0);
   const [closeButtonStyle, setCloseButtonStyle] = useState({
     backgroundColorOffset: 32,
     onHover: false,
@@ -997,9 +998,11 @@ const FileSelectionListItem = ({
     if (index === onDragedMonacoIndex) {
       setZIndex(6);
       setTagOpacity(0);
+      setTagColorOffset(0);
     } else if (index === onSelectedMonacoIndex) {
       setZIndex(7);
       setTagOpacity(1);
+      setTagColorOffset(32);
     } else {
       setZIndex(6);
       setTagOpacity(0.32);
@@ -1007,13 +1010,14 @@ const FileSelectionListItem = ({
         backgroundColorOffset: 32,
         onHover: false,
       });
+      setTagColorOffset(0);
     }
   }, [onSelectedMonacoIndex, onDragedMonacoIndex]);
   useEffect(() => {
-    if (reference.current) {
+    if (reference?.current) {
       setTagSize({
-        width: reference.current.offsetWidth,
-        height: reference.current.offsetHeight,
+        width: reference?.current?.offsetWidth,
+        height: reference?.current?.offsetHeight,
       });
     }
   }, [tag_size]);
@@ -1065,6 +1069,9 @@ const FileSelectionListItem = ({
             boxShadow: "none",
             pointerEvents: "none",
             maxWidth: 128,
+            backgroundColor: `rgba( ${R + tagColorOffset}, ${
+              G + tagColorOffset
+            }, ${B + tagColorOffset}, 1 )`,
           },
         }}
       />
@@ -1122,12 +1129,14 @@ const FileSelectionListContainer = ({}) => {
   const [tagSizes, setTagSizes] = useState([]);
 
   useEffect(() => {
+    if (!tagRefs.current) return;
     tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
     for (let i = 0; i < monacoPaths.length; i++) {
       tagRefs.current[i] = React.createRef();
     }
   }, [monacoPaths]);
   useEffect(() => {
+    if (!tagRefs.current) return;
     const render_tags = () => {
       let tagPositions = [];
       let tagSizes = [];

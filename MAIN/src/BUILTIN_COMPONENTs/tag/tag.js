@@ -271,6 +271,7 @@ const CustomizedTag = ({
           ref={moreOptionLabelRef}
           style={{
             /* { Tag Position } --------------------- */
+            transition: "all 0.12s cubic-bezier(0.32, 1, 0.32, 1)",
             position: "absolute",
             top: "50%",
             right: 0,
