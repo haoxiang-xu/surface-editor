@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, dialog, globalShortcut } = require("electron");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -7,6 +7,7 @@ const {
 } = require("./src/CONSTs/extensionsToLanguagesMatchingList.js");
 
 let mainWindow;
+let zoomLevel = 0;
 const menuTemplate = [
   {
     label: "Vecoder",
@@ -125,6 +126,23 @@ const createWindow = () => {
     mainWindow.webContents.send("window-state-changed", {
       isMaximized: false,
     });
+  });
+
+  globalShortcut.register("CommandOrControl+=", () => {
+    zoomLevel += 1;
+    mainWindow.webContents.setZoomLevel(zoomLevel);
+  });
+
+  // Register the Ctrl - Zoom Out
+  globalShortcut.register("CommandOrControl+-", () => {
+    zoomLevel -= 1;
+    mainWindow.webContents.setZoomLevel(zoomLevel);
+  });
+
+  // Optional: Reset zoom level with Ctrl+0
+  globalShortcut.register("CommandOrControl+0", () => {
+    zoomLevel = 0;
+    mainWindow.webContents.setZoomLevel(zoomLevel);
   });
 
   // Load the index.html of the app.

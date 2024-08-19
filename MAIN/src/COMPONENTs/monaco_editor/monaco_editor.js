@@ -39,9 +39,9 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
-const default_selecion_list_padding = 5;
-const default_selecion_list_item_padding = 0;
+const default_selecion_list_item_padding = 8;
 const default_border_radius = 6;
+const default_selecion_list_icon_offset = 22;
 
 const R = 30;
 const G = 30;
@@ -845,98 +845,125 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
 };
 
 /* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
-const FileSelectionOnSelectedIndicator = ({ indicatorPosition }) => {
-  const outer_curve_offset = 16;
-  const fill_in_offset = 8;
+const FileSelectionListBackgroundIndicator = ({ index }) => {
+  const { onSelectedMonacoIndex } = useContext(MonacoEditorContexts);
+  const [backgroundColorOffset, setBackgroundColorOffset] = useState(0);
+  const [borderRadius, setBorderRadius] = useState({
+    center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+    left_border: 0,
+    left_cover: `0px 0px ${default_border_radius}px 0px`,
+    right_border: 0,
+    right_cover: `0px 0px 0px ${default_border_radius}px`,
+  });
+  const [top, setTop] = useState(default_selecion_list_item_padding);
+  const [left, setLeft] = useState(0);
+
+  useEffect(() => {
+    if (index === onSelectedMonacoIndex) {
+      setBackgroundColorOffset(32);
+      setBorderRadius({
+        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+        left_border: 0,
+        left_cover: `0px 0px ${default_border_radius}px 0px`,
+        right_border: 0,
+        right_cover: `0px 0px 0px ${default_border_radius}px`,
+      });
+      setTop(0);
+      setLeft(-default_selecion_list_icon_offset);
+    } else {
+      setBackgroundColorOffset(0);
+      setBorderRadius({
+        center: `${default_border_radius}px`,
+        left_border: 0,
+        left_cover: 0,
+        right_border: 0,
+        right_cover: 0,
+      });
+      setTop(default_selecion_list_item_padding);
+      setLeft(0);
+    }
+  }, [onSelectedMonacoIndex]);
 
   return (
     <>
       <div
         style={{
           transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          /* POSITION ------------------------------------- */
           position: "absolute",
-          left: indicatorPosition.left,
-          top: default_selecion_list_padding,
-
-          /* SIZE ----------------------------------------- */
-          width: indicatorPosition.width,
-          height: `calc(100% - ${2 * default_selecion_list_padding}px)`,
-
-          /* STYLE ---------------------------------------- */
-          backgroundColor: `rgba(${R + 24}, ${G + 24}, ${B + 24}, 1)`,
-          borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+          top: top,
+          left: left,
+          right: "0px",
+          bottom: "0px",
+          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
+            G + backgroundColorOffset
+          }, ${B + backgroundColorOffset}, 1 )`,
+          borderRadius: `${borderRadius.center}`,
         }}
       ></div>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          /* POSITION ------------------------------------- */
-          position: "absolute",
-          left: indicatorPosition.left - outer_curve_offset,
-          top: `calc(50% - ${default_selecion_list_padding}px)`,
+      {onSelectedMonacoIndex === index ? (
+        <>
+          <div
+            style={{
+              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+              position: "absolute",
+              top: "50%",
+              left: `${-default_selecion_list_item_padding + left}px`,
+              bottom: "0px",
 
-          /* SIZE ----------------------------------------- */
-          width: outer_curve_offset + fill_in_offset,
-          height: "50%",
+              width: `${default_selecion_list_item_padding}px`,
 
-          /* STYLE ---------------------------------------- */
-          backgroundColor: `rgba(${R + 24}, ${G + 24}, ${B + 24}, 1)`,
-          borderRadius: 0,
-        }}
-      ></div>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          /* POSITION ------------------------------------- */
-          position: "absolute",
-          left: indicatorPosition.left - outer_curve_offset,
-          top: `calc(50% - ${default_selecion_list_padding}px)`,
+              backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
+                G + backgroundColorOffset
+              }, ${B + backgroundColorOffset}, 1 )`,
+              borderRadius: `${borderRadius.left_border}`,
+            }}
+          ></div>
+          <div
+            style={{
+              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+              position: "absolute",
+              top: `50%`,
+              left: `${-default_selecion_list_item_padding + left}px`,
+              bottom: "0px",
 
-          /* SIZE ----------------------------------------- */
-          width: outer_curve_offset,
-          height: "50%",
+              width: `${default_selecion_list_item_padding}px`,
 
-          /* STYLE ---------------------------------------- */
-          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
-          borderRadius: `0px 0px ${default_border_radius}px 0px`,
-        }}
-      ></div>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          /* POSITION ------------------------------------- */
-          position: "absolute",
-          left:
-            indicatorPosition.left + indicatorPosition.width - fill_in_offset,
-          top: `calc(50% - ${default_selecion_list_padding}px)`,
+              backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+              borderRadius: `${borderRadius.left_cover}`,
+            }}
+          ></div>
+          <div
+            style={{
+              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+              position: "absolute",
+              top: "50%",
+              right: `${-default_selecion_list_item_padding}px`,
+              bottom: "0px",
 
-          /* SIZE ----------------------------------------- */
-          width: outer_curve_offset + fill_in_offset,
-          height: "50%",
+              width: `${default_selecion_list_item_padding}px`,
 
-          /* STYLE ---------------------------------------- */
-          backgroundColor: `rgba(${R + 24}, ${G + 24}, ${B + 24}, 1)`,
-          borderRadius: 0,
-        }}
-      ></div>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          /* POSITION ------------------------------------- */
-          position: "absolute",
-          left: indicatorPosition.left + indicatorPosition.width,
-          top: `calc(50% - ${default_selecion_list_padding}px)`,
+              backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
+                G + backgroundColorOffset
+              }, ${B + backgroundColorOffset}, 1 )`,
+              borderRadius: `${borderRadius.right_border}`,
+            }}
+          ></div>
+          <div
+            style={{
+              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+              position: "absolute",
+              top: `50%`,
+              right: `${-default_selecion_list_item_padding}px`,
+              bottom: "0px",
 
-          /* SIZE ----------------------------------------- */
-          width: outer_curve_offset,
-          height: "50%",
+              width: `${default_selecion_list_item_padding}px`,
 
-          /* STYLE ---------------------------------------- */
-          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
-          borderRadius: `0px 0px 0px ${default_border_radius}px`,
-        }}
-      ></div>
+              backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+              borderRadius: `${borderRadius.right_cover}`,
+            }}
+          ></div>{" "}
+        </>
+      ) : null}
     </>
   );
 };
@@ -945,22 +972,89 @@ const FileSelectionListItem = ({
   index,
   file_path,
   tag_position,
+  tag_size,
 }) => {
   const { access_dir_name_by_path } = useContext(RootDataContexts);
-  const { setOnSelectedMonacoIndex } = useContext(MonacoEditorContexts);
+  const {
+    id,
+    onSelectedMonacoIndex,
+    setOnSelectedMonacoIndex,
+    onDragedMonacoIndex,
+    setOnDragMonacoIndex,
+    item_on_drag,
+    item_on_drop,
+  } = useContext(MonacoEditorContexts);
+  const [zIndex, setZIndex] = useState(6);
+  const [tagSize, setTagSize] = useState({ width: 0, height: 0 });
+  const [closeButtonStyle, setCloseButtonStyle] = useState({
+    backgroundColorOffset: 32,
+    onHover: false,
+  });
+
+  const [tagOpacity, setTagOpacity] = useState(1);
+
+  useEffect(() => {
+    if (index === onDragedMonacoIndex) {
+      setZIndex(6);
+      setTagOpacity(0);
+    } else if (index === onSelectedMonacoIndex) {
+      setZIndex(7);
+      setTagOpacity(1);
+    } else {
+      setZIndex(6);
+      setTagOpacity(0.32);
+      setCloseButtonStyle({
+        backgroundColorOffset: 32,
+        onHover: false,
+      });
+    }
+  }, [onSelectedMonacoIndex, onDragedMonacoIndex]);
+  useEffect(() => {
+    if (reference.current) {
+      setTagSize({
+        width: reference.current.offsetWidth,
+        height: reference.current.offsetHeight,
+      });
+    }
+  }, [tag_size]);
 
   return (
     <div
+      draggable={true}
       style={{
         transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
-        top: default_selecion_list_padding,
+        top: default_selecion_list_item_padding / 2,
         left: tag_position + "px",
+        width: tagSize.width + "px",
+        height: tagSize.height + "px",
+        zIndex: zIndex,
+        opacity: tagOpacity,
       }}
       onMouseUp={() => {
         setOnSelectedMonacoIndex(index);
       }}
+      onDragStart={(e) => {
+        e.stopPropagation();
+        e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+        setOnSelectedMonacoIndex(index);
+        setOnDragMonacoIndex(index);
+        item_on_drag(e, {
+          source: id,
+          ghost_image: "tag",
+          content: {
+            type: "file",
+            path: file_path,
+          },
+        });
+      }}
+      onDragEnd={(e) => {
+        e.stopPropagation();
+        setOnDragMonacoIndex(-1);
+        item_on_drop(e);
+      }}
     >
+      <FileSelectionListBackgroundIndicator index={index} />
       <Tag
         config={{
           reference: reference,
@@ -970,22 +1064,62 @@ const FileSelectionListItem = ({
             transparentMode: true,
             boxShadow: "none",
             pointerEvents: "none",
+            maxWidth: 128,
           },
         }}
       />
+      {index === onSelectedMonacoIndex ? (
+        <img
+          src={SYSTEM_ICON_MANAGER.close.ICON512}
+          style={{
+            transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+
+            transform: "translate(0%, -50%)",
+            position: "absolute",
+            top: "50%",
+            left: -default_selecion_list_icon_offset + 4,
+            width: 10,
+            height: 10,
+            padding: 4,
+            borderRadius: 3,
+            backgroundColor: `rgba( ${
+              R + closeButtonStyle.backgroundColorOffset
+            }, ${G + closeButtonStyle.backgroundColorOffset}, ${
+              B + closeButtonStyle.backgroundColorOffset
+            }, ${closeButtonStyle.onHover ? 1 : 0} )`,
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          onMouseEnter={() => {
+            setCloseButtonStyle({
+              backgroundColorOffset: 64,
+              onHover: true,
+            });
+          }}
+          onMouseLeave={() => {
+            setCloseButtonStyle({
+              backgroundColorOffset: 32,
+              onHover: false,
+            });
+          }}
+        />
+      ) : null}
     </div>
   );
 };
 const FileSelectionListContainer = ({}) => {
-  const { width, onSelectedMonacoIndex, monacoPaths, setMonacoPaths } =
-    useContext(MonacoEditorContexts);
+  const {
+    width,
+    onDragedMonacoIndex,
+    onSelectedMonacoIndex,
+    monacoPaths,
+    setMonacoPaths,
+  } = useContext(MonacoEditorContexts);
 
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
   const [tagPositions, setTagPositions] = useState([]);
-  const [indicatorPosition, setIndicatorPosition] = useState({
-    left: 0,
-    width: 0,
-  });
+  const [tagSizes, setTagSizes] = useState([]);
 
   useEffect(() => {
     tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
@@ -994,26 +1128,39 @@ const FileSelectionListContainer = ({}) => {
     }
   }, [monacoPaths]);
   useEffect(() => {
-    const render_tag_positions = () => {
-      const tagPositions = [];
-      let position_x = default_selecion_list_padding;
+    const render_tags = () => {
+      let tagPositions = [];
+      let tagSizes = [];
+
+      let position_x = 0;
 
       for (let i = 0; i < monacoPaths.length; i++) {
-        tagPositions.push(position_x);
-        position_x +=
-          tagRefs.current[i]?.current?.offsetWidth +
-          default_selecion_list_item_padding;
-        if (i === onSelectedMonacoIndex) {
-          setIndicatorPosition({
-            left: tagPositions[i],
-            width: tagRefs.current[i]?.current?.offsetWidth,
-          });
+        if (i === onDragedMonacoIndex) {
+          position_x += 0;
+        } else if (i === onSelectedMonacoIndex) {
+          position_x += default_selecion_list_icon_offset;
         }
+        tagPositions.push(position_x);
+        if (i !== onDragedMonacoIndex) {
+          position_x +=
+            tagRefs.current[i]?.current?.offsetWidth +
+            default_selecion_list_item_padding;
+        }
+        tagSizes.push({
+          width: tagRefs.current[i]?.current?.offsetWidth,
+          height: tagRefs.current[i]?.current?.offsetHeight,
+        });
       }
       setTagPositions(tagPositions);
+      setTagSizes(tagSizes);
     };
-    render_tag_positions();
-  }, [monacoPaths, tagRefs.current, onSelectedMonacoIndex]);
+    render_tags();
+  }, [
+    monacoPaths,
+    tagRefs.current,
+    onSelectedMonacoIndex,
+    onDragedMonacoIndex,
+  ]);
 
   return (
     <div
@@ -1021,17 +1168,16 @@ const FileSelectionListContainer = ({}) => {
         position: "absolute",
         top: "128px",
         left: "64px",
-        right: "64px",
+        right: "0px",
 
-        height: "32px",
+        height: "26px",
 
-        // border: "1px solid rgba(0, 0, 0, 0.16)",
+        border: "1px solid rgba(225, 225, 225, 0.32)",
         backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
         overflow: "hidden",
-        padding: default_selecion_list_padding,
+        padding: default_selecion_list_item_padding / 2,
       }}
     >
-      <FileSelectionOnSelectedIndicator indicatorPosition={indicatorPosition} />
       {monacoPaths.map((filePath, index) => {
         return (
           <FileSelectionListItem
@@ -1040,6 +1186,7 @@ const FileSelectionListContainer = ({}) => {
             reference={tagRefs.current[index]}
             file_path={filePath}
             tag_position={tagPositions[index]}
+            tag_size={tagSizes[index]}
           />
         );
       })}
@@ -1066,6 +1213,7 @@ const MonacoEditor = ({
   const [onSelectedMonacoIndex, setOnSelectedMonacoIndex] = useState(
     data?.on_selected_monaco_core_index
   );
+  const [onDragedMonacoIndex, setOnDragMonacoIndex] = useState(-1);
   const [monacoPaths, setMonacoPaths] = useState(data?.monaco_paths);
   const [monacoCores, setMonacoCores] = useState(data?.monaco_cores);
   const access_monaco_core_by_path = (path) => {
@@ -1128,6 +1276,8 @@ const MonacoEditor = ({
         load_contextMenu,
         onSelectedMonacoIndex,
         setOnSelectedMonacoIndex,
+        onDragedMonacoIndex,
+        setOnDragMonacoIndex,
         monacoPaths,
         setMonacoPaths,
         monacoCores,

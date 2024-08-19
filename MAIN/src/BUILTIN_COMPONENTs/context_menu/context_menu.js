@@ -459,7 +459,7 @@ const ContextList = ({
     setTimeout(() => {
       setHeight(calculate_context_list_height(sub_items));
       setWidth(calculate_context_list_width(sub_items));
-      setTransition(`height 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)`);
+      setTransition(`height 0.24s cubic-bezier(0.32, 1, 0.32, 1)`);
     }, 20);
     if (direction === 3) {
       setListPosition([position_x, position_y]);
