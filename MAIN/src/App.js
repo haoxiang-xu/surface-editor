@@ -12,6 +12,10 @@ import "./App.css";
 function App() {
   return (
     <Router>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&display=swap"
+        rel="stylesheet"
+      ></link>
       <Routes>
         <Route
           path="/stack"

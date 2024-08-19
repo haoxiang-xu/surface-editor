@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { SurfaceExplorerContexts } from "../surface_explorer_contexts.js";
 import { SurfaceExplorerContextMenuContexts } from "../surface_explorer_context_menu_contexts.js";
-import DirItemGhostDragImage from "../../../BUILTIN_COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage.js";
 import { ICON_MANAGER, ICON_LOADER } from "../../../ICONs/icon_manager.js";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
 import { rightClickContextMenuCommandContexts } from "../../../CONTEXTs/rightClickContextMenuContexts.js";
@@ -98,7 +97,6 @@ const RenameInputBox = ({ filePath }) => {
     if (event.key === "Enter") {
       if (renameInput === access_file_name_by_path_in_dir(filePath)) {
         setCommand([]);
-        return;
       }
       let parentDirPath = filePath.split("/");
       parentDirPath.pop();
@@ -206,8 +204,14 @@ const DirItem = ({
     update_folder_expand_status_by_path,
     access_subfiles_by_path,
   } = useContext(RootDataContexts);
-  const { stack_component_unique_tag, command, setCommand, load_contextMenu } =
-    useContext(SurfaceExplorerContexts);
+  const {
+    id,
+    command,
+    setCommand,
+    load_contextMenu,
+    item_on_drag,
+    item_on_drop,
+  } = useContext(SurfaceExplorerContexts);
   const { onRightClickItem, setRightClickCommand } = useContext(
     rightClickContextMenuCommandContexts
   );
@@ -411,6 +415,7 @@ const DirItem = ({
 
   //SINGLE CLICK
   const handleOnLeftClick = (event) => {
+    setCommand([]); //remove input box when on click
     setOnSingleClickFile(access_file_subfiles_by_path(filePath));
   };
   useEffect(() => {
@@ -439,21 +444,28 @@ const DirItem = ({
     }
   }, [onRightClickItem]);
   const onDragStart = (e) => {
-    e.stopPropagation();
     e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
     setDraggedItem({
       source: "vecoder_explorer",
       content: filePath,
     });
+    item_on_drag(e, {
+      source: id,
+      ghost_image: 'tag',
+      content: {
+        type: "file",
+        path: filePath,
+      },
+    });
   };
   const onDragEnd = (e) => {
-    e.stopPropagation();
     if (draggedOverItem && access_file_type_by_path(filePath) === "file") {
       setDragCommand("APPEND TO TARGET");
     } else {
       setDraggedItem(null);
       setDraggedOverItem(null);
     }
+    item_on_drop(e);
   };
 
   return (
@@ -608,12 +620,6 @@ const DirItem = ({
         unexpendAnimation={unexpendAnimation}
       />
       {/* SubFiles List -------------------------------------------------------------------------------------------- */}
-
-      {onDragFiles !== null &&
-      draggedItem !== null &&
-      filePath === draggedItem ? (
-        <DirItemGhostDragImage draggedDirItemPath={draggedItem.content} />
-      ) : null}
 
       <style>
         {`

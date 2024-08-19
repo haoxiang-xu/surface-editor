@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, memo } from "react";
-import { stringify } from 'flatted';
+import { stringify } from "flatted";
 
 import HorizontalStackTopLeftSection from "./STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
@@ -234,7 +234,7 @@ const HorizontalStackContainer = ({
   expandContainer,
   narrowContainer,
 }) => {
-  
+  //console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
   const [StackFrameComponent, setStackFrameComponent] = useState(null);
   useEffect(() => {
     async function loadComponent() {
@@ -278,9 +278,7 @@ const HorizontalStackContainer = ({
     update_storage_by_id,
     delete_storage_by_id,
   } = useContext(RootDataContexts);
-  const [data, setData] = useState(
-    access_storage_by_id(id)
-  );
+  const [data, setData] = useState(access_storage_by_id(id));
   useEffect(() => {
     update_storage_by_id(String(id), data);
   }, [data]);
@@ -291,11 +289,7 @@ const HorizontalStackContainer = ({
     useContext(RootCommandContexts);
   const [command, setCommand] = useState([]);
   useEffect(() => {
-    if (
-      cmd[id] &&
-      cmd[id].length > 0 &&
-      command.length === 0
-    ) {
+    if (cmd[id] && cmd[id].length > 0 && command.length === 0) {
       setCommand(cmd[id][0]);
     }
   }, [cmd]);
@@ -308,6 +302,10 @@ const HorizontalStackContainer = ({
     load_context_menu(e, id, contextStructure);
   };
   /* { command } ============================================================================================== */
+
+  /* { drag and drop } ---------------------------------------------------------------------------------------- */
+  const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
+  /* { drag and drop } ---------------------------------------------------------------------------------------- */
 
   const onMaximizeOnClick = () => {
     expandContainer(index);
@@ -369,21 +367,21 @@ const HorizontalStackContainer = ({
         }}
       >
         {StackFrameComponent ? (
-          <StackContainerWrapper mode={mode} command={command} data={data}>
-            <StackFrameComponent
-              id={id}
-              mode={mode}
-              command={command}
-              setCommand={setCommand}
-              load_contextMenu={load_contextMenu}
-              data={data}
-              setData={setData}
-              explorer_width={item.width}
-              code_editor_container_ref_index={
-                item.code_editor_container_ref_index
-              }
-            />
-          </StackContainerWrapper>
+          <StackFrameComponent
+            id={id}
+            width={item.width}
+            mode={mode}
+            command={command}
+            setCommand={setCommand}
+            load_contextMenu={load_contextMenu}
+            data={data}
+            setData={setData}
+            item_on_drag={item_on_drag}
+            item_on_drop={item_on_drop}
+            code_editor_container_ref_index={
+              item.code_editor_container_ref_index
+            }
+          />
         ) : null}
         <HorizontalStackTopLeftSection
           mode={mode}

@@ -30,10 +30,10 @@ const MonacoCore = ({
       EDITOR_FONT_SIZE = 12;
       break;
     case "win32": // Windows
-      EDITOR_FONT_SIZE = 14;
+      EDITOR_FONT_SIZE = 12;
       break;
     default:
-      EDITOR_FONT_SIZE = 13;
+      EDITOR_FONT_SIZE = 12;
   }
   const {
     file,

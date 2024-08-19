@@ -9,7 +9,6 @@
 
   /*STYLE*/
   font-size: 12px;
-  font-family: "Roboto";
   color: #686868;
   overflow: hidden;
 
@@ -48,8 +47,6 @@
 
   /*STYLE*/
   font-size: 18px;
-  font-family: "Jost";
-  font-weight: lighter;
   letter-spacing: 0.6px;
   color: #cccccc;
 }
@@ -95,7 +92,7 @@
 
   /*FONT*/
   font-size: 12px;
-  font-family: "Roboto";
+  font-family: "Jost";
   letter-spacing: 0px;
   white-space: nowrap;
   color: #cccccc;
@@ -127,7 +124,7 @@
   height: 22px;
   padding: 2px 7px 2px 5px;
   font-size: 12px;
-  font-family: "Roboto";
+  font-family: "Jost";
   color: #cccccc;
 
   /*STYLE*/

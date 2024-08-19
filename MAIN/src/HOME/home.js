@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext, memo } from "react";
 import RootDataManager from "../DATA_MANAGERs/root_data_manager/root_data_manager";
 import RootCommandManager from "../DATA_MANAGERs/root_command_manager/root_command_manager";
 import HeaderMenuBar from "../BUILTIN_COMPONENTs/headerMenuBar/headerMenuBar";
@@ -8,6 +8,16 @@ import {
   SYSTEM_FRAME_BORDER_RADIUS,
 } from "../CONSTs/systemFrameStyling";
 import "./home.css";
+
+const MainWrapper = memo(({}) => {
+  return (
+    <RootDataManager>
+      <RootCommandManager>
+        <HorizontalStack />
+      </RootCommandManager>
+    </RootDataManager>
+  );
+});
 
 const Home = () => {
   const [isFrameMaximized, setIsFrameMaximized] = useState(false);
@@ -53,11 +63,7 @@ const Home = () => {
         className="major_content_container0316"
         style={{ top: isMenuBarHovered || isFrameMaximized ? "29px" : "0px" }}
       >
-        <RootDataManager>
-            <RootCommandManager>
-              <HorizontalStack />
-            </RootCommandManager>
-        </RootDataManager>
+        <MainWrapper />
       </div>
     </div>
   );

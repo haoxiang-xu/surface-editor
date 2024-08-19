@@ -33,6 +33,7 @@ const menuTemplate = [
   // },
   // Other menu items...
 ];
+
 const createWindow = () => {
   // Initialize the browser window.
   if (process.platform === "darwin") {
@@ -160,27 +161,12 @@ const openFolderStructureDialog = () => {
         isDirLoading: true,
       });
       if (!result.canceled) {
-        readDir(result.filePaths[0], result.filePaths[0])
+        read_dir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
-            const rootFolder = result.filePaths[0]
-              .replace(/\\/g, "/")
-              .split("/")
-              .pop();
-            const opendFolder = {
-              fileName: rootFolder,
-              filePath: rootFolder,
-              fileAbsolutePath: result.filePaths[0],
-              fileSize: "0 bytes",
-              fileType: "folder",
-              fileExtname: path.extname(rootFolder),
-              files: dirs,
-              fileExpanded: true,
-            };
-            mainWindow.webContents.send("directory-data", opendFolder);
+            //console.log("Directory data:", dirs);
+            mainWindow.webContents.send("directory-data", dirs);
           })
-          .catch((err) => {
-            console.error("Error reading directory:", err);
-          })
+          .catch((error) => console.error("Error reading directory:", error))
           .finally(() => {
             mainWindow.webContents.send("read-dir-state-changed", {
               isDirLoading: false,
@@ -199,67 +185,86 @@ const openFolderStructureDialog = () => {
       });
     });
 };
-const readDir = async (dirPath, rootPath = dirPath) => {
+const read_dir = async (dirPath, rootPath = dirPath) => {
   try {
     const dirents = await fs.readdir(dirPath, { withFileTypes: true });
-    const files = await Promise.all(
-      dirents.map(async (dirent) => {
-        const res = path.resolve(dirPath, dirent.name);
-        const normalizedResPath = res.replace(/\\/g, "/");
-        const normalizedRootPath = rootPath.replace(/\\/g, "/");
-        const rootFolder = normalizedRootPath.split("/").pop();
-        const relPath =
-          rootFolder +
-          "/" +
-          normalizedResPath
-            .substring(normalizedRootPath.length)
-            .replace(/^\/|\\/, ""); // Ensure the leading slash is removed
+    const files = {};
 
-        const stats = await fs.stat(res); // Use asynchronous stat
+    const rootFile = rootPath.replace(/\\/g, "/").split("/").pop();
 
-        if (dirent.isDirectory()) {
-          return {
-            fileName: dirent.name,
-            filePath: relPath,
-            fileAbsolutePath: res,
-            fileSize: stats.size + " bytes",
-            fileType: "folder",
-            fileExtname: path.extname(dirent.name),
-            files: await readDir(res, rootPath), // Pass the original rootPath for correct relative paths
-            fileExpanded: false,
-          };
-        } else {
-          return {
-            fileName: dirent.name,
-            filePath: relPath,
-            fileAbsolutePath: res,
-            fileSize: stats.size + " bytes",
-            fileType: "file",
-            fileExtname: path.extname(dirent.name),
-            files: [],
-            fileExpanded: false,
-          };
-        }
-      })
-    );
+    const basename = path.basename(dirPath);
+    let file_path = "";
+    if (dirPath === rootPath) {
+      file_path = `${rootFile}`;
+    } else {
+      const relativePath = path.relative(rootPath, dirPath).replace(/\\/g, "/");
+      file_path = `${rootFile}/${relativePath}`;
+    }
 
-    // First, sort by type (folders first)
-    files.sort((a, b) => {
-      if (a.fileType === b.fileType) return 0; // If both are files or both are folders, don't change order
-      return a.fileType === "folder" ? -1 : 1; // If a is a folder and b is a file, a comes first, and vice versa
+    let dir = {
+      file_name: basename,
+      file_type: "folder",
+      file_path: file_path,
+      absolute_path: path.resolve(dirPath),
+      file_expand: false,
+      sub_items: [],
+    };
+    for (const dirent of dirents) {
+      const res = path.resolve(dirPath, dirent.name);
+      const relativePath = path.relative(rootPath, res).replace(/\\/g, "/");
+      const filePath = `${rootFile}/${relativePath}`;
+
+      if (dirent.isDirectory()) {
+        dir.sub_items.push(filePath);
+        const sub_dir = await read_dir(res, rootPath);
+        Object.assign(files, sub_dir);
+      } else {
+        files[filePath] = {
+          file_name: dirent.name,
+          file_type: "file",
+          file_path: filePath,
+          absolute_path: path.resolve(dirPath, dirent.name),
+          file_expand: false,
+          sub_items: [],
+        };
+        dir.sub_items.push(filePath);
+      }
+    }
+
+    dir.sub_items = dir.sub_items.sort((a, b) => {
+      if (files[a].file_type === "folder" && files[b].file_type === "file") {
+        return -1;
+      } else if (
+        files[a].file_type === "file" &&
+        files[b].file_type === "folder"
+      ) {
+        return 1;
+      } else {
+        return files[a].file_name.localeCompare(files[b].file_name);
+      }
     });
 
-    // Then, sort alphabetically within each type
-    files.sort((a, b) => {
-      if (a.fileType !== b.fileType) return 0; // Don't sort across types
-      return a.fileName.localeCompare(b.fileName); // Sort alphabetically by fileName
-    });
-
-    return files.flat();
-  } catch (e) {
-    throw e; // Rethrow the error to be caught by the caller
+    if (dirPath === rootPath) {
+      files["root"] = dir;
+    } else {
+      files[file_path] = dir;
+    }
+    return files;
+  } catch (error) {
+    throw error;
   }
-  2;
+};
+
+const getFilesInDir = async (dirPath) => {
+  try {
+    const dirents = await fs.readdir(dirPath, { withFileTypes: true });
+    const fileNames = dirents.map((dirent) => {
+      return dirent.name;
+    });
+    return fileNames;
+  } catch (error) {
+    throw error;
+  }
 };
 
 app.whenReady().then(createWindow);

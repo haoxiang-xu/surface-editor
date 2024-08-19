@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext, memo } from "react";
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
-import DirItemGhostDragImage from "../../BUILTIN_COMPONENTs/dirItemGhostDragImage/dirItemGhostDragImage";
+import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
@@ -39,6 +39,8 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
+const default_selecion_list_item_padding = 6;
+
 const FileSelectionBar = ({
   code_editor_container_ref_index,
   //HORIZONTAL OR VERTICAL MODE
@@ -57,12 +59,15 @@ const FileSelectionBar = ({
   } = useContext(globalDragAndDropContexts);
   const { access_file_name_by_path_in_file } = useContext(RootDataContexts);
   const {
+    id,
     onSelectedMonacoIndex,
     setOnSelectedMonacoIndex,
     monacoPaths,
     setMonacoPaths,
     monacoCores,
     setMonacoCores,
+    item_on_drag,
+    item_on_drop,
   } = useContext(MonacoEditorContexts);
 
   const [forceRefresh, setForceRefresh] = useState(false);
@@ -109,6 +114,14 @@ const FileSelectionBar = ({
       content: monacoPaths[index],
       monaco_cores: monacoCores[monacoPaths[index]],
     });
+    item_on_drag(e, {
+      source: id,
+      ghost_image: "tag",
+      content: {
+        type: "file",
+        path: monacoPaths[index],
+      },
+    });
   };
   const onFileDragEnd = (e, index) => {
     e.stopPropagation();
@@ -139,6 +152,7 @@ const FileSelectionBar = ({
       setOnSwapIndex(-1);
       setDraggedItem(null);
     }
+    item_on_drop(e);
   };
   const fileSelectionBarOnDragOver = (e) => {
     e.preventDefault();
@@ -474,9 +488,9 @@ const FileSelectionBar = ({
           </div>
         );
       })}
-      {onDragIndex !== -1 || draggedItem !== null ? (
+      {/* {onDragIndex !== -1 || draggedItem !== null ? (
         <DirItemGhostDragImage draggedDirItemPath={draggedItem?.content} />
-      ) : null}
+      ) : null} */}
     </div>
   );
 };
@@ -548,7 +562,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "copy",
       clickable: true,
-      label: "Copy",
+      label: "copy",
       short_cut_label: "Ctrl+C",
       icon: SYSTEM_ICON_MANAGER.copy.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
@@ -557,7 +571,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "paste",
       clickable: false,
-      label: "Paste",
+      label: "paste",
       short_cut_label: "Ctrl+V",
       icon: SYSTEM_ICON_MANAGER.paste.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
@@ -566,7 +580,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "customizeInstruction",
       clickable: true,
-      label: "Customize Instruction",
+      label: "customize instruction",
       icon: SYSTEM_ICON_MANAGER.draftingCompass.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.draftingCompass.ICON16,
     },
@@ -574,7 +588,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "customizeAPI",
       icon: SYSTEM_ICON_MANAGER.customize.ICON512,
-      label: "Customize API",
+      label: "customize API",
       quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
       clickable: true,
       sub_items: ["customizeRequest"],
@@ -592,7 +606,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "continue",
       clickable: true,
-      label: "Continue...",
+      label: "continue...",
       icon: SYSTEM_ICON_MANAGER.continue.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.continue.ICON16,
     },
@@ -600,7 +614,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "fix",
       clickable: true,
-      label: "Fix...",
+      label: "fix...",
       icon: SYSTEM_ICON_MANAGER.fix.ICON512,
       quick_view_background: SYSTEM_ICON_MANAGER.fix.ICON16,
     },
@@ -612,7 +626,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "moreOptions",
       icon: SYSTEM_ICON_MANAGER.moreOptions.ICON512,
-      label: "More Editor Options...",
+      label: "more editor options...",
       quick_view_background: SYSTEM_ICON_MANAGER.moreOptions.ICON16,
       clickable: true,
       sub_items: ["fold", "unfold"],
@@ -621,7 +635,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "fold",
       icon: SYSTEM_ICON_MANAGER.fold.ICON512,
-      label: "Fold All",
+      label: "fold all",
       quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
       clickable: true,
     },
@@ -629,7 +643,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       type: "button",
       id: "unfold",
       icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
-      label: "Unfold All",
+      label: "unfold all",
       quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
       clickable: true,
     },
@@ -823,8 +837,86 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     </MonacoEditorContextMenuContexts.Provider>
   );
 };
+
+/* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
+const FileSelectionListItem = ({ reference, file_path, tag_position }) => {
+  const { access_dir_name_by_path } = useContext(RootDataContexts);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "0px",
+        left: tag_position + "px",
+      }}
+    >
+      <Tag
+        config={{
+          reference: reference,
+          type: "file",
+          label: access_dir_name_by_path(file_path),
+          style: {
+            boxShadow: "none",
+          },
+        }}
+      />
+    </div>
+  );
+};
+const FileSelectionListContainer = ({}) => {
+  const { width, monacoPaths, setMonacoPaths } =
+    useContext(MonacoEditorContexts);
+
+  const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
+  const [tagPositions, setTagPositions] = useState([]);
+
+  useEffect(() => {
+    const render_tag_positions = () => {
+      const tagPositions = [];
+      let position_x = 0;
+
+      for (let i = 0; i < monacoPaths.length; i++) {
+        tagPositions.push(position_x);
+        position_x +=
+          tagRefs.current[i].current.offsetWidth +
+          default_selecion_list_item_padding;
+      }
+      setTagPositions(tagPositions);
+    };
+    render_tag_positions();
+  }, [width]);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "128px",
+        left: "0px",
+
+        width: width + "px",
+        height: "32px",
+
+        border: "1px solid #252525",
+      }}
+    >
+      {monacoPaths.map((filePath, index) => {
+        return (
+          <FileSelectionListItem
+            key={filePath}
+            reference={tagRefs.current[index]}
+            file_path={filePath}
+            tag_position={tagPositions[index]}
+          />
+        );
+      })}
+    </div>
+  );
+};
+/* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
+
 const MonacoEditor = ({
   id,
+  width,
   mode,
   code_editor_container_ref_index,
   command,
@@ -832,7 +924,10 @@ const MonacoEditor = ({
   load_contextMenu,
   data,
   setData,
+  item_on_drag,
+  item_on_drop,
 }) => {
+  //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
   const [onSelectedMonacoIndex, setOnSelectedMonacoIndex] = useState(
     data?.on_selected_monaco_core_index
@@ -892,6 +987,8 @@ const MonacoEditor = ({
   return (
     <MonacoEditorContexts.Provider
       value={{
+        id,
+        width,
         command,
         setCommand,
         load_contextMenu,
@@ -910,6 +1007,8 @@ const MonacoEditor = ({
         setOnSelectedCotent,
         onAppendContent,
         setOnAppendContent,
+        item_on_drag,
+        item_on_drop,
       }}
     >
       <MonacoEditorContextMenuWrapper>
@@ -935,6 +1034,7 @@ const MonacoEditor = ({
             onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
             setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
           />
+          {/* <FileSelectionListContainer /> */}
         </div>
       </MonacoEditorContextMenuWrapper>
     </MonacoEditorContexts.Provider>
