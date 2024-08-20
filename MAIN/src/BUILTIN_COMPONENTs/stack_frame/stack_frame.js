@@ -265,7 +265,10 @@ const HorizontalStackContainer = ({
   /* { data } ------------------------------------------------------------------------------------------------- */
   const { access_storage_by_id, update_storage_by_id } =
     useContext(RootDataContexts);
-  const [data, setData] = useCustomizedState(access_storage_by_id(id), compareJson);
+  const [data, setData] = useCustomizedState(
+    access_storage_by_id(id),
+    compareJson
+  );
   useEffect(() => {
     update_storage_by_id(String(id), data);
   }, [data]);
@@ -287,6 +290,9 @@ const HorizontalStackContainer = ({
   }, [command]);
   const load_contextMenu = (e, contextStructure) => {
     load_context_menu(e, id, contextStructure);
+  };
+  const command_executed = () => {
+    setCommand([]);
   };
   /* { command } ============================================================================================== */
 
@@ -361,6 +367,7 @@ const HorizontalStackContainer = ({
             command={command}
             setCommand={setCommand}
             load_contextMenu={load_contextMenu}
+            command_executed={command_executed}
             data={data}
             setData={setData}
             item_on_drag={item_on_drag}

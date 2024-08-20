@@ -14,7 +14,8 @@ const MainWrapper = () => {
   return (
     <RootDataManager>
       <RootCommandManager>
-        <StackStructure />
+        <HorizontalStack/>
+          {/* <StackStructure/> */}
       </RootCommandManager>
     </RootDataManager>
   );
@@ -62,7 +63,7 @@ const Home = () => {
       />
       <div
         className="major_content_container0316"
-        style={{ top: isMenuBarHovered || isFrameMaximized ? "0px" : "0px" }}
+        style={{ top: isMenuBarHovered || isFrameMaximized ? "29px" : "0px" }}
       >
         <MainWrapper />
       </div>
