@@ -1,4 +1,9 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
+import {
+  useCustomizedState,
+  compareJson,
+} from "../../BUILTIN_COMPONENTs/customized_react/customized_react";
+import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 
 /* { import contexts } ---------------------------------------------------------------------- */
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
@@ -11,25 +16,16 @@ const FAKE_STACK_STRUCTURE = {
   root: {
     id: "root",
     type: "horizontal_stack",
-    sub_items: [
-      "surface_explorer_0004",
-      "monaco_editor_0002",
-      "monaco_editor_0003",
-    ],
+    sub_items: ["surface_explorer_0004", "surface_explorer_0005"],
   },
   surface_explorer_0004: {
     id: "surface_explorer_0004",
     type: "surface_explorer",
     sub_items: [],
   },
-  monaco_editor_0002: {
-    id: "monaco_editor_0002",
-    type: "monaco_editor",
-    sub_items: [],
-  },
-  monaco_editor_0003: {
-    id: "monaco_editor_0003",
-    type: "monaco_editor",
+  surface_explorer_0005: {
+    id: "surface_explorer_0005",
+    type: "surface_explorer",
     sub_items: [],
   },
 };
@@ -41,11 +37,10 @@ const G = 30;
 const B = 30;
 
 const StackComponentContainer = ({
-  index,
   id,
   component_type,
   stack_structure_type,
-  /* Stack Data ------------------------------------ */
+  code_editor_container_ref_index,
   width,
 }) => {
   //console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
@@ -76,7 +71,10 @@ const StackComponentContainer = ({
   /* { data } ------------------------------------------------------------------------------------------------- */
   const { access_storage_by_id, update_storage_by_id } =
     useContext(RootDataContexts);
-  const [data, setData] = useCustomizedState(access_storage_by_id(id), compareJson);
+  const [data, setData] = useCustomizedState(
+    access_storage_by_id(id),
+    compareJson
+  );
   useEffect(() => {
     update_storage_by_id(String(id), data);
   }, [data]);
@@ -99,6 +97,9 @@ const StackComponentContainer = ({
   const load_contextMenu = (e, contextStructure) => {
     load_context_menu(e, id, contextStructure);
   };
+  const command_executed = () => {
+    setCommand([]);
+  };
   /* { command } ============================================================================================== */
 
   /* { drag and drop } ---------------------------------------------------------------------------------------- */
@@ -106,67 +107,29 @@ const StackComponentContainer = ({
   /* { drag and drop } ---------------------------------------------------------------------------------------- */
 
   return (
-    <div
-      key={index}
-      style={{
-        /* POSITION-------------------------------- */
-        position: "relative",
-        /* SIZE------------------------------------ */
-        height: "100%",
-        width: width.width,
-
-        /* STYLE----------------------------------- */
-        boxSizing: "border-box",
-        display: "inline-block",
-        overflow: "hidden",
-
-        /* ANIMATION------------------------------- */
-      }}
-    >
-      <div
-        style={{
-          /* POSITION --------------------------- */
-          position: "absolute",
-          top: "0px",
-          left: "0px",
-
-          /* SIZE ------------------------------- */
-          height: "100%",
-          width: "100%",
-
-          /* STYLE ------------------------------ */
-          border: "1px solid #282828",
-          boxSizing: "border-box",
-          overflow: "hidden",
-          borderRadius: 11,
-          backgroundColor: "#1E1E1E",
-
-          /* ANIMATION -------------------------- */
-          transition: "all 0.04s ease",
-        }}
-      >
-        {StackFrameComponent ? (
-          <StackFrameComponent
-            id={id}
-            width={width.width}
-            mode={mode}
-            command={command}
-            setCommand={setCommand}
-            load_contextMenu={load_contextMenu}
-            data={data}
-            setData={setData}
-            item_on_drag={item_on_drag}
-            item_on_drop={item_on_drop}
-            code_editor_container_ref_index={
-              width.code_editor_container_ref_index
-            }
-          />
-        ) : null}
-      </div>
-    </div>
+    <>
+      {StackFrameComponent ? (
+        <StackFrameComponent
+          id={id}
+          width={width}
+          mode={mode}
+          command={command}
+          setCommand={setCommand}
+          load_contextMenu={load_contextMenu}
+          command_executed={command_executed}
+          data={data}
+          setData={setData}
+          item_on_drag={item_on_drag}
+          item_on_drop={item_on_drop}
+          code_editor_container_ref_index={code_editor_container_ref_index}
+        />
+      ) : null}
+    </>
   );
 };
+
 const StackFrame = ({ id, position, size }) => {
+  const { stackStructure } = useContext(StackStructureContexts);
   return (
     <div
       style={{
@@ -181,7 +144,17 @@ const StackFrame = ({ id, position, size }) => {
         border: `1px solid rgba(${R + 12}, ${G + 12}, ${B + 12}, 1)`,
         boxSizing: "border-box",
       }}
-    ></div>
+    >
+      <StackComponentContainer
+        id={id}
+        component_type={stackStructure[id].type}
+        stack_structure_type={"horizontal_stack"}
+        code_editor_container_ref_index={
+          stackStructure[id].code_editor_container_ref_index
+        }
+        width={size.width}
+      />
+    </div>
   );
 };
 const StackResizer = ({ id, position, size, adjust_size }) => {
@@ -304,8 +277,6 @@ const HorizontalStack = ({ id, position, size }) => {
         top: position.y,
         width: size.width,
         height: size.height,
-
-        backgroundColor: `rgb(${R - 6}, ${G - 6}, ${B - 6})`,
       }}
     >
       {subItemComponents

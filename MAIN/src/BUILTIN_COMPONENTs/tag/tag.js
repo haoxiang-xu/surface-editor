@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { stringify } from "flatted";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
@@ -53,7 +54,6 @@ const CustomizedTag = ({
   const [tagStyle, setTagStyle] = useState(style);
   const [tagMaxWidth, setTagMaxWidth] = useState(style.maxWidth);
   const [inputMode, setInputMode] = useState(style.inputMode);
-  const [onHover, setOnHover] = useState(null);
 
   useEffect(() => {
     if (!spanRef.current) return;
@@ -125,7 +125,7 @@ const CustomizedTag = ({
         inputMode: style.inputMode,
       };
     });
-  }, [spanRef, onHover, style]);
+  }, [style]);
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -171,12 +171,6 @@ const CustomizedTag = ({
         border: tagStyle.border || "none",
         backdropFilter: tagStyle.backdropFilter || "none",
         pointerEvents: inputMode ? "auto" : "none",
-      }}
-      onMouseEnter={(event) => {
-        setOnHover(true);
-      }}
-      onMouseLeave={(event) => {
-        setOnHover(false);
       }}
     >
       {icon ? (
@@ -408,7 +402,36 @@ const CommandTag = ({ config }) => {
 };
 /* { Tag types } ================================================================================= */
 
-const Tag = ({ config }) => {
+const compareConfig = (prev, next) => {
+  const prev_config = { ...prev.config };
+  const next_config = { ...next.config };
+
+  if (prev_config.style.maxWidth !== next_config.style.maxWidth) {
+    console.log("maxWidth");
+    return false;
+  }
+  if (prev_config.style.fullSizeMode !== next_config.style.fullSizeMode) {
+    console.log("fullSizeMode");
+    return false;
+  }
+  if (prev_config.style.transparentMode !== next_config.style.transparentMode) {
+    console.log("transparentMode");
+    return false;
+  }
+  if (prev_config.style.inputMode !== next_config.style.inputMode) {
+    console.log("inputMode");
+    return false;
+  }
+  if (
+    prev_config.style.noWidthLimitMode !== next_config.style.noWidthLimitMode
+  ) {
+    console.log("noWidthLimitMode");
+    return false;
+  }
+  return true;
+};
+
+const Tag = React.memo(({ config }) => {
   const process_tag_config = (config) => {
     let processed_config = { ...config };
 
@@ -503,6 +526,6 @@ const Tag = ({ config }) => {
     }
   };
   return render_tag();
-};
+}, compareConfig);
 
 export default Tag;
