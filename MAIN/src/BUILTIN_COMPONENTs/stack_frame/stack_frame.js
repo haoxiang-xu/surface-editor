@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, memo } from "react";
-import { debounce } from 'lodash';
+import { debounce } from "lodash";
 import {
   useCustomizedState,
   compareJson,
@@ -353,7 +353,7 @@ const HorizontalStackContainer = ({
           border: "1px solid #282828",
           boxSizing: "border-box",
           overflow: "hidden",
-          borderRadius: 11,
+          borderRadius: 8,
           backgroundColor: "#1E1E1E",
 
           /* ANIMATION -------------------------- */

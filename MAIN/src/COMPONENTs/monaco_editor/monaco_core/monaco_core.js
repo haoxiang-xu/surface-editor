@@ -27,7 +27,7 @@ const MonacoCore = ({
   let EDITOR_FONT_SIZE;
   switch (window.osInfo.platform) {
     case "darwin": // macOS
-      EDITOR_FONT_SIZE = 12;
+      EDITOR_FONT_SIZE = 10;
       break;
     case "win32": // Windows
       EDITOR_FONT_SIZE = 12;
@@ -280,7 +280,10 @@ const defineTheme = (monaco) => {
     base: "vs-dark",
     inherit: true,
     rules: [],
-    colors: {},
+    colors: {
+      "editor.foreground": "#cccccc",
+      "editorCursor.foreground": "#ffcc00",
+    },
   });
   monaco.editor.setTheme("customTheme");
 };

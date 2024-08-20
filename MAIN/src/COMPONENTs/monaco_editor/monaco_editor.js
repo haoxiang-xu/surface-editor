@@ -1325,7 +1325,7 @@ const MonacoEditor = ({
             onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
             setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
           />
-          {/* <FileSelectionListContainer /> */}
+          <FileSelectionListContainer />
         </div>
       </MonacoEditorContextMenuWrapper>
     </MonacoEditorContexts.Provider>

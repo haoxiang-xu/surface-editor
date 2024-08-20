@@ -15,7 +15,7 @@ const MainWrapper = () => {
     <RootDataManager>
       <RootCommandManager>
         <HorizontalStack/>
-          {/* <StackStructure/> */}
+        {/* <StackStructure /> */}
       </RootCommandManager>
     </RootDataManager>
   );

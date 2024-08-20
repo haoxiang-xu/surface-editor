@@ -139,7 +139,7 @@ const StackFrame = ({ id, position, size }) => {
         width: size.width,
         height: size.height,
 
-        borderRadius: 6,
+        borderRadius: 8,
         backgroundColor: `rgb(${R}, ${G}, ${B})`,
         border: `1px solid rgba(${R + 12}, ${G + 12}, ${B + 12}, 1)`,
         boxSizing: "border-box",
