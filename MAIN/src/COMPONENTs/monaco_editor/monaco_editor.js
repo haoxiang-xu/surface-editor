@@ -43,6 +43,8 @@ const default_selecion_list_item_padding = 8;
 const default_border_radius = 6;
 const default_selecion_list_icon_offset = 22;
 
+const default_onhover_item_background_color_offset = 16;
+
 const R = 30;
 const G = 30;
 const B = 30;
@@ -850,34 +852,34 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
   const [backgroundColorOffset, setBackgroundColorOffset] = useState(0);
   const [borderRadius, setBorderRadius] = useState({
     center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-    left_border: 0,
-    left_cover: `0px 0px ${default_border_radius}px 0px`,
-    right_border: 0,
-    right_cover: `0px 0px 0px ${default_border_radius}px`,
+    left_border: `0px 0px 0px ${default_border_radius}px`,
+    left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+    right_border: `0px 0px ${default_border_radius}px 0px`,
+    right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
   });
   const [top, setTop] = useState(default_selecion_list_item_padding);
   const [left, setLeft] = useState(0);
 
   useEffect(() => {
     if (index === onSelectedMonacoIndex) {
-      setBackgroundColorOffset(32);
+      setBackgroundColorOffset(default_onhover_item_background_color_offset);
       setBorderRadius({
         center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-        left_border: 0,
-        left_cover: `0px 0px ${default_border_radius}px 0px`,
-        right_border: 0,
-        right_cover: `0px 0px 0px ${default_border_radius}px`,
+        left_border: `0px 0px 0px ${default_border_radius}px`,
+        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+        right_border: `0px 0px ${default_border_radius}px 0px`,
+        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
       });
       setTop(0);
       setLeft(-default_selecion_list_icon_offset);
     } else {
       setBackgroundColorOffset(0);
       setBorderRadius({
-        center: `${default_border_radius}px`,
-        left_border: 0,
-        left_cover: 0,
-        right_border: 0,
-        right_cover: 0,
+        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+        left_border: `0px 0px 0px ${default_border_radius}px`,
+        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+        right_border: `0px 0px ${default_border_radius}px 0px`,
+        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
       });
       setTop(0);
       setLeft(0);
@@ -892,78 +894,74 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
           position: "absolute",
           top: top,
           left: left,
-          right: "0px",
-          bottom: "0px",
+          right: -default_selecion_list_item_padding / 2,
+          bottom: 0,
           backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
             G + backgroundColorOffset
           }, ${B + backgroundColorOffset}, 1 )`,
           borderRadius: `${borderRadius.center}`,
         }}
       ></div>
-      {onSelectedMonacoIndex === index ? (
-        <>
-          <div
-            style={{
-              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-              position: "absolute",
-              top: "50%",
-              left: `${-default_selecion_list_item_padding + left}px`,
-              bottom: "0px",
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: "50%",
+          left: `${-default_selecion_list_item_padding + left}px`,
+          bottom: "0px",
 
-              width: `${default_selecion_list_item_padding}px`,
+          width: `${default_selecion_list_item_padding}px`,
 
-              backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
-                G + backgroundColorOffset
-              }, ${B + backgroundColorOffset}, 1 )`,
-              borderRadius: `${borderRadius.left_border}`,
-            }}
-          ></div>
-          <div
-            style={{
-              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-              position: "absolute",
-              top: `50%`,
-              left: `${-default_selecion_list_item_padding + left}px`,
-              bottom: "0px",
+          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
+            G + backgroundColorOffset
+          }, ${B + backgroundColorOffset}, 1 )`,
+          borderRadius: `${borderRadius.left_border}`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: `50%`,
+          left: `${-default_selecion_list_item_padding + left}px`,
+          bottom: "0px",
 
-              width: `${default_selecion_list_item_padding}px`,
+          width: `${default_selecion_list_item_padding}px`,
 
-              backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
-              borderRadius: `${borderRadius.left_cover}`,
-            }}
-          ></div>
-          <div
-            style={{
-              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-              position: "absolute",
-              top: "50%",
-              right: `${-default_selecion_list_item_padding}px`,
-              bottom: "0px",
+          backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+          borderRadius: `${borderRadius.left_cover}`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: "50%",
+          right: `${-1.5 * default_selecion_list_item_padding}px`,
+          bottom: "0px",
 
-              width: `${default_selecion_list_item_padding}px`,
+          width: `${default_selecion_list_item_padding}px`,
 
-              backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
-                G + backgroundColorOffset
-              }, ${B + backgroundColorOffset}, 1 )`,
-              borderRadius: `${borderRadius.right_border}`,
-            }}
-          ></div>
-          <div
-            style={{
-              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-              position: "absolute",
-              top: `50%`,
-              right: `${-default_selecion_list_item_padding}px`,
-              bottom: "0px",
+          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
+            G + backgroundColorOffset
+          }, ${B + backgroundColorOffset}, 1 )`,
+          borderRadius: `${borderRadius.right_border}`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: `50%`,
+          right: `${-1.5 * default_selecion_list_item_padding}px`,
+          bottom: "0px",
 
-              width: `${default_selecion_list_item_padding}px`,
+          width: `${default_selecion_list_item_padding}px`,
 
-              backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
-              borderRadius: `${borderRadius.right_cover}`,
-            }}
-          ></div>{" "}
-        </>
-      ) : null}
+          backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+          borderRadius: `${borderRadius.right_cover}`,
+        }}
+      ></div>{" "}
     </>
   );
 };
@@ -1002,7 +1000,7 @@ const FileSelectionListItem = ({
     } else if (index === onSelectedMonacoIndex) {
       setZIndex(7);
       setTagOpacity(1);
-      setTagColorOffset(32);
+      setTagColorOffset(default_onhover_item_background_color_offset);
     } else {
       setZIndex(6);
       setTagOpacity(0.32);
@@ -1028,10 +1026,10 @@ const FileSelectionListItem = ({
       style={{
         transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
-        top: default_selecion_list_item_padding / 2,
+        top: 0,
         left: tag_position + "px",
         width: tagSize.width + "px",
-        height: tagSize.height + "px",
+        bottom: default_selecion_list_item_padding / 2,
         zIndex: zIndex,
         opacity: tagOpacity,
       }}
@@ -1066,6 +1064,8 @@ const FileSelectionListItem = ({
           label: access_dir_name_by_path(file_path),
           style: {
             transparentMode: true,
+            top: "50%",
+            transform: "translate(0%, -50%)",
             boxShadow: "none",
             pointerEvents: "none",
             maxWidth: 128,
@@ -1100,7 +1100,7 @@ const FileSelectionListItem = ({
           }}
           onMouseEnter={() => {
             setCloseButtonStyle({
-              backgroundColorOffset: 64,
+              backgroundColorOffset: 48,
               onHover: true,
             });
           }}
@@ -1117,7 +1117,6 @@ const FileSelectionListItem = ({
 };
 const FileSelectionListContainer = ({}) => {
   const {
-    width,
     onDragedMonacoIndex,
     onSelectedMonacoIndex,
     monacoPaths,
@@ -1153,7 +1152,7 @@ const FileSelectionListContainer = ({}) => {
         if (i !== onDragedMonacoIndex) {
           position_x +=
             tagRefs.current[i]?.current?.offsetWidth +
-            default_selecion_list_item_padding;
+            1.5 * default_selecion_list_item_padding;
         }
         tagSizes.push({
           width: tagRefs.current[i]?.current?.offsetWidth,
@@ -1175,14 +1174,15 @@ const FileSelectionListContainer = ({}) => {
     <div
       style={{
         position: "absolute",
-        top: "128px",
-        left: "64px",
-        right: "0px",
+        top: 5,
+        left: "90px",
+        right: 5,
 
-        height: "26px",
+        height: 28,
 
-        border: "1px solid rgba(225, 225, 225, 0.32)",
+        // border: "1px solid rgba(225, 225, 225, 0.32)",
         backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+        borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         overflow: "hidden",
         padding: default_selecion_list_item_padding / 2,
       }}
@@ -1206,7 +1206,6 @@ const FileSelectionListContainer = ({}) => {
 
 const MonacoEditor = ({
   id,
-  width,
   mode,
   code_editor_container_ref_index,
   command,
@@ -1279,7 +1278,6 @@ const MonacoEditor = ({
     <MonacoEditorContexts.Provider
       value={{
         id,
-        width,
         command,
         setCommand,
         load_contextMenu,
@@ -1327,7 +1325,7 @@ const MonacoEditor = ({
             onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
             setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
           />
-          <FileSelectionListContainer />
+          {/* <FileSelectionListContainer /> */}
         </div>
       </MonacoEditorContextMenuWrapper>
     </MonacoEditorContexts.Provider>
