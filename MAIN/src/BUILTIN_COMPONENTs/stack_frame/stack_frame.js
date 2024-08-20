@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect, memo } from "react";
+import { debounce } from 'lodash';
 import {
   useCustomizedState,
   compareJson,
@@ -72,7 +73,7 @@ const HorizontalStackResizer = ({
     const right_start_width = stacks[index + 1].width;
     const scroll_x_start_position = window.scrollX;
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = debounce((e) => {
       e.preventDefault();
       const moveX = e.clientX - startX;
       const left_width = left_start_width + moveX;
@@ -153,7 +154,7 @@ const HorizontalStackResizer = ({
           setStacks(editedStacks);
         }
       }
-    };
+    }, 2);
     const handleMouseUp = (e) => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
