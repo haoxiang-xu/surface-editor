@@ -56,6 +56,8 @@ const ContextItemButton = ({
   } = useContext(ContextMenuContexts);
 
   const [onHover, setOnHover] = useState(false);
+  const [onSubMenu, setOnSubMenu] = useState(false);
+  const hoverTimeout = useRef(null);
   const [onClicked, setOnClicked] = useState(false);
   const [isIconLoaded, setIsIconLoaded] = useState(false);
   const handleIconLoad = () => {
@@ -172,10 +174,20 @@ const ContextItemButton = ({
         boxShadow: style.boxShadow,
         opacity: contextStructure[unique_tag].clickable ? 1 : 0.32,
       }}
-      onMouseEnter={() => setOnHover(true)}
+      onMouseEnter={() => {
+        setOnHover(true);
+        hoverTimeout.current = setTimeout(() => {
+          setOnSubMenu(true);
+        }, 200);
+      }}
       onMouseLeave={() => {
         setOnHover(false);
         setOnClicked(false);
+        clearTimeout(hoverTimeout.current);
+        if (hoverTimeout.current) {
+          setOnSubMenu(false);
+        }
+        hoverTimeout.current = null;
       }}
       onMouseDown={(e) => {
         e.stopPropagation();
@@ -347,7 +359,7 @@ const ContextItemButton = ({
       {/* Context Item Sub List render ------------------------------------------------------ */}
       {contextStructure[unique_tag].sub_items !== undefined &&
       contextStructure[unique_tag].sub_items.length !== 0 &&
-      onHover ? (
+      onSubMenu ? (
         <ContextList
           position_x={subListPostion[0][0]}
           position_y={subListPostion[0][1]}
