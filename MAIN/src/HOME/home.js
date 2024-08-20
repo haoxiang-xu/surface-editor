@@ -49,7 +49,6 @@ const Home = () => {
       className="main_container0315"
       //onMouseMove={handleMouseMove}
       style={{
-        transition: "border-radius 0.12s, border 0.12s",
         borderRadius: isFrameMaximized ? "0px" : SYSTEM_FRAME_BORDER_RADIUS,
         border: isFrameMaximized ? "none" : SYSTEM_FRAME_BORDER,
       }}
