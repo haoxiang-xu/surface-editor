@@ -407,25 +407,20 @@ const compareConfig = (prev, next) => {
   const next_config = { ...next.config };
 
   if (prev_config.style.maxWidth !== next_config.style.maxWidth) {
-    console.log("maxWidth");
     return false;
   }
   if (prev_config.style.fullSizeMode !== next_config.style.fullSizeMode) {
-    console.log("fullSizeMode");
     return false;
   }
   if (prev_config.style.transparentMode !== next_config.style.transparentMode) {
-    console.log("transparentMode");
     return false;
   }
   if (prev_config.style.inputMode !== next_config.style.inputMode) {
-    console.log("inputMode");
     return false;
   }
   if (
     prev_config.style.noWidthLimitMode !== next_config.style.noWidthLimitMode
   ) {
-    console.log("noWidthLimitMode");
     return false;
   }
   return true;

@@ -6,6 +6,7 @@ import React, {
   useContext,
   useMemo,
 } from "react";
+import { throttle } from "lodash";
 /* Context ------------------------------------------------------------------------------------------------------------------------ */
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { SurfaceExplorerContexts } from "./surface_explorer_contexts.js";
@@ -481,7 +482,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
             boxShadow: "none",
             isExpanded: isExpanded,
             maxWidth:
-            width -
+              explorerListWidth -
               position_x -
               2 * default_indicator_padding -
               2 * default_border_width,
@@ -728,7 +729,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
             backgroundColor: style.backgroundColor,
             boxShadow: "none",
             maxWidth:
-              width -
+              explorerListWidth -
               position_x -
               2 * default_indicator_padding -
               2 * default_border_width,
@@ -1496,12 +1497,12 @@ const SurfaceExplorer = ({
     [onSelectedExplorerItems]
   );
   useEffect(() => {
-    const update_explorer_scroll_position = () => {
+    const update_explorer_scroll_position = throttle(() => {
       if (explorerListRef.current) {
         setExplorerScrollPosition(explorerListRef.current.scrollTop);
         setExplorerListTop(explorerListRef.current.getBoundingClientRect().top);
       }
-    };
+    }, 200);
     if (!explorerListRef.current) return;
     if (explorerListRef.current) {
       setExplorerListWidth(explorerListRef.current.offsetWidth);
