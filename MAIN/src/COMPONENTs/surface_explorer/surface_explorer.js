@@ -394,7 +394,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
       draggable={!onRenameMode}
       style={{
         transition:
-          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), box-shadow 0.24s",
+          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), box-shadow 0.08s",
         position: "absolute",
         top: position_y,
         left: position_x,
@@ -645,7 +645,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
       draggable={!onRenameMode}
       style={{
         transition:
-          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), box-shadow 0.24s",
+          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), box-shadow 0.08s",
         position: "absolute",
         top: position_y,
         left: position_x,
