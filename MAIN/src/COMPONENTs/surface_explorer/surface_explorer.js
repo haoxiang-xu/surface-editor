@@ -1331,7 +1331,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "rename",
         clickable: true,
         label: "rename",
-        icon: SYSTEM_ICON_MANAGER.rename.ICON512,
+        icon: "rename",
         quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
       },
       delete: {
@@ -1391,7 +1391,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "rename",
         clickable: true,
         label: "rename",
-        icon: SYSTEM_ICON_MANAGER.rename.ICON512,
+        icon: "rename",
         quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
       },
       delete: {

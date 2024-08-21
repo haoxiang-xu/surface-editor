@@ -154,7 +154,7 @@ const HorizontalStackResizer = ({
           setStacks(editedStacks);
         }
       }
-    }, 2);
+    }, 1);
     const handleMouseUp = (e) => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);

@@ -19,6 +19,7 @@ import { ContextMenuContexts } from "./context_menu_contexts";
 
 import Tag from "../tag/tag";
 
+import Icon from "../icon/icon";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
 /* Load ICON manager -------------------------------- */
@@ -230,7 +231,7 @@ const ContextItemButton = ({
             : null,
         }}
       >
-        <img
+        <Icon
           src={contextStructure[unique_tag].icon}
           style={{
             /* POSITION -------------- */
