@@ -394,7 +394,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
       draggable={!onRenameMode}
       style={{
         transition:
-          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), box-shadow 0.24s",
         position: "absolute",
         top: position_y,
         left: position_x,
@@ -408,7 +408,9 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         /* Style ======================= */
         borderRadius: 4,
         backgroundColor: style.backgroundColor,
-        boxShadow: onPause ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
+        boxShadow: onPause
+          ? "0px 4px 16px rgba(0, 0, 0, 0.32)"
+          : "0px 4px 16px rgba(0, 0, 0, 0)",
       }}
       onMouseEnter={() => {
         setOnHover(true);
@@ -643,7 +645,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
       draggable={!onRenameMode}
       style={{
         transition:
-          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), box-shadow 0.24s",
         position: "absolute",
         top: position_y,
         left: position_x,
@@ -657,7 +659,9 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         /* Style ======================= */
         borderRadius: 4,
         backgroundColor: style.backgroundColor,
-        boxShadow: onPause ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
+        boxShadow: onPause
+          ? "0px 4px 16px rgba(0, 0, 0, 0.32)"
+          : "0px 4px 16px rgba(0, 0, 0, 0)",
       }}
       onMouseEnter={() => {
         setOnHover(true);
@@ -1044,6 +1048,7 @@ const ExplorerList = () => {
     >
       {explorerList
         .slice(visibleIndexRange.startIndex, visibleIndexRange.endIndex)
+        .reverse()
         .map((item) => {
           return item;
         })}
