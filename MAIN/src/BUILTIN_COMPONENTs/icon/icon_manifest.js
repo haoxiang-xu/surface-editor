@@ -1,3 +1,3 @@
 export const iconManifest = {
-  arrow: () => import("../../SVGs/UI/arrow.svg"),
+  arrow: () => import("./SVGs/UI/arrow.svg"),
 };

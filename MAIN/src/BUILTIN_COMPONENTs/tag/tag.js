@@ -175,46 +175,24 @@ const CustomizedTag = ({
         pointerEvents: inputMode ? "auto" : "none",
       }}
     >
-      {type === "folder" ? (
-        <Icon
-          path={"arrow"}
-          style={{
-            transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
-            position: "absolute",
-            transform: tagStyle.icon_transform
-              ? `translate(0%, -50%) ${tagStyle.icon_transform}`
-              : `translate(0%, -50%)`,
-            top: "50%",
-            left: style.padding_x || default_tag_padding_x,
+      <Icon
+        src={icon}
+        style={{
+          transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+          position: "absolute",
+          transform: tagStyle.icon_transform
+            ? `translate(0%, -50%) ${tagStyle.icon_transform}`
+            : `translate(0%, -50%)`,
+          top: "50%",
+          left: style.padding_x || default_tag_padding_x,
 
-            width: 16,
-            height: 16,
+          width: 16,
+          height: 16,
 
-            borderRadius: 2,
-            load: "lazy",
-          }}
-        />
-      ) : null}
-      {icon && type === "file" ? (
-        <img
-          src={icon}
-          style={{
-            transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
-            position: "absolute",
-            transform: tagStyle.icon_transform
-              ? `translate(0%, -50%) ${tagStyle.icon_transform}`
-              : `translate(0%, -50%)`,
-            top: "50%",
-            left: style.padding_x || default_tag_padding_x,
-
-            width: 16,
-            height: 16,
-
-            borderRadius: 2,
-            load: "lazy",
-          }}
-        />
-      ) : null}
+          borderRadius: 2,
+          load: "lazy",
+        }}
+      />
       <span
         ref={spanRef}
         style={{
@@ -393,7 +371,7 @@ const FolderTag = ({ config }) => {
       processed_config.style.isExpanded = false;
     }
     if (config.icon === undefined || config.icon === null) {
-      processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON16;
+      processed_config.icon = 'arrow';
     }
     if (!config.style.noWidthLimitMode) {
       processed_config.style.maxWidth = config.style.maxWidth - 12;

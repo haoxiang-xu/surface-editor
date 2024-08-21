@@ -1,23 +1,32 @@
 import React, { useState, useEffect, useRef } from "react";
 import { iconManifest } from "./icon_manifest";
 
-const Icon = ({ path, ...props }) => {
-  const [svg, setSVG] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const svgRef = useRef(null);
+const Icon = ({ src, ...props }) => {
+  const [iconSrc, setIconSrc] = useState(null);
+  const [isIconLoaded, setIsIconLoaded] = useState(false);
+  const iconRef = useRef(null);
 
   useEffect(() => {
     const fetchSVG = async () => {
-      const svg = await iconManifest[path]();
-      setSVG(svg.default);
-      setIsLoaded(true);
+      const svg = await iconManifest[src]();
+      setIconSrc(svg.default);
+      setIsIconLoaded(true);
     };
+    if (!src) return;
+    try {
+      if (src.indexOf("png") == -1) {
+        fetchSVG();
+      } else {
+        setIconSrc(src);
+        setIsIconLoaded(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [src]);
 
-    fetchSVG();
-  }, [path]);
-
-  if (!isLoaded) return null;
-  return <img ref={svgRef} src={svg} alt={path} {...props} />;
+  if (!isIconLoaded) return null;
+  return <img ref={iconRef} src={iconSrc} alt={src} {...props} />;
 };
 
 export default Icon;
