@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { stringify } from "flatted";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
+import Icon from "../icon/icon";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
@@ -41,6 +42,7 @@ const more_option_label_font_size = 12;
 /* { Tag types } ================================================================================= */
 const CustomizedTag = ({
   reference,
+  type,
   label,
   label_on_change,
   label_on_submit,
@@ -173,7 +175,27 @@ const CustomizedTag = ({
         pointerEvents: inputMode ? "auto" : "none",
       }}
     >
-      {icon ? (
+      {type === "folder" ? (
+        <Icon
+          path={"arrow"}
+          style={{
+            transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+            position: "absolute",
+            transform: tagStyle.icon_transform
+              ? `translate(0%, -50%) ${tagStyle.icon_transform}`
+              : `translate(0%, -50%)`,
+            top: "50%",
+            left: style.padding_x || default_tag_padding_x,
+
+            width: 16,
+            height: 16,
+
+            borderRadius: 2,
+            load: "lazy",
+          }}
+        />
+      ) : null}
+      {icon && type === "file" ? (
         <img
           src={icon}
           style={{
