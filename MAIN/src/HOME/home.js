@@ -3,7 +3,7 @@ import RootDataManager from "../DATA_MANAGERs/root_data_manager/root_data_manage
 import RootCommandManager from "../DATA_MANAGERs/root_command_manager/root_command_manager";
 import HeaderMenuBar from "../BUILTIN_COMPONENTs/headerMenuBar/headerMenuBar";
 import HorizontalStack from "../STACK_STRUCTUREs/horizontal_stack/horizontal_stack";
-import RootStackManager from "../DEMO/stack_structure/stack_structure";
+import RootStackManager from "../DEMO/root_stack_manager/root_stack_manager";
 import {
   SYSTEM_FRAME_BORDER,
   SYSTEM_FRAME_BORDER_RADIUS,
@@ -14,8 +14,8 @@ const MainWrapper = () => {
   return (
     <RootDataManager>
       <RootCommandManager>
-        <HorizontalStack/>
-        {/* <RootStackManager /> */}
+        {/* <HorizontalStack/> */}
+        <RootStackManager />
       </RootCommandManager>
     </RootDataManager>
   );
@@ -62,7 +62,7 @@ const Home = () => {
       />
       <div
         className="major_content_container0316"
-        style={{ top: isMenuBarHovered || isFrameMaximized ? "29px" : "0px" }}
+        style={{ top: isMenuBarHovered || isFrameMaximized ? "0px" : "0px" }}
       >
         <MainWrapper />
       </div>
