@@ -49,7 +49,7 @@ const createWindow = () => {
       title: "",
       icon: path.join(
         __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
       ),
       width: 1200,
       height: 800,
@@ -70,10 +70,7 @@ const createWindow = () => {
       backgroundColor: "#181818",
     });
     app.dock.setIcon(
-      path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
-      )
+      path.join(__dirname, "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png")
     );
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({

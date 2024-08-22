@@ -269,7 +269,7 @@ const StackFrameTestingContainer = ({ id }) => {
         overflow: "hidden",
       }}
     >
-      {/* <span
+      <span
         style={{
           position: "absolute",
           top: "50%",
@@ -284,7 +284,7 @@ const StackFrameTestingContainer = ({ id }) => {
         }}
       >
         {id.slice(-2)}
-      </span> */}
+      </span>
     </div>
   );
 };

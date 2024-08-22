@@ -192,6 +192,16 @@ const TitleBar = ({ isWindowMaximized }) => {
   const handleMaximize = () => {
     window.electron.send("window-control", "maximize");
   };
+
+  const render_title_bar = () => {
+    switch (window.osInfo.platform) {
+      case "win32":
+        return <Win32ControlPanel />;
+      case "darwin":
+        return null;
+    }
+  };
+
   return (
     <TitleBarContexts.Provider
       value={{
@@ -214,7 +224,7 @@ const TitleBar = ({ isWindowMaximized }) => {
           WebkitAppRegion: "drag",
         }}
       >
-        <Win32ControlPanel />
+        {render_title_bar()}
       </div>
     </TitleBarContexts.Provider>
   );
