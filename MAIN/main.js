@@ -1,4 +1,11 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog, globalShortcut } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  ipcMain,
+  dialog,
+  globalShortcut,
+} = require("electron");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -79,16 +86,18 @@ const createWindow = () => {
       height: 800,
       webSecurity: true,
       hasShadow: true,
-      transparent: true,
+      transparent: false,
       resizable: true,
       maximizable: true,
       backgroundMaterial: "acrylic",
+      titleBarStyle: 'hidden',
       webPreferences: {
         preload: path.join(__dirname, "preload.js"),
         contextIsolation: true,
         nodeIntegration: false,
       },
-      frame: false,
+      backgroundColor: "#181818",
+      frame: true,
     });
   } else {
     mainWindow = new BrowserWindow({
