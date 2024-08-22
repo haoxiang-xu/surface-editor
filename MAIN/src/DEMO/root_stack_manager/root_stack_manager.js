@@ -1,4 +1,10 @@
-import React, { useState, useContext, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { debounce } from "lodash";
 import { throttle } from "lodash";
 import {
@@ -141,7 +147,8 @@ const FAKE_STACK_STRUCTURE = {
 
 const default_component_padding = 8;
 const default_component_border_radius = 8;
-const default_resizer_size = 10;
+const default_resizer_size = 8;
+const default_resizer_layer = 12;
 
 const R = 30;
 const G = 30;
@@ -246,101 +253,23 @@ const StackComponentContainer = ({
   );
 };
 
-const StackFrameResizer = ({ id, stack_structure_type }) => {
-  switch (stack_structure_type) {
-    case "horizontal_stack":
-      return (
-        <div
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            width: default_resizer_size,
-            height: "100%",
-
-            cursor: "ew-resize",
-            userSelect: "none",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              right: "50%",
-              top: "50%",
-              transform: "translate(50%, -50%)",
-              width: default_resizer_size / 2,
-              height: MIN - default_resizer_size * 2,
-
-              borderRadius: 4,
-              cursor: "ew-resize",
-              userSelect: "none",
-              backgroundColor: `rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`,
-            }}
-          ></div>
-        </div>
-      );
-    case "vertical_stack":
-      return (
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-
-            width: "100%",
-            height: default_resizer_size,
-
-            cursor: "ns-resize",
-            userSelect: "none",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              right: "50%",
-              top: "50%",
-              transform: "translate(50%, -50%)",
-              width: MIN - default_resizer_size * 2,
-              height: default_resizer_size / 2,
-
-              borderRadius: 4,
-              cursor: "ns-resize",
-              userSelect: "none",
-              backgroundColor: `rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`,
-            }}
-          ></div>
-        </div>
-      );
-    default:
-      return null;
-  }
-};
-const StackFrame = ({
-  id,
-  container,
-  parent_stack_type,
-  parent_rerendered,
-  end,
-}) => {
+const StackFrameTestingContainer = ({ id }) => {
   return (
     <div
       style={{
-        transition:
-          "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
-        top: container.position.y,
-        left: container.position.x,
-        width: container.size.width,
-        height: container.size.height,
+        top: default_resizer_size / 2,
+        left: default_resizer_size / 2,
+        bottom: default_resizer_size / 2,
+        right: default_resizer_size / 2,
 
-        border: `1px solid rgb(${R + 10}, ${G + 10}, ${B + 10})`,
-        backgroundColor: `rgb(${R}, ${G}, ${B})`,
-        boxSizing: "border-box",
-
+        border: `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
+        backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
+        borderRadius: default_component_border_radius,
         overflow: "hidden",
       }}
     >
-      <span
+      {/* <span
         style={{
           position: "absolute",
           top: "50%",
@@ -355,9 +284,239 @@ const StackFrame = ({
         }}
       >
         {id.slice(-2)}
-      </span>
+      </span> */}
+    </div>
+  );
+};
+const StackFrameResizer = ({
+  id,
+  index,
+  stack_structure_type,
+  adjust_item_filter,
+  apply_item_filter,
+}) => {
+  const hoverTimeout = useRef(null);
+  const [onHover, setOnHover] = useState(false);
+  const [onPause, setOnPause] = useState(false);
+  const [onClick, setOnClick] = useState(false);
+  const [previousMousePosition, setPerviousMousePosition] = useState(null);
+  const [endingMousePosition, setEndingMousePosition] = useState(null);
+
+  const [resizerSize, setResizerSize] = useState(
+    MIN - default_resizer_size * 2
+  );
+  const [resizerColor, setResizerColor] = useState(
+    `rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`
+  );
+  const [borderRadius, setBorderRadius] = useState(
+    default_component_border_radius
+  );
+
+  const mouse_position_listener = (event) => {
+    const handleMouseUp = (event) => {
+      apply_item_filter();
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.body.style.cursor = "default";
+      setOnClick(false);
+    };
+    const handleMouseMove = (event) => {
+      event.stopPropagation();
+      setEndingMousePosition({ x: event.clientX, y: event.clientY });
+    };
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousemove", handleMouseMove);
+    if (stack_structure_type === "horizontal_stack") {
+      document.body.style.cursor = "ew-resize";
+    } else {
+      document.body.style.cursor = "ns-resize";
+    }
+    setOnClick(true);
+  };
+  useEffect(() => {
+    if (!endingMousePosition || !previousMousePosition) return;
+    if (stack_structure_type === "horizontal_stack") {
+      adjust_item_filter(
+        id,
+        index,
+        endingMousePosition.x - previousMousePosition.x
+      );
+    } else {
+      adjust_item_filter(
+        id,
+        index,
+        endingMousePosition.y - previousMousePosition.y
+      );
+    }
+  }, [endingMousePosition]);
+  useEffect(() => {
+    if (onClick) {
+      setResizerSize(`calc(100% - ${default_resizer_size * 2}px)`);
+      setBorderRadius(default_component_border_radius);
+      setResizerColor(`rgba(${67}, ${105}, ${180}, 1)`);
+    } else if (onHover && onPause) {
+      setResizerSize(`calc(100% - ${default_resizer_size * 2}px)`);
+      setBorderRadius(default_component_border_radius);
+      setResizerColor(`rgba(${67}, ${105}, ${180}, 1)`);
+    } else {
+      setResizerSize(MIN - default_resizer_size * 2);
+      setBorderRadius(default_component_border_radius);
+      setResizerColor(`rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`);
+    }
+  }, [onHover, onPause, onClick]);
+
+  switch (stack_structure_type) {
+    case "horizontal_stack":
+      return (
+        <div
+          draggable="false"
+          style={{
+            position: "absolute",
+            right: -default_resizer_size / 2,
+            top: 0,
+            width: default_resizer_size,
+            height: "100%",
+
+            cursor: "ew-resize",
+            zIndex: default_resizer_layer,
+          }}
+          onMouseEnter={() => {
+            setOnHover(true);
+            hoverTimeout.current = setTimeout(() => {
+              setOnPause(true);
+            }, 400);
+          }}
+          onMouseLeave={() => {
+            setOnHover(false);
+            clearTimeout(hoverTimeout.current);
+            if (hoverTimeout.current) {
+              setOnPause(false);
+            }
+            hoverTimeout.current = null;
+          }}
+          onMouseDown={(event) => {
+            event.stopPropagation();
+            setPerviousMousePosition({ x: event.clientX, y: event.clientY });
+            mouse_position_listener(event);
+          }}
+        >
+          <div
+            draggable="false"
+            style={{
+              transition: "height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+              position: "absolute",
+              right: "50%",
+              top: "50%",
+              transform: "translate(50%, -50%)",
+              width: default_resizer_size / 2,
+              height: resizerSize,
+
+              borderRadius: borderRadius,
+              cursor: "ew-resize",
+              backgroundColor: resizerColor,
+              userSelect: "none",
+            }}
+            onMouseEnter={() => {
+              setOnHover(true);
+              setOnPause(true);
+            }}
+          ></div>
+        </div>
+      );
+    case "vertical_stack":
+      return (
+        <div
+          draggable="false"
+          style={{
+            position: "absolute",
+            bottom: -default_resizer_size / 2,
+            left: 0,
+
+            width: "100%",
+            height: default_resizer_size,
+
+            cursor: "ns-resize",
+            zIndex: default_resizer_layer,
+          }}
+          onMouseEnter={() => {
+            setOnHover(true);
+            hoverTimeout.current = setTimeout(() => {
+              setOnPause(true);
+            }, 400);
+          }}
+          onMouseLeave={() => {
+            setOnHover(false);
+            clearTimeout(hoverTimeout.current);
+            if (hoverTimeout.current) {
+              setOnPause(false);
+            }
+            hoverTimeout.current = null;
+          }}
+          onMouseDown={(event) => {
+            event.stopPropagation();
+            setPerviousMousePosition({ x: event.clientX, y: event.clientY });
+            mouse_position_listener(event);
+          }}
+        >
+          <div
+            draggable="false"
+            style={{
+              transition: "width 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+              position: "absolute",
+              right: "50%",
+              top: "50%",
+              transform: "translate(50%, -50%)",
+              width: resizerSize,
+              height: default_resizer_size / 2,
+
+              borderRadius: borderRadius,
+              cursor: "ns-resize",
+              backgroundColor: resizerColor,
+              userSelect: "none",
+            }}
+            onMouseEnter={() => {
+              setOnHover(true);
+              setOnPause(true);
+            }}
+          ></div>
+        </div>
+      );
+    default:
+      return null;
+  }
+};
+const StackFrame = ({
+  id,
+  index,
+  container,
+  parent_stack_type,
+  parent_rerendered,
+  end,
+  adjust_item_filter,
+  apply_item_filter,
+}) => {
+  return (
+    <div
+      draggable="false"
+      style={{
+        // transition:
+        //   "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+        position: "absolute",
+        top: container.position.y,
+        left: container.position.x,
+        width: container.size.width,
+        height: container.size.height,
+      }}
+    >
+      <StackFrameTestingContainer id={id} />
       {end ? null : (
-        <StackFrameResizer id={id} stack_structure_type={parent_stack_type} />
+        <StackFrameResizer
+          id={id}
+          index={index}
+          stack_structure_type={parent_stack_type}
+          adjust_item_filter={adjust_item_filter}
+          apply_item_filter={apply_item_filter}
+        />
       )}
     </div>
   );
@@ -365,13 +524,17 @@ const StackFrame = ({
 
 const VerticalStack = ({
   id,
+  index,
   container,
   parent_stack_type,
   parent_rerendered,
   end,
+  adjust_item_filter,
+  apply_item_filter,
 }) => {
   const { stackStructure } = useContext(RootStackContexts);
   const [subContainers, setSubContainers] = useState(null);
+  const [containerFilter, setContainerFilter] = useState(null);
   const [rerendered, setRerendered] = useState(false);
 
   const intial_position_and_size_calculation = useCallback(() => {
@@ -535,6 +698,72 @@ const VerticalStack = ({
     }
     setSubContainers(sub_containers);
   }, [container, subContainers]);
+  const adjust_sub_item_filter = useCallback(
+    (subitem_id, index, difference) => {
+      const sub_containers = { ...subContainers };
+      let sub_containers_filter = {};
+
+      const sub_container_id = subitem_id;
+      const next_sub_container_id = stackStructure[id].sub_items[index + 1];
+
+      const max_height =
+        sub_containers[sub_container_id].size.height +
+        sub_containers[next_sub_container_id].size.height -
+        MIN;
+
+      sub_containers_filter[sub_container_id] = {
+        size: {
+          width: sub_containers[sub_container_id].size.width,
+          height: Math.min(
+            Math.max(
+              sub_containers[sub_container_id].size.height + difference,
+              MIN
+            ),
+            max_height
+          ),
+        },
+        position: {
+          x: 0,
+          y: sub_containers[sub_container_id].position.y,
+        },
+      };
+      sub_containers_filter[next_sub_container_id] = {
+        size: {
+          width: sub_containers[next_sub_container_id].size.width,
+          height: Math.min(
+            Math.max(
+              sub_containers[next_sub_container_id].size.height - difference,
+              MIN
+            ),
+            max_height
+          ),
+        },
+        position: {
+          x: 0,
+          y: Math.min(
+            Math.max(
+              sub_containers[sub_container_id].position.y + MIN,
+              sub_containers[next_sub_container_id].position.y + difference
+            ),
+            sub_containers[sub_container_id].position.y + max_height
+          ),
+        },
+      };
+
+      setContainerFilter(sub_containers_filter);
+    },
+    [subContainers, containerFilter]
+  );
+  const apply_sub_item_filter = useCallback(() => {
+    let sub_containers = { ...subContainers };
+    if (containerFilter) {
+      Object.keys(containerFilter).forEach((subContainerId) => {
+        sub_containers[subContainerId] = containerFilter[subContainerId];
+      });
+    }
+    setContainerFilter(null);
+    setSubContainers(sub_containers);
+  }, [subContainers, containerFilter]);
 
   useEffect(() => {
     if (!subContainers) {
@@ -548,71 +777,91 @@ const VerticalStack = ({
   return (
     <div
       style={{
-        transition:
-          "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: container.position.y,
         left: container.position.x,
         width: container.size.width,
         height: container.size.height,
-
-        overflow: "hidden",
       }}
     >
       {subContainers
         ? Object.keys(subContainers).map((subContainerId, index) => {
+            let children_container = subContainers[subContainerId];
+            if (containerFilter && containerFilter[subContainerId]) {
+              children_container = containerFilter[subContainerId];
+            }
+
             switch (stackStructure[subContainerId].type) {
               case "horizontal_stack":
                 return (
                   <HorizontalStack
                     key={subContainerId}
+                    index={index}
                     parent_rerendered={rerendered}
                     id={subContainerId}
-                    container={subContainers[subContainerId]}
+                    container={children_container}
                     parent_stack_type={"vertical_stack"}
                     end={index === stackStructure[id].sub_items.length - 1}
+                    adjust_item_filter={adjust_sub_item_filter}
+                    apply_item_filter={apply_sub_item_filter}
                   />
                 );
               case "vertical_stack":
                 return (
                   <VerticalStack
                     key={subContainerId}
+                    index={index}
                     parent_rerendered={rerendered}
                     id={subContainerId}
-                    container={subContainers[subContainerId]}
+                    container={children_container}
                     parent_stack_type={"vertical_stack"}
                     end={index === stackStructure[id].sub_items.length - 1}
+                    adjust_item_filter={adjust_sub_item_filter}
+                    apply_item_filter={apply_sub_item_filter}
                   />
                 );
               default:
                 return (
                   <StackFrame
                     key={subContainerId}
+                    index={index}
                     parent_rerendered={rerendered}
                     id={subContainerId}
-                    container={subContainers[subContainerId]}
+                    container={children_container}
                     parent_stack_type={"vertical_stack"}
                     end={index === stackStructure[id].sub_items.length - 1}
+                    adjust_item_filter={adjust_sub_item_filter}
+                    apply_item_filter={apply_sub_item_filter}
                   />
                 );
             }
           })
         : null}
       {end ? null : (
-        <StackFrameResizer id={id} stack_structure_type={parent_stack_type} />
+        <StackFrameResizer
+          id={id}
+          index={index}
+          stack_structure_type={parent_stack_type}
+          adjust_item_filter={adjust_item_filter}
+          apply_item_filter={apply_item_filter}
+        />
       )}
     </div>
   );
 };
 const HorizontalStack = ({
   id,
+  index,
   container,
   parent_stack_type,
   parent_rerendered,
   end,
+  adjust_item_filter,
+  apply_item_filter,
 }) => {
   const { stackStructure } = useContext(RootStackContexts);
   const [subContainers, setSubContainers] = useState(null);
+  const [containerFilter, setContainerFilter] = useState(null);
   const [rerendered, setRerendered] = useState(false);
 
   const intial_position_and_size_calculation = useCallback(() => {
@@ -666,7 +915,6 @@ const HorizontalStack = ({
       return;
     } else if (pervious_parent_width < container.size.width) {
       /* { -> } =================================================================================================================== */
-
       let cutoff_width = container.size.width;
       for (let i = stackStructure[id].sub_items.length - 1; i >= 0; i--) {
         const sub_container_id = stackStructure[id].sub_items[i];
@@ -776,6 +1024,72 @@ const HorizontalStack = ({
     }
     setSubContainers(sub_containers);
   }, [container, subContainers]);
+  const adjust_sub_item_filter = useCallback(
+    (subitem_id, index, difference) => {
+      const sub_containers = { ...subContainers };
+      let sub_containers_filter = {};
+
+      const sub_container_id = subitem_id;
+      const next_sub_container_id = stackStructure[id].sub_items[index + 1];
+
+      const max_width =
+        sub_containers[sub_container_id].size.width +
+        sub_containers[next_sub_container_id].size.width -
+        MIN;
+
+      sub_containers_filter[sub_container_id] = {
+        size: {
+          width: Math.min(
+            Math.max(
+              sub_containers[sub_container_id].size.width + difference,
+              MIN
+            ),
+            max_width
+          ),
+          height: sub_containers[sub_container_id].size.height,
+        },
+        position: {
+          x: sub_containers[sub_container_id].position.x,
+          y: 0,
+        },
+      };
+      sub_containers_filter[next_sub_container_id] = {
+        size: {
+          width: Math.min(
+            Math.max(
+              sub_containers[next_sub_container_id].size.width - difference,
+              MIN
+            ),
+            max_width
+          ),
+          height: sub_containers[next_sub_container_id].size.height,
+        },
+        position: {
+          x: Math.min(
+            Math.max(
+              sub_containers[sub_container_id].position.x + MIN,
+              sub_containers[next_sub_container_id].position.x + difference
+            ),
+            sub_containers[sub_container_id].position.x + max_width
+          ),
+          y: 0,
+        },
+      };
+
+      setContainerFilter(sub_containers_filter);
+    },
+    [subContainers, containerFilter]
+  );
+  const apply_sub_item_filter = useCallback(() => {
+    let sub_containers = { ...subContainers };
+    if (containerFilter) {
+      Object.keys(containerFilter).forEach((subContainerId) => {
+        sub_containers[subContainerId] = containerFilter[subContainerId];
+      });
+    }
+    setContainerFilter(null);
+    setSubContainers(sub_containers);
+  }, [subContainers, containerFilter]);
 
   useEffect(() => {
     if (!subContainers) {
@@ -789,58 +1103,74 @@ const HorizontalStack = ({
   return (
     <div
       style={{
-        transition:
-          "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: container.position.y,
         left: container.position.x,
         width: container.size.width,
         height: container.size.height,
-
-        overflow: "hidden",
       }}
     >
       {subContainers
         ? Object.keys(subContainers).map((subContainerId, index) => {
+            let children_container = subContainers[subContainerId];
+            if (containerFilter && containerFilter[subContainerId]) {
+              children_container = containerFilter[subContainerId];
+            }
+
             switch (stackStructure[subContainerId].type) {
               case "horizontal_stack":
                 return (
                   <HorizontalStack
                     key={subContainerId}
+                    index={index}
                     parent_rerendered={rerendered}
                     id={subContainerId}
-                    container={subContainers[subContainerId]}
+                    container={children_container}
                     parent_stack_type={"horizontal_stack"}
                     end={index === stackStructure[id].sub_items.length - 1}
+                    adjust_item_filter={adjust_sub_item_filter}
+                    apply_item_filter={apply_sub_item_filter}
                   />
                 );
               case "vertical_stack":
                 return (
                   <VerticalStack
                     key={subContainerId}
+                    index={index}
                     parent_rerendered={rerendered}
                     id={subContainerId}
-                    container={subContainers[subContainerId]}
+                    container={children_container}
                     parent_stack_type={"horizontal_stack"}
                     end={index === stackStructure[id].sub_items.length - 1}
+                    adjust_item_filter={adjust_sub_item_filter}
+                    apply_item_filter={apply_sub_item_filter}
                   />
                 );
               default:
                 return (
                   <StackFrame
                     key={subContainerId}
+                    index={index}
                     parent_rerendered={rerendered}
                     id={subContainerId}
-                    container={subContainers[subContainerId]}
+                    container={children_container}
                     parent_stack_type={"horizontal_stack"}
                     end={index === stackStructure[id].sub_items.length - 1}
+                    adjust_item_filter={adjust_sub_item_filter}
+                    apply_item_filter={apply_sub_item_filter}
                   />
                 );
             }
           })
         : null}
       {end ? null : (
-        <StackFrameResizer id={id} stack_structure_type={parent_stack_type} />
+        <StackFrameResizer
+          id={id}
+          index={index}
+          stack_structure_type={parent_stack_type}
+          adjust_item_filter={adjust_item_filter}
+          apply_item_filter={apply_item_filter}
+        />
       )}
     </div>
   );
@@ -884,6 +1214,7 @@ const RootStackManager = () => {
       {rootContainer ? (
         <HorizontalStack
           id={"root"}
+          index={0}
           container={rootContainer}
           parent_rerendered={rerendered}
           parent_stack_type={"horizontal_stack"}
