@@ -335,6 +335,7 @@ const StackFrame = ({
 
         border: `1px solid rgb(${R + 10}, ${G + 10}, ${B + 10})`,
         backgroundColor: `rgb(${R}, ${G}, ${B})`,
+        boxSizing: "border-box",
 
         overflow: "hidden",
       }}
