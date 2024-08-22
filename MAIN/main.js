@@ -47,7 +47,7 @@ const createWindow = () => {
       width: 1200,
       height: 800,
       webSecurity: true,
-      transparent: true,
+      transparent: false,
       resizable: true,
       maximizable: true,
       webPreferences: {
@@ -56,10 +56,11 @@ const createWindow = () => {
         nodeIntegration: false,
       },
       //vibrancy: "fullscreen-ui",
-      frame: false,
+      frame: true,
       hasShadow: true,
       titleBarStyle: "hidden",
       trafficLightPosition: { x: 17, y: 15 },
+      backgroundColor: "#181818",
     });
     app.dock.setIcon(
       path.join(
