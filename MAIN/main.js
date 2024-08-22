@@ -80,7 +80,7 @@ const createWindow = () => {
       title: "",
       icon: path.join(
         __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
       ),
       width: 1200,
       height: 800,
@@ -90,7 +90,7 @@ const createWindow = () => {
       resizable: true,
       maximizable: true,
       backgroundMaterial: "acrylic",
-      titleBarStyle: 'hidden',
+      titleBarStyle: "hidden",
       webPreferences: {
         preload: path.join(__dirname, "preload.js"),
         contextIsolation: true,

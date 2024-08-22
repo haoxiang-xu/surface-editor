@@ -15,15 +15,24 @@ const FAKE_STACK_STRUCTURE = {
   root: {
     id: "root",
     type: "horizontal_stack",
-    sub_items: ["surface_explorer_0004", "surface_explorer_0005"],
+    sub_items: [
+      "surface_explorer_0001",
+      "surface_explorer_0002",
+      "surface_explorer_0003",
+    ],
   },
-  surface_explorer_0004: {
-    id: "surface_explorer_0004",
+  surface_explorer_0001: {
+    id: "surface_explorer_0001",
     type: "surface_explorer",
     sub_items: [],
   },
-  surface_explorer_0005: {
-    id: "surface_explorer_0005",
+  surface_explorer_0002: {
+    id: "surface_explorer_0002",
+    type: "surface_explorer",
+    sub_items: [],
+  },
+  surface_explorer_0003: {
+    id: "surface_explorer_0003",
     type: "surface_explorer",
     sub_items: [],
   },
@@ -128,7 +137,7 @@ const StackComponentContainer = ({
 };
 
 const RootStackManager = () => {
-
+  const [stackStructure, setStackStructure] = useState(FAKE_STACK_STRUCTURE);
 };
 
 export default RootStackManager;
