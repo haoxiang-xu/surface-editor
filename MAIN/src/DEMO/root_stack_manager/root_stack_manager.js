@@ -307,7 +307,7 @@ const StackComponentContainer = ({
     </>
   );
 };
-const StackFrameTestingContainer = ({ id }) => {
+const StackTestingContainer = ({ id }) => {
   return (
     <span
       style={{
@@ -320,7 +320,7 @@ const StackFrameTestingContainer = ({ id }) => {
         fontSize: 36,
         userSelect: "none",
 
-        opacity: 0.32,
+        opacity: 0.16,
       }}
     >
       {id.slice(-2)}
@@ -576,12 +576,13 @@ const StackFrame = ({
 
           border: `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
           backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
+          boxShadow: "0px 0px 4px 2px rgba(0,0,0,0.16)",
           borderRadius: default_component_border_radius,
           overflow: "hidden",
         }}
       >
         {stackStructure[id].type === "test" ? (
-          <StackFrameTestingContainer id={id} />
+          <StackTestingContainer id={id} />
         ) : (
           <StackComponentContainer
             id={id}

@@ -38,14 +38,14 @@ const Win32ControlPanelButton = ({
   useEffect(() => {
     if (onClick) {
       setBoxShadow("0px 0px 0px 0px rgba(0,0,0,0)");
-      if (color.R + color.G + color.B < (255 * 3) / 3) {
+      if (color.R + color.G + color.B < 100) {
         setBackgroundColor(
           `rgba(${color.R + 64}, ${color.G + 64}, ${color.B + 64}, 1)`
         );
         setZIndex(default_button_style.frontLayer);
       } else {
         setBackgroundColor(
-          `rgba(${color.R - 64}, ${color.G - 64}, ${color.B - 64}, 1)`
+          `rgba(${color.R - 32}, ${color.G - 32}, ${color.B - 32}, 1)`
         );
       }
     } else if (onHover) {
@@ -76,6 +76,7 @@ const Win32ControlPanelButton = ({
         borderRadius: borderRadius,
         boxSizing: "border-box",
 
+        userSelect: "none",
         backgroundColor: backgroundColor,
         boxShadow: boxShadow,
       }}
@@ -138,7 +139,7 @@ const Win32ControlPanel = () => {
       <Win32ControlPanelButton
         title={"close"}
         position={{ right: default_title_bar_style.padding }}
-        color={{ R: 207, G: 76, B: 0 }}
+        color={{ R: 150, G: 16, B: 4 }}
         handleOnClick={handleClose}
         borderRadius={`${default_button_style.innerBorderRadius}px ${
           isWindowMaximized

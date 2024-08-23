@@ -26,7 +26,9 @@ const Icon = ({ src, ...props }) => {
   }, [src]);
 
   if (!isIconLoaded) return null;
-  return <img ref={iconRef} src={iconSrc} alt={src} {...props} />;
+  return (
+    <img ref={iconRef} src={iconSrc} alt={src} draggable={false} {...props} />
+  );
 };
 
 export default Icon;
