@@ -170,11 +170,7 @@ const TESTING_STACK_STRUCTURE_2 = {
   root: {
     id: "root",
     type: "horizontal_stack",
-    sub_items: [
-      "surface_explorer_0001",
-      "vertical_stack_0001",
-      "test_0001",
-    ],
+    sub_items: ["surface_explorer_0001", "vertical_stack_0001", "test_0001"],
   },
   surface_explorer_0001: {
     id: "surface_explorer_0001",
