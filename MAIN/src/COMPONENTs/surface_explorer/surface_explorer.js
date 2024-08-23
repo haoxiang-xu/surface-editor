@@ -46,7 +46,7 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
-const padding = { top: 42, right: 5, bottom: 5, left: 5 };
+const padding = { top: 36, right: 5, bottom: 5, left: 5 };
 const default_explorer_item_height = 22;
 const default_x_axis_offset = 10;
 const default_font_size = 12;
@@ -63,7 +63,7 @@ const ExplorerLoadingIndicator = ({ width }) => {
     <div
       style={{
         position: "absolute",
-        top: padding.top,
+        top: padding.bottom,
         left: padding.left,
         right: padding.right,
 
