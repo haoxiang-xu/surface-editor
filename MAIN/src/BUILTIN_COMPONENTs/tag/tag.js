@@ -318,7 +318,7 @@ const FileTag = ({ config }) => {
       processed_config.style.backgroundColor = "#323232";
     }
     if (config.style.color === undefined) {
-      processed_config.style.color = "#CCCCCC";
+      processed_config.style.color = "#C0C0C0";
     }
     if (config.style.padding_x === undefined) {
       processed_config.style.padding_x = 5;
@@ -356,7 +356,7 @@ const FolderTag = ({ config }) => {
       processed_config.style.backgroundColor = "#323232";
     }
     if (config.style.color === undefined) {
-      processed_config.style.color = "#CCCCCC";
+      processed_config.style.color = "#C0C0C0";
     }
     if (config.style.padding_x === undefined) {
       processed_config.style.padding_x = 5;

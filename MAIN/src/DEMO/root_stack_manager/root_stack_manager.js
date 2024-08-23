@@ -18,12 +18,11 @@ import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/ro
 import { RootStackContexts } from "./root_stack_contexts";
 /* { import contexts } ---------------------------------------------------------------------- */
 
-const FAKE_STACK_STRUCTURE = {
+const TESTING_STACK_STRUCTURE_1 = {
   root: {
     id: "root",
     type: "horizontal_stack",
     sub_items: [
-      //"vertical_stack_0002",
       "surface_explorer_0001",
       "surface_explorer_0002",
       "vertical_stack_0001",
@@ -69,6 +68,7 @@ const FAKE_STACK_STRUCTURE = {
     sub_items: [
       "surface_explorer_0006",
       "surface_explorer_0007",
+      "horizontal_stack_0001",
       "surface_explorer_0008",
       "surface_explorer_0009",
     ],
@@ -97,59 +97,105 @@ const FAKE_STACK_STRUCTURE = {
     parent_id: "vertical_stack_0001",
     sub_items: [],
   },
-  vertical_stack_0002: {
-    id: "vertical_stack_0002",
-    type: "vertical_stack",
-    sub_items: [
-      "surface_explorer_0010",
-      "surface_explorer_0011",
-      "surface_explorer_0012",
-      "surface_explorer_0013",
-      "horizontal_stack_0001",
-    ],
-  },
-  surface_explorer_0010: {
-    id: "surface_explorer_0010",
-    type: "surface_explorer",
-    sub_items: [],
-  },
-  surface_explorer_0011: {
-    id: "surface_explorer_0011",
-    type: "surface_explorer",
-    sub_items: [],
-  },
-  surface_explorer_0012: {
-    id: "surface_explorer_0012",
-    type: "surface_explorer",
-    sub_items: [],
-  },
-  surface_explorer_0013: {
-    id: "surface_explorer_0013",
-    type: "surface_explorer",
-    sub_items: [],
-  },
   horizontal_stack_0001: {
     id: "horizontal_stack_0001",
+    parent_id: "vertical_stack_0001",
     type: "horizontal_stack",
     sub_items: [
       "surface_explorer_0014",
       "surface_explorer_0015",
       "surface_explorer_0016",
+      "vertical_stack_0002",
     ],
   },
   surface_explorer_0014: {
     id: "surface_explorer_0014",
+    parent_id: "horizontal_stack_0001",
     type: "surface_explorer",
     sub_items: [],
   },
   surface_explorer_0015: {
     id: "surface_explorer_0015",
+    parent_id: "horizontal_stack_0001",
     type: "surface_explorer",
     sub_items: [],
   },
   surface_explorer_0016: {
     id: "surface_explorer_0016",
+    parent_id: "horizontal_stack_0001",
     type: "surface_explorer",
+    sub_items: [],
+  },
+  vertical_stack_0002: {
+    id: "vertical_stack_0002",
+    type: "vertical_stack",
+    parent_id: "horizontal_stack_0001",
+    sub_items: [
+      "surface_explorer_0010",
+      "surface_explorer_0011",
+      "surface_explorer_0012",
+      "surface_explorer_0013",
+    ],
+  },
+  surface_explorer_0010: {
+    id: "surface_explorer_0010",
+    parent_id: "vertical_stack_0002",
+    type: "surface_explorer",
+    sub_items: [],
+  },
+  surface_explorer_0011: {
+    id: "surface_explorer_0011",
+    parent_id: "vertical_stack_0002",
+    type: "surface_explorer",
+    sub_items: [],
+  },
+  surface_explorer_0012: {
+    id: "surface_explorer_0012",
+    parent_id: "vertical_stack_0002",
+    type: "surface_explorer",
+    sub_items: [],
+  },
+  surface_explorer_0013: {
+    id: "surface_explorer_0013",
+    parent_id: "vertical_stack_0002",
+    type: "surface_explorer",
+    sub_items: [],
+  },
+};
+const TESTING_STACK_STRUCTURE_2 = {
+  root: {
+    id: "root",
+    type: "horizontal_stack",
+    sub_items: ["surface_explorer_0001", "vertical_stack_0001", "test_0001"],
+  },
+  surface_explorer_0001: {
+    id: "surface_explorer_0001",
+    parent_id: "root",
+    type: "surface_explorer",
+    sub_items: [],
+  },
+  vertical_stack_0001: {
+    id: "vertical_stack_0001",
+    parent_id: "root",
+    type: "vertical_stack",
+    sub_items: ["test_0002", "test_0003"],
+  },
+  test_0001: {
+    id: "test_0001",
+    parent_id: "root",
+    type: "test",
+    sub_items: [],
+  },
+  test_0002: {
+    id: "test_0002",
+    parent_id: "vertical_stack_0001",
+    type: "test",
+    sub_items: [],
+  },
+  test_0003: {
+    id: "test_0003",
+    parent_id: "vertical_stack_0001",
+    type: "test",
     sub_items: [],
   },
 };
@@ -165,7 +211,7 @@ const B = 30;
 
 const MIN = 60;
 
-const TOP = 40;
+const TOP = 36;
 const RIGHT = default_component_padding;
 const BOTTOM = default_component_padding;
 const LEFT = default_component_padding;
@@ -261,44 +307,27 @@ const StackComponentContainer = ({
     </>
   );
 };
-
 const StackFrameTestingContainer = ({ id }) => {
   return (
-    <div
+    <span
       style={{
         position: "absolute",
-        top: default_resizer_size / 2,
-        left: default_resizer_size / 2,
-        bottom: default_resizer_size / 2,
-        right: default_resizer_size / 2,
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
 
-        border: `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
-        backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
-        borderRadius: default_component_border_radius,
-        overflow: "hidden",
+        color: "white",
+        fontSize: 36,
+        userSelect: "none",
 
-        pointerEvents: "none",
+        opacity: 0.32,
       }}
     >
-      <span
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-
-          color: "white",
-          fontSize: 36,
-          userSelect: "none",
-
-          opacity: 0.32,
-        }}
-      >
-        {id.slice(-2)}
-      </span>
-    </div>
+      {id.slice(-2)}
+    </span>
   );
 };
+
 const StackFrameResizer = ({ id, index, stack_structure_type }) => {
   const {
     stackStructure,
@@ -312,6 +341,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
   const [onHover, setOnHover] = useState(false);
   const [onPause, setOnPause] = useState(false);
   const [onClick, setOnClick] = useState(false);
+  const [zIndex, setZIndex] = useState(null);
   const [previousMousePosition, setPerviousMousePosition] = useState(null);
   const [currentMousePosition, setCurrentMousePosition] = useState(null);
 
@@ -333,9 +363,9 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
     setOnClick(false);
     setOnFrameResize(false);
   };
-  const handle_mouse_move = (event) => {
+  const handle_mouse_move = throttle((event) => {
     setCurrentMousePosition({ x: event.clientX, y: event.clientY });
-  };
+  }, 10);
   const handle_mouse_down = (event) => {
     setPerviousMousePosition({ x: event.clientX, y: event.clientY });
     window.addEventListener("mouseup", handle_mouse_up);
@@ -373,23 +403,27 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
       setResizerSize(`calc(100% - ${default_resizer_size * 2}px)`);
       setBorderRadius(default_component_border_radius);
       setResizerColor(`rgba(${67}, ${105}, ${180}, 1)`);
+      setZIndex(default_component_border_radius);
       return;
     }
     if (onFrameResize) {
       setResizerSize(MIN - default_resizer_size * 2);
       setBorderRadius(default_component_border_radius);
       setResizerColor(`rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`);
+      setZIndex(null);
       return;
     }
     if (onHover && onPause) {
       setResizerSize(`calc(100% - ${default_resizer_size * 2}px)`);
       setBorderRadius(default_component_border_radius);
       setResizerColor(`rgba(${67}, ${105}, ${180}, 1)`);
+      setZIndex(default_component_border_radius);
       return;
     }
     setResizerSize(MIN - default_resizer_size * 2);
     setBorderRadius(default_component_border_radius);
     setResizerColor(`rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`);
+    setZIndex(null);
   }, [onHover, onPause, onClick]);
 
   switch (stack_structure_type) {
@@ -404,7 +438,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
             height: "100%",
 
             cursor: "ew-resize",
-            zIndex: default_resizer_layer,
+            zIndex: zIndex,
           }}
           onMouseEnter={() => {
             setOnHover(true);
@@ -451,7 +485,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
             height: default_resizer_size,
 
             cursor: "ns-resize",
-            zIndex: default_resizer_layer,
+            zIndex: zIndex,
           }}
           onMouseEnter={() => {
             setOnHover(true);
@@ -501,7 +535,8 @@ const StackFrame = ({
   parent_rerendered,
   end,
 }) => {
-  const { containers, filters, onFrameResize } = useContext(RootStackContexts);
+  const { stackStructure, containers, filters, onFrameResize } =
+    useContext(RootStackContexts);
   const [style, setStyle] = useState({
     transition:
       "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
@@ -531,7 +566,30 @@ const StackFrame = ({
           : containers[id].size.height,
       }}
     >
-      <StackFrameTestingContainer id={id} />
+      <div
+        style={{
+          position: "absolute",
+          top: default_resizer_size / 2,
+          left: default_resizer_size / 2,
+          bottom: default_resizer_size / 2,
+          right: default_resizer_size / 2,
+
+          border: `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
+          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
+          borderRadius: default_component_border_radius,
+          overflow: "hidden",
+        }}
+      >
+        {stackStructure[id].type === "test" ? (
+          <StackFrameTestingContainer id={id} />
+        ) : (
+          <StackComponentContainer
+            id={id}
+            width={containers[id].size.width}
+            component_type={stackStructure[id].type}
+          />
+        )}
+      </div>
       {end ? null : (
         <StackFrameResizer
           id={id}
@@ -542,7 +600,6 @@ const StackFrame = ({
     </div>
   );
 };
-
 const VerticalStack = ({
   id,
   index,
@@ -553,10 +610,29 @@ const VerticalStack = ({
   const {
     stackStructure,
     containers,
+    filters,
     calculate_vertical_intial_position_and_size,
     calculate_vertical_position_and_size,
+    onFrameResize,
   } = useContext(RootStackContexts);
+  const [style, setStyle] = useState({
+    transition:
+      "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+  });
+  useEffect(() => {
+    if (onFrameResize) {
+      setStyle({
+        transition: "none",
+      });
+    } else {
+      setStyle({
+        transition:
+          "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+      });
+    }
+  }, [onFrameResize]);
   const [rerendered, setRerendered] = useState(0);
+
   useEffect(() => {
     if (rerendered === 0) {
       calculate_vertical_intial_position_and_size(id);
@@ -569,11 +645,14 @@ const VerticalStack = ({
   return (
     <div
       style={{
+        transition: style.transition,
         position: "absolute",
-        top: containers[id].position.y,
-        left: containers[id].position.x,
-        width: containers[id].size.width,
-        height: containers[id].size.height,
+        top: filters[id] ? filters[id].position.y : containers[id].position.y,
+        left: filters[id] ? filters[id].position.x : containers[id].position.x,
+        width: filters[id] ? filters[id].size.width : containers[id].size.width,
+        height: filters[id]
+          ? filters[id].size.height
+          : containers[id].size.height,
       }}
     >
       {rerendered > 0
@@ -635,10 +714,27 @@ const HorizontalStack = ({
   const {
     stackStructure,
     containers,
+    filters,
     calculate_horizontal_intial_position_and_size,
     calculate_horizontal_position_and_size,
+    onFrameResize,
   } = useContext(RootStackContexts);
-
+  const [style, setStyle] = useState({
+    transition:
+      "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+  });
+  useEffect(() => {
+    if (onFrameResize) {
+      setStyle({
+        transition: "none",
+      });
+    } else {
+      setStyle({
+        transition:
+          "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+      });
+    }
+  }, [onFrameResize]);
   const [rerendered, setRerendered] = useState(0);
 
   useEffect(() => {
@@ -653,11 +749,14 @@ const HorizontalStack = ({
   return (
     <div
       style={{
+        transition: style.transition,
         position: "absolute",
-        top: containers[id].position.y,
-        left: containers[id].position.x,
-        width: containers[id].size.width,
-        height: containers[id].size.height,
+        top: filters[id] ? filters[id].position.y : containers[id].position.y,
+        left: filters[id] ? filters[id].position.x : containers[id].position.x,
+        width: filters[id] ? filters[id].size.width : containers[id].size.width,
+        height: filters[id]
+          ? filters[id].size.height
+          : containers[id].size.height,
       }}
     >
       {rerendered > 0
@@ -711,7 +810,9 @@ const HorizontalStack = ({
 };
 
 const RootStackManager = () => {
-  const [stackStructure, setStackStructure] = useState(FAKE_STACK_STRUCTURE);
+  const [stackStructure, setStackStructure] = useState(
+    TESTING_STACK_STRUCTURE_2
+  );
   const [rootContainer, setRootContainer] = useState(null);
 
   const [containers, setContainers] = useCustomizedState({}, compareJson);
