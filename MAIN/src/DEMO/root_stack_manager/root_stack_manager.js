@@ -16,6 +16,10 @@ import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
 import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts.js";
 import { RootStackContexts } from "./root_stack_contexts";
+
+/* {} */
+import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
+import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
 /* { import contexts } ---------------------------------------------------------------------- */
 
 const TESTING_STACK_STRUCTURE_1 = {
@@ -166,7 +170,11 @@ const TESTING_STACK_STRUCTURE_2 = {
   root: {
     id: "root",
     type: "horizontal_stack",
-    sub_items: ["surface_explorer_0001", "vertical_stack_0001", "test_0001"],
+    sub_items: [
+      "surface_explorer_0001",
+      "vertical_stack_0001",
+      "test_0001",
+    ],
   },
   surface_explorer_0001: {
     id: "surface_explorer_0001",
@@ -178,7 +186,7 @@ const TESTING_STACK_STRUCTURE_2 = {
     id: "vertical_stack_0001",
     parent_id: "root",
     type: "vertical_stack",
-    sub_items: ["test_0002", "test_0003"],
+    sub_items: ["horizontal_stack_0001", "test_0002"],
   },
   test_0001: {
     id: "test_0001",
@@ -192,10 +200,24 @@ const TESTING_STACK_STRUCTURE_2 = {
     type: "test",
     sub_items: [],
   },
-  test_0003: {
-    id: "test_0003",
+  horizontal_stack_0001: {
+    id: "horizontal_stack_0001",
     parent_id: "vertical_stack_0001",
-    type: "test",
+    type: "horizontal_stack",
+    sub_items: ["monaco_editor_0002", "monaco_editor_0003"],
+  },
+  monaco_editor_0002: {
+    id: "monaco_editor_0002",
+    parent_id: "horizontal_stack_0001",
+    type: "monaco_editor",
+    code_editor_container_ref_index: 1,
+    sub_items: [],
+  },
+  monaco_editor_0003: {
+    id: "monaco_editor_0003",
+    parent_id: "horizontal_stack_0001",
+    type: "monaco_editor",
+    code_editor_container_ref_index: 2,
     sub_items: [],
   },
 };
@@ -223,6 +245,57 @@ const StackComponentContainer = ({
   code_editor_container_ref_index,
   width,
 }) => {
+  /* Children Item Drag and Drop  ============================================================================================================================================ */
+  const [draggedItem, setDraggedItem] = useState(null);
+  const [draggedOverItem, setDraggedOverItem] = useState(null);
+  const [dragCommand, setDragCommand] = useState(null);
+  /* Children Item Drag and Drop ----------------------------------------------------------------- */
+  /* Stack Container Drag and Drop ------------------------------------------------------------ */
+  const [onDragIndex, setOnDragIndex] = useState(-1);
+  const [onDropIndex, setOnDropIndex] = useState(-1);
+
+  const onStackItemDragStart = (e, index) => {
+    unload_context_menu();
+    e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+
+    setOnDragIndex(index);
+  };
+  const onStackItemDragEnd = (e) => {
+    let fromIndex = -1;
+    let toIndex = -1;
+    const editedStacks = [...stacks];
+    const dragedItems = editedStacks.splice(onDragIndex, 2);
+    fromIndex = onDragIndex;
+
+    if (onDropIndex !== -1 && onDropIndex === stacks.length - 1) {
+      toIndex = onDropIndex - 2;
+    } else if (onDropIndex !== -1 && onDropIndex % 2 === 0) {
+      if (onDragIndex < onDropIndex) {
+        toIndex = onDropIndex - 2;
+      } else {
+        toIndex = onDropIndex;
+      }
+    } else if (onDropIndex !== -1 && onDropIndex % 2 === 1) {
+      if (onDragIndex < onDropIndex) {
+        toIndex = onDropIndex - 1;
+      } else {
+        toIndex = onDropIndex + 1;
+      }
+    }
+
+    if (onDropIndex !== -1) {
+      updateStackStructureContainerIndex(
+        parseInt(fromIndex / 2),
+        parseInt(toIndex / 2)
+      );
+      editedStacks.splice(toIndex, 0, ...dragedItems);
+      setStacks(editedStacks);
+    }
+    setOnDragIndex(-1);
+    setOnDropIndex(-1);
+  };
+  /* Stack Container Drag and Drop ============================================================================================================================================ */
+
   //console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
   const [StackFrameComponent, setStackFrameComponent] = useState(null);
   useEffect(() => {
@@ -244,6 +317,10 @@ const StackComponentContainer = ({
       width <= 50
         ? setMode(stack_structure_type + "_vertical_mode")
         : setMode(stack_structure_type + "_horizontal_mode");
+    } else {
+      width <= 50
+        ? setMode("horizontal_stack_vertical_mode")
+        : setMode("horizontal_stack_horizontal_mode");
     }
   }, [width]);
   /* { mode } ================================================================================================= */
@@ -287,24 +364,44 @@ const StackComponentContainer = ({
   /* { drag and drop } ---------------------------------------------------------------------------------------- */
 
   return (
-    <>
-      {StackFrameComponent ? (
-        <StackFrameComponent
-          id={id}
-          width={width}
-          mode={mode}
-          command={command}
-          setCommand={setCommand}
-          load_contextMenu={load_contextMenu}
-          command_executed={command_executed}
-          data={data}
-          setData={setData}
-          item_on_drag={item_on_drag}
-          item_on_drop={item_on_drop}
-          code_editor_container_ref_index={code_editor_container_ref_index}
-        />
-      ) : null}
-    </>
+    <stackStructureDragAndDropContexts.Provider
+      value={{
+        onDropIndex,
+        setOnDropIndex,
+        onDragIndex,
+        setOnDragIndex,
+        onStackItemDragStart,
+        onStackItemDragEnd,
+      }}
+    >
+      <globalDragAndDropContexts.Provider
+        value={{
+          draggedItem,
+          setDraggedItem,
+          draggedOverItem,
+          setDraggedOverItem,
+          dragCommand,
+          setDragCommand,
+        }}
+      >
+        {StackFrameComponent ? (
+          <StackFrameComponent
+            id={id}
+            width={width}
+            mode={mode}
+            command={command}
+            setCommand={setCommand}
+            load_contextMenu={load_contextMenu}
+            command_executed={command_executed}
+            data={data}
+            setData={setData}
+            item_on_drag={item_on_drag}
+            item_on_drop={item_on_drop}
+            code_editor_container_ref_index={code_editor_container_ref_index}
+          />
+        ) : null}
+      </globalDragAndDropContexts.Provider>
+    </stackStructureDragAndDropContexts.Provider>
   );
 };
 const StackTestingContainer = ({ id }) => {
@@ -588,6 +685,7 @@ const StackFrame = ({
             id={id}
             width={containers[id].size.width}
             component_type={stackStructure[id].type}
+            code_editor_container_ref_index={1}
           />
         )}
       </div>
