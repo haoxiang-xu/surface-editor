@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useCallback,
   useRef,
+  memo,
 } from "react";
 import { throttle } from "lodash";
 import {
@@ -234,7 +235,7 @@ const RIGHT = default_component_padding;
 const BOTTOM = default_component_padding;
 const LEFT = default_component_padding;
 
-const StackComponentContainer = ({
+const StackComponentContainer = React.memo(({
   id,
   component_type,
   stack_structure_type,
@@ -399,7 +400,7 @@ const StackComponentContainer = ({
       </globalDragAndDropContexts.Provider>
     </stackStructureDragAndDropContexts.Provider>
   );
-};
+});
 const StackTestingContainer = ({ id }) => {
   return (
     <span
@@ -458,7 +459,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
   };
   const handle_mouse_move = throttle((event) => {
     setCurrentMousePosition({ x: event.clientX, y: event.clientY });
-  }, 10);
+  }, 5);
   const handle_mouse_down = (event) => {
     setPerviousMousePosition({ x: event.clientX, y: event.clientY });
     window.addEventListener("mouseup", handle_mouse_up);

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { stringify } from "flatted";
+import { throttle } from "lodash";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import Icon from "../icon/icon";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
@@ -56,6 +56,8 @@ const CustomizedTag = ({
   const [tagStyle, setTagStyle] = useState(style);
   const [tagMaxWidth, setTagMaxWidth] = useState(style.maxWidth);
   const [inputMode, setInputMode] = useState(style.inputMode);
+
+  // console.log(label);
 
   useEffect(() => {
     if (!spanRef.current) return;
@@ -371,7 +373,7 @@ const FolderTag = ({ config }) => {
       processed_config.style.isExpanded = false;
     }
     if (config.icon === undefined || config.icon === null) {
-      processed_config.icon = 'arrow';
+      processed_config.icon = "arrow";
     }
     if (!config.style.noWidthLimitMode) {
       processed_config.style.maxWidth = config.style.maxWidth - 12;
@@ -502,7 +504,7 @@ const Tag = React.memo(({ config }) => {
       style,
     };
   };
-  const render_tag = () => {
+  const render_tag = throttle(() => {
     switch (config.type) {
       case "shortcut":
         return <ShortCutTag config={process_tag_config(config)} />;
@@ -519,7 +521,7 @@ const Tag = React.memo(({ config }) => {
       default:
         return null;
     }
-  };
+  }, 100);
   return render_tag();
 }, compareConfig);
 
