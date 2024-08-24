@@ -59,7 +59,7 @@ const max_render_range = 1024;
 const default_indicator_layer = 12;
 
 /* { Explorer Search Bar } ------------------------------------------------------------------------------------------------------------------------------------------- */
-const ExplorerSearchBar = ({}) => {
+const ExplorerSearchBar = ({ filterKeyWord, setFilterKeyWord }) => {
   const hoverTimeout = useRef(null);
   const [onHover, setOnHover] = useState(false);
   const [onFocus, setOnFocus] = useState(false);
@@ -154,6 +154,9 @@ const ExplorerSearchBar = ({}) => {
       });
     }
   }, [searchButtonOnHover, searchButtonOnClicked, onHover, onFocus]);
+  const handle_on_search_submit = useCallback(() => {
+    setFilterKeyWord(searchingKeyword);
+  }, [searchingKeyword]);
 
   return (
     <div
@@ -224,6 +227,7 @@ const ExplorerSearchBar = ({}) => {
         }}
         onMouseUp={(e) => {
           setSearchButtonOnClicked(false);
+          handle_on_search_submit();
         }}
       />
       <input
@@ -232,8 +236,8 @@ const ExplorerSearchBar = ({}) => {
           position: "absolute",
           top: "50%",
           left: 2,
+          right: 30,
           transform: "translateY(-50%)",
-          width: "calc(100% - 24px)",
           height: default_font_size,
           backgroundColor: "transparent",
           border: "none",
@@ -248,6 +252,10 @@ const ExplorerSearchBar = ({}) => {
         }}
         onBlur={() => {
           setOnFocus(false);
+        }}
+        value={searchingKeyword}
+        onChange={(e) => {
+          setSearchingKeyword(e.target.value);
         }}
       />
     </div>
@@ -945,13 +953,9 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   );
 };
 
-const ExplorerList = () => {
-  const {
-    dir,
-    access_dir_type_by_path,
-    access_dir_sub_items_by_path,
-    access_dir_expand_status_by_path,
-  } = useContext(RootDataContexts);
+const ExplorerList = ({ filteredDir }) => {
+  const { access_dir_type_by_path, access_dir_expand_status_by_path } =
+    useContext(RootDataContexts);
   const {
     width,
     explorerListRef,
@@ -960,6 +964,7 @@ const ExplorerList = () => {
     setOnSelectedExplorerItems,
     onHoverExplorerItem,
     setOnHoverExplorerItem,
+    access_filtered_dir_sub_items_by_path,
   } = useContext(SurfaceExplorerContexts);
   const { load_explorer_context_menu } = useContext(
     SurfaceExplorerContextMenuContexts
@@ -1006,7 +1011,7 @@ const ExplorerList = () => {
 
   useEffect(() => {
     const update_explorer_list = async () => {
-      if (!dir) return;
+      if (!filteredDir) return;
       const update_explorer_structure = await render_explorer_structure(
         "root",
         default_indicator_padding,
@@ -1020,7 +1025,7 @@ const ExplorerList = () => {
       setExplorerItemPositions(new_explorer_structure_positions);
     };
     const render_explorer_structure = async (path, position_y, position_x) => {
-      const sub_items = access_dir_sub_items_by_path(path);
+      const sub_items = access_filtered_dir_sub_items_by_path(path);
       let explorer_structure = [];
       let explorer_structure_positions = [];
       let next_position_y = position_y;
@@ -1098,7 +1103,7 @@ const ExplorerList = () => {
       };
     };
     update_explorer_list();
-  }, [dir]);
+  }, [filteredDir]);
   useEffect(() => {
     const update_on_selected_indicator = () => {
       const new_on_selected_indicator = [];
@@ -1680,6 +1685,9 @@ const SurfaceExplorer = ({
   item_on_drag,
   item_on_drop,
 }) => {
+  const { dir } = useContext(RootDataContexts);
+  const [filteredDir, setFilteredDir] = useState(null);
+
   const { isDirLoaded } = useContext(RootDataContexts);
   const explorerListRef = useRef(null);
   const [explorerListWidth, setExplorerListWidth] = useState(0);
@@ -1688,6 +1696,7 @@ const SurfaceExplorer = ({
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
   const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
   const [firstVisibleItem, setFirstVisibleItem] = useState(null);
+  const [filterKeyWord, setFilterKeyWord] = useState(null);
 
   const check_is_explorer_item_selected = useCallback(
     (file_path) => {
@@ -1700,6 +1709,21 @@ const SurfaceExplorer = ({
     },
     [onSelectedExplorerItems]
   );
+  const access_filtered_dir_sub_items_by_path = useCallback(
+    (path) => {
+      if (!filteredDir) return null;
+      const sub_items = filteredDir[path]?.sub_items;
+
+      for (let index = 0; index < sub_items.length; index++) {
+        if (!filteredDir[sub_items[index]]) {
+          sub_items.splice(index, 1);
+        }
+      }
+      return sub_items;
+    },
+    [filteredDir]
+  );
+
   useEffect(() => {
     const update_explorer_scroll_position = throttle(() => {
       if (explorerListRef.current) {
@@ -1730,6 +1754,30 @@ const SurfaceExplorer = ({
       setExplorerListWidth(explorerListRef.current.offsetWidth);
     }
   }, [width]);
+  useEffect(() => {
+    if (!dir) return null;
+    const filter = (filterKeyWord) => {
+      if (!filterKeyWord || filterKeyWord.length === 0) return dir;
+      if (filterKeyWord === "folder") {
+        if (!dir || typeof dir !== "object") {
+          console.error("Data is undefined or null");
+          return {};
+        }
+        return Object.keys(dir)
+          .filter((key) => dir[key]?.file_type === "folder")
+          .reduce((acc, key) => {
+            acc[key] = dir[key];
+            return acc;
+          }, {});
+      }
+      return dir;
+    };
+    setFilteredDir(filter(filterKeyWord));
+  }, [dir, isDirLoaded, filterKeyWord]);
+
+  useEffect(() => {
+    console.log(filteredDir);
+  }, [filteredDir]);
 
   return (
     <SurfaceExplorerContexts.Provider
@@ -1756,13 +1804,17 @@ const SurfaceExplorer = ({
         firstVisibleItem,
         setFirstVisibleItem,
         check_is_explorer_item_selected,
+        access_filtered_dir_sub_items_by_path,
       }}
     >
       <ContextMenuWrapper>
         {isDirLoaded ? (
           <>
-            <ExplorerList />
-            <ExplorerSearchBar />
+            <ExplorerList filteredDir={filteredDir} />
+            <ExplorerSearchBar
+              filterKeyWord={filterKeyWord}
+              setFilterKeyWord={setFilterKeyWord}
+            />
           </>
         ) : (
           <ExplorerLoadingIndicator width={width} />
