@@ -124,7 +124,7 @@ const HeaderMenuBar = ({
               className="header_menu_bar_close_icon0316"
               style={{
                 opacity: win32CloseIconOpacity,
-                borderRadius: isFrameMaximized ? "3px" : "3px 14px 3px 3px",
+                borderRadius: isFrameMaximized ? "3px" : "3px 5px 3px 3px",
               }}
               onClick={handleClose}
               onMouseEnter={() => {

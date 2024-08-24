@@ -43,7 +43,7 @@ const default_selecion_list_item_padding = 8;
 const default_border_radius = 6;
 const default_selecion_list_icon_offset = 22;
 
-const default_onhover_item_background_color_offset = 16;
+const default_onhover_item_background_color_offset = 10;
 
 const R = 30;
 const G = 30;
@@ -642,7 +642,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     fold: {
       type: "button",
       id: "fold",
-      icon: SYSTEM_ICON_MANAGER.fold.ICON512,
+      icon: "fold",
       label: "fold all",
       quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
       clickable: true,
@@ -650,7 +650,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     unfold: {
       type: "button",
       id: "unfold",
-      icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
+      icon: "unfold",
       label: "unfold all",
       quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
       clickable: true,
@@ -1174,14 +1174,13 @@ const FileSelectionListContainer = ({}) => {
     <div
       style={{
         position: "absolute",
-        top: 5,
-        left: "90px",
-        right: 5,
+        top: 6,
+        left: 6,
+        right: 6,
 
         height: 28,
 
         // border: "1px solid rgba(225, 225, 225, 0.32)",
-        backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
         borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         overflow: "hidden",
         padding: default_selecion_list_item_padding / 2,
@@ -1308,24 +1307,41 @@ const MonacoEditor = ({
           rel="stylesheet"
         ></link>
         <div style={{ height: "100%" }}>
-          <MonacoEditorGroup
+          <div
+            style={{
+              position: "absolute",
+              top: 38,
+              left: 6,
+              right: 6,
+              bottom: 6,
+              padding: "0px 8px 8px 0px",
+              
+              boxSizing: "border-box",
+              backgroundColor: "#202020",
+              borderRadius: "0px 0px 5px 5px",
+              border: "1px solid #282828",
+              boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
+            }}
+          >
+            <MonacoEditorGroup
+              code_editor_container_ref_index={code_editor_container_ref_index}
+              setOnSelectedContent={setOnSelectedCotent}
+              onAppendContent={onAppendContent}
+              setOnAppendContent={setOnAppendContent}
+              //HORIZONTAL OR VERTICAL MODE
+              mode={mode}
+              onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
+              setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
+            />
+          </div>
+          {/* <FileSelectionBar
             code_editor_container_ref_index={code_editor_container_ref_index}
-            setOnSelectedContent={setOnSelectedCotent}
-            onAppendContent={onAppendContent}
-            setOnAppendContent={setOnAppendContent}
             //HORIZONTAL OR VERTICAL MODE
             mode={mode}
             onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
             setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-          />
-          <FileSelectionBar
-            code_editor_container_ref_index={code_editor_container_ref_index}
-            //HORIZONTAL OR VERTICAL MODE
-            mode={mode}
-            onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-            setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-          />
-          {/* <FileSelectionListContainer /> */}
+          /> */}
+          <FileSelectionListContainer />
         </div>
       </MonacoEditorContextMenuWrapper>
     </MonacoEditorContexts.Provider>

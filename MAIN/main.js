@@ -1,4 +1,11 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog, globalShortcut } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  ipcMain,
+  dialog,
+  globalShortcut,
+} = require("electron");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -42,12 +49,12 @@ const createWindow = () => {
       title: "",
       icon: path.join(
         __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
       ),
       width: 1200,
       height: 800,
       webSecurity: true,
-      transparent: true,
+      transparent: false,
       resizable: true,
       maximizable: true,
       webPreferences: {
@@ -56,38 +63,38 @@ const createWindow = () => {
         nodeIntegration: false,
       },
       //vibrancy: "fullscreen-ui",
-      frame: false,
+      frame: true,
       hasShadow: true,
       titleBarStyle: "hidden",
       trafficLightPosition: { x: 17, y: 15 },
+      backgroundColor: "#181818",
     });
     app.dock.setIcon(
-      path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
-      )
+      path.join(__dirname, "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png")
     );
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({
       title: "",
       icon: path.join(
         __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
       ),
       width: 1200,
       height: 800,
       webSecurity: true,
       hasShadow: true,
-      transparent: true,
+      transparent: false,
       resizable: true,
       maximizable: true,
       backgroundMaterial: "acrylic",
+      titleBarStyle: "hidden",
       webPreferences: {
         preload: path.join(__dirname, "preload.js"),
         contextIsolation: true,
         nodeIntegration: false,
       },
-      frame: false,
+      backgroundColor: "#181818",
+      frame: true,
     });
   } else {
     mainWindow = new BrowserWindow({

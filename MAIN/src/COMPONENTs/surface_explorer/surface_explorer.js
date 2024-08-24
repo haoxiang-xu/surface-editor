@@ -6,10 +6,7 @@ import React, {
   useContext,
   useMemo,
 } from "react";
-import {
-  useCustomizedState,
-  compareJson,
-} from "../../BUILTIN_COMPONENTs/customized_react/customized_react";
+import { throttle } from "lodash";
 /* Context ------------------------------------------------------------------------------------------------------------------------ */
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
 import { SurfaceExplorerContexts } from "./surface_explorer_contexts.js";
@@ -49,7 +46,7 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
-const padding = { top: 42, right: 5, bottom: 5, left: 5 };
+const padding = { top: 36, right: 5, bottom: 5, left: 5 };
 const default_explorer_item_height = 22;
 const default_x_axis_offset = 10;
 const default_font_size = 12;
@@ -66,7 +63,7 @@ const ExplorerLoadingIndicator = ({ width }) => {
     <div
       style={{
         position: "absolute",
-        top: padding.top,
+        top: padding.bottom,
         left: padding.left,
         right: padding.right,
 
@@ -239,20 +236,37 @@ const ExplorerEndingIndicator = ({ position_y, position_x }) => {
   );
 };
 const ExplorerItemFolderFilter = ({ file_path, position_y, position_x }) => {
-  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
-  if (explorerScrollPosition - max_render_range > position_y) {
-    return;
-  } else if (explorerScrollPosition + 2 * max_render_range < position_y) {
-    return;
-  } else {
-    return (
-      <ExplorerItemFolderComponent
-        file_path={file_path}
-        position_y={position_y}
-        position_x={position_x}
-      />
-    );
-  }
+  // const {
+  //   update_dir_expand_status_by_path,
+  //   access_dir_expand_status_by_path,
+  //   access_dir_name_by_path,
+  // } = useContext(RootDataContexts);
+  // return (
+  //   <span
+  //     style={{
+  //       position: "absolute",
+  //       top: position_y,
+  //       left: position_x,
+  //       color: '#CCCCCC',
+  //       fontSize: 12,
+  //     }}
+  //     onClick={() => {
+  //       update_dir_expand_status_by_path(
+  //         file_path,
+  //         !access_dir_expand_status_by_path(file_path)
+  //       );
+  //     }}
+  //   >
+  //     {access_dir_name_by_path(file_path)}
+  //   </span>
+  // );
+  return (
+    <ExplorerItemFolderComponent
+      file_path={file_path}
+      position_y={position_y}
+      position_x={position_x}
+    />
+  );
 };
 const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const {
@@ -265,8 +279,9 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   } = useContext(RootDataContexts);
   const {
     id,
+    width,
     command,
-    setCommand,
+    command_executed,
     item_on_drag,
     item_on_drop,
     explorerListWidth,
@@ -287,8 +302,6 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const [style, setStyle] = useState({
     backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
   });
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [containerHeight, setContainerHeight] = useState(0);
 
   const [isExpanded, setIsExpanded] = useState(
     access_dir_expand_status_by_path(file_path)
@@ -323,7 +336,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     } else {
       setRenameValue(access_dir_name_by_path(onConextMenuPath));
     }
-    setCommand([]);
+    command_executed();
     setOnConextMenuPath(null);
   };
   useEffect(() => {
@@ -335,12 +348,6 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     );
   }, [command, onConextMenuPath]);
 
-  useEffect(() => {
-    if (tagRef.current) {
-      setContainerWidth(tagRef.current.offsetWidth);
-      setContainerHeight(tagRef.current.offsetHeight);
-    }
-  }, [tagRef.current]);
   useEffect(() => {
     if (onRenameMode) {
       setStyle({
@@ -381,21 +388,13 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onPause]);
-  useEffect(() => {
-    if (
-      explorerScrollPosition < position_y &&
-      position_y < explorerScrollPosition + default_explorer_item_height
-    ) {
-      setFirstVisibleItem(file_path);
-    }
-  }, [explorerScrollPosition]);
 
   return (
     <div
       draggable={!onRenameMode}
       style={{
         transition:
-          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), box-shadow 0.08s",
         position: "absolute",
         top: position_y,
         left: position_x,
@@ -409,7 +408,9 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         /* Style ======================= */
         borderRadius: 4,
         backgroundColor: style.backgroundColor,
-        boxShadow: onPause ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
+        boxShadow: onPause
+          ? "0px 4px 16px rgba(0, 0, 0, 0.32)"
+          : "0px 4px 16px rgba(0, 0, 0, 0)",
       }}
       onMouseEnter={() => {
         setOnHover(true);
@@ -497,20 +498,27 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   );
 };
 const ExplorerItemFileFilter = ({ file_path, position_y, position_x }) => {
-  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
-  if (explorerScrollPosition - max_render_range > position_y) {
-    return;
-  } else if (explorerScrollPosition + 2 * max_render_range < position_y) {
-    return;
-  } else {
-    return (
-      <ExplorerItemFileComponent
-        file_path={file_path}
-        position_y={position_y}
-        position_x={position_x}
-      />
-    );
-  }
+  // const { access_dir_name_by_path } = useContext(RootDataContexts);
+  // return (
+  //   <span
+  //     style={{
+  //       position: "absolute",
+  //       top: position_y,
+  //       left: position_x,
+  //       color: '#CCCCCC',
+  //       fontSize: 12,
+  //     }}
+  //   >
+  //     {access_dir_name_by_path(file_path)}
+  //   </span>
+  // );
+  return (
+    <ExplorerItemFileComponent
+      file_path={file_path}
+      position_y={position_y}
+      position_x={position_x}
+    />
+  );
 };
 const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   const {
@@ -521,16 +529,17 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     dragCommand,
     setDragCommand,
   } = useContext(globalDragAndDropContexts);
-
   const {
     access_dir_name_by_path,
     rename_file_by_path,
     check_if_file_name_duplicate,
   } = useContext(RootDataContexts);
   const {
+    width,
     id,
     command,
     setCommand,
+    command_executed,
     item_on_drag,
     item_on_drop,
     explorerListWidth,
@@ -578,7 +587,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     } else {
       setRenameValue(access_dir_name_by_path(onConextMenuPath));
     }
-    setCommand([]);
+    command_executed();
     setOnConextMenuPath(null);
   };
   useEffect(() => {
@@ -630,20 +639,13 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onPause]);
-  useEffect(() => {
-    if (
-      explorerScrollPosition < position_y &&
-      position_y < explorerScrollPosition + default_explorer_item_height
-    ) {
-      setFirstVisibleItem(file_path);
-    }
-  }, [explorerScrollPosition]);
+
   return (
     <div
       draggable={!onRenameMode}
       style={{
         transition:
-          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+          "top 0.24s cubic-bezier(0.32, 0.96, 0.32, 1), left 0.24s cubic-bezier(0.32, 0.96, 0.32, 1.08), box-shadow 0.08s",
         position: "absolute",
         top: position_y,
         left: position_x,
@@ -657,7 +659,9 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         /* Style ======================= */
         borderRadius: 4,
         backgroundColor: style.backgroundColor,
-        boxShadow: onPause ? "0px 4px 16px rgba(0, 0, 0, 0.32)" : "none",
+        boxShadow: onPause
+          ? "0px 4px 16px rgba(0, 0, 0, 0.32)"
+          : "0px 4px 16px rgba(0, 0, 0, 0)",
       }}
       onMouseEnter={() => {
         setOnHover(true);
@@ -1044,6 +1048,7 @@ const ExplorerList = () => {
     >
       {explorerList
         .slice(visibleIndexRange.startIndex, visibleIndexRange.endIndex)
+        .reverse()
         .map((item) => {
           return item;
         })}
@@ -1069,13 +1074,8 @@ const ContextMenuWrapper = ({ children }) => {
     create_file_by_path,
     update_dir_expand_status_by_path,
   } = useContext(RootDataContexts);
-  const {
-    id,
-    command,
-    setCommand,
-    load_contextMenu,
-    setOnSelectedExplorerItems,
-  } = useContext(SurfaceExplorerContexts);
+  const { id, command, setCommand, load_contextMenu, command_executed } =
+    useContext(SurfaceExplorerContexts);
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
   const tagRef = useRef(null);
@@ -1138,192 +1138,6 @@ const ContextMenuWrapper = ({ children }) => {
     }
   }, [onCopyFile]);
 
-  const default_explorer_context_menu = {
-    root: {
-      type: "root",
-      sub_items: ["openFolder", "openFile"],
-    },
-    openFolder: {
-      type: "button",
-      id: "openFolder",
-      clickable: true,
-      label: "open folder...",
-      icon: SYSTEM_ICON_MANAGER.uploadFolder.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.uploadFolder.ICON16,
-    },
-    openFile: {
-      type: "button",
-      id: "openFile",
-      clickable: true,
-      label: "open file...",
-      icon: SYSTEM_ICON_MANAGER.uploadFile.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.uploadFile.ICON16,
-    },
-  };
-  const default_root_context_menu = {
-    root: {
-      type: "root",
-      sub_items: [
-        "newFile",
-        "newFolder",
-        "br",
-        "paste",
-        "br",
-        "openFolder",
-        "openFile",
-      ],
-    },
-    openFolder: {
-      type: "button",
-      id: "openFolder",
-      clickable: true,
-      label: "open folder...",
-      icon: SYSTEM_ICON_MANAGER.uploadFolder.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.uploadFolder.ICON16,
-    },
-    openFile: {
-      type: "button",
-      id: "openFile",
-      clickable: true,
-      label: "open file...",
-      icon: SYSTEM_ICON_MANAGER.uploadFile.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.uploadFile.ICON16,
-    },
-    br: {
-      type: "br",
-      id: "br",
-    },
-    newFile: {
-      type: "button",
-      id: "newFile",
-      clickable: true,
-      label: "new file...",
-      icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
-    },
-    newFolder: {
-      type: "button",
-      id: "newFolder",
-      clickable: true,
-      label: "new folder...",
-      icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
-    },
-    paste: {
-      type: "button",
-      id: "paste",
-      clickable: false,
-      label: "paste",
-      short_cut_label: "Ctrl+V",
-      icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
-    },
-  };
-  const default_folder_context_menu = {
-    root: {
-      type: "root",
-      sub_items: [
-        "newFile",
-        "newFolder",
-        "br",
-        "copy",
-        "paste",
-        "br",
-        "rename",
-        "delete",
-      ],
-    },
-    copy: {
-      type: "button",
-      id: "copy",
-      clickable: true,
-      label: "copy",
-      short_cut_label: "Ctrl+C",
-      icon: SYSTEM_ICON_MANAGER.copy.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
-    },
-    rename: {
-      type: "button",
-      id: "rename",
-      clickable: true,
-      label: "rename",
-      icon: SYSTEM_ICON_MANAGER.rename.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
-    },
-    delete: {
-      type: "button",
-      id: "delete",
-      clickable: true,
-      label: "delete",
-      icon: SYSTEM_ICON_MANAGER.trash.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
-    },
-    br: {
-      type: "br",
-      id: "br",
-    },
-    newFile: {
-      type: "button",
-      id: "newFile",
-      clickable: true,
-      label: "new file...",
-      icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
-    },
-    newFolder: {
-      type: "button",
-      id: "newFolder",
-      clickable: true,
-      label: "new folder...",
-      icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
-    },
-    paste: {
-      type: "button",
-      id: "paste",
-      clickable: false,
-      label: "paste",
-      short_cut_label: "Ctrl+V",
-      icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
-    },
-  };
-  const default_file_context_menu = {
-    root: {
-      type: "root",
-      sub_items: ["copy", "br", "rename", "delete"],
-    },
-    copy: {
-      type: "button",
-      id: "copy",
-      clickable: true,
-      label: "copy",
-      short_cut_label: "Ctrl+C",
-      icon: SYSTEM_ICON_MANAGER.copy.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
-    },
-    rename: {
-      type: "button",
-      id: "rename",
-      clickable: true,
-      label: "rename",
-      icon: SYSTEM_ICON_MANAGER.rename.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
-    },
-    delete: {
-      type: "button",
-      id: "delete",
-      clickable: true,
-      label: "delete",
-      icon: SYSTEM_ICON_MANAGER.trash.ICON512,
-      quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
-    },
-    br: {
-      type: "br",
-      id: "br",
-    },
-  };
-
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
     if (command && command.source === "context_menu") {
@@ -1332,7 +1146,7 @@ const ContextMenuWrapper = ({ children }) => {
         case "copy": {
           setOnCopyFile(generate_on_copy_file(onConextMenuPath));
           setOnConextMenuPath(null);
-          setCommand([]);
+          command_executed();
           break;
         }
         case "paste": {
@@ -1345,7 +1159,7 @@ const ContextMenuWrapper = ({ children }) => {
             alert("File name already exist");
           }
           setOnConextMenuPath(null);
-          setCommand([]);
+          command_executed();
           break;
         }
         case "newFile": {
@@ -1396,14 +1210,14 @@ const ContextMenuWrapper = ({ children }) => {
         case "delete": {
           delete_file_by_path(onConextMenuPath);
           setOnConextMenuPath(null);
-          setCommand([]);
+          command_executed();
           break;
         }
         case "openFolder": {
           window.electronAPI.triggerReadDir();
           setIsDirLoaded(false);
           setOnConextMenuPath(null);
-          setCommand([]);
+          command_executed();
           break;
         }
       }
@@ -1413,6 +1227,191 @@ const ContextMenuWrapper = ({ children }) => {
 
   /* { context menu render } ============================================================================================ */
   const render_context_menu = async (source_editor_component) => {
+    const default_explorer_context_menu = {
+      root: {
+        type: "root",
+        sub_items: ["openFolder", "openFile"],
+      },
+      openFolder: {
+        type: "button",
+        id: "openFolder",
+        clickable: true,
+        label: "open folder...",
+        icon: "open_folder",
+        quick_view_background: SYSTEM_ICON_MANAGER.uploadFolder.ICON16,
+      },
+      openFile: {
+        type: "button",
+        id: "openFile",
+        clickable: true,
+        label: "open file...",
+        icon: "open_file",
+        quick_view_background: SYSTEM_ICON_MANAGER.uploadFile.ICON16,
+      },
+    };
+    const default_root_context_menu = {
+      root: {
+        type: "root",
+        sub_items: [
+          "newFile",
+          "newFolder",
+          "br",
+          "paste",
+          "br",
+          "openFolder",
+          "openFile",
+        ],
+      },
+      openFolder: {
+        type: "button",
+        id: "open_folder",
+        clickable: true,
+        label: "open folder...",
+        icon: "open_folder",
+        quick_view_background: SYSTEM_ICON_MANAGER.uploadFolder.ICON16,
+      },
+      openFile: {
+        type: "button",
+        id: "openFile",
+        clickable: true,
+        label: "open file...",
+        icon: "open_file",
+        quick_view_background: SYSTEM_ICON_MANAGER.uploadFile.ICON16,
+      },
+      br: {
+        type: "br",
+        id: "br",
+      },
+      newFile: {
+        type: "button",
+        id: "newFile",
+        clickable: true,
+        label: "new file...",
+        icon: "new_file",
+        quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
+      },
+      newFolder: {
+        type: "button",
+        id: "newFolder",
+        clickable: true,
+        label: "new folder...",
+        icon: "new_folder",
+        quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
+      },
+      paste: {
+        type: "button",
+        id: "paste",
+        clickable: false,
+        label: "paste",
+        short_cut_label: "Ctrl+V",
+        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+      },
+    };
+    const default_folder_context_menu = {
+      root: {
+        type: "root",
+        sub_items: [
+          "newFile",
+          "newFolder",
+          "br",
+          "copy",
+          "paste",
+          "br",
+          "rename",
+          "delete",
+        ],
+      },
+      copy: {
+        type: "button",
+        id: "copy",
+        clickable: true,
+        label: "copy",
+        short_cut_label: "Ctrl+C",
+        icon: SYSTEM_ICON_MANAGER.copy.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
+      },
+      rename: {
+        type: "button",
+        id: "rename",
+        clickable: true,
+        label: "rename",
+        icon: "rename",
+        quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
+      },
+      delete: {
+        type: "button",
+        id: "delete",
+        clickable: true,
+        label: "delete",
+        icon: SYSTEM_ICON_MANAGER.trash.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
+      },
+      br: {
+        type: "br",
+        id: "br",
+      },
+      newFile: {
+        type: "button",
+        id: "newFile",
+        clickable: true,
+        label: "new file...",
+        icon: "new_file",
+        quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
+      },
+      newFolder: {
+        type: "button",
+        id: "newFolder",
+        clickable: true,
+        label: "new folder...",
+        icon: "new_folder",
+        quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
+      },
+      paste: {
+        type: "button",
+        id: "paste",
+        clickable: false,
+        label: "paste",
+        short_cut_label: "Ctrl+V",
+        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+      },
+    };
+    const default_file_context_menu = {
+      root: {
+        type: "root",
+        sub_items: ["copy", "br", "rename", "delete"],
+      },
+      copy: {
+        type: "button",
+        id: "copy",
+        clickable: true,
+        label: "copy",
+        short_cut_label: "Ctrl+C",
+        icon: SYSTEM_ICON_MANAGER.copy.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
+      },
+      rename: {
+        type: "button",
+        id: "rename",
+        clickable: true,
+        label: "rename",
+        icon: "rename",
+        quick_view_background: SYSTEM_ICON_MANAGER.rename.ICON16,
+      },
+      delete: {
+        type: "button",
+        id: "delete",
+        clickable: true,
+        label: "delete",
+        icon: SYSTEM_ICON_MANAGER.trash.ICON512,
+        quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
+      },
+      br: {
+        type: "br",
+        id: "br",
+      },
+    };
     let contextStructure = { ...default_file_context_menu };
     switch (source_editor_component) {
       case "file": {
@@ -1476,6 +1475,7 @@ const SurfaceExplorer = ({
   command,
   setCommand,
   load_contextMenu,
+  command_executed,
   data,
   setData,
   item_on_drag,
@@ -1502,12 +1502,12 @@ const SurfaceExplorer = ({
     [onSelectedExplorerItems]
   );
   useEffect(() => {
-    const update_explorer_scroll_position = () => {
+    const update_explorer_scroll_position = throttle(() => {
       if (explorerListRef.current) {
         setExplorerScrollPosition(explorerListRef.current.scrollTop);
         setExplorerListTop(explorerListRef.current.getBoundingClientRect().top);
       }
-    };
+    }, 200);
     if (!explorerListRef.current) return;
     if (explorerListRef.current) {
       setExplorerListWidth(explorerListRef.current.offsetWidth);
@@ -1536,9 +1536,11 @@ const SurfaceExplorer = ({
     <SurfaceExplorerContexts.Provider
       value={{
         id,
+        width,
         command,
         setCommand,
         load_contextMenu,
+        command_executed,
         item_on_drag,
         item_on_drop,
         explorerListRef,

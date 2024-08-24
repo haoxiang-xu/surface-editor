@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
+import { throttle } from "lodash";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
+import Icon from "../icon/icon";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
@@ -40,6 +42,7 @@ const more_option_label_font_size = 12;
 /* { Tag types } ================================================================================= */
 const CustomizedTag = ({
   reference,
+  type,
   label,
   label_on_change,
   label_on_submit,
@@ -53,7 +56,8 @@ const CustomizedTag = ({
   const [tagStyle, setTagStyle] = useState(style);
   const [tagMaxWidth, setTagMaxWidth] = useState(style.maxWidth);
   const [inputMode, setInputMode] = useState(style.inputMode);
-  const [onHover, setOnHover] = useState(null);
+
+  // console.log(label);
 
   useEffect(() => {
     if (!spanRef.current) return;
@@ -125,7 +129,7 @@ const CustomizedTag = ({
         inputMode: style.inputMode,
       };
     });
-  }, [spanRef, onHover, style]);
+  }, [style]);
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -172,33 +176,25 @@ const CustomizedTag = ({
         backdropFilter: tagStyle.backdropFilter || "none",
         pointerEvents: inputMode ? "auto" : "none",
       }}
-      onMouseEnter={(event) => {
-        setOnHover(true);
-      }}
-      onMouseLeave={(event) => {
-        setOnHover(false);
-      }}
     >
-      {icon ? (
-        <img
-          src={icon}
-          style={{
-            transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
-            position: "absolute",
-            transform: tagStyle.icon_transform
-              ? `translate(0%, -50%) ${tagStyle.icon_transform}`
-              : `translate(0%, -50%)`,
-            top: "50%",
-            left: style.padding_x || default_tag_padding_x,
+      <Icon
+        src={icon}
+        style={{
+          transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+          position: "absolute",
+          transform: tagStyle.icon_transform
+            ? `translate(0%, -50%) ${tagStyle.icon_transform}`
+            : `translate(0%, -50%)`,
+          top: "50%",
+          left: style.padding_x || default_tag_padding_x,
 
-            width: 16,
-            height: 16,
+          width: 16,
+          height: 16,
 
-            borderRadius: 2,
-            load: "lazy",
-          }}
-        />
-      ) : null}
+          borderRadius: 2,
+          load: "lazy",
+        }}
+      />
       <span
         ref={spanRef}
         style={{
@@ -324,7 +320,7 @@ const FileTag = ({ config }) => {
       processed_config.style.backgroundColor = "#323232";
     }
     if (config.style.color === undefined) {
-      processed_config.style.color = "#CCCCCC";
+      processed_config.style.color = "#C0C0C0";
     }
     if (config.style.padding_x === undefined) {
       processed_config.style.padding_x = 5;
@@ -362,7 +358,7 @@ const FolderTag = ({ config }) => {
       processed_config.style.backgroundColor = "#323232";
     }
     if (config.style.color === undefined) {
-      processed_config.style.color = "#CCCCCC";
+      processed_config.style.color = "#C0C0C0";
     }
     if (config.style.padding_x === undefined) {
       processed_config.style.padding_x = 5;
@@ -377,7 +373,7 @@ const FolderTag = ({ config }) => {
       processed_config.style.isExpanded = false;
     }
     if (config.icon === undefined || config.icon === null) {
-      processed_config.icon = SYSTEM_ICON_MANAGER.arrow.ICON16;
+      processed_config.icon = "arrow";
     }
     if (!config.style.noWidthLimitMode) {
       processed_config.style.maxWidth = config.style.maxWidth - 12;
@@ -408,7 +404,31 @@ const CommandTag = ({ config }) => {
 };
 /* { Tag types } ================================================================================= */
 
-const Tag = ({ config }) => {
+const compareConfig = (prev, next) => {
+  const prev_config = { ...prev.config };
+  const next_config = { ...next.config };
+
+  if (prev_config.style.maxWidth !== next_config.style.maxWidth) {
+    return false;
+  }
+  if (prev_config.style.fullSizeMode !== next_config.style.fullSizeMode) {
+    return false;
+  }
+  if (prev_config.style.transparentMode !== next_config.style.transparentMode) {
+    return false;
+  }
+  if (prev_config.style.inputMode !== next_config.style.inputMode) {
+    return false;
+  }
+  if (
+    prev_config.style.noWidthLimitMode !== next_config.style.noWidthLimitMode
+  ) {
+    return false;
+  }
+  return true;
+};
+
+const Tag = React.memo(({ config }) => {
   const process_tag_config = (config) => {
     let processed_config = { ...config };
 
@@ -484,7 +504,7 @@ const Tag = ({ config }) => {
       style,
     };
   };
-  const render_tag = () => {
+  const render_tag = throttle(() => {
     switch (config.type) {
       case "shortcut":
         return <ShortCutTag config={process_tag_config(config)} />;
@@ -501,8 +521,8 @@ const Tag = ({ config }) => {
       default:
         return null;
     }
-  };
+  }, 100);
   return render_tag();
-};
+}, compareConfig);
 
 export default Tag;

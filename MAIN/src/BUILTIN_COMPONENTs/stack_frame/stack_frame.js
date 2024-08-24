@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect, memo } from "react";
+import { debounce } from "lodash";
 import {
   useCustomizedState,
   compareJson,
@@ -72,7 +73,7 @@ const HorizontalStackResizer = ({
     const right_start_width = stacks[index + 1].width;
     const scroll_x_start_position = window.scrollX;
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = debounce((e) => {
       e.preventDefault();
       const moveX = e.clientX - startX;
       const left_width = left_start_width + moveX;
@@ -153,7 +154,7 @@ const HorizontalStackResizer = ({
           setStacks(editedStacks);
         }
       }
-    };
+    }, 1);
     const handleMouseUp = (e) => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -265,7 +266,10 @@ const HorizontalStackContainer = ({
   /* { data } ------------------------------------------------------------------------------------------------- */
   const { access_storage_by_id, update_storage_by_id } =
     useContext(RootDataContexts);
-  const [data, setData] = useCustomizedState(access_storage_by_id(id), compareJson);
+  const [data, setData] = useCustomizedState(
+    access_storage_by_id(id),
+    compareJson
+  );
   useEffect(() => {
     update_storage_by_id(String(id), data);
   }, [data]);
@@ -287,6 +291,9 @@ const HorizontalStackContainer = ({
   }, [command]);
   const load_contextMenu = (e, contextStructure) => {
     load_context_menu(e, id, contextStructure);
+  };
+  const command_executed = () => {
+    setCommand([]);
   };
   /* { command } ============================================================================================== */
 
@@ -346,7 +353,7 @@ const HorizontalStackContainer = ({
           border: "1px solid #282828",
           boxSizing: "border-box",
           overflow: "hidden",
-          borderRadius: 11,
+          borderRadius: 9,
           backgroundColor: "#1E1E1E",
 
           /* ANIMATION -------------------------- */
@@ -361,6 +368,7 @@ const HorizontalStackContainer = ({
             command={command}
             setCommand={setCommand}
             load_contextMenu={load_contextMenu}
+            command_executed={command_executed}
             data={data}
             setData={setData}
             item_on_drag={item_on_drag}
