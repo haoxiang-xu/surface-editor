@@ -525,7 +525,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
         <div
           style={{
             position: "absolute",
-            right: -default_resizer_size / 2,
+            right: 0,
             top: 0,
             width: default_resizer_size,
             height: "100%",
@@ -571,7 +571,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
           draggable="false"
           style={{
             position: "absolute",
-            bottom: -default_resizer_size / 2,
+            bottom: 0,
             left: 0,
 
             width: "100%",
@@ -653,10 +653,12 @@ const StackFrame = ({
         position: "absolute",
         top: filters[id] ? filters[id].position.y : containers[id].position.y,
         left: filters[id] ? filters[id].position.x : containers[id].position.x,
-        width: filters[id] ? filters[id].size.width : containers[id].size.width,
+        width: filters[id]
+          ? filters[id].size.width + default_resizer_size / 2
+          : containers[id].size.width + default_resizer_size / 2,
         height: filters[id]
-          ? filters[id].size.height
-          : containers[id].size.height,
+          ? filters[id].size.height + default_resizer_size / 2
+          : containers[id].size.height + default_resizer_size / 2,
       }}
     >
       <div
@@ -664,8 +666,8 @@ const StackFrame = ({
           position: "absolute",
           top: default_resizer_size / 2,
           left: default_resizer_size / 2,
-          bottom: default_resizer_size / 2,
-          right: default_resizer_size / 2,
+          bottom: default_resizer_size,
+          right: default_resizer_size,
 
           border: `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
           backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
@@ -744,10 +746,15 @@ const VerticalStack = ({
         position: "absolute",
         top: filters[id] ? filters[id].position.y : containers[id].position.y,
         left: filters[id] ? filters[id].position.x : containers[id].position.x,
-        width: filters[id] ? filters[id].size.width : containers[id].size.width,
+        width: filters[id]
+          ? filters[id].size.width + default_resizer_size / 2
+          : containers[id].size.width + default_resizer_size / 2,
         height: filters[id]
-          ? filters[id].size.height
-          : containers[id].size.height,
+          ? filters[id].size.height + default_resizer_size / 2
+          : containers[id].size.height + default_resizer_size / 2,
+        
+
+        overflow: "hidden",
       }}
     >
       {rerendered > 0
@@ -848,10 +855,13 @@ const HorizontalStack = ({
         position: "absolute",
         top: filters[id] ? filters[id].position.y : containers[id].position.y,
         left: filters[id] ? filters[id].position.x : containers[id].position.x,
-        width: filters[id] ? filters[id].size.width : containers[id].size.width,
+        width: filters[id]
+          ? filters[id].size.width + default_resizer_size / 2
+          : containers[id].size.width + default_resizer_size / 2,
         height: filters[id]
-          ? filters[id].size.height
-          : containers[id].size.height,
+          ? filters[id].size.height + default_resizer_size / 2
+          : containers[id].size.height + default_resizer_size / 2,
+        overflow: "hidden",
       }}
     >
       {rerendered > 0
