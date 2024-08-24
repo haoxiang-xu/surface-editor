@@ -23,47 +23,52 @@ import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropConte
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
 /* { import contexts } ---------------------------------------------------------------------- */
 
+/* { ICONs } ------------------------------------------------------------------------------------------------- */
+import { ICON_MANAGER } from "../../ICONs/icon_manager";
+const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
+/* { ICONs } ------------------------------------------------------------------------------------------------- */
+
 const TESTING_STACK_STRUCTURE_1 = {
   root: {
     id: "root",
     type: "horizontal_stack",
     sub_items: [
-      "surface_explorer_0001",
-      "surface_explorer_0002",
+      "test_0001",
+      "test_0002",
       "vertical_stack_0001",
-      "surface_explorer_0003",
-      "surface_explorer_0004",
-      "surface_explorer_0005",
+      "test_0003",
+      "test_0004",
+      "test_0005",
     ],
   },
-  surface_explorer_0001: {
-    id: "surface_explorer_0001",
+  test_0001: {
+    id: "test_0001",
     parent_id: "root",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0002: {
-    id: "surface_explorer_0002",
+  test_0002: {
+    id: "test_0002",
     parent_id: "root",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0003: {
-    id: "surface_explorer_0003",
+  test_0003: {
+    id: "test_0003",
     parent_id: "root",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0004: {
-    id: "surface_explorer_0004",
+  test_0004: {
+    id: "test_0004",
     parent_id: "root",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0005: {
-    id: "surface_explorer_0005",
+  test_0005: {
+    id: "test_0005",
     parent_id: "root",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
   vertical_stack_0001: {
@@ -71,34 +76,34 @@ const TESTING_STACK_STRUCTURE_1 = {
     type: "vertical_stack",
     parent_id: "root",
     sub_items: [
-      "surface_explorer_0006",
-      "surface_explorer_0007",
+      "test_0006",
+      "test_0007",
       "horizontal_stack_0001",
-      "surface_explorer_0008",
-      "surface_explorer_0009",
+      "test_0008",
+      "test_0009",
     ],
   },
-  surface_explorer_0006: {
-    id: "surface_explorer_0006",
-    type: "surface_explorer",
+  test_0006: {
+    id: "test_0006",
+    type: "test",
     parent_id: "vertical_stack_0001",
     sub_items: [],
   },
-  surface_explorer_0007: {
-    id: "surface_explorer_0007",
-    type: "surface_explorer",
+  test_0007: {
+    id: "test_0007",
+    type: "test",
     parent_id: "vertical_stack_0001",
     sub_items: [],
   },
-  surface_explorer_0008: {
-    id: "surface_explorer_0008",
-    type: "surface_explorer",
+  test_0008: {
+    id: "test_0008",
+    type: "test",
     parent_id: "vertical_stack_0001",
     sub_items: [],
   },
-  surface_explorer_0009: {
-    id: "surface_explorer_0009",
-    type: "surface_explorer",
+  test_0009: {
+    id: "test_0009",
+    type: "test",
     parent_id: "vertical_stack_0001",
     sub_items: [],
   },
@@ -106,64 +111,54 @@ const TESTING_STACK_STRUCTURE_1 = {
     id: "horizontal_stack_0001",
     parent_id: "vertical_stack_0001",
     type: "horizontal_stack",
-    sub_items: [
-      "surface_explorer_0014",
-      "surface_explorer_0015",
-      "surface_explorer_0016",
-      "vertical_stack_0002",
-    ],
+    sub_items: ["test_0014", "test_0015", "test_0016", "vertical_stack_0002"],
   },
-  surface_explorer_0014: {
-    id: "surface_explorer_0014",
+  test_0014: {
+    id: "test_0014",
     parent_id: "horizontal_stack_0001",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0015: {
-    id: "surface_explorer_0015",
+  test_0015: {
+    id: "test_0015",
     parent_id: "horizontal_stack_0001",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0016: {
-    id: "surface_explorer_0016",
+  test_0016: {
+    id: "test_0016",
     parent_id: "horizontal_stack_0001",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
   vertical_stack_0002: {
     id: "vertical_stack_0002",
     type: "vertical_stack",
     parent_id: "horizontal_stack_0001",
-    sub_items: [
-      "surface_explorer_0010",
-      "surface_explorer_0011",
-      "surface_explorer_0012",
-      "surface_explorer_0013",
-    ],
+    sub_items: ["test_0010", "test_0011", "test_0012", "test_0013"],
   },
-  surface_explorer_0010: {
-    id: "surface_explorer_0010",
+  test_0010: {
+    id: "test_0010",
     parent_id: "vertical_stack_0002",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0011: {
-    id: "surface_explorer_0011",
+  test_0011: {
+    id: "test_0011",
     parent_id: "vertical_stack_0002",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0012: {
-    id: "surface_explorer_0012",
+  test_0012: {
+    id: "test_0012",
     parent_id: "vertical_stack_0002",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
-  surface_explorer_0013: {
-    id: "surface_explorer_0013",
+  test_0013: {
+    id: "test_0013",
     parent_id: "vertical_stack_0002",
-    type: "surface_explorer",
+    type: "test",
     sub_items: [],
   },
 };
@@ -218,6 +213,37 @@ const TESTING_STACK_STRUCTURE_2 = {
     sub_items: [],
   },
 };
+const TESTING_STACK_STRUCTURE_3 = {
+  root: {
+    id: "root",
+    type: "horizontal_stack",
+    sub_items: [
+      "surface_explorer_0001",
+      "monaco_editor_0002",
+      "monaco_editor_0003",
+    ],
+  },
+  surface_explorer_0001: {
+    id: "surface_explorer_0001",
+    parent_id: "root",
+    type: "surface_explorer",
+    sub_items: [],
+  },
+  monaco_editor_0002: {
+    id: "monaco_editor_0002",
+    parent_id: "root",
+    type: "monaco_editor",
+    code_editor_container_ref_index: 1,
+    sub_items: [],
+  },
+  monaco_editor_0003: {
+    id: "monaco_editor_0003",
+    parent_id: "root",
+    type: "monaco_editor",
+    code_editor_container_ref_index: 2,
+    sub_items: [],
+  },
+};
 
 const default_component_padding = 8;
 const default_component_border_radius = 8;
@@ -235,172 +261,174 @@ const RIGHT = default_component_padding;
 const BOTTOM = default_component_padding;
 const LEFT = default_component_padding;
 
-const StackComponentContainer = React.memo(({
-  id,
-  component_type,
-  stack_structure_type,
-  code_editor_container_ref_index,
-  width,
-}) => {
-  /* Children Item Drag and Drop  ============================================================================================================================================ */
-  const [draggedItem, setDraggedItem] = useState(null);
-  const [draggedOverItem, setDraggedOverItem] = useState(null);
-  const [dragCommand, setDragCommand] = useState(null);
-  /* Children Item Drag and Drop ----------------------------------------------------------------- */
-  /* Stack Container Drag and Drop ------------------------------------------------------------ */
-  const [onDragIndex, setOnDragIndex] = useState(-1);
-  const [onDropIndex, setOnDropIndex] = useState(-1);
+const StackComponentContainer = React.memo(
+  ({
+    id,
+    component_type,
+    stack_structure_type,
+    code_editor_container_ref_index,
+    width,
+  }) => {
+    /* Children Item Drag and Drop  ============================================================================================================================================ */
+    const [draggedItem, setDraggedItem] = useState(null);
+    const [draggedOverItem, setDraggedOverItem] = useState(null);
+    const [dragCommand, setDragCommand] = useState(null);
+    /* Children Item Drag and Drop ----------------------------------------------------------------- */
+    /* Stack Container Drag and Drop ------------------------------------------------------------ */
+    const [onDragIndex, setOnDragIndex] = useState(-1);
+    const [onDropIndex, setOnDropIndex] = useState(-1);
 
-  const onStackItemDragStart = (e, index) => {
-    unload_context_menu();
-    e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+    const onStackItemDragStart = (e, index) => {
+      unload_context_menu();
+      e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
 
-    setOnDragIndex(index);
-  };
-  const onStackItemDragEnd = (e) => {
-    let fromIndex = -1;
-    let toIndex = -1;
-    const editedStacks = [...stacks];
-    const dragedItems = editedStacks.splice(onDragIndex, 2);
-    fromIndex = onDragIndex;
+      setOnDragIndex(index);
+    };
+    const onStackItemDragEnd = (e) => {
+      let fromIndex = -1;
+      let toIndex = -1;
+      const editedStacks = [...stacks];
+      const dragedItems = editedStacks.splice(onDragIndex, 2);
+      fromIndex = onDragIndex;
 
-    if (onDropIndex !== -1 && onDropIndex === stacks.length - 1) {
-      toIndex = onDropIndex - 2;
-    } else if (onDropIndex !== -1 && onDropIndex % 2 === 0) {
-      if (onDragIndex < onDropIndex) {
+      if (onDropIndex !== -1 && onDropIndex === stacks.length - 1) {
         toIndex = onDropIndex - 2;
-      } else {
-        toIndex = onDropIndex;
+      } else if (onDropIndex !== -1 && onDropIndex % 2 === 0) {
+        if (onDragIndex < onDropIndex) {
+          toIndex = onDropIndex - 2;
+        } else {
+          toIndex = onDropIndex;
+        }
+      } else if (onDropIndex !== -1 && onDropIndex % 2 === 1) {
+        if (onDragIndex < onDropIndex) {
+          toIndex = onDropIndex - 1;
+        } else {
+          toIndex = onDropIndex + 1;
+        }
       }
-    } else if (onDropIndex !== -1 && onDropIndex % 2 === 1) {
-      if (onDragIndex < onDropIndex) {
-        toIndex = onDropIndex - 1;
-      } else {
-        toIndex = onDropIndex + 1;
+
+      if (onDropIndex !== -1) {
+        updateStackStructureContainerIndex(
+          parseInt(fromIndex / 2),
+          parseInt(toIndex / 2)
+        );
+        editedStacks.splice(toIndex, 0, ...dragedItems);
+        setStacks(editedStacks);
       }
-    }
+      setOnDragIndex(-1);
+      setOnDropIndex(-1);
+    };
+    /* Stack Container Drag and Drop ============================================================================================================================================ */
 
-    if (onDropIndex !== -1) {
-      updateStackStructureContainerIndex(
-        parseInt(fromIndex / 2),
-        parseInt(toIndex / 2)
-      );
-      editedStacks.splice(toIndex, 0, ...dragedItems);
-      setStacks(editedStacks);
-    }
-    setOnDragIndex(-1);
-    setOnDropIndex(-1);
-  };
-  /* Stack Container Drag and Drop ============================================================================================================================================ */
+    //console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
+    const [StackFrameComponent, setStackFrameComponent] = useState(null);
+    useEffect(() => {
+      async function loadComponent() {
+        const component_path = STACK_COMPONENT_CONFIG[component_type].path;
+        const { default: LoadedComponent } = await import(
+          `../../COMPONENTs/${component_path}`
+        );
+        setStackFrameComponent(() => LoadedComponent);
+      }
 
-  //console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
-  const [StackFrameComponent, setStackFrameComponent] = useState(null);
-  useEffect(() => {
-    async function loadComponent() {
-      const component_path = STACK_COMPONENT_CONFIG[component_type].path;
-      const { default: LoadedComponent } = await import(
-        `../../COMPONENTs/${component_path}`
-      );
-      setStackFrameComponent(() => LoadedComponent);
-    }
+      loadComponent();
+    }, [component_type]);
 
-    loadComponent();
-  }, [component_type]);
+    /* { mode } ================================================================================================= */
+    const [mode, setMode] = useState(null);
+    useEffect(() => {
+      if (stack_structure_type === "horizontal_stack") {
+        width <= 50
+          ? setMode(stack_structure_type + "_vertical_mode")
+          : setMode(stack_structure_type + "_horizontal_mode");
+      } else {
+        width <= 50
+          ? setMode("horizontal_stack_vertical_mode")
+          : setMode("horizontal_stack_horizontal_mode");
+      }
+    }, [width]);
+    /* { mode } ================================================================================================= */
 
-  /* { mode } ================================================================================================= */
-  const [mode, setMode] = useState(null);
-  useEffect(() => {
-    if (stack_structure_type === "horizontal_stack") {
-      width <= 50
-        ? setMode(stack_structure_type + "_vertical_mode")
-        : setMode(stack_structure_type + "_horizontal_mode");
-    } else {
-      width <= 50
-        ? setMode("horizontal_stack_vertical_mode")
-        : setMode("horizontal_stack_horizontal_mode");
-    }
-  }, [width]);
-  /* { mode } ================================================================================================= */
+    /* { data } ------------------------------------------------------------------------------------------------- */
+    const { access_storage_by_id, update_storage_by_id } =
+      useContext(RootDataContexts);
+    const [data, setData] = useCustomizedState(
+      access_storage_by_id(id),
+      compareJson
+    );
+    useEffect(() => {
+      update_storage_by_id(String(id), data);
+    }, [data]);
+    /* { data } ------------------------------------------------------------------------------------------------- */
 
-  /* { data } ------------------------------------------------------------------------------------------------- */
-  const { access_storage_by_id, update_storage_by_id } =
-    useContext(RootDataContexts);
-  const [data, setData] = useCustomizedState(
-    access_storage_by_id(id),
-    compareJson
-  );
-  useEffect(() => {
-    update_storage_by_id(String(id), data);
-  }, [data]);
-  /* { data } ------------------------------------------------------------------------------------------------- */
+    /* { command } ============================================================================================== */
+    const { cmd, pop_command_by_id, load_context_menu } =
+      useContext(RootCommandContexts);
+    const [command, setCommand] = useCustomizedState([], compareJson);
+    useEffect(() => {
+      if (cmd[id] && cmd[id].length > 0 && command.length === 0) {
+        setCommand(cmd[id][0]);
+      }
+    }, [cmd]);
+    useEffect(() => {
+      if (command.length === 0) {
+        pop_command_by_id(id);
+      }
+    }, [command]);
+    const load_contextMenu = (e, contextStructure) => {
+      load_context_menu(e, id, contextStructure);
+    };
+    const command_executed = () => {
+      setCommand([]);
+    };
+    /* { command } ============================================================================================== */
 
-  /* { command } ============================================================================================== */
-  const { cmd, pop_command_by_id, load_context_menu } =
-    useContext(RootCommandContexts);
-  const [command, setCommand] = useCustomizedState([], compareJson);
-  useEffect(() => {
-    if (cmd[id] && cmd[id].length > 0 && command.length === 0) {
-      setCommand(cmd[id][0]);
-    }
-  }, [cmd]);
-  useEffect(() => {
-    if (command.length === 0) {
-      pop_command_by_id(id);
-    }
-  }, [command]);
-  const load_contextMenu = (e, contextStructure) => {
-    load_context_menu(e, id, contextStructure);
-  };
-  const command_executed = () => {
-    setCommand([]);
-  };
-  /* { command } ============================================================================================== */
+    /* { drag and drop } ---------------------------------------------------------------------------------------- */
+    const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
+    /* { drag and drop } ---------------------------------------------------------------------------------------- */
 
-  /* { drag and drop } ---------------------------------------------------------------------------------------- */
-  const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
-  /* { drag and drop } ---------------------------------------------------------------------------------------- */
-
-  return (
-    <stackStructureDragAndDropContexts.Provider
-      value={{
-        onDropIndex,
-        setOnDropIndex,
-        onDragIndex,
-        setOnDragIndex,
-        onStackItemDragStart,
-        onStackItemDragEnd,
-      }}
-    >
-      <globalDragAndDropContexts.Provider
+    return (
+      <stackStructureDragAndDropContexts.Provider
         value={{
-          draggedItem,
-          setDraggedItem,
-          draggedOverItem,
-          setDraggedOverItem,
-          dragCommand,
-          setDragCommand,
+          onDropIndex,
+          setOnDropIndex,
+          onDragIndex,
+          setOnDragIndex,
+          onStackItemDragStart,
+          onStackItemDragEnd,
         }}
       >
-        {StackFrameComponent ? (
-          <StackFrameComponent
-            id={id}
-            width={width}
-            mode={mode}
-            command={command}
-            setCommand={setCommand}
-            load_contextMenu={load_contextMenu}
-            command_executed={command_executed}
-            data={data}
-            setData={setData}
-            item_on_drag={item_on_drag}
-            item_on_drop={item_on_drop}
-            code_editor_container_ref_index={code_editor_container_ref_index}
-          />
-        ) : null}
-      </globalDragAndDropContexts.Provider>
-    </stackStructureDragAndDropContexts.Provider>
-  );
-});
+        <globalDragAndDropContexts.Provider
+          value={{
+            draggedItem,
+            setDraggedItem,
+            draggedOverItem,
+            setDraggedOverItem,
+            dragCommand,
+            setDragCommand,
+          }}
+        >
+          {StackFrameComponent ? (
+            <StackFrameComponent
+              id={id}
+              width={width}
+              mode={mode}
+              command={command}
+              setCommand={setCommand}
+              load_contextMenu={load_contextMenu}
+              command_executed={command_executed}
+              data={data}
+              setData={setData}
+              item_on_drag={item_on_drag}
+              item_on_drop={item_on_drop}
+              code_editor_container_ref_index={code_editor_container_ref_index}
+            />
+          ) : null}
+        </globalDragAndDropContexts.Provider>
+      </stackStructureDragAndDropContexts.Provider>
+    );
+  }
+);
 const StackTestingContainer = ({ id }) => {
   return (
     <span
@@ -629,12 +657,22 @@ const StackFrame = ({
   parent_rerendered,
   end,
 }) => {
-  const { stackStructure, containers, filters, onFrameResize } =
-    useContext(RootStackContexts);
+  const {
+    stackStructure,
+    containers,
+    filters,
+    onFrameResize,
+    generate_horizontal_sub_item_on_drag_filter,
+    generate_vertical_sub_item_on_drag_filter,
+    clean_filter,
+  } = useContext(RootStackContexts);
+  const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
+
   const [style, setStyle] = useState({
     transition:
       "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
   });
+  const [onDrag, setOnDrag] = useState(false);
   useEffect(() => {
     if (onFrameResize) {
       setStyle({
@@ -663,6 +701,7 @@ const StackFrame = ({
       }}
     >
       <div
+        draggable="true"
         style={{
           position: "absolute",
           top: default_resizer_size / 2,
@@ -670,11 +709,34 @@ const StackFrame = ({
           bottom: default_resizer_size,
           right: default_resizer_size,
 
-          border: `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
+          border: onDrag
+            ? "none"
+            : `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
           backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
-          boxShadow: "0px 0px 4px 2px rgba(0,0,0,0.16)",
+          boxShadow: onDrag ? "none" : "0px 0px 4px 2px rgba(0,0,0,0.16)",
           borderRadius: default_component_border_radius,
           overflow: "hidden",
+        }}
+        onDragStart={(e) => {
+          setOnDrag(true);
+          e.stopPropagation();
+          e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+          if (parent_stack_type === "horizontal_stack") {
+            generate_horizontal_sub_item_on_drag_filter(
+              stackStructure[id].parent_id,
+              index
+            );
+          } else {
+            generate_vertical_sub_item_on_drag_filter(
+              stackStructure[id].parent_id,
+              index
+            );
+          }
+        }}
+        onDragEnd={(e) => {
+          setOnDrag(false);
+          e.stopPropagation();
+          clean_filter();
         }}
       >
         {stackStructure[id].type === "test" ? (
@@ -688,7 +750,7 @@ const StackFrame = ({
           />
         )}
       </div>
-      {end ? null : (
+      {end || onDrag ? null : (
         <StackFrameResizer
           id={id}
           index={index}
@@ -698,6 +760,8 @@ const StackFrame = ({
     </div>
   );
 };
+
+/* { Stack Structures } ==================================================================================================================================== */
 const VerticalStack = ({
   id,
   index,
@@ -753,7 +817,6 @@ const VerticalStack = ({
         height: filters[id]
           ? filters[id].size.height + default_resizer_size / 2
           : containers[id].size.height + default_resizer_size / 2,
-        
 
         overflow: "hidden",
       }}
@@ -914,10 +977,11 @@ const HorizontalStack = ({
     </div>
   );
 };
+/* { Stack Structures } ==================================================================================================================================== */
 
 const RootStackManager = () => {
   const [stackStructure, setStackStructure] = useState(
-    TESTING_STACK_STRUCTURE_2
+    TESTING_STACK_STRUCTURE_3
   );
   const [rootContainer, setRootContainer] = useState(null);
 
@@ -1196,6 +1260,88 @@ const RootStackManager = () => {
     },
     [stackStructure, containers, filters]
   );
+  const generate_horizontal_sub_item_on_drag_filter = useCallback(
+    (parent_id, sub_item_index) => {
+      let adjusted_filters = { ...filters };
+      const applying_containers = { ...containers };
+
+      const sub_container_id =
+        stackStructure[parent_id].sub_items[sub_item_index];
+      let next_sub_container_id = null;
+
+      if (sub_item_index + 1 < stackStructure[parent_id].sub_items.length) {
+        next_sub_container_id =
+          stackStructure[parent_id].sub_items[sub_item_index + 1];
+        const max_width =
+          applying_containers[sub_container_id].size.width +
+          applying_containers[next_sub_container_id].size.width;
+
+        adjusted_filters[sub_container_id] = {
+          size: {
+            width: 0,
+            height: applying_containers[sub_container_id].size.height,
+          },
+          position: {
+            x: applying_containers[sub_container_id].position.x,
+            y: 0,
+          },
+        };
+        adjusted_filters[next_sub_container_id] = {
+          size: {
+            width: max_width,
+            height: applying_containers[next_sub_container_id].size.height,
+          },
+          position: {
+            x: applying_containers[sub_container_id].position.x,
+            y: 0,
+          },
+        };
+      } else if (
+        sub_item_index + 1 >= stackStructure[parent_id].sub_items.length &&
+        sub_item_index - 1 >= 0
+      ) {
+        next_sub_container_id =
+          stackStructure[parent_id].sub_items[sub_item_index - 1];
+        const max_width =
+          applying_containers[sub_container_id].size.width +
+          applying_containers[next_sub_container_id].size.width;
+
+        adjusted_filters[sub_container_id] = {
+          size: {
+            width: 0,
+            height: applying_containers[sub_container_id].size.height,
+          },
+          position: {
+            x: applying_containers[sub_container_id].position.x + max_width,
+            y: 0,
+          },
+        };
+        adjusted_filters[next_sub_container_id] = {
+          size: {
+            width: max_width,
+            height: applying_containers[next_sub_container_id].size.height,
+          },
+          position: {
+            x: applying_containers[next_sub_container_id].position.x,
+            y: 0,
+          },
+        };
+      } else {
+        adjusted_filters[sub_container_id] = {
+          size: {
+            width: 0,
+            height: applying_containers[sub_container_id].size.height,
+          },
+          position: {
+            x: applying_containers[sub_container_id].position.x,
+            y: 0,
+          },
+        };
+      }
+      setFilters(adjusted_filters);
+    },
+    [stackStructure, containers, filters]
+  );
 
   const calculate_vertical_intial_position_and_size = useCallback(
     (parent_container_id) => {
@@ -1465,6 +1611,94 @@ const RootStackManager = () => {
     },
     [stackStructure, containers, filters]
   );
+  const generate_vertical_sub_item_on_drag_filter = useCallback(
+    (parent_id, sub_item_index) => {
+      let adjusted_filters = { ...filters };
+      const applying_containers = { ...containers };
+
+      const sub_container_id =
+        stackStructure[parent_id].sub_items[sub_item_index];
+      let next_sub_container_id = null;
+
+      if (sub_item_index + 1 < stackStructure[parent_id].sub_items.length) {
+        next_sub_container_id =
+          stackStructure[parent_id].sub_items[sub_item_index + 1];
+        const max_height =
+          applying_containers[sub_container_id].size.height +
+          applying_containers[next_sub_container_id].size.height;
+
+        adjusted_filters[sub_container_id] = {
+          size: {
+            width: applying_containers[sub_container_id].size.width,
+            height: 0,
+          },
+          position: {
+            x: 0,
+            y: applying_containers[sub_container_id].position.y,
+          },
+        };
+        adjusted_filters[next_sub_container_id] = {
+          size: {
+            width: applying_containers[next_sub_container_id].size.width,
+            height: max_height,
+          },
+          position: {
+            x: 0,
+            y: applying_containers[sub_container_id].position.y,
+          },
+        };
+      } else if (
+        sub_item_index + 1 >= stackStructure[parent_id].sub_items.length &&
+        sub_item_index - 1 >= 0
+      ) {
+        next_sub_container_id =
+          stackStructure[parent_id].sub_items[sub_item_index - 1];
+        const max_height =
+          applying_containers[sub_container_id].size.height +
+          applying_containers[next_sub_container_id].size.height;
+
+        adjusted_filters[sub_container_id] = {
+          size: {
+            width: applying_containers[sub_container_id].size.width,
+            height: 0,
+          },
+          position: {
+            x: 0,
+            y: applying_containers[sub_container_id].position.y + max_height,
+          },
+        };
+        adjusted_filters[next_sub_container_id] = {
+          size: {
+            width: applying_containers[next_sub_container_id].size.width,
+            height: max_height,
+          },
+          position: {
+            x: 0,
+            y: applying_containers[next_sub_container_id].position.y,
+          },
+        };
+      } else {
+        adjusted_filters[sub_container_id] = {
+          size: {
+            width: applying_containers[sub_container_id].size.width,
+            height: 0,
+          },
+          position: {
+            x: 0,
+            y: applying_containers[sub_container_id].position.y,
+          },
+        };
+        setFilters(adjusted_filters);
+        return;
+      }
+      setFilters(adjusted_filters);
+    },
+    [stackStructure, containers, filters]
+  );
+
+  const clean_filter = useCallback(() => {
+    setFilters({});
+  }, [filters]);
 
   const apply_filter = useCallback(() => {
     const applying_filter = { ...filters };
@@ -1525,10 +1759,13 @@ const RootStackManager = () => {
         calculate_horizontal_intial_position_and_size,
         calculate_horizontal_position_and_size,
         adjust_horizontal_sub_item_filter,
+        generate_horizontal_sub_item_on_drag_filter,
         calculate_vertical_intial_position_and_size,
         calculate_vertical_position_and_size,
         adjust_vertical_sub_item_filter,
+        generate_vertical_sub_item_on_drag_filter,
         apply_filter,
+        clean_filter,
       }}
     >
       {rootContainer ? (

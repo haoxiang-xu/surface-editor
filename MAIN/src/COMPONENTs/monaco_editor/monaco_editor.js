@@ -43,7 +43,7 @@ const default_selecion_list_item_padding = 8;
 const default_border_radius = 6;
 const default_selecion_list_icon_offset = 22;
 
-const default_onhover_item_background_color_offset = 10;
+const default_onhover_item_background_color_offset = 16;
 
 const R = 30;
 const G = 30;

@@ -17,6 +17,7 @@ import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
 import BarLoader from "react-spinners/BarLoader";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
+import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 /* { Import Styling } ------------------------------------------------------------------------------------------ */
 import { surface_explorer_fixed_styling } from "./surface_explorer_fixed_styling_config.js";
 
@@ -56,6 +57,203 @@ const default_border_width = 1;
 const max_render_range = 1024;
 
 const default_indicator_layer = 12;
+
+/* { Explorer Search Bar } ------------------------------------------------------------------------------------------------------------------------------------------- */
+const ExplorerSearchBar = ({}) => {
+  const hoverTimeout = useRef(null);
+  const [onHover, setOnHover] = useState(false);
+  const [onFocus, setOnFocus] = useState(false);
+  const [style, setStyle] = useState({
+    backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
+    boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.16)",
+    width: 24,
+  });
+  const [searchingKeyword, setSearchingKeyword] = useState("");
+  const [buttonStyle, setButtonStyle] = useState({
+    backgroundColor: `transparent`,
+    boxShadow: "none",
+  });
+  const [searchButtonOnHover, setSearchButtonOnHover] = useState(false);
+  const [searchButtonOnClicked, setSearchButtonOnClicked] = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (onHover || onFocus) {
+      setStyle({
+        backgroundColor: `rgba( ${
+          surface_explorer_fixed_styling.backgroundColorR + 16
+        }, ${surface_explorer_fixed_styling.backgroundColorG + 16}, ${
+          surface_explorer_fixed_styling.backgroundColorB + 16
+        }, 1)`,
+        boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.32)",
+        width: "calc(100% - " + (padding.left + padding.right) + "px)",
+        opacity: 0.64,
+      });
+      setButtonStyle({
+        backgroundColor: `rgba( ${
+          surface_explorer_fixed_styling.backgroundColorR + 32
+        }, ${surface_explorer_fixed_styling.backgroundColorG + 32}, ${
+          surface_explorer_fixed_styling.backgroundColorB + 32
+        }, 1)`,
+        boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.32)",
+      });
+    } else {
+      setStyle({
+        backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
+        boxShadow: "none",
+        width: 24,
+        opacity: 0.32,
+      });
+      setButtonStyle({
+        backgroundColor: `transparent`,
+        boxShadow: "none",
+      });
+    }
+    if (onFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [onHover, onFocus]);
+  useEffect(() => {
+    if ((onHover || onFocus) && searchButtonOnClicked) {
+      setButtonStyle((prev) => {
+        return {
+          ...prev,
+          backgroundColor: `rgba( ${
+            surface_explorer_fixed_styling.backgroundColorR + 64
+          }, ${surface_explorer_fixed_styling.backgroundColorG + 64}, ${
+            surface_explorer_fixed_styling.backgroundColorB + 64
+          }, 1)`,
+        };
+      });
+    } else if ((onHover || onFocus) && searchButtonOnHover) {
+      setButtonStyle((prev) => {
+        return {
+          ...prev,
+          backgroundColor: `rgba( ${
+            surface_explorer_fixed_styling.backgroundColorR + 48
+          }, ${surface_explorer_fixed_styling.backgroundColorG + 48}, ${
+            surface_explorer_fixed_styling.backgroundColorB + 48
+          }, 1)`,
+        };
+      });
+    } else if (onHover || onFocus) {
+      setButtonStyle((prev) => {
+        return {
+          ...prev,
+          backgroundColor: `rgba( ${
+            surface_explorer_fixed_styling.backgroundColorR + 32
+          }, ${surface_explorer_fixed_styling.backgroundColorG + 32}, ${
+            surface_explorer_fixed_styling.backgroundColorB + 32
+          }, 1)`,
+        };
+      });
+    } else {
+      setButtonStyle({
+        backgroundColor: `transparent`,
+        boxShadow: "none",
+      });
+    }
+  }, [searchButtonOnHover, searchButtonOnClicked, onHover, onFocus]);
+
+  return (
+    <div
+      style={{
+        transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+        position: "absolute",
+        right: padding.right,
+        top: padding.bottom,
+        /* Size ======================== */
+        width: style.width,
+        height: 24,
+        /* Style ======================= */
+
+        backgroundColor: style.backgroundColor,
+        borderRadius: 4,
+        boxShadow: style.boxShadow,
+
+        overflow: "hidden",
+      }}
+      draggable={true}
+      onDragStart={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+      onMouseEnter={() => {
+        hoverTimeout.current = setTimeout(() => {
+          setOnHover(true);
+        }, 300);
+      }}
+      onMouseLeave={() => {
+        clearTimeout(hoverTimeout.current);
+        if (hoverTimeout.current) {
+          setOnHover(false);
+        }
+        hoverTimeout.current = null;
+      }}
+      onMouseUp={() => {
+        setOnFocus(true);
+      }}
+    >
+      <Icon
+        src={"search"}
+        style={{
+          position: "absolute",
+          top: "50%",
+          right: 0,
+          transform: "translateY(-50%)",
+
+          width: 18,
+          height: 18,
+
+          padding: 4,
+
+          opacity: style.opacity,
+
+          backgroundColor: buttonStyle.backgroundColor,
+          boxShadow: buttonStyle.boxShadow,
+        }}
+        onMouseEnter={(e) => {
+          setSearchButtonOnHover(true);
+        }}
+        onMouseLeave={(e) => {
+          setSearchButtonOnHover(false);
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          setSearchButtonOnClicked(true);
+        }}
+        onMouseUp={(e) => {
+          setSearchButtonOnClicked(false);
+        }}
+      />
+      <input
+        ref={inputRef}
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: 2,
+          transform: "translateY(-50%)",
+          width: "calc(100% - 24px)",
+          height: default_font_size,
+          backgroundColor: "transparent",
+          border: "none",
+          color: "#FFFFFF",
+          font: "inherit",
+          fontSize: default_font_size,
+          outline: "none",
+          opacity: style.opacity,
+        }}
+        onFocus={() => {
+          setOnFocus(true);
+        }}
+        onBlur={() => {
+          setOnFocus(false);
+        }}
+      />
+    </div>
+  );
+};
+/* { Explorer Search Bar } ------------------------------------------------------------------------------------------------------------------------------------------- */
 
 /* { Explorer Loading Sub Components } =============================================================================================================================== */
 const ExplorerLoadingIndicator = ({ width }) => {
@@ -755,6 +953,7 @@ const ExplorerList = () => {
     access_dir_expand_status_by_path,
   } = useContext(RootDataContexts);
   const {
+    width,
     explorerListRef,
     explorerScrollPosition,
     onSelectedExplorerItems,
@@ -1038,7 +1237,7 @@ const ExplorerList = () => {
         left: padding.left,
 
         /* Size ======================== */
-        width: "calc(100% - " + (padding.left + padding.right) + "px)",
+        width: width - (padding.left + padding.right + 8),
         height: "calc(100% - " + (padding.top + padding.bottom) + "px",
 
         /* Style ======================= */
@@ -1561,7 +1760,10 @@ const SurfaceExplorer = ({
     >
       <ContextMenuWrapper>
         {isDirLoaded ? (
-          <ExplorerList />
+          <>
+            <ExplorerList />
+            <ExplorerSearchBar />
+          </>
         ) : (
           <ExplorerLoadingIndicator width={width} />
         )}
