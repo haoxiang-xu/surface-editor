@@ -642,7 +642,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     fold: {
       type: "button",
       id: "fold",
-      icon: SYSTEM_ICON_MANAGER.fold.ICON512,
+      icon: "fold",
       label: "fold all",
       quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
       clickable: true,
@@ -650,7 +650,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     unfold: {
       type: "button",
       id: "unfold",
-      icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
+      icon: "unfold",
       label: "unfold all",
       quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
       clickable: true,

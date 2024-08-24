@@ -1237,7 +1237,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "openFolder",
         clickable: true,
         label: "open folder...",
-        icon: SYSTEM_ICON_MANAGER.uploadFolder.ICON512,
+        icon: "open_folder",
         quick_view_background: SYSTEM_ICON_MANAGER.uploadFolder.ICON16,
       },
       openFile: {
@@ -1245,7 +1245,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "openFile",
         clickable: true,
         label: "open file...",
-        icon: SYSTEM_ICON_MANAGER.uploadFile.ICON512,
+        icon: "open_file",
         quick_view_background: SYSTEM_ICON_MANAGER.uploadFile.ICON16,
       },
     };
@@ -1264,10 +1264,10 @@ const ContextMenuWrapper = ({ children }) => {
       },
       openFolder: {
         type: "button",
-        id: "openFolder",
+        id: "open_folder",
         clickable: true,
         label: "open folder...",
-        icon: SYSTEM_ICON_MANAGER.uploadFolder.ICON512,
+        icon: "open_folder",
         quick_view_background: SYSTEM_ICON_MANAGER.uploadFolder.ICON16,
       },
       openFile: {
@@ -1275,7 +1275,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "openFile",
         clickable: true,
         label: "open file...",
-        icon: SYSTEM_ICON_MANAGER.uploadFile.ICON512,
+        icon: "open_file",
         quick_view_background: SYSTEM_ICON_MANAGER.uploadFile.ICON16,
       },
       br: {
@@ -1287,7 +1287,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "newFile",
         clickable: true,
         label: "new file...",
-        icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
+        icon: "new_file",
         quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
       },
       newFolder: {
@@ -1295,7 +1295,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "newFolder",
         clickable: true,
         label: "new folder...",
-        icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
+        icon: "new_folder",
         quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
       },
       paste: {
@@ -1356,7 +1356,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "newFile",
         clickable: true,
         label: "new file...",
-        icon: SYSTEM_ICON_MANAGER.newFile.ICON512,
+        icon: "new_file",
         quick_view_background: SYSTEM_ICON_MANAGER.newFile.ICON16,
       },
       newFolder: {
@@ -1364,7 +1364,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "newFolder",
         clickable: true,
         label: "new folder...",
-        icon: SYSTEM_ICON_MANAGER.newFolder.ICON512,
+        icon: "new_folder",
         quick_view_background: SYSTEM_ICON_MANAGER.newFolder.ICON16,
       },
       paste: {
