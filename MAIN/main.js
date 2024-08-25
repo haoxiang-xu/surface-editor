@@ -182,31 +182,26 @@ const openFolderStructureDialog = () => {
       properties: ["openDirectory"],
     })
     .then((result) => {
-      mainWindow.webContents.send("read-dir-state-changed", {
-        isDirLoading: true,
-      });
       if (!result.canceled) {
         read_dir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
-            //console.log("Directory data:", dirs);
-            mainWindow.webContents.send("directory-data", dirs);
-          })
-          .catch((error) => console.error("Error reading directory:", error))
-          .finally(() => {
-            mainWindow.webContents.send("read-dir-state-changed", {
-              isDirLoading: false,
+            mainWindow.webContents.send("directory-data", {
+              is_dir_successfully_loaded: true,
+              dirs: dirs,
             });
-          });
+          })
+          .catch((error) => console.error("Error reading directory:", error));
       } else {
-        mainWindow.webContents.send("read-dir-state-changed", {
-          isDirLoading: false,
+        mainWindow.webContents.send("directory-data", {
+          is_dir_successfully_loaded: false,
+          dirs: null,
         });
       }
     })
     .catch((err) => {
-      console.error(err);
-      mainWindow.webContents.send("read-dir-state-changed", {
-        isDirLoading: false,
+      mainWindow.webContents.send("directory-data", {
+        is_dir_successfully_loaded: false,
+        dirs: null,
       });
     });
 };
@@ -340,6 +335,9 @@ ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
   }
 });
 ipcMain.on("trigger-read-dir", () => {
+  mainWindow.webContents.send("read-dir-state-changed", {
+    isDirLoaded: false,
+  });
   openFolderStructureDialog();
 });
 ipcMain.on("read-file", async (event, absolutePath, relativePath) => {

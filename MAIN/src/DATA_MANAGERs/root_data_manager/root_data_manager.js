@@ -573,9 +573,20 @@ const RootDataManager = ({ children }) => {
   const [isDirLoaded, setIsDirLoaded] = useState(true);
   useEffect(() => {
     window.electron.receive("directory-data", (data) => {
-      setDir(data);
-      setIsDirLoaded(true);
+      if (data.is_dir_successfully_loaded) {
+        setDir(data.dirs);
+        setIsDirLoaded(true);
+      } else {
+        setIsDirLoaded(true);
+      }
     });
+    return () => {
+      window.electron.receive("directory-data", () => {});
+    };
+  }, []);
+  const read_dir_from_system = useCallback(() => {
+    setIsDirLoaded(false);
+    window.electronAPI.triggerReadDir();
   }, []);
   const access_dir_name_by_path = useCallback(
     (path) => {
@@ -934,6 +945,7 @@ const RootDataManager = ({ children }) => {
         setDir,
         isDirLoaded,
         setIsDirLoaded,
+        read_dir_from_system,
         access_dir_name_by_path,
         access_dir_type_by_path,
         access_dir_absolute_path_by_path,

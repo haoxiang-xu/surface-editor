@@ -1270,7 +1270,8 @@ const ExplorerList = ({ filteredDir }) => {
 
 const ContextMenuWrapper = ({ children }) => {
   const {
-    setIsDirLoaded,
+    isDirLoaded,
+    read_dir_from_system,
     delete_file_by_path,
     check_if_file_name_duplicate,
     generate_on_copy_file,
@@ -1341,6 +1342,12 @@ const ContextMenuWrapper = ({ children }) => {
       });
     }
   }, [onCopyFile]);
+  useEffect(() => {
+    if (isDirLoaded) {
+      setOnConextMenuPath(null);
+      command_executed();
+    }
+  }, [isDirLoaded]);
 
   /* { context menu command handler } ----------------------------------------------------------------------------------- */
   const handle_context_menu_command = async () => {
@@ -1418,10 +1425,7 @@ const ContextMenuWrapper = ({ children }) => {
           break;
         }
         case "openFolder": {
-          window.electronAPI.triggerReadDir();
-          setIsDirLoaded(false);
-          setOnConextMenuPath(null);
-          command_executed();
+          read_dir_from_system();
           break;
         }
       }
@@ -1774,10 +1778,6 @@ const SurfaceExplorer = ({
     };
     setFilteredDir(filter(filterKeyWord));
   }, [dir, isDirLoaded, filterKeyWord]);
-
-  useEffect(() => {
-    console.log(filteredDir);
-  }, [filteredDir]);
 
   return (
     <SurfaceExplorerContexts.Provider
