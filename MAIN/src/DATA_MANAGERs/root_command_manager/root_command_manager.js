@@ -97,6 +97,9 @@ const RootCommandManager = ({ children }) => {
   /* { Drag and Drop } =============================================================================== */
   const [onDrag, setOnDrag] = useState(false);
   const [onDragItem, setOnDragItem] = useState(null);
+  useEffect(() => {
+    console.log("onDragItem", onDragItem);
+  }, [onDragItem]);
 
   const item_on_drag = (event, on_drag_item) => {
     event.stopPropagation();

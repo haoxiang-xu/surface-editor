@@ -3,6 +3,7 @@ import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
 import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
+import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
@@ -1055,6 +1056,9 @@ const FileSelectionListItem = ({
         setOnDragMonacoIndex(-1);
         item_on_drop(e);
       }}
+      onDragOver={(e) => {
+        console.log("drag over", index);
+      }}
     >
       <FileSelectionListBackgroundIndicator index={index} />
       <Tag
@@ -1076,8 +1080,8 @@ const FileSelectionListItem = ({
         }}
       />
       {index === onSelectedMonacoIndex ? (
-        <img
-          src={SYSTEM_ICON_MANAGER.close.ICON512}
+        <Icon
+          src="close"
           style={{
             transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
 
@@ -1085,10 +1089,11 @@ const FileSelectionListItem = ({
             position: "absolute",
             top: "50%",
             left: -default_selecion_list_icon_offset + 4,
-            width: 10,
-            height: 10,
-            padding: 4,
+            width: 16,
+            height: 16,
+            padding: 1,
             borderRadius: 3,
+            opacity: closeButtonStyle.onHover ? 0.72 : 0.32,
             backgroundColor: `rgba( ${
               R + closeButtonStyle.backgroundColorOffset
             }, ${G + closeButtonStyle.backgroundColorOffset}, ${
@@ -1117,6 +1122,7 @@ const FileSelectionListItem = ({
 };
 const FileSelectionListContainer = ({}) => {
   const {
+    mode,
     onDragedMonacoIndex,
     onSelectedMonacoIndex,
     monacoPaths,
@@ -1173,14 +1179,14 @@ const FileSelectionListContainer = ({}) => {
   return (
     <div
       style={{
+        transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: 6,
         left: 6,
         right: 6,
-
+        
         height: 28,
 
-        // border: "1px solid rgba(225, 225, 225, 0.32)",
         borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         overflow: "hidden",
         padding: default_selecion_list_item_padding / 2,
@@ -1277,6 +1283,7 @@ const MonacoEditor = ({
     <MonacoEditorContexts.Provider
       value={{
         id,
+        mode,
         command,
         setCommand,
         load_contextMenu,
@@ -1309,18 +1316,20 @@ const MonacoEditor = ({
         <div style={{ height: "100%" }}>
           <div
             style={{
+              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
               position: "absolute",
               top: 38,
               left: 6,
               right: 6,
               bottom: 6,
               padding: "0px 8px 8px 0px",
-              
+
               boxSizing: "border-box",
               backgroundColor: "#202020",
               borderRadius: "0px 0px 5px 5px",
               border: "1px solid #282828",
-              boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
+              // boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
+              opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
             }}
           >
             <MonacoEditorGroup

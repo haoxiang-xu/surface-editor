@@ -34,7 +34,7 @@ const default_tag_padding_x = 6;
 const default_tag_padding_y = 3;
 
 const default_tag_font_size = 12;
-const default_border_radius = 6;
+const default_border_radius = 4;
 
 const default_tag_layer = 8;
 const more_option_label_font_size = 12;

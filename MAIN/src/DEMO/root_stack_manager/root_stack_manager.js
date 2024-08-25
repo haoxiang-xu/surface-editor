@@ -338,15 +338,15 @@ const StackComponentContainer = React.memo(
     const [mode, setMode] = useState(null);
     useEffect(() => {
       if (stack_structure_type === "horizontal_stack") {
-        width <= 50
+        width <= MIN
           ? setMode(stack_structure_type + "_vertical_mode")
           : setMode(stack_structure_type + "_horizontal_mode");
-      } else {
-        width <= 50
-          ? setMode("horizontal_stack_vertical_mode")
-          : setMode("horizontal_stack_horizontal_mode");
+      } else if (stack_structure_type === "vertical_stack") {
+        width <= MIN
+          ? setMode(stack_structure_type + "_horizontal_mode")
+          : setMode(stack_structure_type + "_vertical_mode");
       }
-    }, [width]);
+    }, [width, stack_structure_type]);
     /* { mode } ================================================================================================= */
 
     /* { data } ------------------------------------------------------------------------------------------------- */
@@ -745,6 +745,7 @@ const StackFrame = ({
           <StackComponentContainer
             id={id}
             width={containers[id].size.width}
+            stack_structure_type={parent_stack_type}
             component_type={stackStructure[id].type}
             code_editor_container_ref_index={1}
           />
