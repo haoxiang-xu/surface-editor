@@ -47,7 +47,7 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
-const padding = { top: 36, right: 5, bottom: 5, left: 5 };
+const padding = { top: 43, right: 6, bottom: 6, left: 6 };
 const default_explorer_item_height = 22;
 const default_x_axis_offset = 10;
 const default_font_size = 12;
@@ -101,7 +101,7 @@ const ExplorerSearchBar = ({ filterKeyWord, setFilterKeyWord }) => {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
         boxShadow: "none",
-        width: 24,
+        width: 38,
         opacity: 0.32,
       });
       setButtonStyle({
@@ -167,11 +167,11 @@ const ExplorerSearchBar = ({ filterKeyWord, setFilterKeyWord }) => {
         top: padding.bottom,
         /* Size ======================== */
         width: style.width,
-        height: 24,
+        height: 32,
         /* Style ======================= */
 
         backgroundColor: style.backgroundColor,
-        borderRadius: 4,
+        borderRadius: 5,
         boxShadow: style.boxShadow,
 
         overflow: "hidden",
@@ -202,16 +202,17 @@ const ExplorerSearchBar = ({ filterKeyWord, setFilterKeyWord }) => {
         style={{
           position: "absolute",
           top: "50%",
-          right: 0,
+          right: 4,
           transform: "translateY(-50%)",
 
-          width: 18,
-          height: 18,
+          width: 16,
+          height: 16,
 
           padding: 4,
 
           opacity: style.opacity,
 
+          borderRadius: 3,
           backgroundColor: buttonStyle.backgroundColor,
           boxShadow: buttonStyle.boxShadow,
         }}
@@ -235,8 +236,8 @@ const ExplorerSearchBar = ({ filterKeyWord, setFilterKeyWord }) => {
         style={{
           position: "absolute",
           top: "50%",
-          left: 2,
-          right: 30,
+          left: 4,
+          right: 32,
           transform: "translateY(-50%)",
           height: default_font_size,
           backgroundColor: "transparent",

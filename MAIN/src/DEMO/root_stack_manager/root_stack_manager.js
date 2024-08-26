@@ -528,12 +528,14 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
         resizer_size.height = `calc(100% - ${default_resizer_size * 2}px)`;
         return resizer_size;
       });
+      setResizerColor(`rgba(${225}, ${225}, ${225}, 0.32)`);
     } else {
       setResizerSize((prev) => {
         let resizer_size = { ...prev };
         resizer_size.height = MIN - default_resizer_size * 2;
         return resizer_size;
       });
+      setResizerColor(`rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`);
     }
   }, [onDragOver]);
   useEffect(() => {
