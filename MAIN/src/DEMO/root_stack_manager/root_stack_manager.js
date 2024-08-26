@@ -249,6 +249,7 @@ const default_component_padding = 8;
 const default_component_border_radius = 8;
 const default_resizer_size = 8;
 const default_resizer_layer = 12;
+const default_overlay_layer = 128;
 
 const R = 30;
 const G = 30;
@@ -463,13 +464,14 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
   const [onHover, setOnHover] = useState(false);
   const [onPause, setOnPause] = useState(false);
   const [onClick, setOnClick] = useState(false);
+  const [onDragOver, setOnDragOver] = useState(false);
   const [zIndex, setZIndex] = useState(null);
   const [previousMousePosition, setPerviousMousePosition] = useState(null);
   const [currentMousePosition, setCurrentMousePosition] = useState(null);
 
-  const [resizerSize, setResizerSize] = useState(
-    MIN - default_resizer_size * 2
-  );
+  const [resizerSize, setResizerSize] = useState({
+    height: MIN - default_resizer_size * 2,
+  });
   const [resizerColor, setResizerColor] = useState(
     `rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`
   );
@@ -519,30 +521,60 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
       );
     }
   }, [currentMousePosition, previousMousePosition, onClick]);
-
+  useEffect(() => {
+    if (onDragOver) {
+      setResizerSize((prev) => {
+        let resizer_size = { ...prev };
+        resizer_size.height = `calc(100% - ${default_resizer_size * 2}px)`;
+        return resizer_size;
+      });
+    } else {
+      setResizerSize((prev) => {
+        let resizer_size = { ...prev };
+        resizer_size.height = MIN - default_resizer_size * 2;
+        return resizer_size;
+      });
+    }
+  }, [onDragOver]);
   useEffect(() => {
     if (onClick && onFrameResize) {
-      setResizerSize(`calc(100% - ${default_resizer_size * 2}px)`);
+      setResizerSize((prev) => {
+        let resizer_size = { ...prev };
+        resizer_size.height = `calc(100% - ${default_resizer_size * 2}px)`;
+        return resizer_size;
+      });
       setBorderRadius(default_component_border_radius);
       setResizerColor(`rgba(${67}, ${105}, ${180}, 1)`);
       setZIndex(default_component_border_radius);
       return;
     }
     if (onFrameResize) {
-      setResizerSize(MIN - default_resizer_size * 2);
+      setResizerSize((prev) => {
+        let resizer_size = { ...prev };
+        resizer_size.height = MIN - default_resizer_size * 2;
+        return resizer_size;
+      });
       setBorderRadius(default_component_border_radius);
       setResizerColor(`rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`);
       setZIndex(null);
       return;
     }
     if (onHover && onPause) {
-      setResizerSize(`calc(100% - ${default_resizer_size * 2}px)`);
+      setResizerSize((prev) => {
+        let resizer_size = { ...prev };
+        resizer_size.height = `calc(100% - ${default_resizer_size * 2}px)`;
+        return resizer_size;
+      });
       setBorderRadius(default_component_border_radius);
       setResizerColor(`rgba(${67}, ${105}, ${180}, 1)`);
       setZIndex(default_component_border_radius);
       return;
     }
-    setResizerSize(MIN - default_resizer_size * 2);
+    setResizerSize((prev) => {
+      let resizer_size = { ...prev };
+      resizer_size.height = MIN - default_resizer_size * 2;
+      return resizer_size;
+    });
     setBorderRadius(default_component_border_radius);
     setResizerColor(`rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`);
     setZIndex(null);
@@ -574,6 +606,12 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
             event.stopPropagation();
             handle_mouse_down(event);
           }}
+          onDragOver={(event) => {
+            setOnDragOver(true);
+          }}
+          onDragLeave={(event) => {
+            setOnDragOver(false);
+          }}
         >
           <div
             style={{
@@ -583,7 +621,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
               top: "50%",
               transform: "translate(50%, -50%)",
               width: default_resizer_size / 2,
-              height: resizerSize,
+              height: resizerSize.height,
 
               borderRadius: borderRadius,
               cursor: "ew-resize",
@@ -597,7 +635,6 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
     case "vertical_stack":
       return (
         <div
-          draggable="false"
           style={{
             position: "absolute",
             bottom: 0,
@@ -622,16 +659,21 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
             setPerviousMousePosition({ x: event.clientX, y: event.clientY });
             handle_mouse_down(event);
           }}
+          onDragOver={(event) => {
+            setOnDragOver(true);
+          }}
+          onDragLeave={(event) => {
+            setOnDragOver(false);
+          }}
         >
           <div
-            draggable="false"
             style={{
               transition: "width 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
               position: "absolute",
               right: "50%",
               top: "50%",
               transform: "translate(50%, -50%)",
-              width: resizerSize,
+              width: resizerSize.height,
               height: default_resizer_size / 2,
 
               borderRadius: borderRadius,
@@ -662,17 +704,31 @@ const StackFrame = ({
     containers,
     filters,
     onFrameResize,
+    onFrameReposition,
+    setOnFrameReposition,
     generate_horizontal_sub_item_on_drag_filter,
     generate_vertical_sub_item_on_drag_filter,
     clean_filter,
   } = useContext(RootStackContexts);
   const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
 
+  const containerRef = useRef(null);
   const [style, setStyle] = useState({
     transition:
       "top 0.24s cubic-bezier(0.32, 1, 0.32, 1), left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1), height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
   });
-  const [onDrag, setOnDrag] = useState(false);
+  const [onDragStart, setOnDragStart] = useState(false);
+  const [onDragOver, setOnDragOver] = useState(false);
+  const [onDragOverPosition, setOnDragOverPosition] = useState({
+    x: -1,
+    y: -1,
+  });
+  const [overlayStyle, setOverlayStyle] = useState({
+    top: 2,
+    left: 2,
+    width: "calc(100% - 4px)",
+    height: "calc(100% - 4px)",
+  });
   useEffect(() => {
     if (onFrameResize) {
       setStyle({
@@ -685,41 +741,140 @@ const StackFrame = ({
       });
     }
   }, [onFrameResize]);
+  useEffect(() => {
+    if (!onFrameReposition) {
+      setOnDragStart(false);
+      setOnDragOver(false);
+    }
+  }, [onFrameReposition]);
+  const update_on_drag_over_position = useCallback(
+    (event) => {
+      if (onDragOver && containerRef) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setOnDragOverPosition({
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+        });
+      }
+    },
+    [containerRef, onDragOver]
+  );
+  useEffect(() => {
+    if (!containerRef) return;
+    // Y = height/width * X
+    // Y = - (height/width * X) + height
+    const rect = containerRef.current.getBoundingClientRect();
+    const height = rect.height;
+    const width = rect.width;
+
+    const lower_thrus_hold = 0.25;
+    const upper_thrus_hold = 0.75;
+
+    // if (
+    //   onDragOverPosition.x > width * lower_thrus_hold &&
+    //   onDragOverPosition.y > height * lower_thrus_hold &&
+    //   onDragOverPosition.x < width * upper_thrus_hold &&
+    //   onDragOverPosition.y < height * upper_thrus_hold
+    // ) {
+    //   setOverlayStyle({
+    //     top: 2,
+    //     left: 2,
+    //     width: "calc(100% - 4px)",
+    //     height: "calc(100% - 4px)",
+    //   });
+    // } else
+    if (
+      height > 2 * MIN &&
+      onDragOverPosition.y > (height / width) * onDragOverPosition.x &&
+      onDragOverPosition.y > (-height / width) * onDragOverPosition.x + height
+    ) {
+      setOverlayStyle({
+        top: "50%",
+        left: 2,
+        width: "calc(100% - 4px)",
+        height: "calc(50% - 2px)",
+      });
+    } else if (
+      height > 2 * MIN &&
+      onDragOverPosition.y < (height / width) * onDragOverPosition.x &&
+      onDragOverPosition.y < (-height / width) * onDragOverPosition.x + height
+    ) {
+      setOverlayStyle({
+        top: 2,
+        left: 2,
+        width: "calc(100% - 4px)",
+        height: "calc(50% - 2px)",
+      });
+    } else if (
+      width > 2 * MIN &&
+      onDragOverPosition.y > (height / width) * onDragOverPosition.x &&
+      onDragOverPosition.y < (-height / width) * onDragOverPosition.x + height
+    ) {
+      setOverlayStyle({
+        top: 2,
+        left: 2,
+        width: "calc(50% - 2px)",
+        height: "calc(100% - 4px)",
+      });
+    } else if (
+      width > 2 * MIN &&
+      onDragOverPosition.y < (height / width) * onDragOverPosition.x &&
+      onDragOverPosition.y > (-height / width) * onDragOverPosition.x + height
+    ) {
+      setOverlayStyle({
+        top: 2,
+        left: "50%",
+        width: "calc(50% - 4px)",
+        height: "calc(100% - 2px)",
+      });
+    } else {
+      setOverlayStyle({
+        top: 2,
+        left: 2,
+        width: "calc(100% - 4px)",
+        height: "calc(100% - 4px)",
+      });
+    }
+  }, [containerRef, onDragOverPosition]);
+
   return (
     <div
       style={{
         transition: style.transition,
         position: "absolute",
-        top: filters[id] ? filters[id].position.y : containers[id].position.y,
-        left: filters[id] ? filters[id].position.x : containers[id].position.x,
-        width: filters[id]
-          ? filters[id].size.width + default_resizer_size / 2
-          : containers[id].size.width + default_resizer_size / 2,
+        top: filters[id]
+          ? filters[id].position.y + default_resizer_size / 2
+          : containers[id].position.y + default_resizer_size / 2,
+        left: filters[id]
+          ? filters[id].position.x + default_resizer_size / 2
+          : containers[id].position.x + default_resizer_size / 2,
+        width: filters[id] ? filters[id].size.width : containers[id].size.width,
         height: filters[id]
-          ? filters[id].size.height + default_resizer_size / 2
-          : containers[id].size.height + default_resizer_size / 2,
+          ? filters[id].size.height
+          : containers[id].size.height,
       }}
     >
       <div
+        ref={containerRef}
         draggable="true"
         style={{
           position: "absolute",
-          top: default_resizer_size / 2,
-          left: default_resizer_size / 2,
+          top: 0,
+          left: 0,
           bottom: default_resizer_size,
           right: default_resizer_size,
 
-          border: onDrag
+          border: onDragStart
             ? "none"
             : `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
           backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
-          boxShadow: onDrag ? "none" : "0px 0px 4px 2px rgba(0,0,0,0.16)",
+          boxShadow: onDragStart ? "none" : "0px 0px 4px 2px rgba(0,0,0,0.16)",
           borderRadius: default_component_border_radius,
           overflow: "hidden",
         }}
         onDragStart={(e) => {
-          setOnDrag(true);
-          e.stopPropagation();
+          setOnDragStart(true);
+          setOnFrameReposition(true);
           e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
           if (parent_stack_type === "horizontal_stack") {
             generate_horizontal_sub_item_on_drag_filter(
@@ -734,9 +889,18 @@ const StackFrame = ({
           }
         }}
         onDragEnd={(e) => {
-          setOnDrag(false);
-          e.stopPropagation();
+          setOnDragStart(false);
+          setOnFrameReposition(false);
           clean_filter();
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setOnDragOver(true);
+          update_on_drag_over_position(e);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          setOnDragOver(false);
         }}
       >
         {stackStructure[id].type === "test" ? (
@@ -750,8 +914,28 @@ const StackFrame = ({
             code_editor_container_ref_index={1}
           />
         )}
+        <div
+          className="stack_frame_overlay"
+          style={{
+            transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+            position: "absolute",
+            top: overlayStyle.top,
+            left: overlayStyle.left,
+            width: overlayStyle.width,
+            height: overlayStyle.height,
+
+            backgroundColor: `rgba(255,255,255,0.08)`,
+            border: `1px solid rgba(255,255,255,0.16)`,
+            boxSizing: "border-box",
+            borderRadius: default_component_border_radius - 2,
+            opacity: onFrameReposition && onDragOver && !onDragStart ? 1 : 0,
+            pointerEvents: onFrameReposition ? "auto" : "none",
+
+            zIndex: default_overlay_layer,
+          }}
+        ></div>
       </div>
-      {end || onDrag ? null : (
+      {end || onDragStart ? null : (
         <StackFrameResizer
           id={id}
           index={index}
@@ -993,6 +1177,7 @@ const RootStackManager = () => {
 
   /* { State } ------ */
   const [onFrameResize, setOnFrameResize] = useState(false);
+  const [onFrameReposition, setOnFrameReposition] = useState(false);
   /* { State } ------ */
 
   const calculate_horizontal_intial_position_and_size = useCallback(
@@ -1757,6 +1942,8 @@ const RootStackManager = () => {
         setFilters,
         onFrameResize,
         setOnFrameResize,
+        onFrameReposition,
+        setOnFrameReposition,
         calculate_horizontal_intial_position_and_size,
         calculate_horizontal_position_and_size,
         adjust_horizontal_sub_item_filter,
