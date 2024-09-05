@@ -41,7 +41,7 @@ const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const default_selecion_list_item_padding = 8;
-const default_border_radius = 6;
+const default_border_radius = 5;
 const default_selecion_list_icon_offset = 22;
 
 const default_onhover_item_background_color_offset = 24;

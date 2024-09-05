@@ -620,7 +620,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
               transition: "height 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
               position: "absolute",
               right: "50%",
-              top: "50%",
+              top: `calc(50% - ${default_resizer_size / 2}px)`,
               transform: "translate(50%, -50%)",
               width: default_resizer_size / 2,
               height: resizerSize.height,
@@ -672,7 +672,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
             style={{
               transition: "width 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
               position: "absolute",
-              right: "50%",
+              right: `calc(50% + ${default_resizer_size / 2}px)`,
               top: "50%",
               transform: "translate(50%, -50%)",
               width: resizerSize.height,

@@ -66,7 +66,7 @@ const createWindow = () => {
       frame: true,
       hasShadow: true,
       titleBarStyle: "hidden",
-      trafficLightPosition: { x: 17, y: 15 },
+      trafficLightPosition: { x: 14, y: 13 },
       backgroundColor: "#181818",
     });
     app.dock.setIcon(
