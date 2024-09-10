@@ -1,4 +1,11 @@
-import React, { useState, useRef, useEffect, useContext, memo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  memo,
+  useCallback,
+} from "react";
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
@@ -43,6 +50,7 @@ const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 const default_selecion_list_item_padding = 8;
 const default_border_radius = 5;
 const default_selecion_list_icon_offset = 22;
+const default_tag_max_width = 128;
 
 const default_onhover_item_background_color_offset = 24;
 
@@ -849,7 +857,8 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
 
 /* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
 const FileSelectionListBackgroundIndicator = ({ index }) => {
-  const { onSelectedMonacoIndex } = useContext(MonacoEditorContexts);
+  const { onSelectedMonacoIndex, onDragOveredMonacoIndex, onDragOverPosition } =
+    useContext(MonacoEditorContexts);
   const [backgroundColorOffset, setBackgroundColorOffset] = useState(0);
   const [borderRadius, setBorderRadius] = useState({
     center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
@@ -873,8 +882,19 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
       });
       setTop(0);
       setLeft(-default_selecion_list_icon_offset);
+    } else if (index === onDragOveredMonacoIndex) {
+      setBackgroundColorOffset(default_onhover_item_background_color_offset);
+      setBorderRadius({
+        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+        left_border: `0px 0px 0px ${default_border_radius}px`,
+        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+        right_border: `0px 0px ${default_border_radius}px 0px`,
+        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+      });
+      setTop(0);
+      setLeft(default_tag_max_width);
     } else {
-      setBackgroundColorOffset(0);
+      setBackgroundColorOffset(16);
       setBorderRadius({
         center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         left_border: `0px 0px 0px ${default_border_radius}px`,
@@ -980,9 +1000,14 @@ const FileSelectionListItem = ({
     setOnSelectedMonacoIndex,
     onDragedMonacoIndex,
     setOnDragMonacoIndex,
+    onDragOveredMonacoIndex,
+    setOnDragOverMonacoIndex,
+    onDragOverPosition,
+    setOnDragOverPosition,
     item_on_drag,
     item_on_drop,
   } = useContext(MonacoEditorContexts);
+  const containerRef = useRef(null);
   const [zIndex, setZIndex] = useState(6);
   const [tagSize, setTagSize] = useState({ width: 0, height: 0 });
   const [tagColorOffset, setTagColorOffset] = useState(0);
@@ -1020,16 +1045,33 @@ const FileSelectionListItem = ({
       });
     }
   }, [tag_size]);
+  const update_on_drag_over_position = useCallback(
+    (event, index) => {
+      if (onDragOveredMonacoIndex === index && containerRef) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setOnDragOverPosition({
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+        });
+      }
+      setOnDragOverMonacoIndex(index);
+    },
+    [containerRef, onDragOveredMonacoIndex]
+  );
 
   return (
     <div
+      ref={containerRef}
       draggable={true}
       style={{
         transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: 0,
         left: tag_position + "px",
-        width: tagSize.width + "px",
+        width:
+          onDragOveredMonacoIndex === index
+            ? tagSize.width + default_tag_max_width + "px"
+            : tagSize.width + "px",
         bottom: default_selecion_list_item_padding / 2,
         zIndex: zIndex,
         opacity: tagOpacity,
@@ -1054,10 +1096,12 @@ const FileSelectionListItem = ({
       onDragEnd={(e) => {
         e.stopPropagation();
         setOnDragMonacoIndex(-1);
+        setOnDragOverMonacoIndex(-1);
+        setOnDragOverPosition({ x: 0, y: 0 });
         item_on_drop(e);
       }}
       onDragOver={(e) => {
-        console.log("drag over", index);
+        update_on_drag_over_position(e, index);
       }}
     >
       <FileSelectionListBackgroundIndicator index={index} />
@@ -1124,7 +1168,11 @@ const FileSelectionListContainer = ({}) => {
   const {
     mode,
     onDragedMonacoIndex,
+    onDragOveredMonacoIndex,
+    setOnDragOverMonacoIndex,
     onSelectedMonacoIndex,
+    onDragOverPosition,
+    setOnDragOverPosition,
     monacoPaths,
     setMonacoPaths,
   } = useContext(MonacoEditorContexts);
@@ -1160,6 +1208,9 @@ const FileSelectionListContainer = ({}) => {
             tagRefs.current[i]?.current?.offsetWidth +
             1.5 * default_selecion_list_item_padding;
         }
+        if (i === onDragOveredMonacoIndex) {
+          position_x += default_tag_max_width;
+        }
         tagSizes.push({
           width: tagRefs.current[i]?.current?.offsetWidth,
           height: tagRefs.current[i]?.current?.offsetHeight,
@@ -1174,6 +1225,7 @@ const FileSelectionListContainer = ({}) => {
     tagRefs.current,
     onSelectedMonacoIndex,
     onDragedMonacoIndex,
+    onDragOveredMonacoIndex,
   ]);
 
   return (
@@ -1227,6 +1279,9 @@ const MonacoEditor = ({
     data?.on_selected_monaco_core_index
   );
   const [onDragedMonacoIndex, setOnDragMonacoIndex] = useState(-1);
+  const [onDragOveredMonacoIndex, setOnDragOverMonacoIndex] = useState(-1);
+  const [onDragOverPosition, setOnDragOverPosition] = useState({ x: 0, y: 0 });
+
   const [monacoPaths, setMonacoPaths] = useState(data?.monaco_paths);
   const [monacoCores, setMonacoCores] = useState(data?.monaco_cores);
   const access_monaco_core_by_path = (path) => {
@@ -1291,6 +1346,10 @@ const MonacoEditor = ({
         setOnSelectedMonacoIndex,
         onDragedMonacoIndex,
         setOnDragMonacoIndex,
+        onDragOveredMonacoIndex,
+        setOnDragOverMonacoIndex,
+        onDragOverPosition,
+        setOnDragOverPosition,
         monacoPaths,
         setMonacoPaths,
         monacoCores,
