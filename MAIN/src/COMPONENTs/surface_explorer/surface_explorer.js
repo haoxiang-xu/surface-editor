@@ -306,6 +306,34 @@ const ExplorerLoadingIndicator = ({ width }) => {
 /* { Explorer Loading Sub Components } =============================================================================================================================== */
 
 /* { Explorer List Sub Components } ================================================================================================================================== */
+const ExplorerTopShadow = ({ position_y, position_x }) => {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: position_y,
+        left: 0,
+        right: 0,
+        zIndex: default_indicator_layer,
+
+        /* Size ======================== */
+        height: 128,
+        borderRadius: 0,
+
+        /* Style ======================= */
+        background: `linear-gradient(180deg, rgba( ${
+          surface_explorer_fixed_styling.backgroundColorR - 12
+        }, ${surface_explorer_fixed_styling.backgroundColorG - 12}, ${
+          surface_explorer_fixed_styling.backgroundColorB - 12
+        }, 0.64), rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${
+          surface_explorer_fixed_styling.backgroundColorG
+        }, ${surface_explorer_fixed_styling.backgroundColorB}, 0))`,
+        userSelect: "none",
+        pointerEvents: "none",
+      }}
+    ></div>
+  );
+};
 const ExplorerLevelIndicatorFilter = ({ position_y, position_x, height }) => {
   const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
   if (
@@ -1243,7 +1271,6 @@ const ExplorerList = ({ filteredDir }) => {
         left: padding.left,
 
         /* Size ======================== */
-        width: width - (padding.left + padding.right + 8),
         height: "calc(100% - " + (padding.top + padding.bottom) + "px",
 
         /* Style ======================= */
@@ -1821,6 +1848,7 @@ const SurfaceExplorer = ({
           <ExplorerLoadingIndicator width={width} />
         )}
       </ContextMenuWrapper>
+      {/* <ExplorerTopShadow position_y={padding.top} position_x={padding.left} /> */}
     </SurfaceExplorerContexts.Provider>
   );
 };
