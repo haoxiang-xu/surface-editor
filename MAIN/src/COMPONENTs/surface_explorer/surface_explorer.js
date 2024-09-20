@@ -516,6 +516,11 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const tagRef = useRef(null);
   const [style, setStyle] = useState({
     backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
+    maxWidth:
+      explorerListWidth -
+      position_x -
+      2 * default_indicator_padding -
+      2 * default_border_width,
   });
 
   const [isExpanded, setIsExpanded] = useState(
@@ -801,6 +806,11 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   const tagRef = useRef(null);
   const [style, setStyle] = useState({
     backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
+    maxWidth:
+      explorerListWidth -
+      position_x -
+      2 * default_indicator_padding -
+      2 * default_border_width,
   });
   const [fullSizeMode, setFullSizeMode] = useState(false);
   const [onHover, setOnHover] = useState(false);
@@ -849,6 +859,16 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         }, ${surface_explorer_fixed_styling.backgroundColorG + 16}, ${
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
+        maxWidth: scrollbarVisible
+          ? explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width -
+            default_scrollbar_width
+          : explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width,
       });
     } else if (onHover) {
       setStyle({
@@ -857,14 +877,34 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         }, ${surface_explorer_fixed_styling.backgroundColorG + 32}, ${
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
+        maxWidth: scrollbarVisible
+          ? explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width -
+            default_scrollbar_width
+          : explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width,
       });
       setOnHoverExplorerItem(file_path);
     } else {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
+        maxWidth: scrollbarVisible
+          ? explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width -
+            default_scrollbar_width
+          : explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width,
       });
     }
-  }, [onHover, onRenameMode]);
+  }, [onHover, onRenameMode, width, scrollbarVisible, explorerListWidth]);
   useEffect(() => {
     if (tagRef.current) {
       if (
@@ -974,16 +1014,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
             fontSize: default_font_size,
             backgroundColor: style.backgroundColor,
             boxShadow: "none",
-            maxWidth: scrollbarVisible
-              ? explorerListWidth -
-                position_x -
-                2 * default_indicator_padding -
-                2 * default_border_width -
-                default_scrollbar_width
-              : explorerListWidth -
-                position_x -
-                2 * default_indicator_padding -
-                2 * default_border_width,
+            maxWidth: style.maxWidth,
             fullSizeMode: fullSizeMode,
             transparentMode: true,
             inputMode: onRenameMode,
