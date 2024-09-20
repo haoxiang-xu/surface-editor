@@ -53,6 +53,7 @@ const default_x_axis_offset = 10;
 const default_font_size = 12;
 const default_indicator_padding = 4;
 const default_border_width = 1;
+const default_scrollbar_width = 10;
 
 const max_render_range = 1024;
 
@@ -306,39 +307,17 @@ const ExplorerLoadingIndicator = ({ width }) => {
 /* { Explorer Loading Sub Components } =============================================================================================================================== */
 
 /* { Explorer List Sub Components } ================================================================================================================================== */
-const ExplorerTopShadow = ({ position_y, position_x }) => {
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top: position_y,
-        left: 0,
-        right: 0,
-        zIndex: default_indicator_layer,
-
-        /* Size ======================== */
-        height: 128,
-        borderRadius: 0,
-
-        /* Style ======================= */
-        background: `linear-gradient(180deg, rgba( ${
-          surface_explorer_fixed_styling.backgroundColorR - 12
-        }, ${surface_explorer_fixed_styling.backgroundColorG - 12}, ${
-          surface_explorer_fixed_styling.backgroundColorB - 12
-        }, 0.64), rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${
-          surface_explorer_fixed_styling.backgroundColorG
-        }, ${surface_explorer_fixed_styling.backgroundColorB}, 0))`,
-        userSelect: "none",
-        pointerEvents: "none",
-      }}
-    ></div>
+const ExplorerLevelIndicatorFilter = ({
+  position_y,
+  position_x,
+  height: indicator_height,
+}) => {
+  const { height, explorerScrollPosition } = useContext(
+    SurfaceExplorerContexts
   );
-};
-const ExplorerLevelIndicatorFilter = ({ position_y, position_x, height }) => {
-  const { explorerScrollPosition } = useContext(SurfaceExplorerContexts);
   if (
-    position_y + height < explorerScrollPosition ||
-    position_y > explorerScrollPosition + max_render_range
+    position_y + indicator_height < explorerScrollPosition ||
+    position_y > explorerScrollPosition + height
   ) {
     return null;
   } else {
@@ -346,7 +325,7 @@ const ExplorerLevelIndicatorFilter = ({ position_y, position_x, height }) => {
       <ExplorerLevelIndicatorComponent
         position_y={position_y}
         position_x={position_x}
-        height={height}
+        height={indicator_height}
       />
     );
   }
@@ -525,6 +504,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
     setFirstVisibleItem,
+    scrollbarVisible,
   } = useContext(SurfaceExplorerContexts);
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
@@ -591,6 +571,16 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         }, ${surface_explorer_fixed_styling.backgroundColorG + 16}, ${
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
+        maxWidth: scrollbarVisible
+          ? explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width -
+            default_scrollbar_width
+          : explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width,
       });
     } else if (onHover) {
       setStyle({
@@ -599,14 +589,34 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         }, ${surface_explorer_fixed_styling.backgroundColorG + 32}, ${
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
+        maxWidth: scrollbarVisible
+          ? explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width -
+            default_scrollbar_width
+          : explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width,
       });
       setOnHoverExplorerItem(file_path);
     } else {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
+        maxWidth: scrollbarVisible
+          ? explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width -
+            default_scrollbar_width
+          : explorerListWidth -
+            position_x -
+            2 * default_indicator_padding -
+            2 * default_border_width,
       });
     }
-  }, [onHover, onRenameMode]);
+  }, [onHover, onRenameMode, width, scrollbarVisible, explorerListWidth]);
   useEffect(() => {
     if (tagRef.current) {
       if (
@@ -718,11 +728,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
             backgroundColor: style.backgroundColor,
             boxShadow: "none",
             isExpanded: isExpanded,
-            maxWidth:
-              explorerListWidth -
-              position_x -
-              2 * default_indicator_padding -
-              2 * default_border_width,
+            maxWidth: style.maxWidth,
             fullSizeMode: fullSizeMode,
             transparentMode: true,
             inputMode: onRenameMode,
@@ -783,6 +789,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     setOnSelectedExplorerItems,
     setOnHoverExplorerItem,
     setFirstVisibleItem,
+    scrollbarVisible,
   } = useContext(SurfaceExplorerContexts);
 
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
@@ -967,11 +974,16 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
             fontSize: default_font_size,
             backgroundColor: style.backgroundColor,
             boxShadow: "none",
-            maxWidth:
-              explorerListWidth -
-              position_x -
-              2 * default_indicator_padding -
-              2 * default_border_width,
+            maxWidth: scrollbarVisible
+              ? explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+              : explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width,
             fullSizeMode: fullSizeMode,
             transparentMode: true,
             inputMode: onRenameMode,
@@ -987,8 +999,11 @@ const ExplorerList = ({ filteredDir }) => {
     useContext(RootDataContexts);
   const {
     width,
+    height,
     explorerListRef,
     explorerScrollPosition,
+    scrollbarVisible,
+    setScrollbarVisible,
     onSelectedExplorerItems,
     setOnSelectedExplorerItems,
     onHoverExplorerItem,
@@ -1183,12 +1198,11 @@ const ExplorerList = ({ filteredDir }) => {
       if (!explorerItemPositions || !explorerList) return;
       const startIndex = Math.max(
         parseInt(explorerScrollPosition / default_explorer_item_height) -
-          parseInt(max_render_range / default_explorer_item_height / 2),
+          parseInt(height / default_explorer_item_height / 2),
         0
       );
       const endIndex =
-        2 * parseInt(max_render_range / default_explorer_item_height) +
-        startIndex;
+        2 * parseInt(height / default_explorer_item_height) + startIndex;
 
       setVisibleIndexRange({
         startIndex: startIndex,
@@ -1241,6 +1255,13 @@ const ExplorerList = ({ filteredDir }) => {
     };
     update_parent_indicator();
   }, [explorerItemPositions, onHoverExplorerItem]);
+  useEffect(() => {
+    if (explorerList.length * default_explorer_item_height > height) {
+      setScrollbarVisible(true);
+    } else {
+      setScrollbarVisible(false);
+    }
+  }, [explorerList, height]);
 
   return (
     <div
@@ -1707,6 +1728,7 @@ const ContextMenuWrapper = ({ children }) => {
 const SurfaceExplorer = ({
   id,
   width,
+  height,
   mode,
   command,
   setCommand,
@@ -1725,6 +1747,7 @@ const SurfaceExplorer = ({
   const [explorerListWidth, setExplorerListWidth] = useState(0);
   const [explorerListTop, setExplorerListTop] = useState(0);
   const [explorerScrollPosition, setExplorerScrollPosition] = useState(0);
+  const [scrollbarVisible, setScrollbarVisible] = useState(false);
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
   const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
   const [firstVisibleItem, setFirstVisibleItem] = useState(null);
@@ -1812,6 +1835,7 @@ const SurfaceExplorer = ({
       value={{
         id,
         width,
+        height,
         command,
         setCommand,
         load_contextMenu,
@@ -1825,6 +1849,8 @@ const SurfaceExplorer = ({
         setExplorerListTop,
         explorerScrollPosition,
         setExplorerScrollPosition,
+        scrollbarVisible,
+        setScrollbarVisible,
         onSelectedExplorerItems,
         setOnSelectedExplorerItems,
         onHoverExplorerItem,

@@ -269,6 +269,7 @@ const StackComponentContainer = React.memo(
     stack_structure_type,
     code_editor_container_ref_index,
     width,
+    height,
   }) => {
     /* Children Item Drag and Drop  ============================================================================================================================================ */
     const [draggedItem, setDraggedItem] = useState(null);
@@ -413,6 +414,7 @@ const StackComponentContainer = React.memo(
             <StackFrameComponent
               id={id}
               width={width}
+              height={height}
               mode={mode}
               command={command}
               setCommand={setCommand}
@@ -422,6 +424,7 @@ const StackComponentContainer = React.memo(
               setData={setData}
               item_on_drag={item_on_drag}
               item_on_drop={item_on_drop}
+              
               code_editor_container_ref_index={code_editor_container_ref_index}
             />
           ) : null}
@@ -911,6 +914,7 @@ const StackFrame = ({
           <StackComponentContainer
             id={id}
             width={containers[id].size.width}
+            height={containers[id].size.height}
             stack_structure_type={parent_stack_type}
             component_type={stackStructure[id].type}
             code_editor_container_ref_index={1}
