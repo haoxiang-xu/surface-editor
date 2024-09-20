@@ -852,6 +852,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   }, [command, onConextMenuPath]);
 
   useEffect(() => {
+    console.log(width);
     if (onRenameMode) {
       setStyle({
         backgroundColor: `rgba( ${

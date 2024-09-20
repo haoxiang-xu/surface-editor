@@ -57,8 +57,6 @@ const CustomizedTag = ({
   const [tagMaxWidth, setTagMaxWidth] = useState(style.maxWidth);
   const [inputMode, setInputMode] = useState(style.inputMode);
 
-  // console.log(label);
-
   useEffect(() => {
     if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
@@ -129,7 +127,7 @@ const CustomizedTag = ({
         inputMode: style.inputMode,
       };
     });
-  }, [style]);
+  }, [style, tagMaxWidth]);
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
