@@ -852,7 +852,6 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   }, [command, onConextMenuPath]);
 
   useEffect(() => {
-    console.log(width);
     if (onRenameMode) {
       setStyle({
         backgroundColor: `rgba( ${
@@ -1371,8 +1370,7 @@ const ContextMenuWrapper = ({ children }) => {
     clickable: true,
     label: "paste",
     short_cut_label: "Ctrl+V",
-    icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-    quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+    icon: "paste",
   });
   useEffect(() => {
     if (onCopyFile) {
@@ -1408,8 +1406,7 @@ const ContextMenuWrapper = ({ children }) => {
             noWidthLimitMode: true,
           },
         },
-        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+        icon: "paste",
       });
     } else {
       setClickablePaste({
@@ -1593,8 +1590,7 @@ const ContextMenuWrapper = ({ children }) => {
         clickable: false,
         label: "paste",
         short_cut_label: "Ctrl+V",
-        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+        icon: "paste",
       },
     };
     const default_folder_context_menu = {
@@ -1617,8 +1613,7 @@ const ContextMenuWrapper = ({ children }) => {
         clickable: true,
         label: "copy",
         short_cut_label: "Ctrl+C",
-        icon: SYSTEM_ICON_MANAGER.copy.ICON512,
-        quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
+        icon: "copy",
       },
       rename: {
         type: "button",
@@ -1662,8 +1657,7 @@ const ContextMenuWrapper = ({ children }) => {
         clickable: false,
         label: "paste",
         short_cut_label: "Ctrl+V",
-        icon: SYSTEM_ICON_MANAGER.paste.ICON512,
-        quick_view_background: SYSTEM_ICON_MANAGER.paste.ICON16,
+        icon: "paste",
       },
     };
     const default_file_context_menu = {
@@ -1677,8 +1671,7 @@ const ContextMenuWrapper = ({ children }) => {
         clickable: true,
         label: "copy",
         short_cut_label: "Ctrl+C",
-        icon: SYSTEM_ICON_MANAGER.copy.ICON512,
-        quick_view_background: SYSTEM_ICON_MANAGER.copy.ICON16,
+        icon: "copy",
       },
       rename: {
         type: "button",

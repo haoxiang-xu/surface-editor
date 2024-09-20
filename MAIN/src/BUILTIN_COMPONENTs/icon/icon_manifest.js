@@ -12,6 +12,8 @@ export const iconManifest = {
   fold: () => import("./SVGs/UI/fold.svg"),
   unfold: () => import("./SVGs/UI/unfold.svg"),
   search: () => import("./SVGs/UI/search.svg"),
+  copy: () => import("./SVGs/UI/copy.svg"),
+  paste: () => import("./SVGs/UI/paste.svg"),
 
   /* {win32} */
   win32_maximize: () => import("./SVGs/UI/win32/maximize.svg"),
