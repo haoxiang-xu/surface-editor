@@ -366,7 +366,7 @@ const StackComponentContainer = React.memo(
     /* { command } ============================================================================================== */
     const { cmd, pop_command_by_id, load_context_menu } =
       useContext(RootCommandContexts);
-    const [command, setCommand] = useCustomizedState([], compareJson);
+    const [command, setCommand] = useState([]);
     useEffect(() => {
       if (cmd[id] && cmd[id].length > 0 && command.length === 0) {
         setCommand(cmd[id][0]);
@@ -424,7 +424,6 @@ const StackComponentContainer = React.memo(
               setData={setData}
               item_on_drag={item_on_drag}
               item_on_drop={item_on_drop}
-              
               code_editor_container_ref_index={code_editor_container_ref_index}
             />
           ) : null}
