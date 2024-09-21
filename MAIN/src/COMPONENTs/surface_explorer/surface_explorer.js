@@ -54,9 +54,6 @@ const default_font_size = 12;
 const default_indicator_padding = 4;
 const default_border_width = 1;
 const default_scrollbar_width = 10;
-
-const max_render_range = 1024;
-
 const default_indicator_layer = 12;
 
 /* { Explorer Search Bar } ------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -1114,8 +1111,11 @@ const ExplorerList = ({ filteredDir }) => {
           position_x={position_x}
         />
       );
+
       next_position_y += default_explorer_item_height;
       next_position_x += default_x_axis_offset;
+
+      let sub_explorer_structure_positions = [];
 
       if (sub_items && access_dir_expand_status_by_path(path)) {
         for (let index = 0; index < sub_items.length; index++) {
@@ -1127,14 +1127,15 @@ const ExplorerList = ({ filteredDir }) => {
               next_position_x
             );
             const sub_explorer_structure = updated_structure.explorer_structure;
-            const sub_explorer_structure_positions =
+            const sub_sub_explorer_structure_positions =
               updated_structure.explorer_structure_positions;
             explorer_structure = explorer_structure.concat(
               sub_explorer_structure
             );
-            explorer_structure_positions = explorer_structure_positions.concat(
-              sub_explorer_structure_positions
-            );
+            sub_explorer_structure_positions =
+              sub_explorer_structure_positions.concat(
+                sub_sub_explorer_structure_positions
+              );
             next_position_y +=
               default_explorer_item_height * sub_explorer_structure.length;
           } else {
@@ -1146,7 +1147,7 @@ const ExplorerList = ({ filteredDir }) => {
                 position_x={next_position_x}
               />
             );
-            explorer_structure_positions.push({
+            sub_explorer_structure_positions.push({
               file_path: sub_items[index],
               position_y: next_position_y,
               position_x: next_position_x,
@@ -1162,6 +1163,9 @@ const ExplorerList = ({ filteredDir }) => {
         position_x: position_x,
         height: next_position_y - position_y,
       });
+      explorer_structure_positions = explorer_structure_positions.concat(
+        sub_explorer_structure_positions
+      );
 
       if (path === "root") {
         explorer_structure.push(
@@ -1293,6 +1297,10 @@ const ExplorerList = ({ filteredDir }) => {
       setScrollbarVisible(false);
     }
   }, [explorerList, height]);
+
+  useEffect(() => {
+    console.log(explorerItemPositions);
+  }, [explorerItemPositions]);
 
   return (
     <div
