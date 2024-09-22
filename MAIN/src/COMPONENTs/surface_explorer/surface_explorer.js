@@ -1298,10 +1298,6 @@ const ExplorerList = ({ filteredDir }) => {
     }
   }, [explorerList, height]);
 
-  useEffect(() => {
-    console.log(explorerItemPositions);
-  }, [explorerItemPositions]);
-
   return (
     <div
       className="scrollable-element"
