@@ -34,6 +34,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "electron": "^26.6.10",

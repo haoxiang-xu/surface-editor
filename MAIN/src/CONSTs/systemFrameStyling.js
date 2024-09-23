@@ -1,6 +1,6 @@
 /* System Frame Styling --------------------------------------------- */
-const SYSTEM_FRAME_BORDER = "1px solid #585858";
-const SYSTEM_FRAME_BORDER_RADIUS = 21;
+const SYSTEM_FRAME_BORDER = "0px solid #282828";
+const SYSTEM_FRAME_BORDER_RADIUS = 0;
 /* System Frame Styling --------------------------------------------- */
 
 export { SYSTEM_FRAME_BORDER, SYSTEM_FRAME_BORDER_RADIUS };

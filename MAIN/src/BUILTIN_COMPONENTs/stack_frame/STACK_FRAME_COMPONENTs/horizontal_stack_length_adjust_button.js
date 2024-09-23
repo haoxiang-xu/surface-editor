@@ -156,6 +156,7 @@ const HorizontalStackLengthAdjustButton = ({
           opacity: MaximizeStyling.opacity,
           backgroundColor: MaximizeStyling.backgroundColor,
           boxShadow: MaximizeStyling.boxShadow,
+          userSelect: "none",
         }}
         onMouseEnter={() => {
           setIsMaxOnHover(true);
@@ -204,6 +205,7 @@ const HorizontalStackLengthAdjustButton = ({
           opacity: MinimizeStyling.opacity,
           backgroundColor: MinimizeStyling.backgroundColor,
           boxShadow: MinimizeStyling.boxShadow,
+          userSelect: "none",
         }}
         onMouseEnter={() => {
           setIsMinOnHover(true);

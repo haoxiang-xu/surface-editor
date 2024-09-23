@@ -1,8 +1,16 @@
-import React, { useState, useRef, useEffect, useContext, memo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  memo,
+  useCallback,
+} from "react";
 import axios from "axios";
 /* { Import Components } ------------------------------------------------------------------------------------- */
 import MonacoCore from "./monaco_core/monaco_core";
 import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
+import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
@@ -39,7 +47,16 @@ try {
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
-const default_selecion_list_item_padding = 6;
+const default_selecion_list_item_padding = 8;
+const default_border_radius = 5;
+const default_selecion_list_icon_offset = 22;
+const default_tag_max_width = 128;
+
+const default_onhover_item_background_color_offset = 24;
+
+const R = 30;
+const G = 30;
+const B = 30;
 
 const FileSelectionBar = ({
   code_editor_container_ref_index,
@@ -634,7 +651,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     fold: {
       type: "button",
       id: "fold",
-      icon: SYSTEM_ICON_MANAGER.fold.ICON512,
+      icon: "fold",
       label: "fold all",
       quick_view_background: SYSTEM_ICON_MANAGER.fold.ICON16,
       clickable: true,
@@ -642,7 +659,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
     unfold: {
       type: "button",
       id: "unfold",
-      icon: SYSTEM_ICON_MANAGER.unfold.ICON512,
+      icon: "unfold",
       label: "unfold all",
       quick_view_background: SYSTEM_ICON_MANAGER.unfold.ICON16,
       clickable: true,
@@ -839,73 +856,403 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
 };
 
 /* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
-const FileSelectionListItem = ({ reference, file_path, tag_position }) => {
+const FileSelectionListBackgroundIndicator = ({ index }) => {
+  const { onSelectedMonacoIndex, onDragOveredMonacoIndex, onDragOverPosition } =
+    useContext(MonacoEditorContexts);
+  const [backgroundColorOffset, setBackgroundColorOffset] = useState(0);
+  const [borderRadius, setBorderRadius] = useState({
+    center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+    left_border: `0px 0px 0px ${default_border_radius}px`,
+    left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+    right_border: `0px 0px ${default_border_radius}px 0px`,
+    right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+  });
+  const [top, setTop] = useState(default_selecion_list_item_padding);
+  const [left, setLeft] = useState(0);
+
+  useEffect(() => {
+    if (index === onSelectedMonacoIndex) {
+      setBackgroundColorOffset(default_onhover_item_background_color_offset);
+      setBorderRadius({
+        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+        left_border: `0px 0px 0px ${default_border_radius}px`,
+        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+        right_border: `0px 0px ${default_border_radius}px 0px`,
+        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+      });
+      setTop(0);
+      setLeft(-default_selecion_list_icon_offset);
+    } else if (index === onDragOveredMonacoIndex) {
+      setBackgroundColorOffset(default_onhover_item_background_color_offset);
+      setBorderRadius({
+        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+        left_border: `0px 0px 0px ${default_border_radius}px`,
+        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+        right_border: `0px 0px ${default_border_radius}px 0px`,
+        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+      });
+      setTop(0);
+      setLeft(default_tag_max_width);
+    } else {
+      setBackgroundColorOffset(16);
+      setBorderRadius({
+        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+        left_border: `0px 0px 0px ${default_border_radius}px`,
+        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+        right_border: `0px 0px ${default_border_radius}px 0px`,
+        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+      });
+      setTop(0);
+      setLeft(0);
+    }
+  }, [onSelectedMonacoIndex]);
+
+  return (
+    <>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: top,
+          left: left,
+          right: -default_selecion_list_item_padding / 2,
+          bottom: 0,
+          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
+            G + backgroundColorOffset
+          }, ${B + backgroundColorOffset}, 1 )`,
+          borderRadius: `${borderRadius.center}`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: "50%",
+          left: `${-default_selecion_list_item_padding + left}px`,
+          bottom: "0px",
+
+          width: `${default_selecion_list_item_padding}px`,
+
+          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
+            G + backgroundColorOffset
+          }, ${B + backgroundColorOffset}, 1 )`,
+          borderRadius: `${borderRadius.left_border}`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: `50%`,
+          left: `${-default_selecion_list_item_padding + left}px`,
+          bottom: "0px",
+
+          width: `${default_selecion_list_item_padding}px`,
+
+          backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+          borderRadius: `${borderRadius.left_cover}`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: "50%",
+          right: `${-1.5 * default_selecion_list_item_padding}px`,
+          bottom: "0px",
+
+          width: `${default_selecion_list_item_padding}px`,
+
+          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
+            G + backgroundColorOffset
+          }, ${B + backgroundColorOffset}, 1 )`,
+          borderRadius: `${borderRadius.right_border}`,
+        }}
+      ></div>
+      <div
+        style={{
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: `50%`,
+          right: `${-1.5 * default_selecion_list_item_padding}px`,
+          bottom: "0px",
+
+          width: `${default_selecion_list_item_padding}px`,
+
+          backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+          borderRadius: `${borderRadius.right_cover}`,
+        }}
+      ></div>{" "}
+    </>
+  );
+};
+const FileSelectionListItem = ({
+  reference,
+  index,
+  file_path,
+  tag_position,
+  tag_size,
+}) => {
   const { access_dir_name_by_path } = useContext(RootDataContexts);
+  const {
+    id,
+    onSelectedMonacoIndex,
+    setOnSelectedMonacoIndex,
+    onDragedMonacoIndex,
+    setOnDragMonacoIndex,
+    onDragOveredMonacoIndex,
+    setOnDragOverMonacoIndex,
+    onDragOverPosition,
+    setOnDragOverPosition,
+    item_on_drag,
+    item_on_drop,
+  } = useContext(MonacoEditorContexts);
+  const containerRef = useRef(null);
+  const [zIndex, setZIndex] = useState(6);
+  const [tagSize, setTagSize] = useState({ width: 0, height: 0 });
+  const [tagColorOffset, setTagColorOffset] = useState(0);
+  const [closeButtonStyle, setCloseButtonStyle] = useState({
+    backgroundColorOffset: 32,
+    onHover: false,
+  });
+
+  const [tagOpacity, setTagOpacity] = useState(1);
+
+  useEffect(() => {
+    if (index === onDragedMonacoIndex) {
+      setZIndex(6);
+      setTagOpacity(0);
+      setTagColorOffset(0);
+    } else if (index === onSelectedMonacoIndex) {
+      setZIndex(7);
+      setTagOpacity(1);
+      setTagColorOffset(default_onhover_item_background_color_offset);
+    } else {
+      setZIndex(6);
+      setTagOpacity(0.32);
+      setCloseButtonStyle({
+        backgroundColorOffset: 32,
+        onHover: false,
+      });
+      setTagColorOffset(0);
+    }
+  }, [onSelectedMonacoIndex, onDragedMonacoIndex]);
+  useEffect(() => {
+    if (reference?.current) {
+      setTagSize({
+        width: reference?.current?.offsetWidth,
+        height: reference?.current?.offsetHeight,
+      });
+    }
+  }, [tag_size]);
+  const update_on_drag_over_position = useCallback(
+    (event, index) => {
+      if (onDragOveredMonacoIndex === index && containerRef) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setOnDragOverPosition({
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+        });
+      }
+      setOnDragOverMonacoIndex(index);
+    },
+    [containerRef, onDragOveredMonacoIndex]
+  );
 
   return (
     <div
+      ref={containerRef}
+      draggable={true}
       style={{
+        transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
-        top: "0px",
+        top: 0,
         left: tag_position + "px",
+        width:
+          onDragOveredMonacoIndex === index
+            ? tagSize.width + default_tag_max_width + "px"
+            : tagSize.width + "px",
+        bottom: default_selecion_list_item_padding / 2,
+        zIndex: zIndex,
+        opacity: tagOpacity,
+      }}
+      onMouseUp={() => {
+        setOnSelectedMonacoIndex(index);
+      }}
+      onDragStart={(e) => {
+        e.stopPropagation();
+        e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+        setOnSelectedMonacoIndex(index);
+        setOnDragMonacoIndex(index);
+        item_on_drag(e, {
+          source: id,
+          ghost_image: "tag",
+          content: {
+            type: "file",
+            path: file_path,
+          },
+        });
+      }}
+      onDragEnd={(e) => {
+        e.stopPropagation();
+        setOnDragMonacoIndex(-1);
+        setOnDragOverMonacoIndex(-1);
+        setOnDragOverPosition({ x: 0, y: 0 });
+        item_on_drop(e);
+      }}
+      onDragOver={(e) => {
+        update_on_drag_over_position(e, index);
       }}
     >
+      <FileSelectionListBackgroundIndicator index={index} />
       <Tag
         config={{
           reference: reference,
           type: "file",
           label: access_dir_name_by_path(file_path),
           style: {
+            transparentMode: true,
+            top: "50%",
+            transform: "translate(0%, -50%)",
             boxShadow: "none",
+            pointerEvents: "none",
+            maxWidth: 128,
+            backgroundColor: `rgba( ${R + tagColorOffset}, ${
+              G + tagColorOffset
+            }, ${B + tagColorOffset}, 1 )`,
           },
         }}
       />
+      {index === onSelectedMonacoIndex ? (
+        <Icon
+          src="close"
+          style={{
+            transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+
+            transform: "translate(0%, -50%)",
+            position: "absolute",
+            top: "50%",
+            left: -default_selecion_list_icon_offset + 4,
+            width: 16,
+            height: 16,
+            padding: 1,
+            borderRadius: 3,
+            opacity: closeButtonStyle.onHover ? 0.72 : 0.32,
+            backgroundColor: `rgba( ${
+              R + closeButtonStyle.backgroundColorOffset
+            }, ${G + closeButtonStyle.backgroundColorOffset}, ${
+              B + closeButtonStyle.backgroundColorOffset
+            }, ${closeButtonStyle.onHover ? 1 : 0} )`,
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          onMouseEnter={() => {
+            setCloseButtonStyle({
+              backgroundColorOffset: 64,
+              onHover: true,
+            });
+          }}
+          onMouseLeave={() => {
+            setCloseButtonStyle({
+              backgroundColorOffset: 32,
+              onHover: false,
+            });
+          }}
+        />
+      ) : null}
     </div>
   );
 };
 const FileSelectionListContainer = ({}) => {
-  const { width, monacoPaths, setMonacoPaths } =
-    useContext(MonacoEditorContexts);
+  const {
+    mode,
+    onDragedMonacoIndex,
+    onDragOveredMonacoIndex,
+    setOnDragOverMonacoIndex,
+    onSelectedMonacoIndex,
+    onDragOverPosition,
+    setOnDragOverPosition,
+    monacoPaths,
+    setMonacoPaths,
+  } = useContext(MonacoEditorContexts);
 
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
   const [tagPositions, setTagPositions] = useState([]);
+  const [tagSizes, setTagSizes] = useState([]);
 
   useEffect(() => {
-    const render_tag_positions = () => {
-      const tagPositions = [];
+    if (!tagRefs.current) return;
+    tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
+    for (let i = 0; i < monacoPaths.length; i++) {
+      tagRefs.current[i] = React.createRef();
+    }
+  }, [monacoPaths]);
+  useEffect(() => {
+    if (!tagRefs.current) return;
+    const render_tags = () => {
+      let tagPositions = [];
+      let tagSizes = [];
+
       let position_x = 0;
 
       for (let i = 0; i < monacoPaths.length; i++) {
+        if (i === onDragedMonacoIndex) {
+          position_x += 0;
+        } else if (i === onSelectedMonacoIndex) {
+          position_x += default_selecion_list_icon_offset;
+        }
         tagPositions.push(position_x);
-        position_x +=
-          tagRefs.current[i].current.offsetWidth +
-          default_selecion_list_item_padding;
+        if (i !== onDragedMonacoIndex) {
+          position_x +=
+            tagRefs.current[i]?.current?.offsetWidth +
+            1.5 * default_selecion_list_item_padding;
+        }
+        if (i === onDragOveredMonacoIndex) {
+          position_x += default_tag_max_width;
+        }
+        tagSizes.push({
+          width: tagRefs.current[i]?.current?.offsetWidth,
+          height: tagRefs.current[i]?.current?.offsetHeight,
+        });
       }
       setTagPositions(tagPositions);
+      setTagSizes(tagSizes);
     };
-    render_tag_positions();
-  }, [width]);
+    render_tags();
+  }, [
+    monacoPaths,
+    tagRefs.current,
+    onSelectedMonacoIndex,
+    onDragedMonacoIndex,
+    onDragOveredMonacoIndex,
+  ]);
 
   return (
     <div
       style={{
+        transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
-        top: "128px",
-        left: "0px",
+        top: 6,
+        left: 6,
+        right: 6,
 
-        width: width + "px",
-        height: "32px",
+        height: 28,
 
-        border: "1px solid #252525",
+        borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
+        overflow: "hidden",
+        padding: default_selecion_list_item_padding / 2,
       }}
     >
       {monacoPaths.map((filePath, index) => {
         return (
           <FileSelectionListItem
             key={filePath}
+            index={index}
             reference={tagRefs.current[index]}
             file_path={filePath}
             tag_position={tagPositions[index]}
+            tag_size={tagSizes[index]}
           />
         );
       })}
@@ -916,7 +1263,6 @@ const FileSelectionListContainer = ({}) => {
 
 const MonacoEditor = ({
   id,
-  width,
   mode,
   code_editor_container_ref_index,
   command,
@@ -932,6 +1278,10 @@ const MonacoEditor = ({
   const [onSelectedMonacoIndex, setOnSelectedMonacoIndex] = useState(
     data?.on_selected_monaco_core_index
   );
+  const [onDragedMonacoIndex, setOnDragMonacoIndex] = useState(-1);
+  const [onDragOveredMonacoIndex, setOnDragOverMonacoIndex] = useState(-1);
+  const [onDragOverPosition, setOnDragOverPosition] = useState({ x: 0, y: 0 });
+
   const [monacoPaths, setMonacoPaths] = useState(data?.monaco_paths);
   const [monacoCores, setMonacoCores] = useState(data?.monaco_cores);
   const access_monaco_core_by_path = (path) => {
@@ -988,12 +1338,18 @@ const MonacoEditor = ({
     <MonacoEditorContexts.Provider
       value={{
         id,
-        width,
+        mode,
         command,
         setCommand,
         load_contextMenu,
         onSelectedMonacoIndex,
         setOnSelectedMonacoIndex,
+        onDragedMonacoIndex,
+        setOnDragMonacoIndex,
+        onDragOveredMonacoIndex,
+        setOnDragOverMonacoIndex,
+        onDragOverPosition,
+        setOnDragOverPosition,
         monacoPaths,
         setMonacoPaths,
         monacoCores,
@@ -1017,24 +1373,43 @@ const MonacoEditor = ({
           rel="stylesheet"
         ></link>
         <div style={{ height: "100%" }}>
-          <MonacoEditorGroup
+          <div
+            style={{
+              transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+              position: "absolute",
+              top: 38,
+              left: 6,
+              right: 6,
+              bottom: 6,
+              padding: "0px 8px 8px 0px",
+
+              boxSizing: "border-box",
+              backgroundColor: "#202020",
+              borderRadius: "0px 0px 5px 5px",
+              border: "1px solid #282828",
+              // boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
+              opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
+            }}
+          >
+            <MonacoEditorGroup
+              code_editor_container_ref_index={code_editor_container_ref_index}
+              setOnSelectedContent={setOnSelectedCotent}
+              onAppendContent={onAppendContent}
+              setOnAppendContent={setOnAppendContent}
+              //HORIZONTAL OR VERTICAL MODE
+              mode={mode}
+              onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
+              setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
+            />
+          </div>
+          {/* <FileSelectionBar
             code_editor_container_ref_index={code_editor_container_ref_index}
-            setOnSelectedContent={setOnSelectedCotent}
-            onAppendContent={onAppendContent}
-            setOnAppendContent={setOnAppendContent}
             //HORIZONTAL OR VERTICAL MODE
             mode={mode}
             onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
             setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-          />
-          <FileSelectionBar
-            code_editor_container_ref_index={code_editor_container_ref_index}
-            //HORIZONTAL OR VERTICAL MODE
-            mode={mode}
-            onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-            setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-          />
-          {/* <FileSelectionListContainer /> */}
+          /> */}
+          <FileSelectionListContainer />
         </div>
       </MonacoEditorContextMenuWrapper>
     </MonacoEditorContexts.Provider>

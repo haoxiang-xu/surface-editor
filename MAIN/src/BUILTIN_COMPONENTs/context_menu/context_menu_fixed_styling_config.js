@@ -1,5 +1,5 @@
 /* { Fixed Context Menu Styling } --------------------------------------------------------------------------------------------------------- */
-const contextMenu_borderRadius = 12;
+const contextMenu_borderRadius = 8;
 const contextMenu_boxShadow = "0 2px 12px rgba(0, 0, 0, 0.2)";
 const contextMenu_backgroundColorR = 32;
 const contextMenu_backgroundColorG = 32;
@@ -28,7 +28,7 @@ const context_menu_fixed_styling = {
 
 /* { Button } */
 const button_height = 22;
-const button_outter_borderRadius = 7;
+const button_outter_borderRadius = 4;
 const button_inner_borderRadius = 2;
 const button_fontSize = 12;
 const button_fixed_styling = {

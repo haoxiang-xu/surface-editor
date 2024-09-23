@@ -30,6 +30,10 @@ const RootCommandManager = ({ children }) => {
     (id) => {
       let popped_command = null;
 
+      if (!cmd[id] || cmd[id].length === 0) {
+        return popped_command;
+      }
+
       setCmd((prevCommand) => {
         const updatedCommand = { ...prevCommand };
         if (updatedCommand[id] && updatedCommand[id].length > 0) {
@@ -93,6 +97,9 @@ const RootCommandManager = ({ children }) => {
   /* { Drag and Drop } =============================================================================== */
   const [onDrag, setOnDrag] = useState(false);
   const [onDragItem, setOnDragItem] = useState(null);
+  useEffect(() => {
+    console.log("onDragItem", onDragItem);
+  }, [onDragItem]);
 
   const item_on_drag = (event, on_drag_item) => {
     event.stopPropagation();

@@ -67,6 +67,7 @@ const HorizontalStackCloseButton = ({}) => {
         padding: "9px",
         backgroundColor: buttonStyle.backgroundColor,
         boxShadow: buttonStyle.boxShadow,
+        userSelect: "none",
       }}
       loading="lazy"
       onMouseEnter={() => {

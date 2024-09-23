@@ -1,4 +1,11 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  ipcMain,
+  dialog,
+  globalShortcut,
+} = require("electron");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -7,6 +14,7 @@ const {
 } = require("./src/CONSTs/extensionsToLanguagesMatchingList.js");
 
 let mainWindow;
+let zoomLevel = 0;
 const menuTemplate = [
   {
     label: "Vecoder",
@@ -41,12 +49,12 @@ const createWindow = () => {
       title: "",
       icon: path.join(
         __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
       ),
       width: 1200,
       height: 800,
       webSecurity: true,
-      transparent: true,
+      transparent: false,
       resizable: true,
       maximizable: true,
       webPreferences: {
@@ -55,38 +63,38 @@ const createWindow = () => {
         nodeIntegration: false,
       },
       //vibrancy: "fullscreen-ui",
-      frame: false,
+      frame: true,
       hasShadow: true,
       titleBarStyle: "hidden",
-      trafficLightPosition: { x: 17, y: 15 },
+      trafficLightPosition: { x: 14, y: 13 },
+      backgroundColor: "#181818",
     });
     app.dock.setIcon(
-      path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
-      )
+      path.join(__dirname, "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png")
     );
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({
       title: "",
       icon: path.join(
         __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
+        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
       ),
       width: 1200,
       height: 800,
       webSecurity: true,
       hasShadow: true,
-      transparent: true,
+      transparent: false,
       resizable: true,
       maximizable: true,
       backgroundMaterial: "acrylic",
+      titleBarStyle: "hidden",
       webPreferences: {
         preload: path.join(__dirname, "preload.js"),
         contextIsolation: true,
         nodeIntegration: false,
       },
-      frame: false,
+      backgroundColor: "#181818",
+      frame: true,
     });
   } else {
     mainWindow = new BrowserWindow({
@@ -127,6 +135,23 @@ const createWindow = () => {
     });
   });
 
+  globalShortcut.register("CommandOrControl+=", () => {
+    zoomLevel += 1;
+    mainWindow.webContents.setZoomLevel(zoomLevel);
+  });
+
+  // Register the Ctrl - Zoom Out
+  globalShortcut.register("CommandOrControl+-", () => {
+    zoomLevel -= 1;
+    mainWindow.webContents.setZoomLevel(zoomLevel);
+  });
+
+  // Optional: Reset zoom level with Ctrl+0
+  globalShortcut.register("CommandOrControl+0", () => {
+    zoomLevel = 0;
+    mainWindow.webContents.setZoomLevel(zoomLevel);
+  });
+
   // Load the index.html of the app.
   checkServerAndLoadURL("http://127.0.0.1:3000");
 
@@ -157,31 +182,26 @@ const openFolderStructureDialog = () => {
       properties: ["openDirectory"],
     })
     .then((result) => {
-      mainWindow.webContents.send("read-dir-state-changed", {
-        isDirLoading: true,
-      });
       if (!result.canceled) {
         read_dir(result.filePaths[0], result.filePaths[0])
           .then((dirs) => {
-            //console.log("Directory data:", dirs);
-            mainWindow.webContents.send("directory-data", dirs);
-          })
-          .catch((error) => console.error("Error reading directory:", error))
-          .finally(() => {
-            mainWindow.webContents.send("read-dir-state-changed", {
-              isDirLoading: false,
+            mainWindow.webContents.send("directory-data", {
+              is_dir_successfully_loaded: true,
+              dirs: dirs,
             });
-          });
+          })
+          .catch((error) => console.error("Error reading directory:", error));
       } else {
-        mainWindow.webContents.send("read-dir-state-changed", {
-          isDirLoading: false,
+        mainWindow.webContents.send("directory-data", {
+          is_dir_successfully_loaded: false,
+          dirs: null,
         });
       }
     })
     .catch((err) => {
-      console.error(err);
-      mainWindow.webContents.send("read-dir-state-changed", {
-        isDirLoading: false,
+      mainWindow.webContents.send("directory-data", {
+        is_dir_successfully_loaded: false,
+        dirs: null,
       });
     });
 };
@@ -315,6 +335,9 @@ ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
   }
 });
 ipcMain.on("trigger-read-dir", () => {
+  mainWindow.webContents.send("read-dir-state-changed", {
+    isDirLoaded: false,
+  });
   openFolderStructureDialog();
 });
 ipcMain.on("read-file", async (event, absolutePath, relativePath) => {

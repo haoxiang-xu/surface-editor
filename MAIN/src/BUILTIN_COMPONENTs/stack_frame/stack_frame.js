@@ -1,5 +1,9 @@
 import React, { useState, useContext, useEffect, memo } from "react";
-import { stringify } from "flatted";
+import { debounce } from "lodash";
+import {
+  useCustomizedState,
+  compareJson,
+} from "../../BUILTIN_COMPONENTs/customized_react/customized_react";
 
 import HorizontalStackTopLeftSection from "./STACK_FRAME_COMPONENTs/horizontal_stack_top_left_section.js";
 import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
@@ -69,7 +73,7 @@ const HorizontalStackResizer = ({
     const right_start_width = stacks[index + 1].width;
     const scroll_x_start_position = window.scrollX;
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = debounce((e) => {
       e.preventDefault();
       const moveX = e.clientX - startX;
       const left_width = left_start_width + moveX;
@@ -150,7 +154,7 @@ const HorizontalStackResizer = ({
           setStacks(editedStacks);
         }
       }
-    };
+    }, 1);
     const handleMouseUp = (e) => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -210,16 +214,6 @@ const HorizontalStackResizer = ({
   );
 };
 
-const is_stack_frame_rerender_required = (prevProps, nextProps) => {
-  return (
-    prevProps.mode === nextProps.mode &&
-    stringify(prevProps.command) === stringify(nextProps.command) &&
-    stringify(prevProps.data) === stringify(nextProps.data)
-  );
-};
-const StackContainerWrapper = memo(({ children, mode, command, data }) => {
-  return children;
-}, is_stack_frame_rerender_required);
 const HorizontalStackContainer = ({
   index,
   id,
@@ -251,12 +245,10 @@ const HorizontalStackContainer = ({
   /* { Stack Frame Drag and Drop } ---------------------------------------------------------------------------- */
   const {
     onDropIndex,
-    setOnDropIndex,
     onDragIndex,
     onStackItemDragStart,
     onStackItemDragEnd,
     resizerOnMouseDown,
-    setResizerOnMouseDown,
   } = useContext(stackStructureDragAndDropContexts);
   /* { Stack Frame Drag and Drop } ---------------------------------------------------------------------------- */
 
@@ -272,13 +264,12 @@ const HorizontalStackContainer = ({
   /* { mode } ================================================================================================= */
 
   /* { data } ------------------------------------------------------------------------------------------------- */
-  const {
-    storage,
-    access_storage_by_id,
-    update_storage_by_id,
-    delete_storage_by_id,
-  } = useContext(RootDataContexts);
-  const [data, setData] = useState(access_storage_by_id(id));
+  const { access_storage_by_id, update_storage_by_id } =
+    useContext(RootDataContexts);
+  const [data, setData] = useCustomizedState(
+    access_storage_by_id(id),
+    compareJson
+  );
   useEffect(() => {
     update_storage_by_id(String(id), data);
   }, [data]);
@@ -287,7 +278,7 @@ const HorizontalStackContainer = ({
   /* { command } ============================================================================================== */
   const { cmd, pop_command_by_id, load_context_menu } =
     useContext(RootCommandContexts);
-  const [command, setCommand] = useState([]);
+  const [command, setCommand] = useCustomizedState([], compareJson);
   useEffect(() => {
     if (cmd[id] && cmd[id].length > 0 && command.length === 0) {
       setCommand(cmd[id][0]);
@@ -300,6 +291,9 @@ const HorizontalStackContainer = ({
   }, [command]);
   const load_contextMenu = (e, contextStructure) => {
     load_context_menu(e, id, contextStructure);
+  };
+  const command_executed = () => {
+    setCommand([]);
   };
   /* { command } ============================================================================================== */
 
@@ -359,7 +353,7 @@ const HorizontalStackContainer = ({
           border: "1px solid #282828",
           boxSizing: "border-box",
           overflow: "hidden",
-          borderRadius: 11,
+          borderRadius: 9,
           backgroundColor: "#1E1E1E",
 
           /* ANIMATION -------------------------- */
@@ -374,6 +368,7 @@ const HorizontalStackContainer = ({
             command={command}
             setCommand={setCommand}
             load_contextMenu={load_contextMenu}
+            command_executed={command_executed}
             data={data}
             setData={setData}
             item_on_drag={item_on_drag}

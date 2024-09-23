@@ -27,7 +27,7 @@ const MonacoCore = ({
   let EDITOR_FONT_SIZE;
   switch (window.osInfo.platform) {
     case "darwin": // macOS
-      EDITOR_FONT_SIZE = 12;
+      EDITOR_FONT_SIZE = 10;
       break;
     case "win32": // Windows
       EDITOR_FONT_SIZE = 12;
@@ -280,7 +280,11 @@ const defineTheme = (monaco) => {
     base: "vs-dark",
     inherit: true,
     rules: [],
-    colors: {},
+    colors: {
+      "editor.foreground": "#cccccc",
+      "editorCursor.foreground": "#ffcc00",
+      "editor.background": "#202020",
+    },
   });
   monaco.editor.setTheme("customTheme");
 };
@@ -305,27 +309,27 @@ const registerInlineCompletionProvider = async (monaco) => {
         endColumn: position.column,
       });
 
-      const continueAPI = async () => {
-        const requestBody = {
-          language: "javascript",
-          propmt: contextText,
-        };
+      // const continueAPI = async () => {
+      //   const requestBody = {
+      //     language: "javascript",
+      //     propmt: contextText,
+      //   };
 
-        try {
-          const response = await axios.post(
-            "http://localhost:8200/openai/continue",
-            requestBody
-          );
-          return response;
-        } catch (e) {
-          console.log(e);
-        }
-      };
+      //   try {
+      //     const response = await axios.post(
+      //       "http://localhost:8200/openai/continue",
+      //       requestBody
+      //     );
+      //     return response;
+      //   } catch (e) {
+      //     console.log(e);
+      //   }
+      // };
 
       return {
         items: [
           {
-            insertText: continueAPI(),
+            insertText: "continueAPI()",
             range: {
               startLineNumber: position.lineNumber,
               startColumn: position.column,
