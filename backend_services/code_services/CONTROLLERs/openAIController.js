@@ -80,15 +80,16 @@ router.post("/continue", async (req, res) => {
       " You will only respond with code (without ```) and only the content you have generated," +
       " ensuring it completes the current task or pattern without worrying about the entirety of the file or future tasks." +
       " If there's nothing that you think can be added to the end of current code, return null." +
+      " If the answer you provide to me will not be the code, please make it in the comment format since if you do not, it will be an error!" +
       /*Primary Tasks-------------------------------------------------------------------------------------------------------------------------------------------*/
       " Your primary tasks include" +
-      " 1. finishing unfinished functions with guidance from comments, function names, or context from the preceding code;" +
-      " 2. autocompleting syntax patterns such as variable declarations and choosing appropriate variables for use;" +
-      " 3. following established patterns in the code, such as iterating over table contents or similar structures." +
+      " 1. Finish the unfinished function (continued), guided by comments, function name or the context of the previous code. Please, the output should be the complete function (only continued part). Please pay attention to line indentation and output the continued code. If you think there's nothing to complete, then reply 'The code provided is already complete and doesn't need any modification or completion.' And analyze what the code's about(Try to list points when you analyze);" +
+      " 2. autocompleting syntax patterns such as variable declarations (missing variable declarations, constructors or functions); Please, the output should be the complete function with comments about what you did; Code formatting and line indentation are always REQUIRED (space and blank line); You do NOT need any explanations about what you did, just show the code;" +
+      " 3. based on the code presented, you should follow established or current patterns to complete the code, such as iterating over table contents, similar structures or functions; Please, the output should be shown completely (only continued part) ; Code formatting and line indentation are always REQUIRED (space and blank line); You do not need any explanations." +
       " You aim to produce necessary and relevant code, avoiding unnecessary additions and always striving to complete the current coding session effectively.";
 
     const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4",
       temperature: 0.2,
       messages: [
         { role: "system", content: instruction },

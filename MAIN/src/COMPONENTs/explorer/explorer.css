@@ -1,0 +1,138 @@
+.explorer_component_container0126 {
+  transition: all 0.04s ease;
+
+  /*POSITION*/
+  position: relative;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+
+  /*STYLE*/
+  border: 1px solid #282828;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: #1e1e1e;
+}
+#dir_list_component_container0725 {
+  transition: all 0.04s ease;
+
+  /*POSITION*/
+  position: absolute;
+  top: 42px;
+  left: 0px;
+  right: 2px;
+  bottom: 4px;
+  transform: translate(0%, 0%);
+  margin: 0px 3px 5px 9px;
+  padding: 0px 4px 0px 0px;
+
+  /*SIZE*/
+
+  /*STYLE*/
+  border-radius: 0px 0px 4px 4px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  animation-timing-function: linear;
+}
+#dir_list_component_container0725::-webkit-scrollbar {
+  width: 6px;
+}
+#dir_list_component_container0725::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+#dir_list_component_container0725::-webkit-scrollbar-thumb {
+  background: #2f3133;
+  border-radius: 4px;
+}
+#dir_list_component_container0725::-webkit-scrollbar-thumb:hover {
+  background: #494d53;
+  border-radius: 4px;
+}
+#dir_list_component_container0725::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Search Bar */
+.dir_list_component_search_bar_container0125 {
+  transition: all 0.32s ease;
+  /*POSITION*/
+  position: absolute;
+  top: 5px;
+  left: 90px;
+  right: 4px;
+
+  /*SIZE*/
+  overflow-y: hidden;
+  overflow-x: hidden;
+  height: 30px;
+  max-width: 512px;
+
+  /*STYLE*/
+  background-color: #323232;
+  border-radius: 7px;
+}
+.dir_list_component_search_bar_container0125:hover {
+  transition: all 0.32s ease;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.16);
+}
+.dir_list_component_search_bar_input0125 {
+  transition: all 0.12s ease;
+
+  /*POSITION*/
+  position: absolute;
+
+  /*SIZE*/
+  height: 30px;
+  left: 5px;
+  right: 32px;
+  outline: 0px;
+
+  /*STYLE*/
+  box-sizing: border-box;
+  background-color: #323232;
+  border: 0px;
+  padding: 0px 0px 0px 8px;
+  color: #cccccc;
+  font-size: 13px;
+  font-family: "Roboto";
+}
+.dir_list_component_search_bar_icon0125 {
+  transition: all 0.2s ease;
+
+  /*POSITION*/
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+
+  /*STYLE*/
+  border-radius: 6px;
+  padding: 5px;
+}
+.dir_list_component_search_bar_icon0125:hover {
+  transition: all 0.2s ease;
+
+  /*STYLE*/
+  background-color: #5c5c5c;
+}
+.dir_list_component_search_bar_icon0125:active {
+  transition: all 0.1s ease;
+
+  /*STYLE*/
+  background-color: #838383;
+}
+
+/* Loading Container */
+.dir_list_component_loading_container0404 {
+  position: absolute;
+  top: 42px;
+  left: 6px;
+  border-radius: 4px;
+  border: 1px solid #8c8c8c64;
+  overflow: hidden;
+}

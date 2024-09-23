@@ -1,0 +1,260 @@
+.header_menu_bar_container0316 {
+  /* POSITION */
+  position: sticky;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 40px;
+
+  /* STYLE */
+  overflow: hidden;
+}
+.header_menu_bar_container_dragging_area0316 {
+  /* POSITION */
+  position: absolute;
+  top: 0px;
+  left: 70px;
+  right: 120px;
+  height: 40px;
+
+  /* STYLE */
+  box-sizing: border-box;
+  display: flex;
+  overflow: hidden;
+
+  -webkit-app-region: drag;
+}
+
+.header_menu_bar_close_icon0316 {
+  transition: all 0.2s ease;
+
+  /*POSITION*/
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  /*STYLE*/
+  padding: 8px 20px 8px 12px;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.header_menu_bar_close_icon0316:hover {
+  transition: all 0.2s ease;
+  /*STYLE*/
+  background-color: #e81123;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.16);
+}
+.header_menu_bar_close_icon0316:active {
+  transition: all 0.1s ease;
+
+  /*STYLE*/
+  background-color: #94141e;
+}
+
+.header_menu_bar_maximize_icon0316 {
+  transition: all 0.2s ease;
+
+  /*POSITION*/
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 6px;
+  right: 50px;
+
+  /*STYLE*/
+  padding: 8px 12px 8px 12px;
+  border-radius: 3px;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.header_menu_bar_maximize_icon0316:hover {
+  transition: all 0.2s ease;
+  /*STYLE*/
+  background-color: #2e2e2e;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.16);
+}
+.header_menu_bar_maximize_icon0316:active {
+  transition: all 0.1s ease;
+
+  /*STYLE*/
+  background-color: #444444;
+}
+
+.header_menu_bar_minimize_icon0316 {
+  transition: all 0.16s ease;
+
+  /*POSITION*/
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 6px;
+  right: 86px;
+
+  /*STYLE*/
+  padding: 8px 12px 8px 12px;
+  border-radius: 3px;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.header_menu_bar_minimize_icon0316:hover {
+  transition: all 0.2s ease;
+  /*STYLE*/
+  background-color: #2e2e2e;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.16);
+}
+.header_menu_bar_minimize_icon0316:active {
+  transition: all 0.1s ease;
+
+  /*STYLE*/
+  background-color: #444444;
+}
+
+.header_menu_bar_file_button0316 {
+  transition: all 0.16s ease;
+
+  /*POSITION*/
+  position: absolute;
+  top: 3px;
+  left: 3px;
+
+  /*STYLE*/
+  border-radius: 11px 0px 0px 0px;
+  font-size: 14px;
+  padding: 6px 8px 7px 8px;
+  color: #8c8c8c;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.header_menu_bar_file_button0316:hover {
+  transition: all 0.16s ease;
+  /*STYLE*/
+  color: #cccccc;
+  background-color: #2e2e2e;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.16);
+}
+
+/* Darwin ------------------------------------------------------------------------ */
+.header_menu_bar_darwin_container_dragging_area0316 {
+  /* POSITION */
+  position: absolute;
+  top: 0px;
+  left: 70px;
+  right: 0px;
+  height: 40px;
+
+  /* STYLE */
+  box-sizing: border-box;
+  display: flex;
+  overflow: hidden;
+
+  -webkit-app-region: drag;
+}
+.header_menu_bar_darwin_overlay0316 {
+  /* POSITION */
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 40px;
+
+  /* STYLE */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.header_menu_bar_darwin_close_icon0316 {
+  transition: all 0.2s ease;
+
+  /*POSITION*/
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+
+  /*STYLE*/
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.header_menu_bar_darwin_maximize_icon0316 {
+  transition: all 0.2s ease;
+
+  /*POSITION*/
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 15px;
+  left: 53px;
+
+  /*STYLE*/
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.header_menu_bar_darwin_minimize_icon0316 {
+  transition: all 0.16s ease;
+
+  /*POSITION*/
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 15px;
+  left: 34px;
+
+  /*STYLE*/
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.header_menu_bar_darwin_file_button0316 {
+  transition: all 0.16s ease;
+
+  /*POSITION*/
+  position: absolute;
+  top: 5px;
+  right: 5px;
+
+  /*STYLE*/
+  border-radius: 10px 5px 5px 5px;
+  font-size: 14px;
+  padding: 6px 10px 6px 10px;
+  color: #8c8c8c;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.header_menu_bar_darwin_file_button0316:hover {
+  transition: all 0.2s ease;
+  /*STYLE*/
+  color: #cccccc;
+  background-color: #2e2e2e;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.16);
+}
+.header_menu_bar_darwin_file_button0316:active {
+  transition: all 0.1s ease;
+
+  /*STYLE*/
+  background-color: #444444;
+}
