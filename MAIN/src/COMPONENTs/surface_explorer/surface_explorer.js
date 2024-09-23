@@ -502,6 +502,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     setOnHoverExplorerItem,
     setFirstVisibleItem,
     scrollbarVisible,
+    setScrollToPath,
   } = useContext(SurfaceExplorerContexts);
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
@@ -548,6 +549,16 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           alert("Duplicate Name Detected");
         } else {
           rename_file_by_path(onConextMenuPath, renameValue);
+          setScrollToPath(
+            onConextMenuPath.split("/").slice(0, -1).join("/") +
+              "/" +
+              renameValue
+          );
+          setOnSelectedExplorerItems([
+            onConextMenuPath.split("/").slice(0, -1).join("/") +
+              "/" +
+              renameValue,
+          ]);
         }
       }
     } else {
@@ -792,6 +803,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     setOnHoverExplorerItem,
     setFirstVisibleItem,
     scrollbarVisible,
+    setScrollToPath,
   } = useContext(SurfaceExplorerContexts);
 
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
@@ -831,6 +843,16 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           alert("Duplicate Name Detected");
         } else {
           rename_file_by_path(onConextMenuPath, renameValue);
+          setScrollToPath(
+            onConextMenuPath.split("/").slice(0, -1).join("/") +
+              "/" +
+              renameValue
+          );
+          setOnSelectedExplorerItems([
+            onConextMenuPath.split("/").slice(0, -1).join("/") +
+              "/" +
+              renameValue,
+          ]);
         }
       }
     } else {
@@ -1030,6 +1052,8 @@ const ExplorerList = ({ filteredDir }) => {
     height,
     explorerListRef,
     explorerScrollPosition,
+    scrollToPath,
+    setScrollToPath,
     scrollbarVisible,
     setScrollbarVisible,
     onSelectedExplorerItems,
@@ -1297,6 +1321,24 @@ const ExplorerList = ({ filteredDir }) => {
       setScrollbarVisible(false);
     }
   }, [explorerList, height]);
+  useEffect(() => {
+    if (!scrollToPath || !explorerItemPositions || !explorerListRef) return;
+    const position = explorerItemPositions.find(
+      (element) => element.file_path === scrollToPath
+    );
+    if (!position) return;
+    if (
+      position.position_y < explorerScrollPosition ||
+      position.position_y >
+        explorerScrollPosition + height - default_explorer_item_height
+    ) {
+      explorerListRef.current.scrollTo({
+        top: position.position_y - default_explorer_item_height,
+        behavior: "smooth",
+      });
+    }
+    setScrollToPath(null);
+  }, [scrollToPath, setScrollToPath, explorerItemPositions, explorerListRef]);
 
   return (
     <div
@@ -1363,8 +1405,15 @@ const ContextMenuWrapper = ({ children }) => {
     create_file_by_path,
     update_dir_expand_status_by_path,
   } = useContext(RootDataContexts);
-  const { id, command, setCommand, load_contextMenu, command_executed } =
-    useContext(SurfaceExplorerContexts);
+  const {
+    id,
+    command,
+    setCommand,
+    load_contextMenu,
+    command_executed,
+    scrollToPath,
+    setScrollToPath,
+  } = useContext(SurfaceExplorerContexts);
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
   const tagRef = useRef(null);
@@ -1474,6 +1523,7 @@ const ContextMenuWrapper = ({ children }) => {
             target: id,
             content: { command_title: "rename", command_content: {} },
           });
+          setScrollToPath(new_file_path);
           break;
         }
         case "newFolder": {
@@ -1495,6 +1545,7 @@ const ContextMenuWrapper = ({ children }) => {
             target: id,
             content: { command_title: "rename", command_content: {} },
           });
+          setScrollToPath(new_file_path);
           break;
         }
         case "rename": {
@@ -1776,6 +1827,7 @@ const SurfaceExplorer = ({
   const [explorerListWidth, setExplorerListWidth] = useState(0);
   const [explorerListTop, setExplorerListTop] = useState(0);
   const [explorerScrollPosition, setExplorerScrollPosition] = useState(0);
+  const [scrollToPath, setScrollToPath] = useState(null);
   const [scrollbarVisible, setScrollbarVisible] = useState(false);
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
   const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
@@ -1878,6 +1930,8 @@ const SurfaceExplorer = ({
         setExplorerListTop,
         explorerScrollPosition,
         setExplorerScrollPosition,
+        scrollToPath,
+        setScrollToPath,
         scrollbarVisible,
         setScrollbarVisible,
         onSelectedExplorerItems,
