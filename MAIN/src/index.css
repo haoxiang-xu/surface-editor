@@ -1,0 +1,13 @@
+body {
+  font-family: 'Jost', sans-serif;
+  background-color: #ffffff00;
+  overflow: hidden;
+}
+body::-webkit-scrollbar {
+  height: 0px;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
