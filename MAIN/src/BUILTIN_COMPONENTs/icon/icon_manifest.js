@@ -21,4 +21,16 @@ export const iconManifest = {
   win32_restore: () => import("./SVGs/UI/win32/restore.svg"),
 
   /* { System UI Icons } ------------------------------------------------------------------------------------------------------------- */
+
+  /* { File types Icons } ------------------------------------------------------------------------------------------------------------ */
+
+  /* { Programming Languages } */
+  js: () => import("./SVGs/file_types/js.svg"),
+  html: () => import("./SVGs/file_types/html.svg"),
+  css: () => import("./SVGs/file_types/css.svg"),
+  ipynb: () => import("./SVGs/file_types/ipynb.svg"),
+  json: () => import("./SVGs/file_types/json.svg"),
+  md: () => import("./SVGs/file_types/md.svg"),
+
+  /* { File types Icons } ------------------------------------------------------------------------------------------------------------ */
 };

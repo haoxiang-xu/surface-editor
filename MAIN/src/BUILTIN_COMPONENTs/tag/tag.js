@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { throttle } from "lodash";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import Icon from "../icon/icon";
+import { iconManifest } from "../icon/icon_manifest";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
@@ -86,7 +87,7 @@ const CustomizedTag = ({
     } else {
       width += containerWidth;
     }
-    if (icon) {
+    if (icon && icon in iconManifest) {
       width += 16 + 4;
       left += 16 + 4;
     }
@@ -175,24 +176,26 @@ const CustomizedTag = ({
         pointerEvents: inputMode ? "auto" : "none",
       }}
     >
-      <Icon
-        src={icon}
-        style={{
-          transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
-          position: "absolute",
-          transform: tagStyle.icon_transform
-            ? `translate(0%, -50%) ${tagStyle.icon_transform}`
-            : `translate(0%, -50%)`,
-          top: "50%",
-          left: style.padding_x || default_tag_padding_x,
+      {icon && icon in iconManifest ? (
+        <Icon
+          src={icon}
+          style={{
+            transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+            position: "absolute",
+            transform: tagStyle.icon_transform
+              ? `translate(0%, -50%) ${tagStyle.icon_transform}`
+              : `translate(0%, -50%)`,
+            top: "50%",
+            left: style.padding_x || default_tag_padding_x,
 
-          width: 16,
-          height: 16,
+            width: 16,
+            height: 16,
 
-          borderRadius: 2,
-          load: "lazy",
-        }}
-      />
+            borderRadius: 2,
+            load: "lazy",
+          }}
+        />
+      ) : null}
       <span
         ref={spanRef}
         style={{
@@ -330,10 +333,9 @@ const FileTag = ({ config }) => {
       processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
     }
     if (config.icon === undefined || config.icon === null) {
-      processed_config.icon =
-        FILE_TYPE_ICON_MANAGER[config.label.split(".").pop()]?.ICON16;
+      processed_config.icon = config.label.split(".").pop();
       if (!config.style.noWidthLimitMode) {
-        if (processed_config.icon !== undefined) {
+        if (processed_config.icon in iconManifest) {
           processed_config.style.maxWidth = config.style.maxWidth - 12;
         } else {
           processed_config.style.maxWidth = config.style.maxWidth - 2;
