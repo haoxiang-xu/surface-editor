@@ -30,6 +30,7 @@ export const iconManifest = {
   CSS: () => import("./SVGs/file_types/css.svg"),
   IPYNB: () => import("./SVGs/file_types/ipynb.svg"),
   JSON: () => import("./SVGs/file_types/json.svg"),
+  PY: () => import("./SVGs/file_types/py.svg"),
 
   /* { Image } */
   PNG: () => import("./SVGs/file_types/png.svg"),
