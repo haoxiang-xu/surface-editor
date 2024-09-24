@@ -34,6 +34,13 @@ export const iconManifest = {
   /* { Image } */
   PNG: () => import("./SVGs/file_types/png.svg"),
 
+  /* { Document } */
+  TXT: () => import("./SVGs/file_types/txt.svg"),
+  PDF: () => import("./SVGs/file_types/pdf.svg"),
+  DOCX: () => import("./SVGs/file_types/docx.svg"),
+  XLSX: () => import("./SVGs/file_types/xlsx.svg"),
+  PPTX: () => import("./SVGs/file_types/pptx.svg"),
+
   /* { Configuration } */
   GITIGNORE: () => import("./SVGs/file_types/gitignore.svg"),
 
