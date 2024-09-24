@@ -333,7 +333,7 @@ const FileTag = ({ config }) => {
       processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
     }
     if (config.icon === undefined || config.icon === null) {
-      processed_config.icon = config.label.split(".").pop();
+      processed_config.icon = config.label.split(".").pop().toUpperCase();
       if (!config.style.noWidthLimitMode) {
         if (processed_config.icon in iconManifest) {
           processed_config.style.maxWidth = config.style.maxWidth - 12;

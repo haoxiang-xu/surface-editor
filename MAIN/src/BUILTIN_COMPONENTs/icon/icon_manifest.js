@@ -25,12 +25,17 @@ export const iconManifest = {
   /* { File types Icons } ------------------------------------------------------------------------------------------------------------ */
 
   /* { Programming Languages } */
-  js: () => import("./SVGs/file_types/js.svg"),
-  html: () => import("./SVGs/file_types/html.svg"),
-  css: () => import("./SVGs/file_types/css.svg"),
-  ipynb: () => import("./SVGs/file_types/ipynb.svg"),
-  json: () => import("./SVGs/file_types/json.svg"),
-  md: () => import("./SVGs/file_types/md.svg"),
+  JS: () => import("./SVGs/file_types/js.svg"),
+  HTML: () => import("./SVGs/file_types/html.svg"),
+  CSS: () => import("./SVGs/file_types/css.svg"),
+  IPYNB: () => import("./SVGs/file_types/ipynb.svg"),
+  JSON: () => import("./SVGs/file_types/json.svg"),
+
+  /* { Image } */
+  PNG: () => import("./SVGs/file_types/png.svg"),
+
+  /* { Configuration } */
+  GITIGNORE: () => import("./SVGs/file_types/gitignore.svg"),
 
   /* { File types Icons } ------------------------------------------------------------------------------------------------------------ */
 };
