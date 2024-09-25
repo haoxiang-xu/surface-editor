@@ -31,6 +31,7 @@ export const iconManifest = {
   IPYNB: () => import("./SVGs/file_types/ipynb.svg"),
   JSON: () => import("./SVGs/file_types/json.svg"),
   PY: () => import("./SVGs/file_types/py.svg"),
+  JAVA: () => import("./SVGs/file_types/java.svg"),
 
   /* { Image } */
   PNG: () => import("./SVGs/file_types/png.svg"),
