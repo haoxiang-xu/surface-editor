@@ -44,6 +44,7 @@ export const iconManifest = {
 
   /* { Configuration } */
   GITIGNORE: () => import("./SVGs/file_types/gitignore.svg"),
+  DOCKERIGNORE: () => import("./SVGs/file_types/dockerignore.svg"),
 
   /* { File types Icons } ------------------------------------------------------------------------------------------------------------ */
 };
