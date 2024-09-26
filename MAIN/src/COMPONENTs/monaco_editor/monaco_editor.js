@@ -14,6 +14,7 @@ import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 import { MonacoEditorContexts } from "./monaco_editor_contexts";
 import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_contexts";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
@@ -1080,7 +1081,7 @@ const FileSelectionListItem = ({
           "left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: 0,
-        left: tag_position,
+        left: tag_position? tag_position : 0,
         width:
           onDragOveredMonacoIndex === index
             ? tagSize.width + default_tag_max_width + "px"
@@ -1184,9 +1185,11 @@ const FileSelectionListItem = ({
   );
 };
 const FileSelectionListContainer = ({}) => {
+  const { onDragItem } = useContext(RootCommandContexts);
   const {
     mode,
     onDragedMonacoIndex,
+    setOnDragMonacoIndex,
     onDragOveredMonacoIndex,
     setOnDragOverMonacoIndex,
     onSelectedMonacoIndex,
@@ -1246,6 +1249,12 @@ const FileSelectionListContainer = ({}) => {
     onDragedMonacoIndex,
     onDragOveredMonacoIndex,
   ]);
+  useEffect(() => {
+    if (onDragItem) return;
+    setOnDragMonacoIndex(-1); 
+    setOnDragOverMonacoIndex(-1);
+    setOnDragOverPosition({ x: 0, y: 0 });
+  }, [onDragItem]);
 
   return (
     <div
