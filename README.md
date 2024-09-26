@@ -38,6 +38,7 @@
 <!-- [![Figma][Figma-shield]][Figma-url] -->
 <!-- [![VSC][VSC-shield]][VSC-install] -->
 <!-- [![Nodemon][Nodemon-shield]][Nodemon-url] -->
+
 [![OpenAI][OpenAI-shield]][OpenAI-url]
 [![React][React-shield]][React-url]
 [![Express][Express-shield]][Express-url]
@@ -130,6 +131,7 @@
 [![VSC][VSC-download-shield]][VSC-install]
 [![Docker][Docker-download-shield]][Docker-install]
 [![Postman][Postman-download-shield]][Postman-install]
+
 <!-- [![MongoDB][MongoDB-download-shield]][MongoDB-install] -->
 
 ### <a id="local-setup"></a>LOCAL SETUP
@@ -146,7 +148,7 @@
 
 - **Setup Frontend Testing Application**
 
-  - To Frontend Testing Application Directory `cd frontend_application/component_lib_testing_application`
+  - To Frontend Testing Application Directory `cd MAIN`
   - To install required modules `npm install`
   - Run Frontend Testing Application `npm start`
   - Heading to the Application `http://localhost:3000/`
@@ -159,17 +161,9 @@
   - Run Backend File Server `npm start`
   - Server will running on `http://localhost:8200/` in development mode
 
-- **Setup Backend File Server(optional)**
-
-  - To Backend File Server Directory `cd backend_services/file_services`
-  - To install required modules `npm install`
-  - Run Backend File Server `npm start`
-  - Server will running on `http://localhost:8000/` in development mode
-
 ### <a id="join-the-team"></a>JOIN THE DEVELOPMENT TEAM
 
 [![Discord][Discord-shield]][Discord-url]
-
 
 [vscode-repo-shield]: https://img.shields.io/badge/Open_With_Visual_Studio_Code-222222?style=for-the-badge&logo=VisualStudioCode&logoColor=FFFFFF&labelColor=007ACC
 [vscode-repo-url]: git-client://clone?repo=https%3A%2F%2Fgithub.com%2Fhaoxiang-xu%2Fvecoder

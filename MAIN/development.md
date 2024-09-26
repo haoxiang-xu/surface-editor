@@ -19,7 +19,7 @@
 
 ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
-<span style="opacity: 0.64">Your Component should be created under `src/COMPONENTs/STACK_COMPONENTs`, under that folder you can create your own folder named as your root component, and under that you should create a same name .js file exporting yout root componet. For example if your component called `test_component`, your component dir path should be `src/COMPONENTs/STACK_COMPONENTs/test_component/test_component`. And then after you have created the component, the next step is to let the system know where your component is. In the file `src/CONSTs/stackComponentConfig.js` you should add a json variable at the end of the `STACK_COMPONENT_CONFIG` list variable like this</span> [`SAMPLE 000_001`](#000_001) <span style="opacity: 0.64">.</span>
+<span style="opacity: 0.64">Your Component should be created under `src/COMPONENTs`, under that folder you can create your own folder named as your root component, and under that you should create a same name .js file exporting yout root componet. For example if your component called `test_component`, your component dir path should be `src/COMPONENTs/test_component/test_component.js`. And then after you have created the component, the next step is to let the system know where your component is. In the file `src/CONSTs/stackComponentConfig.js` you should add a json variable at the end of the `STACK_COMPONENT_CONFIG` list variable like this</span> [`SAMPLE 000_001`](#000_001) <span style="opacity: 0.64">.</span>
 
 <a id="Handle_component_parameters"></a>
 
