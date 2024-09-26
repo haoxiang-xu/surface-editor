@@ -42,10 +42,17 @@ export const iconManifest = {
   DOCX: () => import("./SVGs/file_types/docx.svg"),
   XLSX: () => import("./SVGs/file_types/xlsx.svg"),
   PPTX: () => import("./SVGs/file_types/pptx.svg"),
+  ENV: () => import("./SVGs/file_types/env.svg"),
+  MD: () => import("./SVGs/file_types/md.svg"),
+  MARKDOWN: () => import("./SVGs/file_types/markdown.svg"),
 
   /* { Configuration } */
+  DS_STORE: () => import("./SVGs/file_types/DS_store.svg"),
   GITIGNORE: () => import("./SVGs/file_types/gitignore.svg"),
   DOCKERIGNORE: () => import("./SVGs/file_types/dockerignore.svg"),
+
+  /* { Other } */
+  ZIP: () => import("./SVGs/file_types/zip.svg"),
 
   /* { File types Icons } ------------------------------------------------------------------------------------------------------------ */
 };
