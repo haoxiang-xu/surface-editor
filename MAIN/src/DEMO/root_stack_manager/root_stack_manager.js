@@ -880,6 +880,13 @@ const StackFrame = ({
           setOnDragStart(true);
           setOnFrameReposition(true);
           e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
+          item_on_drag(e, {
+            source: id,
+            ghost_image: null,
+            content: {
+              type: "stack_frame",
+            },
+          });
           if (parent_stack_type === "horizontal_stack") {
             generate_horizontal_sub_item_on_drag_filter(
               stackStructure[id].parent_id,
@@ -895,6 +902,7 @@ const StackFrame = ({
         onDragEnd={(e) => {
           setOnDragStart(false);
           setOnFrameReposition(false);
+          item_on_drop(e);
           clean_filter();
         }}
         onDragOver={(e) => {

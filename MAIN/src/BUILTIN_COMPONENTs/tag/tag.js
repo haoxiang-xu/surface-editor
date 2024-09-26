@@ -145,7 +145,8 @@ const CustomizedTag = ({
     <div
       ref={reference}
       style={{
-        transition: "width 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+        transition:
+          "width 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08), left 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
 
         /* { Tag Position } ------------------------ */
         position: style.fullSizeMode ? "fixed" : "absolute",

@@ -894,7 +894,7 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
       setTop(0);
       setLeft(default_tag_max_width);
     } else {
-      setBackgroundColorOffset(16);
+      setBackgroundColorOffset(0);
       setBorderRadius({
         center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         left_border: `0px 0px 0px ${default_border_radius}px`,
@@ -1010,6 +1010,7 @@ const FileSelectionListItem = ({
   const containerRef = useRef(null);
   const [zIndex, setZIndex] = useState(6);
   const [tagSize, setTagSize] = useState({ width: 0, height: 0 });
+  const [tagLeft, setTagLeft] = useState(0);
   const [tagColorOffset, setTagColorOffset] = useState(0);
   const [closeButtonStyle, setCloseButtonStyle] = useState({
     backgroundColorOffset: 32,
@@ -1058,16 +1059,28 @@ const FileSelectionListItem = ({
     },
     [containerRef, onDragOveredMonacoIndex]
   );
+  useEffect(() => {
+    if (onDragOveredMonacoIndex === index) {
+      if (onDragOverPosition.x < (tag_size.width + default_tag_max_width) / 2) {
+        setTagLeft(default_tag_max_width);
+      } else {
+        setTagLeft(0);
+      }
+    } else {
+      setTagLeft(0);
+    }
+  }, [onDragOverPosition, onDragOveredMonacoIndex, tag_position, tag_size]);
 
   return (
     <div
       ref={containerRef}
       draggable={true}
       style={{
-        transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+        transition:
+          "left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: 0,
-        left: tag_position + "px",
+        left: tag_position,
         width:
           onDragOveredMonacoIndex === index
             ? tagSize.width + default_tag_max_width + "px"
@@ -1103,6 +1116,11 @@ const FileSelectionListItem = ({
       onDragOver={(e) => {
         update_on_drag_over_position(e, index);
       }}
+      onDragLeave={(e) => {
+        e.stopPropagation();
+        setOnDragOverMonacoIndex(-1);
+        setOnDragOverPosition({ x: 0, y: 0 });
+      }}
     >
       <FileSelectionListBackgroundIndicator index={index} />
       <Tag
@@ -1113,6 +1131,7 @@ const FileSelectionListItem = ({
           style: {
             transparentMode: true,
             top: "50%",
+            left: tagLeft,
             transform: "translate(0%, -50%)",
             boxShadow: "none",
             pointerEvents: "none",
@@ -1206,7 +1225,7 @@ const FileSelectionListContainer = ({}) => {
         if (i !== onDragedMonacoIndex) {
           position_x +=
             tagRefs.current[i]?.current?.offsetWidth +
-            1.5 * default_selecion_list_item_padding;
+            0.5 * default_selecion_list_item_padding;
         }
         if (i === onDragOveredMonacoIndex) {
           position_x += default_tag_max_width;
