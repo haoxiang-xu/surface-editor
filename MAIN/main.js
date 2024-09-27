@@ -4,8 +4,8 @@ const {
   Menu,
   ipcMain,
   dialog,
-  globalShortcut,
 } = require("electron");
+const localShortcut = require("electron-localshortcut");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -135,21 +135,18 @@ const createWindow = () => {
     });
   });
 
-  globalShortcut.register("CommandOrControl+=", () => {
-    zoomLevel += 1;
-    mainWindow.webContents.setZoomLevel(zoomLevel);
+  localShortcut.register(mainWindow, "CommandOrControl+=", () => {
+    let zoomLevel = mainWindow.webContents.getZoomLevel();
+    mainWindow.webContents.setZoomLevel(zoomLevel + 1);
   });
 
-  // Register the Ctrl - Zoom Out
-  globalShortcut.register("CommandOrControl+-", () => {
-    zoomLevel -= 1;
-    mainWindow.webContents.setZoomLevel(zoomLevel);
+  localShortcut.register(mainWindow, "CommandOrControl+-", () => {
+    let zoomLevel = mainWindow.webContents.getZoomLevel();
+    mainWindow.webContents.setZoomLevel(zoomLevel - 1);
   });
 
-  // Optional: Reset zoom level with Ctrl+0
-  globalShortcut.register("CommandOrControl+0", () => {
-    zoomLevel = 0;
-    mainWindow.webContents.setZoomLevel(zoomLevel);
+  localShortcut.register(mainWindow, "CommandOrControl+0", () => {
+    mainWindow.webContents.setZoomLevel(0);
   });
 
   // Load the index.html of the app.
