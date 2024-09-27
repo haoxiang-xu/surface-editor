@@ -32,6 +32,12 @@ export const iconManifest = {
   JSON: () => import("./SVGs/file_types/json.svg"),
   PY: () => import("./SVGs/file_types/py.svg"),
   JAVA: () => import("./SVGs/file_types/java.svg"),
+  C: () => import("./SVGs/file_types/c.svg"),
+  CPP: () => import("./SVGs/file_types/cpp.svg"),
+  CS: () => import("./SVGs/file_types/cs.svg"),
+  PHP: () => import("./SVGs/file_types/php.svg"),
+  SQL: () => import("./SVGs/file_types/sql.svg"),
+  SWIFT: () => import("./SVGs/file_types/swift.svg"),
 
   /* { Image } */
   PNG: () => import("./SVGs/file_types/png.svg"),
