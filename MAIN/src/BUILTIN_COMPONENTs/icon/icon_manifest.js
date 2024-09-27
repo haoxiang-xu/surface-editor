@@ -26,6 +26,7 @@ export const iconManifest = {
 
   /* { Programming Languages } */
   JS: () => import("./SVGs/file_types/js.svg"),
+  TS: () => import("./SVGs/file_types/ts.svg"),
   HTML: () => import("./SVGs/file_types/html.svg"),
   CSS: () => import("./SVGs/file_types/css.svg"),
   IPYNB: () => import("./SVGs/file_types/ipynb.svg"),
