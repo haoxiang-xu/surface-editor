@@ -857,7 +857,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
 };
 
 /* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
-const FileSelectionListBackgroundIndicator = ({ index }) => {
+const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
   const { onSelectedMonacoIndex, onDragOveredMonacoIndex, onDragOverPosition } =
     useContext(MonacoEditorContexts);
   const [backgroundColorOffset, setBackgroundColorOffset] = useState(0);
@@ -865,12 +865,59 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
     center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
     left_border: `0px 0px 0px ${default_border_radius}px`,
     left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-    right_border: `0px 0px ${default_border_radius}px 0px`,
-    right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+    right_border: `0px 0px 0px 0px`,
+    right_cover: `0px 0px 0px ${default_border_radius}px`,
   });
   const [top, setTop] = useState(default_selecion_list_item_padding);
   const [left, setLeft] = useState(0);
+  const [right, setRight] = useState(-default_selecion_list_item_padding / 2);
+  const [otherRight, setOtherRight] = useState(
+    -1.5 * default_selecion_list_item_padding +
+      default_selecion_list_item_padding / 2
+  );
 
+  useEffect(() => {
+    if (index === onSelectedMonacoIndex && index === onDragOveredMonacoIndex) {
+      setLeft(tagLeft - default_selecion_list_icon_offset);
+      if (tagLeft > 0) {
+        setRight(-default_selecion_list_item_padding / 2);
+        setOtherRight(
+          -1.5 * default_selecion_list_item_padding +
+            default_selecion_list_item_padding / 2
+        );
+      } else {
+        setRight(
+          default_tag_max_width - default_selecion_list_item_padding / 2
+        );
+        setOtherRight(
+          -1.5 * default_selecion_list_item_padding +
+            default_selecion_list_item_padding / 2 +
+            default_tag_max_width
+        );
+      }
+    } else if (index === onSelectedMonacoIndex) {
+      setLeft(tagLeft - default_selecion_list_icon_offset);
+      setRight(-default_selecion_list_item_padding / 2);
+      setOtherRight(
+        -1.5 * default_selecion_list_item_padding +
+          default_selecion_list_item_padding / 2
+      );
+    } else if (index === onDragOveredMonacoIndex) {
+      setLeft(default_tag_max_width);
+      setRight(-default_selecion_list_item_padding / 2);
+      setOtherRight(
+        -1.5 * default_selecion_list_item_padding +
+          default_selecion_list_item_padding / 2
+      );
+    } else {
+      setLeft(0);
+      setRight(-default_selecion_list_item_padding / 2);
+      setOtherRight(
+        -1.5 * default_selecion_list_item_padding +
+          default_selecion_list_item_padding / 2
+      );
+    }
+  }, [tagLeft, onSelectedMonacoIndex, onDragOveredMonacoIndex]);
   useEffect(() => {
     if (index === onSelectedMonacoIndex) {
       setBackgroundColorOffset(default_onhover_item_background_color_offset);
@@ -878,30 +925,18 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
         center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         left_border: `0px 0px 0px ${default_border_radius}px`,
         left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-        right_border: `0px 0px ${default_border_radius}px 0px`,
-        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+        right_border: `0px 0px 0px 0px`,
+        right_cover: `0px 0px 0px ${default_border_radius}px`,
       });
       setTop(0);
-      setLeft(-default_selecion_list_icon_offset);
-    } else if (index === onDragOveredMonacoIndex) {
-      setBackgroundColorOffset(default_onhover_item_background_color_offset);
-      setBorderRadius({
-        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-        left_border: `0px 0px 0px ${default_border_radius}px`,
-        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-        right_border: `0px 0px ${default_border_radius}px 0px`,
-        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-      });
-      setTop(0);
-      setLeft(default_tag_max_width);
     } else {
       setBackgroundColorOffset(0);
       setBorderRadius({
         center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         left_border: `0px 0px 0px ${default_border_radius}px`,
         left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-        right_border: `0px 0px ${default_border_radius}px 0px`,
-        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
+        right_border: `0px 0px 0px 0px`,
+        right_cover: `0px 0px 0px ${default_border_radius}px`,
       });
       setTop(0);
       setLeft(0);
@@ -912,11 +947,11 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
     <>
       <div
         style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: top,
           left: left,
-          right: -default_selecion_list_item_padding / 2,
+          right: right,
           bottom: 0,
           backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
             G + backgroundColorOffset
@@ -926,9 +961,9 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
       ></div>
       <div
         style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
-          top: "50%",
+          top: "0%",
           left: `${-default_selecion_list_item_padding + left}px`,
           bottom: "0px",
 
@@ -942,9 +977,9 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
       ></div>
       <div
         style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
-          top: `50%`,
+          top: `0%`,
           left: `${-default_selecion_list_item_padding + left}px`,
           bottom: "0px",
 
@@ -956,13 +991,13 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
       ></div>
       <div
         style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
-          top: "50%",
-          right: `${-1.5 * default_selecion_list_item_padding}px`,
+          top: "0%",
+          right: otherRight,
           bottom: "0px",
 
-          width: `${default_selecion_list_item_padding}px`,
+          width: `${default_selecion_list_item_padding / 2}px`,
 
           backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
             G + backgroundColorOffset
@@ -972,18 +1007,18 @@ const FileSelectionListBackgroundIndicator = ({ index }) => {
       ></div>
       <div
         style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
-          top: `50%`,
-          right: `${-1.5 * default_selecion_list_item_padding}px`,
+          top: `0%`,
+          right: otherRight,
           bottom: "0px",
 
-          width: `${default_selecion_list_item_padding}px`,
+          width: `${default_selecion_list_item_padding / 2}px`,
 
           backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
           borderRadius: `${borderRadius.right_cover}`,
         }}
-      ></div>{" "}
+      ></div>
     </>
   );
 };
@@ -1081,7 +1116,7 @@ const FileSelectionListItem = ({
           "left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: 0,
-        left: tag_position? tag_position : 0,
+        left: tag_position ? tag_position : 0,
         width:
           onDragOveredMonacoIndex === index
             ? tagSize.width + default_tag_max_width + "px"
@@ -1123,7 +1158,7 @@ const FileSelectionListItem = ({
         setOnDragOverPosition({ x: 0, y: 0 });
       }}
     >
-      <FileSelectionListBackgroundIndicator index={index} />
+      <FileSelectionListBackgroundIndicator index={index} tagLeft={tagLeft} />
       <Tag
         config={{
           reference: reference,
@@ -1145,14 +1180,16 @@ const FileSelectionListItem = ({
       />
       {index === onSelectedMonacoIndex ? (
         <Icon
+          draggable={false}
           src="close"
           style={{
-            transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+            transition:
+              "left 0.32s cubic-bezier(0.32, 1, 0.32, 1), backgroundColor 0.12s ease",
 
             transform: "translate(0%, -50%)",
             position: "absolute",
             top: "50%",
-            left: -default_selecion_list_icon_offset + 4,
+            left: -default_selecion_list_icon_offset + 4 + tagLeft,
             width: 16,
             height: 16,
             padding: 1,
@@ -1177,6 +1214,18 @@ const FileSelectionListItem = ({
             setCloseButtonStyle({
               backgroundColorOffset: 32,
               onHover: false,
+            });
+          }}
+          onMouseDown={() => {
+            setCloseButtonStyle({
+              backgroundColorOffset: 128,
+              onHover: true,
+            });
+          }}
+          onMouseUp={() => {
+            setCloseButtonStyle({
+              backgroundColorOffset: 64,
+              onHover: true,
             });
           }}
         />
@@ -1251,7 +1300,7 @@ const FileSelectionListContainer = ({}) => {
   ]);
   useEffect(() => {
     if (onDragItem) return;
-    setOnDragMonacoIndex(-1); 
+    setOnDragMonacoIndex(-1);
     setOnDragOverMonacoIndex(-1);
     setOnDragOverPosition({ x: 0, y: 0 });
   }, [onDragItem]);
