@@ -1045,7 +1045,11 @@ const FileSelectionListItem = ({
   } = useContext(MonacoEditorContexts);
   const containerRef = useRef(null);
   const [zIndex, setZIndex] = useState(6);
-  const [tagSize, setTagSize] = useState({ width: 0, height: 0 });
+  const [width, setWidth] = useState(0);
+  const [tagSize, setTagSize] = useState({
+    width: default_tag_max_width,
+    height: 0,
+  });
   const [tagLeft, setTagLeft] = useState(0);
   const [tagColorOffset, setTagColorOffset] = useState(0);
   const [closeButtonStyle, setCloseButtonStyle] = useState({
@@ -1055,6 +1059,13 @@ const FileSelectionListItem = ({
 
   const [tagOpacity, setTagOpacity] = useState(1);
 
+  useEffect(() => {
+    setWidth(
+      onDragOveredMonacoIndex === index
+        ? tagSize.width + default_tag_max_width + "px"
+        : tagSize.width + "px"
+    );
+  }, [tag_size, onDragOveredMonacoIndex, index]);
   useEffect(() => {
     if (index === onDragedMonacoIndex) {
       setZIndex(6);
@@ -1117,10 +1128,7 @@ const FileSelectionListItem = ({
         position: "absolute",
         top: 0,
         left: tag_position ? tag_position : 0,
-        width:
-          onDragOveredMonacoIndex === index
-            ? tagSize.width + default_tag_max_width + "px"
-            : tagSize.width + "px",
+        width: width,
         bottom: default_selecion_list_item_padding / 2,
         zIndex: zIndex,
         opacity: tagOpacity,
@@ -1151,11 +1159,6 @@ const FileSelectionListItem = ({
       }}
       onDragOver={(e) => {
         update_on_drag_over_position(e, index);
-      }}
-      onDragLeave={(e) => {
-        e.stopPropagation();
-        setOnDragOverMonacoIndex(-1);
-        setOnDragOverPosition({ x: 0, y: 0 });
       }}
     >
       <FileSelectionListBackgroundIndicator index={index} tagLeft={tagLeft} />
@@ -1204,13 +1207,15 @@ const FileSelectionListItem = ({
           onClick={(e) => {
             e.stopPropagation();
           }}
-          onMouseEnter={() => {
+          onMouseEnter={(e) => {
+            e.stopPropagation();
             setCloseButtonStyle({
               backgroundColorOffset: 64,
               onHover: true,
             });
           }}
-          onMouseLeave={() => {
+          onMouseLeave={(e) => {
+            e.stopPropagation();
             setCloseButtonStyle({
               backgroundColorOffset: 32,
               onHover: false,
@@ -1234,7 +1239,7 @@ const FileSelectionListItem = ({
   );
 };
 const FileSelectionListContainer = ({}) => {
-  const { onDragItem } = useContext(RootCommandContexts);
+  const { onDragItem, onDragPosition } = useContext(RootCommandContexts);
   const {
     mode,
     onDragedMonacoIndex,

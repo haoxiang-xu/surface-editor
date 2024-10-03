@@ -97,6 +97,7 @@ const RootCommandManager = ({ children }) => {
   /* { Drag and Drop } =============================================================================== */
   const [onDrag, setOnDrag] = useState(false);
   const [onDragItem, setOnDragItem] = useState(null);
+  const [onDragPosition, setOnDragPosition] = useState({ x: 0, y: 0 });
   useEffect(() => {
     console.log("onDragItem", onDragItem);
   }, [onDragItem]);
@@ -112,6 +113,7 @@ const RootCommandManager = ({ children }) => {
     event.stopPropagation();
     setOnDrag(false);
     setOnDragItem(null);
+    setOnDragPosition({ x: 0, y: 0 });
   };
   /* { Drag and Drop } =============================================================================== */
 
@@ -158,6 +160,8 @@ const RootCommandManager = ({ children }) => {
         setOnDrag,
         onDragItem,
         setOnDragItem,
+        onDragPosition,
+        setOnDragPosition,
         item_on_drag,
         item_on_drop,
         /* { Drag and Drop } ------------------------ */

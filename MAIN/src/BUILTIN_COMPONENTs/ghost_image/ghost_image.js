@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 import Tag from "../tag/tag";
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 
@@ -30,6 +31,7 @@ try {
 
 const GhostImage = ({ onDragItem }) => {
   const { access_file_name_by_path_in_file } = useContext(RootDataContexts);
+  const { onDragPosition, setOnDragPosition } = useContext(RootCommandContexts);
 
   const [positionX, setPositionX] = useState(-9999);
   const [positionY, setPositionY] = useState(-9999);
@@ -99,6 +101,9 @@ const GhostImage = ({ onDragItem }) => {
       setContainerHeight(tagRef.current.offsetHeight);
     }
   }, [tagRef.current]);
+  useEffect(() => {
+    setOnDragPosition({ x: positionX, y: positionY });
+  }, [positionX, positionY]);
 
   return (
     <div
