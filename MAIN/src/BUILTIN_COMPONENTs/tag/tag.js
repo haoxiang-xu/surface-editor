@@ -59,14 +59,13 @@ const CustomizedTag = ({
   const [inputMode, setInputMode] = useState(style.inputMode);
 
   useEffect(() => {
-    if (!spanRef.current) return;
+    if (!spanRef.current || !inputRef) return;
     const spanWidth = spanRef.current.offsetWidth;
     const spanHeight = spanRef.current.offsetHeight;
     let inputHeight = 0;
     if (style.inputMode && inputRef.current) {
       inputHeight = inputRef.current.offsetHeight;
     }
-    setTagMaxWidth(style.maxWidth);
     let containerWidth = 0;
     if (style.inputMode) {
       containerWidth = tagMaxWidth;
@@ -128,7 +127,10 @@ const CustomizedTag = ({
         inputMode: style.inputMode,
       };
     });
-  }, [style, tagMaxWidth]);
+  }, [style, tagMaxWidth, spanRef, inputRef]);
+  useEffect(() => {
+    setTagMaxWidth(style.maxWidth);
+  }, [style]);
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -429,7 +431,7 @@ const compareConfig = (prev, next) => {
   return true;
 };
 
-const Tag = React.memo(({ config }) => {
+const Tag = ({ config }) => {
   const process_tag_config = (config) => {
     let processed_config = { ...config };
 
@@ -524,6 +526,6 @@ const Tag = React.memo(({ config }) => {
     }
   }, 100);
   return render_tag();
-}, compareConfig);
+};
 
 export default Tag;
