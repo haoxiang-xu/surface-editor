@@ -59,13 +59,8 @@ const CustomizedTag = ({
   const [inputMode, setInputMode] = useState(style.inputMode);
 
   useEffect(() => {
-    if (!spanRef.current || !inputRef) return;
+    if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
-    const spanHeight = spanRef.current.offsetHeight;
-    let inputHeight = 0;
-    if (style.inputMode && inputRef.current) {
-      inputHeight = inputRef.current.offsetHeight;
-    }
     let containerWidth = 0;
     if (style.inputMode) {
       containerWidth = tagMaxWidth;
@@ -90,14 +85,11 @@ const CustomizedTag = ({
       width += 16 + 4;
       left += 16 + 4;
     }
-    if (style.inputMode !== inputMode) {
-      setInputMode(style.inputMode);
-    }
+    setInputMode(style.inputMode);
     setTagStyle((prevData) => {
       return {
         ...prevData,
         width: width,
-        height: style.inputMode ? inputHeight : spanHeight + padding_y * 2,
 
         top: style.top,
         left: `calc(0% + ${left}px)`,
@@ -127,7 +119,21 @@ const CustomizedTag = ({
         inputMode: style.inputMode,
       };
     });
-  }, [style, tagMaxWidth, spanRef, inputRef]);
+  }, [style, tagMaxWidth, spanRef, icon]);
+  useEffect(() => {
+    const spanHeight = spanRef.current.offsetHeight;
+    let inputHeight = 0;
+    const padding_y = style.padding_y;
+    if (style.inputMode && inputRef.current) {
+      inputHeight = inputRef.current.offsetHeight;
+    }
+    setTagStyle((prevData) => {
+      return {
+        ...prevData,
+        height: style.inputMode ? inputHeight : spanHeight + padding_y * 2,
+      };
+    });
+  }, [style, inputRef, spanRef]);
   useEffect(() => {
     setTagMaxWidth(style.maxWidth);
   }, [style]);

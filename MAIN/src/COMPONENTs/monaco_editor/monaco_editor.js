@@ -947,7 +947,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
     <>
       <div
         style={{
-          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: top,
           left: left,
@@ -961,7 +961,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
       ></div>
       <div
         style={{
-          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: "0%",
           left: `${-default_selecion_list_item_padding + left}px`,
@@ -977,7 +977,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
       ></div>
       <div
         style={{
-          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: `0%`,
           left: `${-default_selecion_list_item_padding + left}px`,
@@ -991,7 +991,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
       ></div>
       <div
         style={{
-          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "right 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: "0%",
           right: otherRight,
@@ -1007,7 +1007,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
       ></div>
       <div
         style={{
-          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "right 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: `0%`,
           right: otherRight,
@@ -1159,6 +1159,9 @@ const FileSelectionListItem = ({
       }}
       onDragOver={(e) => {
         update_on_drag_over_position(e, index);
+      }}
+      onDragLeave={(e) => {
+        e.stopPropagation();
       }}
     >
       <FileSelectionListBackgroundIndicator index={index} tagLeft={tagLeft} />
@@ -1324,6 +1327,12 @@ const FileSelectionListContainer = ({}) => {
         borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         overflow: "hidden",
         padding: default_selecion_list_item_padding / 2,
+      }}
+      onDragLeave={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setOnDragOverMonacoIndex(-1);
+        setOnDragOverPosition({ x: 0, y: 0 });
       }}
     >
       {monacoPaths.map((filePath, index) => {
