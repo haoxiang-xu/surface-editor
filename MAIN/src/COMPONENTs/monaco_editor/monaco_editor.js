@@ -1119,6 +1119,20 @@ const FileSelectionListItem = ({
     }
   }, [onDragOverPosition, onDragOveredMonacoIndex, tag_position, tag_size]);
 
+  const memoized_tag_style = useMemo(() => {
+    return {
+      top: "50%",
+      left: tagLeft,
+      transform: "translate(0%, -50%)",
+      boxShadow: "none",
+      pointerEvents: "none",
+      maxWidth: default_tag_max_width,
+      backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
+        B + tagColorOffset
+      }, 1 )`,
+    };
+  }, [tagLeft, tagColorOffset]);
+
   return (
     <div
       ref={containerRef}
@@ -1171,18 +1185,7 @@ const FileSelectionListItem = ({
           reference: reference,
           type: "file",
           label: access_dir_name_by_path(file_path),
-          style: {
-            transparentMode: true,
-            top: "50%",
-            left: tagLeft,
-            transform: "translate(0%, -50%)",
-            boxShadow: "none",
-            pointerEvents: "none",
-            maxWidth: default_tag_max_width,
-            backgroundColor: `rgba( ${R + tagColorOffset}, ${
-              G + tagColorOffset
-            }, ${B + tagColorOffset}, 1 )`,
-          },
+          style: memoized_tag_style,
         }}
       />
       {index === onSelectedMonacoIndex ? (
@@ -1263,6 +1266,67 @@ const FileSelectionListContainer = ({}) => {
   const [tagPositions, setTagPositions] = useState([]);
   const [tagSizes, setTagSizes] = useState([]);
 
+  const render_tags = useCallback(() => {
+    if (!tagRefs.current) return;
+    if (!containerRef.current) return;
+
+    let tagPositions = [];
+    let tagSizes = [];
+
+    let position_x = 0;
+
+    for (let i = 0; i < monacoPaths.length; i++) {
+      if (i === onDragedMonacoIndex) {
+        position_x += 0;
+      } else if (i === onSelectedMonacoIndex) {
+        position_x += default_selecion_list_icon_offset;
+      }
+      tagPositions.push(position_x);
+      if (i !== onDragedMonacoIndex) {
+        position_x +=
+          tagRefs.current[i]?.current?.offsetWidth +
+          0.5 * default_selecion_list_item_padding;
+      }
+      if (i === onDragOveredMonacoIndex) {
+        position_x += default_tag_max_width;
+      }
+      tagSizes.push({
+        width: tagRefs.current[i]?.current?.offsetWidth,
+        height: tagRefs.current[i]?.current?.offsetHeight,
+      });
+    }
+    setTagPositions(tagPositions);
+    setTagSizes(tagSizes);
+  }, [
+    monacoPaths,
+    tagRefs.current,
+    containerRef.current,
+    onSelectedMonacoIndex,
+    onDragedMonacoIndex,
+    onDragOveredMonacoIndex,
+  ]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (tagPositions.length === 0 || tagSizes.length === 0) {
+        render_tags();
+      } else {
+        console.log(tagPositions, tagSizes);
+        for (let i = 0; i < monacoPaths.length; i++) {
+          if (
+            tagPositions[i] === undefined ||
+            tagPositions[i] === null ||
+            tagPositions[i] == NaN
+          ) {
+            render_tags();
+            return;
+          }
+        }
+        clearInterval(intervalId);
+      }
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [tagPositions, tagSizes]);
   useEffect(() => {
     if (!tagRefs.current) return;
     tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
@@ -1271,38 +1335,6 @@ const FileSelectionListContainer = ({}) => {
     }
   }, [monacoPaths]);
   useEffect(() => {
-    if (!tagRefs.current) return;
-    if (!containerRef.current) return;
-
-    const render_tags = () => {
-      let tagPositions = [];
-      let tagSizes = [];
-
-      let position_x = 0;
-
-      for (let i = 0; i < monacoPaths.length; i++) {
-        if (i === onDragedMonacoIndex) {
-          position_x += 0;
-        } else if (i === onSelectedMonacoIndex) {
-          position_x += default_selecion_list_icon_offset;
-        }
-        tagPositions.push(position_x);
-        if (i !== onDragedMonacoIndex) {
-          position_x +=
-            tagRefs.current[i]?.current?.offsetWidth +
-            0.5 * default_selecion_list_item_padding;
-        }
-        if (i === onDragOveredMonacoIndex) {
-          position_x += default_tag_max_width;
-        }
-        tagSizes.push({
-          width: tagRefs.current[i]?.current?.offsetWidth,
-          height: tagRefs.current[i]?.current?.offsetHeight,
-        });
-      }
-      setTagPositions(tagPositions);
-      setTagSizes(tagSizes);
-    };
     render_tags();
   }, [
     width,

@@ -666,7 +666,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     }
   }, [explorerListWidth, onPause]);
 
-  const memoizedTagStyle = useMemo(
+  const memoized_tag_style = useMemo(
     () => ({
       top: fullSizeMode
         ? position_y + explorerListTop - explorerScrollPosition
@@ -791,7 +791,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
             setRenameValue(value);
           },
           label_on_submit: handle_rename_on_sumbit,
-          style: memoizedTagStyle,
+          style: memoized_tag_style,
         }}
       />
     </div>
@@ -1006,7 +1006,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     }
   }, [explorerListWidth, onPause]);
 
-  const memoizedTagStyle = useMemo(
+  const memoized_tag_style = useMemo(
     () => ({
       top: fullSizeMode
         ? position_y + explorerListTop - explorerScrollPosition
@@ -1128,7 +1128,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
             setRenameValue(value);
           },
           label_on_submit: handle_rename_on_sumbit,
-          style: memoizedTagStyle,
+          style: memoized_tag_style,
         }}
       />
     </div>
