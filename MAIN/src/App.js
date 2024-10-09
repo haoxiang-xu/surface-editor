@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Tag from "./BUILTIN_COMPONENTs/tag/tag";
-import Home from "./HOME/home";
+import RootEventListener from "./DATA_MANAGERs/root_event_listener/root_event_listener";
 
 import "./App.css";
 
@@ -13,8 +13,7 @@ function App() {
         rel="stylesheet"
       ></link>
       <Routes>
-        <Route path="/tag" element={<Tag />} />
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<RootEventListener />} />
       </Routes>
     </Router>
   );

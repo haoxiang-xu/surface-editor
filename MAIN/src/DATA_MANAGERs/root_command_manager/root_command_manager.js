@@ -117,28 +117,6 @@ const RootCommandManager = ({ children }) => {
   };
   /* { Drag and Drop } =============================================================================== */
 
-  /* { Global Key Event Listener } =================================================================== */
-  const [pressedKeys, setPressedKeys] = useState(new Set());
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      setPressedKeys((prev) => new Set(prev).add(event.key));
-    };
-    const handleKeyUp = (event) => {
-      const newPressedKeys = new Set(pressedKeys);
-      newPressedKeys.delete(event.key);
-      setPressedKeys(newPressedKeys);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
-  /* { Global Key Event Listener } =================================================================== */
-
   return (
     <RootCommandContexts.Provider
       value={{
@@ -165,10 +143,6 @@ const RootCommandManager = ({ children }) => {
         item_on_drag,
         item_on_drop,
         /* { Drag and Drop } ------------------------ */
-
-        /* { Global Key Event Listener } ------------ */
-        pressedKeys,
-        /* { Global Key Event Listener } ------------ */
       }}
     >
       <div onClick={unload_context_menu}>

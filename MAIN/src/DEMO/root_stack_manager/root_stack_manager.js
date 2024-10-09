@@ -257,7 +257,7 @@ const B = 30;
 
 const MIN = 60;
 
-const TOP = 36;
+const TOP = 8;
 const RIGHT = default_component_padding;
 const BOTTOM = default_component_padding;
 const LEFT = default_component_padding;
