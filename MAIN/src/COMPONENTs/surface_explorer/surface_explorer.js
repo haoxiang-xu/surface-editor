@@ -242,7 +242,7 @@ const ExplorerSearchBar = ({ filterKeyWord, setFilterKeyWord }) => {
           border: "none",
           color: "#FFFFFF",
           font: "inherit",
-          fontSize: default_font_size,
+          fontSize: default_font_size + 2,
           outline: "none",
           opacity: style.opacity,
         }}

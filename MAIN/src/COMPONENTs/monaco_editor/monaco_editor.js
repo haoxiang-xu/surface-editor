@@ -1096,6 +1096,7 @@ const FileSelectionListItem = ({
   }, [tag_size]);
   const update_on_drag_over_position = useCallback(
     (event, index) => {
+      if (index === onDragedMonacoIndex) return;
       if (onDragOveredMonacoIndex === index && containerRef) {
         const rect = containerRef.current.getBoundingClientRect();
         setOnDragOverPosition({
@@ -1154,8 +1155,9 @@ const FileSelectionListItem = ({
       onDragStart={(e) => {
         e.stopPropagation();
         e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
-        setOnSelectedMonacoIndex(index);
         setOnDragMonacoIndex(index);
+        setOnDragOverMonacoIndex(-1);
+        setOnSelectedMonacoIndex(index);
         item_on_drag(e, {
           source: id,
           ghost_image: "tag",
@@ -1265,6 +1267,7 @@ const FileSelectionListContainer = ({}) => {
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
   const [tagPositions, setTagPositions] = useState([]);
   const [tagSizes, setTagSizes] = useState([]);
+  const [initalRendered, setInitalRendered] = useState(false);
 
   const render_tags = useCallback(() => {
     if (!tagRefs.current) return;
@@ -1307,26 +1310,23 @@ const FileSelectionListContainer = ({}) => {
   ]);
 
   useEffect(() => {
+    if (initalRendered) return;
     const intervalId = setInterval(() => {
       if (tagPositions.length === 0 || tagSizes.length === 0) {
         render_tags();
       } else {
-        console.log(tagPositions, tagSizes);
         for (let i = 0; i < monacoPaths.length; i++) {
-          if (
-            tagPositions[i] === undefined ||
-            tagPositions[i] === null ||
-            tagPositions[i] == NaN
-          ) {
+          if (isNaN(tagPositions[i])) {
             render_tags();
             return;
           }
         }
         clearInterval(intervalId);
+        setInitalRendered(true);
       }
-    }, 1000);
+    }, 100);
     return () => clearInterval(intervalId);
-  }, [tagPositions, tagSizes]);
+  }, [tagPositions, tagSizes, initalRendered]);
   useEffect(() => {
     if (!tagRefs.current) return;
     tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
@@ -1360,6 +1360,12 @@ const FileSelectionListContainer = ({}) => {
       });
     }
   }, [onSelectedMonacoIndex, containerRef.current]);
+
+  useEffect(() => {
+    if (onDragOveredMonacoIndex === onDragedMonacoIndex) {
+      setOnDragOverMonacoIndex(-1);
+    }
+  }, [onDragOveredMonacoIndex]);
 
   return (
     <div
