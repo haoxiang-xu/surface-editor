@@ -7,8 +7,8 @@ import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 import GhostImage from "../../BUILTIN_COMPONENTs/ghost_image/ghost_image";
 
-const RootCommandManager = ({ children }) => {
-  //console.log("RDM/RCM", new Date().getTime());
+const RootCommandManager = React.memo(({ children }) => {
+  // console.log("RDM/RCM", new Date().getTime());
   const [cmd, setCmd] = useCustomizedState({}, compareJson);
   const push_command_by_id = useCallback(
     (id, command) => {
@@ -152,6 +152,6 @@ const RootCommandManager = ({ children }) => {
       </div>
     </RootCommandContexts.Provider>
   );
-};
+});
 
 export default RootCommandManager;

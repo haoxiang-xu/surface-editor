@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { RootDataContexts } from "./root_data_contexts";
 
 const DEFAULT_VECODER_EDITORS_CONTENT_DATA = {
@@ -496,8 +496,8 @@ const FAKE_STORAGE = {
   },
 };
 
-const RootDataManager = ({ children }) => {
-  console.log("RDM", new Date().getTime());
+const RootDataManager = React.memo(({ children }) => {
+  // console.log("RDM", new Date().getTime());
 
   /* { FILE } ========================================================================================================================== */
   const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
@@ -982,6 +982,6 @@ const RootDataManager = ({ children }) => {
       {children}
     </RootDataContexts.Provider>
   );
-};
+});
 
 export default RootDataManager;

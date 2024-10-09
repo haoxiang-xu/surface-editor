@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useRef,
   memo,
+  useMemo,
 } from "react";
 import { throttle } from "lodash";
 import {
@@ -709,6 +710,8 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     generate_vertical_sub_item_on_drag_filter,
     clean_filter,
   } = useContext(RootStackContexts);
+  // console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
+
   const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
 
   const containerRef = useRef(null);
@@ -1159,7 +1162,9 @@ const HorizontalStack = ({
 };
 /* { Stack Structures } ==================================================================================================================================== */
 
-const RootStackManager = () => {
+const RootStackManager = React.memo(() => {
+  // console.log("RDM/RCM/stack_manager/", new Date().getTime());
+
   const { isOnTitleBar } = useContext(RootEventContexts);
 
   const [top, setTop] = useState(TOP);
@@ -1937,6 +1942,18 @@ const RootStackManager = () => {
     };
   }, [top]);
 
+  const memorized_root_stack = useMemo(() => {
+    return rootContainer ? (
+      <HorizontalStack
+        id={"root"}
+        index={0}
+        parent_rerendered={rerendered}
+        parent_stack_type={"horizontal_stack"}
+        end={true}
+      />
+    ) : null;
+  }, [rootContainer, rerendered]);
+
   return (
     <RootStackContexts.Provider
       value={{
@@ -1962,17 +1979,9 @@ const RootStackManager = () => {
         clean_filter,
       }}
     >
-      {rootContainer ? (
-        <HorizontalStack
-          id={"root"}
-          index={0}
-          parent_rerendered={rerendered}
-          parent_stack_type={"horizontal_stack"}
-          end={true}
-        />
-      ) : null}
+      {memorized_root_stack}
     </RootStackContexts.Provider>
   );
-};
+});
 
 export default RootStackManager;

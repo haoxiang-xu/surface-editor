@@ -10,6 +10,7 @@ import {
 } from "../../CONSTs/systemFrameStyling";
 
 const MainStack = React.memo(() => {
+  // console.log("RDM/REL/MainStack", new Date().getTime());
   const root_stack_manager = useMemo(() => <RootStackManager />, []);
   const root_command_manager = useMemo(
     () => <RootCommandManager>{root_stack_manager}</RootCommandManager>,
