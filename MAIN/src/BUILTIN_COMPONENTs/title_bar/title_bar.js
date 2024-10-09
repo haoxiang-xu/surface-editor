@@ -183,7 +183,7 @@ const Win32ControlPanel = () => {
     </div>
   );
 };
-const TitleBar = ({ isWindowMaximized }) => {
+const TitleBar = React.memo(({ isWindowMaximized }) => {
   const handleClose = () => {
     window.electron.send("window-control", "close");
   };
@@ -229,6 +229,6 @@ const TitleBar = ({ isWindowMaximized }) => {
       </div>
     </TitleBarContexts.Provider>
   );
-};
+});
 
 export default TitleBar;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import RootDataManager from "../root_data_manager/root_data_manager";
 import RootCommandManager from "../root_command_manager/root_command_manager";
 import TitleBar from "../../BUILTIN_COMPONENTs/title_bar/title_bar";
@@ -9,15 +9,15 @@ import {
   SYSTEM_FRAME_BORDER_RADIUS,
 } from "../../CONSTs/systemFrameStyling";
 
-const MainStack = () => {
-  return (
-    <RootDataManager>
-      <RootCommandManager>
-        <RootStackManager />
-      </RootCommandManager>
-    </RootDataManager>
+const MainStack = React.memo(() => {
+  const root_stack_manager = useMemo(() => <RootStackManager />, []);
+  const root_command_manager = useMemo(
+    () => <RootCommandManager>{root_stack_manager}</RootCommandManager>,
+    []
   );
-};
+  return <RootDataManager>{root_command_manager}</RootDataManager>;
+});
+
 const RootEventListener = () => {
   const [isWindowMaximized, setIsWindowMaximized] = useState(false);
   const [isOnTitleBar, setIsOnTitleBar] = useState(false);

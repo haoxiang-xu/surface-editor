@@ -1468,12 +1468,17 @@ const MonacoEditor = ({
     });
   }, [monacoPaths]);
   useEffect(() => {
-    setData((prevData) => {
-      return {
-        ...prevData,
-        monaco_cores: monacoCores,
-      };
-    });
+    const timeoutId = setTimeout(() => {
+      setData((prevData) => {
+        if (prevData.monaco_cores === monacoCores) return prevData;
+        return {
+          ...prevData,
+          monaco_cores: monacoCores,
+        };
+      });
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
   }, [monacoCores]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
 

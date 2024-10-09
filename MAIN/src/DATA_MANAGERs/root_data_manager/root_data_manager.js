@@ -497,7 +497,7 @@ const FAKE_STORAGE = {
 };
 
 const RootDataManager = ({ children }) => {
-  //console.log("RDM", new Date().getTime());
+  console.log("RDM", new Date().getTime());
 
   /* { FILE } ========================================================================================================================== */
   const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
@@ -938,6 +938,7 @@ const RootDataManager = ({ children }) => {
     });
   }, []);
   /* Stack Structure Data and Functions ============================================================== */
+
   return (
     <RootDataContexts.Provider
       value={{
