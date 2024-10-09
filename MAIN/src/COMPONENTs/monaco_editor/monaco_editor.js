@@ -947,7 +947,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
     <>
       <div
         style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: top,
           left: left,
@@ -961,7 +961,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
       ></div>
       <div
         style={{
-          transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "left 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: "0%",
           left: `${-default_selecion_list_item_padding + left}px`,
@@ -977,7 +977,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
       ></div>
       <div
         style={{
-          transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "left 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: `0%`,
           left: `${-default_selecion_list_item_padding + left}px`,
@@ -991,7 +991,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
       ></div>
       <div
         style={{
-          transition: "right 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "right 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: "0%",
           right: otherRight,
@@ -1007,7 +1007,7 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
       ></div>
       <div
         style={{
-          transition: "right 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "right 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: `0%`,
           right: otherRight,
@@ -1023,15 +1023,18 @@ const FileSelectionListBackgroundIndicator = ({ index, tagLeft }) => {
   );
 };
 const FileSelectionListItem = ({
+  containerListRef,
   reference,
   index,
   file_path,
   tag_position,
   tag_size,
 }) => {
+  console.log(file_path, "Item rendered");
   const { access_dir_name_by_path } = useContext(RootDataContexts);
   const {
     id,
+    width,
     onSelectedMonacoIndex,
     setOnSelectedMonacoIndex,
     onDragedMonacoIndex,
@@ -1045,7 +1048,7 @@ const FileSelectionListItem = ({
   } = useContext(MonacoEditorContexts);
   const containerRef = useRef(null);
   const [zIndex, setZIndex] = useState(6);
-  const [width, setWidth] = useState(0);
+  const [itemWidth, setItemWidth] = useState(0);
   const [tagSize, setTagSize] = useState({
     width: default_tag_max_width,
     height: 0,
@@ -1056,11 +1059,10 @@ const FileSelectionListItem = ({
     backgroundColorOffset: 32,
     onHover: false,
   });
-
   const [tagOpacity, setTagOpacity] = useState(1);
 
   useEffect(() => {
-    setWidth(
+    setItemWidth(
       onDragOveredMonacoIndex === index
         ? tagSize.width + default_tag_max_width + "px"
         : tagSize.width + "px"
@@ -1124,11 +1126,11 @@ const FileSelectionListItem = ({
       draggable={true}
       style={{
         transition:
-          "left 0.24s cubic-bezier(0.32, 1, 0.32, 1), width 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+          "left 0.32s cubic-bezier(0.32, 1, 0.32, 1), width 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: 0,
         left: tag_position ? tag_position : 0,
-        width: width,
+        width: itemWidth,
         bottom: default_selecion_list_item_padding / 2,
         zIndex: zIndex,
         opacity: tagOpacity,
@@ -1177,7 +1179,7 @@ const FileSelectionListItem = ({
             transform: "translate(0%, -50%)",
             boxShadow: "none",
             pointerEvents: "none",
-            maxWidth: 128,
+            maxWidth: default_tag_max_width,
             backgroundColor: `rgba( ${R + tagColorOffset}, ${
               G + tagColorOffset
             }, ${B + tagColorOffset}, 1 )`,
@@ -1245,6 +1247,7 @@ const FileSelectionListContainer = ({}) => {
   const { onDragItem, onDragPosition } = useContext(RootCommandContexts);
   const {
     mode,
+    width,
     onDragedMonacoIndex,
     setOnDragMonacoIndex,
     onDragOveredMonacoIndex,
@@ -1256,6 +1259,7 @@ const FileSelectionListContainer = ({}) => {
     setMonacoPaths,
   } = useContext(MonacoEditorContexts);
 
+  const containerRef = useRef(null);
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
   const [tagPositions, setTagPositions] = useState([]);
   const [tagSizes, setTagSizes] = useState([]);
@@ -1269,6 +1273,8 @@ const FileSelectionListContainer = ({}) => {
   }, [monacoPaths]);
   useEffect(() => {
     if (!tagRefs.current) return;
+    if (!containerRef.current) return;
+
     const render_tags = () => {
       let tagPositions = [];
       let tagSizes = [];
@@ -1300,8 +1306,10 @@ const FileSelectionListContainer = ({}) => {
     };
     render_tags();
   }, [
+    width,
     monacoPaths,
     tagRefs.current,
+    containerRef.current,
     onSelectedMonacoIndex,
     onDragedMonacoIndex,
     onDragOveredMonacoIndex,
@@ -1312,11 +1320,21 @@ const FileSelectionListContainer = ({}) => {
     setOnDragOverMonacoIndex(-1);
     setOnDragOverPosition({ x: 0, y: 0 });
   }, [onDragItem]);
+  useEffect(() => {
+    if (onSelectedMonacoIndex === -1) return;
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        left: tagPositions[onSelectedMonacoIndex] - 0.5 * default_tag_max_width,
+        behavior: "smooth",
+      });
+    }
+  }, [onSelectedMonacoIndex, containerRef.current]);
 
   return (
     <div
+      ref={containerRef}
       style={{
-        transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+        transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
         top: 6,
         left: 6,
@@ -1340,6 +1358,7 @@ const FileSelectionListContainer = ({}) => {
           <FileSelectionListItem
             key={filePath}
             index={index}
+            containerListRef={containerRef}
             reference={tagRefs.current[index]}
             file_path={filePath}
             tag_position={tagPositions[index]}
@@ -1354,6 +1373,7 @@ const FileSelectionListContainer = ({}) => {
 
 const MonacoEditor = ({
   id,
+  width,
   mode,
   code_editor_container_ref_index,
   command,
@@ -1429,6 +1449,7 @@ const MonacoEditor = ({
     <MonacoEditorContexts.Provider
       value={{
         id,
+        width,
         mode,
         command,
         setCommand,
@@ -1482,7 +1503,7 @@ const MonacoEditor = ({
               opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
             }}
           >
-            <MonacoEditorGroup
+            {/* <MonacoEditorGroup
               code_editor_container_ref_index={code_editor_container_ref_index}
               setOnSelectedContent={setOnSelectedCotent}
               onAppendContent={onAppendContent}
@@ -1491,15 +1512,8 @@ const MonacoEditor = ({
               mode={mode}
               onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
               setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-            />
+            /> */}
           </div>
-          {/* <FileSelectionBar
-            code_editor_container_ref_index={code_editor_container_ref_index}
-            //HORIZONTAL OR VERTICAL MODE
-            mode={mode}
-            onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-            setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-          /> */}
           <FileSelectionListContainer />
         </div>
       </MonacoEditorContextMenuWrapper>

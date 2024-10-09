@@ -50,6 +50,7 @@ const CustomizedTag = ({
   style,
   icon,
 }) => {
+  console.log(label, " tag rendered");
   const spanRef = useRef(null);
   const inputRef = useRef(null);
   const moreOptionLabelRef = useRef(null);

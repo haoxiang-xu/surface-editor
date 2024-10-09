@@ -765,28 +765,11 @@ const StackFrame = ({
   );
   useEffect(() => {
     if (!containerRef) return;
-    // Y = height/width * X
-    // Y = - (height/width * X) + height
+
     const rect = containerRef.current.getBoundingClientRect();
     const height = rect.height;
     const width = rect.width;
 
-    const lower_thrus_hold = 0.25;
-    const upper_thrus_hold = 0.75;
-
-    // if (
-    //   onDragOverPosition.x > width * lower_thrus_hold &&
-    //   onDragOverPosition.y > height * lower_thrus_hold &&
-    //   onDragOverPosition.x < width * upper_thrus_hold &&
-    //   onDragOverPosition.y < height * upper_thrus_hold
-    // ) {
-    //   setOverlayStyle({
-    //     top: 2,
-    //     left: 2,
-    //     width: "calc(100% - 4px)",
-    //     height: "calc(100% - 4px)",
-    //   });
-    // } else
     if (
       height > 2 * MIN &&
       onDragOverPosition.y > (height / width) * onDragOverPosition.x &&
