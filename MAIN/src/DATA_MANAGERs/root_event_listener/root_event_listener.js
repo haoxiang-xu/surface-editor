@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useContext, memo } from "react";
+import React, { useState, useEffect } from "react";
 import RootDataManager from "../root_data_manager/root_data_manager";
 import RootCommandManager from "../root_command_manager/root_command_manager";
 import TitleBar from "../../BUILTIN_COMPONENTs/title_bar/title_bar";
 import RootStackManager from "../../DEMO/root_stack_manager/root_stack_manager";
-import RootEventContexts from "./root_event_contexts";
+import { RootEventContexts } from "./root_event_contexts";
 import {
   SYSTEM_FRAME_BORDER,
   SYSTEM_FRAME_BORDER_RADIUS,
@@ -20,6 +20,7 @@ const MainStack = () => {
 };
 const RootEventListener = () => {
   const [isWindowMaximized, setIsWindowMaximized] = useState(false);
+  const [isOnTitleBar, setIsOnTitleBar] = useState(false);
 
   /* { Global Key Event Listener } =================================================================== */
   const [pressedKeys, setPressedKeys] = useState(new Set());
@@ -77,6 +78,26 @@ const RootEventListener = () => {
   /* { Global Mouse Event Listener } ================================================================= */
 
   useEffect(() => {
+    if (isWindowMaximized) {
+      setIsOnTitleBar(true);
+      return;
+    }
+    setIsOnTitleBar((prev) => {
+      if (!prev) {
+        if (mousePosition.y <= 8 || (!mouseActive && mousePosition.y <= 36)) {
+          return true;
+        }
+        return prev;
+      } else {
+        if (mousePosition.y > 36 && mouseActive) {
+          return false;
+        }
+        return prev;
+      }
+    });
+  }, [isWindowMaximized, mouseActive, mousePosition]);
+
+  useEffect(() => {
     window.electronAPI.subscribeToWindowStateChange(({ isMaximized }) => {
       setIsWindowMaximized(isMaximized);
     });
@@ -88,6 +109,7 @@ const RootEventListener = () => {
         pressedKeys,
         mouseActive,
         mousePosition,
+        isOnTitleBar,
       }}
     >
       <div
@@ -107,7 +129,9 @@ const RootEventListener = () => {
           border: isWindowMaximized ? "none" : SYSTEM_FRAME_BORDER,
         }}
       >
-        <TitleBar isWindowMaximized={isWindowMaximized} />
+        {isOnTitleBar ? (
+          <TitleBar isWindowMaximized={isWindowMaximized} />
+        ) : null}
         <div
           style={{
             position: "absolute",

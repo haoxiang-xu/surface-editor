@@ -17,6 +17,7 @@ import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
 import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts.js";
 import { RootStackContexts } from "./root_stack_contexts";
+import { RootEventContexts } from "../../DATA_MANAGERs/root_event_listener/root_event_contexts.js";
 
 /* {} */
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
@@ -1166,6 +1167,17 @@ const HorizontalStack = ({
 /* { Stack Structures } ==================================================================================================================================== */
 
 const RootStackManager = () => {
+  const { isOnTitleBar } = useContext(RootEventContexts);
+
+  const [top, setTop] = useState(TOP);
+  useEffect(() => {
+    if (isOnTitleBar) {
+      setTop(36);
+    } else {
+      setTop(TOP);
+    }
+  }, [isOnTitleBar]);
+
   const [stackStructure, setStackStructure] = useState(
     TESTING_STACK_STRUCTURE_3
   );
@@ -1904,11 +1916,11 @@ const RootStackManager = () => {
     const calculate_root_position_and_size = throttle(() => {
       const position = {
         x: LEFT,
-        y: TOP,
+        y: top,
       };
       const size = {
         width: window.innerWidth - LEFT - RIGHT,
-        height: window.innerHeight - TOP - BOTTOM,
+        height: window.innerHeight - top - BOTTOM,
       };
       setRootContainer({
         position: position,
@@ -1930,7 +1942,7 @@ const RootStackManager = () => {
     return () => {
       window.removeEventListener("resize", calculate_root_position_and_size);
     };
-  }, []);
+  }, [top]);
 
   return (
     <RootStackContexts.Provider
