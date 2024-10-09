@@ -1534,7 +1534,7 @@ const MonacoEditor = ({
               opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
             }}
           >
-            {/* <MonacoEditorGroup
+            <MonacoEditorGroup
               code_editor_container_ref_index={code_editor_container_ref_index}
               setOnSelectedContent={setOnSelectedCotent}
               onAppendContent={onAppendContent}
@@ -1543,7 +1543,7 @@ const MonacoEditor = ({
               mode={mode}
               onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
               setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-            /> */}
+            />
           </div>
           <FileSelectionListContainer />
         </div>
