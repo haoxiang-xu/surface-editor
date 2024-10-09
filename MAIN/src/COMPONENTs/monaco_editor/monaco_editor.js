@@ -1030,7 +1030,6 @@ const FileSelectionListItem = ({
   tag_position,
   tag_size,
 }) => {
-  console.log(file_path, "Item rendered");
   const { access_dir_name_by_path } = useContext(RootDataContexts);
   const {
     id,

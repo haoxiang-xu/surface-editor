@@ -81,8 +81,22 @@ const GhostImage = ({ onDragItem }) => {
     const handle_drag_over_event_ghost_image = (event) => {
       event.stopPropagation();
       event.preventDefault();
-      setPositionX(event.clientX);
-      setPositionY(event.clientY);
+      setPositionX((prev) => {
+        const newX = event.clientX;
+        if (prev !== newX) {
+          return newX;
+        } else {
+          return prev;
+        }
+      });
+      setPositionY((prev) => {
+        const newY = event.clientY;
+        if (prev !== newY) {
+          return newY;
+        } else {
+          return prev;
+        }
+      });
     };
     window.addEventListener("dragover", handle_drag_over_event_ghost_image);
     return () => {

@@ -703,6 +703,7 @@ const StackFrame = ({
   parent_rerendered,
   end,
 }) => {
+  console.log("RSM/stack_frame/", id, new Date().getTime());
   const {
     stackStructure,
     containers,
@@ -755,9 +756,13 @@ const StackFrame = ({
     (event) => {
       if (onDragOver && containerRef) {
         const rect = containerRef.current.getBoundingClientRect();
-        setOnDragOverPosition({
-          x: event.clientX - rect.left,
-          y: event.clientY - rect.top,
+        setOnDragOverPosition((prevPosition) => {
+          const newX = event.clientX - rect.left;
+          const newY = event.clientY - rect.top;
+          if (prevPosition.x !== newX || prevPosition.y !== newY) {
+            return { x: newX, y: newY };
+          }
+          return prevPosition;
         });
       }
     },
@@ -822,7 +827,7 @@ const StackFrame = ({
         height: "calc(100% - 4px)",
       });
     }
-  }, [containerRef, onDragOverPosition]);
+  }, [onDragOverPosition]);
 
   return (
     <div
