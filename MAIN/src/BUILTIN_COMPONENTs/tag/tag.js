@@ -51,7 +51,7 @@ const CustomizedTag = ({
   style,
   icon,
 }) => {
-  // console.log("tag/", label, new Date().getTime());
+  console.log("tag/", label, new Date().getTime());
   const spanRef = useRef(null);
   const inputRef = useRef(null);
   const moreOptionLabelRef = useRef(null);
@@ -421,21 +421,21 @@ const Tag = ({ config }) => {
 
   useEffect(() => {
     const is_config_different = (old_config, new_config) => {
-
+      if (old_config.reference !== new_config.reference) {
+        return true;
+      }
+      if (old_config.label !== new_config.label) {
+        return true;
+      }
+      if (old_config.icon !== new_config.icon) {
+        return true;
+      }
       for (let key in old_config.style) {
         if (
           old_config.style.hasOwnProperty(key) &&
           new_config.style.hasOwnProperty(key)
         ) {
           if (old_config.style[key] !== new_config.style[key]) {
-            // console.log(
-            //   key,
-            //   old_config.style[key],
-            //   new_config.style[key],
-            //   old_config.style[key] === new_config.style[key],
-            //   old_config.style,
-            //   new_config.style
-            // );
             return true;
           }
         } else {
