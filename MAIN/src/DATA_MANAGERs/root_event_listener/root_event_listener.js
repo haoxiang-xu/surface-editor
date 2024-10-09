@@ -84,7 +84,10 @@ const RootEventListener = () => {
     }
     setIsOnTitleBar((prev) => {
       if (!prev) {
-        if (mousePosition.y <= 8 || (!mouseActive && mousePosition.y <= 36)) {
+        if (
+          mousePosition.y <= 8 ||
+          (!mouseActive && mousePosition.y <= window.innerHeight / 3)
+        ) {
           return true;
         }
         return prev;

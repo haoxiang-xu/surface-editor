@@ -697,14 +697,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
       return null;
   }
 };
-const StackFrame = ({
-  id,
-  index,
-  parent_stack_type,
-  parent_rerendered,
-  end,
-}) => {
-  // console.log("RSM/stack_frame/", id, new Date().getTime());
+const StackFrame = ({ id, index, parent_stack_type, end }) => {
   const {
     stackStructure,
     containers,

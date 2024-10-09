@@ -102,19 +102,19 @@ const RootCommandManager = ({ children }) => {
     console.log("onDragItem", onDragItem);
   }, [onDragItem]);
 
-  const item_on_drag = (event, on_drag_item) => {
+  const item_on_drag = useCallback((event, on_drag_item) => {
     event.stopPropagation();
     setOnDragItem(on_drag_item);
     setOnDrag(true);
 
     unload_context_menu();
-  };
-  const item_on_drop = (event) => {
+  }, []);
+  const item_on_drop = useCallback((event) => {
     event.stopPropagation();
     setOnDrag(false);
     setOnDragItem(null);
     setOnDragPosition({ x: 0, y: 0 });
-  };
+  }, []);
   /* { Drag and Drop } =============================================================================== */
 
   return (
