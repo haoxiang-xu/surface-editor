@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { throttle } from "lodash";
+const { stringify, parse } = require('flatted');
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import Icon from "../icon/icon";
 import { iconManifest } from "../icon/icon_manifest";
@@ -50,7 +51,7 @@ const CustomizedTag = ({
   style,
   icon,
 }) => {
-  console.log("tag/", label, new Date().getTime());
+  // console.log("tag/", label, new Date().getTime());
   const spanRef = useRef(null);
   const inputRef = useRef(null);
   const moreOptionLabelRef = useRef(null);
@@ -417,9 +418,34 @@ const CommandTag = ({ config }) => {
 const Tag = ({ config }) => {
   const [tagConfig, setTagConfig] = useState(config);
   const [tagObject, setTagObject] = useState(null);
+
   useEffect(() => {
+    const is_config_different = (old_config, new_config) => {
+
+      for (let key in old_config.style) {
+        if (
+          old_config.style.hasOwnProperty(key) &&
+          new_config.style.hasOwnProperty(key)
+        ) {
+          if (old_config.style[key] !== new_config.style[key]) {
+            // console.log(
+            //   key,
+            //   old_config.style[key],
+            //   new_config.style[key],
+            //   old_config.style[key] === new_config.style[key],
+            //   old_config.style,
+            //   new_config.style
+            // );
+            return true;
+          }
+        } else {
+          continue;
+        }
+      }
+      return false;
+    };
     setTagConfig((prevData) => {
-      if (prevData.reference !== config.reference) {
+      if (is_config_different(prevData, config)) {
         return config;
       } else {
         return prevData;
@@ -429,7 +455,7 @@ const Tag = ({ config }) => {
   useEffect(() => {
     const process_tag_config = (config) => {
       let processed_config = { ...config };
-  
+
       const reference = processed_config.reference || null;
       const type = processed_config.type || "default";
       const label = processed_config.label || "";
@@ -437,7 +463,7 @@ const Tag = ({ config }) => {
       const label_on_submit = processed_config.label_on_submit || null;
       const icon = processed_config.icon || null;
       let style = {};
-  
+
       if (processed_config.style) {
         style = processed_config.style;
         if (processed_config.style.fontSize === undefined) {

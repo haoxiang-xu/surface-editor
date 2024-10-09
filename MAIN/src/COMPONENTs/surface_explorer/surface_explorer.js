@@ -536,7 +536,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     access_dir_name_by_path(file_path)
   );
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = (change_or_not) => {
+  const handle_rename_on_sumbit = useCallback((change_or_not) => {
     if (change_or_not) {
       if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
         let parent_path = onConextMenuPath.split("/").slice(0, -1);
@@ -566,7 +566,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     }
     command_executed();
     setOnConextMenuPath(null);
-  };
+  });
   useEffect(() => {
     setOnRenameMode(
       command.content?.command_title === "rename" &&
@@ -585,15 +585,19 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
     } else if (onHover) {
       setStyle({
@@ -603,33 +607,48 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
       setOnHoverExplorerItem(file_path);
     } else {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
     }
-  }, [onHover, onRenameMode, width, scrollbarVisible, explorerListWidth]);
+  }, [
+    onHover,
+    onRenameMode,
+    width,
+    scrollbarVisible,
+    explorerListWidth,
+    position_x,
+  ]);
   useEffect(() => {
     if (tagRef.current) {
       if (
@@ -646,6 +665,34 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onPause]);
+
+  const memoizedTagStyle = useMemo(
+    () => ({
+      top: fullSizeMode
+        ? position_y + explorerListTop - explorerScrollPosition
+        : 0,
+      borderRadius: 4,
+      padding_x: 3,
+      padding_y: 2,
+      fontSize: default_font_size,
+      backgroundColor: style.backgroundColor,
+      boxShadow: "none",
+      maxWidth: style.maxWidth,
+      fullSizeMode: fullSizeMode,
+      transparentMode: true,
+      inputMode: onRenameMode,
+    }),
+    [
+      fullSizeMode,
+      position_y,
+      explorerListTop,
+      explorerScrollPosition,
+      default_font_size,
+      style.backgroundColor,
+      style.maxWidth,
+      onRenameMode,
+    ]
+  );
 
   return (
     <div
@@ -671,13 +718,25 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           : "0px 4px 16px rgba(0, 0, 0, 0)",
       }}
       onMouseEnter={() => {
-        setOnHover(true);
+        setOnHover((prev) => {
+          if (prev) {
+            return prev;
+          } else {
+            return true;
+          }
+        });
         hoverTimeout.current = setTimeout(() => {
           setOnPause(true);
         }, 200);
       }}
       onMouseLeave={() => {
-        setOnHover(false);
+        setOnHover((prev) => {
+          if (prev) {
+            return false;
+          } else {
+            return prev;
+          }
+        });
         clearTimeout(hoverTimeout.current);
         if (hoverTimeout.current) {
           setOnPause(false);
@@ -730,22 +789,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
             setRenameValue(value);
           },
           label_on_submit: handle_rename_on_sumbit,
-          style: {
-            top: fullSizeMode
-              ? position_y + explorerListTop - explorerScrollPosition
-              : 0,
-            borderRadius: 4,
-            padding_x: 3,
-            padding_y: 2,
-            fontSize: default_font_size,
-            backgroundColor: style.backgroundColor,
-            boxShadow: "none",
-            isExpanded: isExpanded,
-            maxWidth: style.maxWidth,
-            fullSizeMode: fullSizeMode,
-            transparentMode: true,
-            inputMode: onRenameMode,
-          },
+          style: memoizedTagStyle,
         }}
       />
     </div>
@@ -830,7 +874,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     access_dir_name_by_path(file_path)
   );
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = (change_or_not) => {
+  const handle_rename_on_sumbit = useCallback((change_or_not) => {
     if (change_or_not) {
       if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
         let parent_path = onConextMenuPath.split("/").slice(0, -1);
@@ -860,7 +904,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     }
     command_executed();
     setOnConextMenuPath(null);
-  };
+  });
   useEffect(() => {
     setOnRenameMode(
       command.content?.command_title === "rename" &&
@@ -879,15 +923,19 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
     } else if (onHover) {
       setStyle({
@@ -897,33 +945,48 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
       setOnHoverExplorerItem(file_path);
     } else {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
     }
-  }, [onHover, onRenameMode, width, scrollbarVisible, explorerListWidth]);
+  }, [
+    onHover,
+    onRenameMode,
+    width,
+    scrollbarVisible,
+    explorerListWidth,
+    position_x,
+  ]);
   useEffect(() => {
     if (tagRef.current) {
       if (
@@ -940,6 +1003,34 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onPause]);
+
+  const memoizedTagStyle = useMemo(
+    () => ({
+      top: fullSizeMode
+        ? position_y + explorerListTop - explorerScrollPosition
+        : 0,
+      borderRadius: 4,
+      padding_x: 3,
+      padding_y: 2,
+      fontSize: default_font_size,
+      backgroundColor: style.backgroundColor,
+      boxShadow: "none",
+      maxWidth: style.maxWidth,
+      fullSizeMode: fullSizeMode,
+      transparentMode: true,
+      inputMode: onRenameMode,
+    }),
+    [
+      fullSizeMode,
+      position_y,
+      explorerListTop,
+      explorerScrollPosition,
+      default_font_size,
+      style.backgroundColor,
+      style.maxWidth,
+      onRenameMode,
+    ]
+  );
 
   return (
     <div
@@ -965,13 +1056,25 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           : "0px 4px 16px rgba(0, 0, 0, 0)",
       }}
       onMouseEnter={() => {
-        setOnHover(true);
+        setOnHover((prev) => {
+          if (prev) {
+            return prev;
+          } else {
+            return true;
+          }
+        });
         hoverTimeout.current = setTimeout(() => {
           setOnPause(true);
         }, 200);
       }}
       onMouseLeave={() => {
-        setOnHover(false);
+        setOnHover((prev) => {
+          if (prev) {
+            return false;
+          } else {
+            return prev;
+          }
+        });
         clearTimeout(hoverTimeout.current);
         if (hoverTimeout.current) {
           setOnPause(false);
@@ -1023,21 +1126,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
             setRenameValue(value);
           },
           label_on_submit: handle_rename_on_sumbit,
-          style: {
-            top: fullSizeMode
-              ? position_y + explorerListTop - explorerScrollPosition
-              : 0,
-            borderRadius: 4,
-            padding_x: 3,
-            padding_y: 2,
-            fontSize: default_font_size,
-            backgroundColor: style.backgroundColor,
-            boxShadow: "none",
-            maxWidth: style.maxWidth,
-            fullSizeMode: fullSizeMode,
-            transparentMode: true,
-            inputMode: onRenameMode,
-          },
+          style: memoizedTagStyle,
         }}
       />
     </div>
@@ -1316,9 +1405,21 @@ const ExplorerList = ({ filteredDir }) => {
   }, [explorerItemPositions, onHoverExplorerItem]);
   useEffect(() => {
     if (explorerList.length * default_explorer_item_height > height) {
-      setScrollbarVisible(true);
+      setScrollbarVisible((prev) => {
+        if (!prev) {
+          return true;
+        } else {
+          return prev;
+        }
+      });
     } else {
-      setScrollbarVisible(false);
+      setScrollbarVisible((prev) => {
+        if (prev) {
+          return false;
+        } else {
+          return prev;
+        }
+      });
     }
   }, [explorerList, height]);
   useEffect(() => {
