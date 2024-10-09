@@ -703,7 +703,7 @@ const StackFrame = ({
   parent_rerendered,
   end,
 }) => {
-  console.log("RSM/stack_frame/", id, new Date().getTime());
+  // console.log("RSM/stack_frame/", id, new Date().getTime());
   const {
     stackStructure,
     containers,

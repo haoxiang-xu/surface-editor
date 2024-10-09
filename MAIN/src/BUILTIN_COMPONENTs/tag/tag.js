@@ -50,6 +50,7 @@ const CustomizedTag = ({
   style,
   icon,
 }) => {
+  console.log("tag/", label, new Date().getTime());
   const spanRef = useRef(null);
   const inputRef = useRef(null);
   const moreOptionLabelRef = useRef(null);
@@ -413,125 +414,116 @@ const CommandTag = ({ config }) => {
 };
 /* { Tag types } ================================================================================= */
 
-const compareConfig = (prev, next) => {
-  const prev_config = { ...prev.config };
-  const next_config = { ...next.config };
-
-  if (prev_config.style.maxWidth !== next_config.style.maxWidth) {
-    return false;
-  }
-  if (prev_config.style.fullSizeMode !== next_config.style.fullSizeMode) {
-    return false;
-  }
-  if (prev_config.style.transparentMode !== next_config.style.transparentMode) {
-    return false;
-  }
-  if (prev_config.style.inputMode !== next_config.style.inputMode) {
-    return false;
-  }
-  if (
-    prev_config.style.noWidthLimitMode !== next_config.style.noWidthLimitMode
-  ) {
-    return false;
-  }
-  return true;
-};
-
 const Tag = ({ config }) => {
-  const process_tag_config = (config) => {
-    let processed_config = { ...config };
-
-    const reference = processed_config.reference || null;
-    const type = processed_config.type || "default";
-    const label = processed_config.label || "";
-    const label_on_change = processed_config.label_on_change || null;
-    const label_on_submit = processed_config.label_on_submit || null;
-    const icon = processed_config.icon || null;
-    let style = {};
-
-    if (processed_config.style) {
-      style = processed_config.style;
-      if (processed_config.style.fontSize === undefined) {
-        style.fontSize = default_tag_font_size;
+  const [tagConfig, setTagConfig] = useState(config);
+  const [tagObject, setTagObject] = useState(null);
+  useEffect(() => {
+    setTagConfig((prevData) => {
+      if (prevData.reference !== config.reference) {
+        return config;
+      } else {
+        return prevData;
       }
-      if (processed_config.style.left === undefined) {
-        style.left = "none";
+    });
+  }, [config]);
+  useEffect(() => {
+    const process_tag_config = (config) => {
+      let processed_config = { ...config };
+  
+      const reference = processed_config.reference || null;
+      const type = processed_config.type || "default";
+      const label = processed_config.label || "";
+      const label_on_change = processed_config.label_on_change || null;
+      const label_on_submit = processed_config.label_on_submit || null;
+      const icon = processed_config.icon || null;
+      let style = {};
+  
+      if (processed_config.style) {
+        style = processed_config.style;
+        if (processed_config.style.fontSize === undefined) {
+          style.fontSize = default_tag_font_size;
+        }
+        if (processed_config.style.left === undefined) {
+          style.left = "none";
+        }
+        if (processed_config.style.right === undefined) {
+          style.right = "none";
+        }
+        if (processed_config.style.top === undefined) {
+          style.top = "none";
+        }
+        if (processed_config.style.bottom === undefined) {
+          style.bottom = "none";
+        }
+        if (processed_config.style.transform === undefined) {
+          style.transform = "none";
+        }
+        if (processed_config.style.borderRadius === undefined) {
+          style.borderRadius = default_border_radius;
+        }
+        if (processed_config.style.maxWidth === undefined) {
+          style.maxWidth = default_max_tag_width;
+        }
+        if (processed_config.style.fullSizeMode === undefined) {
+          style.fullSizeMode = false;
+        }
+        if (processed_config.style.transparentMode === undefined) {
+          style.transparentMode = false;
+        }
+        if (processed_config.style.inputMode === undefined) {
+          style.inputMode = false;
+        }
+        if (processed_config.style.noWidthLimitMode === undefined) {
+          style.noWidthLimitMode = false;
+        }
+      } else {
+        style = {
+          fontSize: default_tag_font_size,
+          right: "none",
+          left: "none",
+          top: "none",
+          bottom: "none",
+          transform: "none",
+          borderRadius: default_border_radius,
+          maxWidth: default_max_tag_width,
+          fullSizeMode: false,
+          transparentMode: false,
+          inputMode: false,
+          noWidthLimitMode: false,
+        };
       }
-      if (processed_config.style.right === undefined) {
-        style.right = "none";
-      }
-      if (processed_config.style.top === undefined) {
-        style.top = "none";
-      }
-      if (processed_config.style.bottom === undefined) {
-        style.bottom = "none";
-      }
-      if (processed_config.style.transform === undefined) {
-        style.transform = "none";
-      }
-      if (processed_config.style.borderRadius === undefined) {
-        style.borderRadius = default_border_radius;
-      }
-      if (processed_config.style.maxWidth === undefined) {
-        style.maxWidth = default_max_tag_width;
-      }
-      if (processed_config.style.fullSizeMode === undefined) {
-        style.fullSizeMode = false;
-      }
-      if (processed_config.style.transparentMode === undefined) {
-        style.transparentMode = false;
-      }
-      if (processed_config.style.inputMode === undefined) {
-        style.inputMode = false;
-      }
-      if (processed_config.style.noWidthLimitMode === undefined) {
-        style.noWidthLimitMode = false;
-      }
-    } else {
-      style = {
-        fontSize: default_tag_font_size,
-        right: "none",
-        left: "none",
-        top: "none",
-        bottom: "none",
-        transform: "none",
-        borderRadius: default_border_radius,
-        maxWidth: default_max_tag_width,
-        fullSizeMode: false,
-        transparentMode: false,
-        inputMode: false,
-        noWidthLimitMode: false,
+      return {
+        reference,
+        type,
+        label,
+        label_on_change,
+        label_on_submit,
+        icon,
+        style,
       };
-    }
-    return {
-      reference,
-      type,
-      label,
-      label_on_change,
-      label_on_submit,
-      icon,
-      style,
     };
-  };
-  const render_tag = throttle(() => {
-    switch (config.type) {
-      case "shortcut":
-        return <ShortCutTag config={process_tag_config(config)} />;
-      case "key":
-        return <KeyTag config={process_tag_config(config)} />;
-      case "file":
-        return <FileTag config={process_tag_config(config)} />;
-      case "folder":
-        return <FolderTag config={process_tag_config(config)} />;
-      case "string":
-        return <StringTag config={process_tag_config(config)} />;
-      case "command":
-        return <CommandTag config={process_tag_config(config)} />;
-      default:
-        return null;
-    }
-  }, 100);
-  return render_tag();
+    const render_tag = throttle(() => {
+      switch (config.type) {
+        case "shortcut":
+          return <ShortCutTag config={process_tag_config(config)} />;
+        case "key":
+          return <KeyTag config={process_tag_config(config)} />;
+        case "file":
+          return <FileTag config={process_tag_config(config)} />;
+        case "folder":
+          return <FolderTag config={process_tag_config(config)} />;
+        case "string":
+          return <StringTag config={process_tag_config(config)} />;
+        case "command":
+          return <CommandTag config={process_tag_config(config)} />;
+        default:
+          return null;
+      }
+    }, 100);
+    setTagObject(render_tag());
+  }, [tagConfig]);
+
+  return tagObject;
 };
 
 export default Tag;
