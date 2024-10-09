@@ -681,6 +681,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
       fullSizeMode: fullSizeMode,
       transparentMode: true,
       inputMode: onRenameMode,
+      isExpanded: isExpanded,
     }),
     [
       fullSizeMode,
@@ -691,6 +692,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
       style.backgroundColor,
       style.maxWidth,
       onRenameMode,
+      isExpanded,
     ]
   );
 
