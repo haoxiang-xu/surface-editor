@@ -16,7 +16,6 @@ const default_title_bar_style = {
   padding: 5,
   height: 40,
 };
-
 const default_button_style = {
   width: 36,
   height: 30,
