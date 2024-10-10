@@ -252,34 +252,6 @@ app.on("window-all-closed", () => {
   }
 });
 
-ipcMain.on("window-control", (event, action) => {
-  switch (action) {
-    case "close":
-      mainWindow.close();
-      break;
-    case "minimize":
-      mainWindow.minimize();
-      break;
-    case "maximize":
-      if (process.platform === "win32") {
-        if (mainWindow.isMaximized()) {
-          mainWindow.unmaximize();
-        } else {
-          mainWindow.maximize();
-        }
-      } else if (process.platform === "darwin") {
-        if (mainWindow.isFullScreen()) {
-          mainWindow.setFullScreen(false);
-        } else {
-          mainWindow.setFullScreen(true);
-        }
-      }
-      break;
-    default:
-      break;
-  }
-});
-
 /* { Root Event Listener } ---------------------------------------------------------------------------- */
 const register_window_state_event_listeners = () => {
   mainWindow.on("maximize", () => {
