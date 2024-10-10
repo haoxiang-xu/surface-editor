@@ -100,12 +100,14 @@ const RootEventListener = () => {
       }
     });
   }, [isWindowMaximized, mouseActive, mousePosition]);
-
   useEffect(() => {
     window.electronAPI.subscribeToWindowStateChange(({ isMaximized }) => {
       setIsWindowMaximized(isMaximized);
     });
   }, []);
+  useEffect(() => {
+    window.rootEventListenerAPI.windowTitleBarEventHandler(isOnTitleBar);
+  }, [isOnTitleBar]);
 
   return (
     <RootEventContexts.Provider

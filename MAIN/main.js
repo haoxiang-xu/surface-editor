@@ -1,10 +1,4 @@
-const {
-  app,
-  BrowserWindow,
-  Menu,
-  ipcMain,
-  dialog,
-} = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
 const localShortcut = require("electron-localshortcut");
 const path = require("path");
 const axios = require("axios");
@@ -272,18 +266,6 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
   }
 };
 
-const getFilesInDir = async (dirPath) => {
-  try {
-    const dirents = await fs.readdir(dirPath, { withFileTypes: true });
-    const fileNames = dirents.map((dirent) => {
-      return dirent.name;
-    });
-    return fileNames;
-  } catch (error) {
-    throw error;
-  }
-};
-
 app.whenReady().then(createWindow);
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
@@ -323,14 +305,23 @@ ipcMain.on("window-control", (event, action) => {
       break;
   }
 });
-ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
+
+/* { Root Event Listener } ---------------------------------------------------------------------------- */
+ipcMain.on("window-title-bar-event-handler", (event, is_on_title_bar) => {
   if (process.platform === "darwin") {
-    setTimeout(() => {
-      mainWindow.setWindowButtonVisibility(!shouldHide);
-      mainWindow.setWindowButtonPosition({ x: 17, y: 15 });
-    }, 110);
+    if (is_on_title_bar) {
+      setTimeout(() => {
+        mainWindow.setTrafficLightPosition({ x: 14, y: 13 });
+      }, 60);
+    } else {
+      mainWindow.setTrafficLightPosition({ x: 14, y: -23 });
+    }
   }
 });
+/* { Root Event Listener } ---------------------------------------------------------------------------- */
+
+
+/* { Root Data Manager } ------------------------------------------------------------------------------ */
 ipcMain.on("trigger-read-dir", () => {
   mainWindow.webContents.send("read-dir-state-changed", {
     isDirLoaded: false,
@@ -364,3 +355,4 @@ ipcMain.on("read-file", async (event, absolutePath, relativePath) => {
     }
   }
 });
+/* { Root Data Manager } ------------------------------------------------------------------------------ */
