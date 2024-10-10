@@ -57,18 +57,17 @@ const CustomizedTag = ({
   const moreOptionLabelRef = useRef(null);
 
   const [tagStyle, setTagStyle] = useState(style);
-  const [tagMaxWidth, setTagMaxWidth] = useState(style.maxWidth);
 
   useEffect(() => {
     if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
     let containerWidth = 0;
     if (style.inputMode) {
-      containerWidth = tagMaxWidth;
+      containerWidth = style.maxWidth;
     } else if (style.fullSizeMode) {
       containerWidth = spanWidth;
     } else {
-      containerWidth = Math.min(spanWidth, tagMaxWidth);
+      containerWidth = Math.min(spanWidth, style.maxWidth);
     }
     const padding_x = style.padding_x;
     const padding_y = style.padding_y;
@@ -111,11 +110,11 @@ const CustomizedTag = ({
         icon_transform: style.icon_transform,
         moreOptionLabel: style.fullSizeMode
           ? false
-          : spanWidth > tagMaxWidth &&
-            tagMaxWidth > more_option_label_font_size,
+          : spanWidth > style.maxWidth &&
+            style.maxWidth > more_option_label_font_size,
       };
     });
-  }, [style, tagMaxWidth, spanRef, icon]);
+  }, [style, spanRef, icon]);
   useEffect(() => {
     const spanHeight = spanRef.current.offsetHeight;
     let inputHeight = 0;
@@ -130,9 +129,6 @@ const CustomizedTag = ({
       };
     });
   }, [style, inputRef, spanRef]);
-  useEffect(() => {
-    setTagMaxWidth(style.maxWidth);
-  }, [style.maxWidth]);
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -219,7 +215,7 @@ const CustomizedTag = ({
           userSelect: "none",
           whiteSpace: "nowrap",
           display: "inline-block",
-          opacity: tagStyle.inputMode ? 0 : 1,
+          opacity: style.inputMode ? 0 : 1,
         }}
       >
         {label}
@@ -262,7 +258,7 @@ const CustomizedTag = ({
             /* { Font Styling } ---------------------- */
             padding: `${tagStyle.padding_y}px ${0}px`,
             font: "inherit",
-            fontSize: tagStyle.fontSize,
+            fontSize: style.fontSize,
             color: tagStyle.color,
             background: "transparent",
             border: "none",
