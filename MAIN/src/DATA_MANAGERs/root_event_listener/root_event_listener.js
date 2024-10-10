@@ -87,7 +87,7 @@ const RootEventListener = () => {
       if (!prev) {
         if (
           mousePosition.y <= 8 ||
-          (!mouseActive && mousePosition.y <= window.innerHeight / 3)
+          (!mouseActive && mousePosition.y <= 64)
         ) {
           return true;
         }
