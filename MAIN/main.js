@@ -112,7 +112,7 @@ const create_main_window = () => {
       frame: false,
     });
   }
-  mainWindow.setTitle("");
+  mainWindow.setTitle("Surface Editor");
 
   localShortcut.register(mainWindow, "CommandOrControl+=", () => {
     let zoomLevel = mainWindow.webContents.getZoomLevel();
@@ -240,12 +240,6 @@ app.whenReady().then(() => {
   create_main_window();
   register_window_state_event_listeners();
 });
-
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    create_main_window();
-  }
-});
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
@@ -255,10 +249,14 @@ app.on("window-all-closed", () => {
 /* { Root Event Listener } ---------------------------------------------------------------------------- */
 const register_window_state_event_listeners = () => {
   mainWindow.on("maximize", () => {
-    mainWindow.webContents.send("window-state-event-listener", { isMaximized: true });
+    mainWindow.webContents.send("window-state-event-listener", {
+      isMaximized: true,
+    });
   });
   mainWindow.on("unmaximize", () => {
-    mainWindow.webContents.send("window-state-event-listener", { isMaximized: false });
+    mainWindow.webContents.send("window-state-event-listener", {
+      isMaximized: false,
+    });
   });
   mainWindow.on("enter-full-screen", () => {
     mainWindow.webContents.send("window-state-event-listener", {
