@@ -532,37 +532,36 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const [onHover, setOnHover] = useState(false);
   const hoverTimeout = useRef(null);
 
-  const [renameValue, setRenameValue] = useState(
-    access_dir_name_by_path(file_path)
-  );
+  const [tagLabel, setTagLabel] = useState(access_dir_name_by_path(file_path));
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = useCallback((change_or_not) => {
+  const handle_rename_on_sumbit = useCallback((rename_value, change_or_not) => {
     if (change_or_not) {
-      if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
+      if (access_dir_name_by_path(onConextMenuPath) !== rename_value) {
         let parent_path = onConextMenuPath.split("/").slice(0, -1);
         if (parent_path.length === 1) {
           parent_path = "root";
         } else {
           parent_path = parent_path.join("/");
         }
-        if (check_if_file_name_duplicate(parent_path, renameValue)) {
+        if (check_if_file_name_duplicate(parent_path, rename_value)) {
           alert("Duplicate Name Detected");
         } else {
-          rename_file_by_path(onConextMenuPath, renameValue);
+          rename_file_by_path(onConextMenuPath, rename_value);
           setScrollToPath(
             onConextMenuPath.split("/").slice(0, -1).join("/") +
               "/" +
-              renameValue
+              rename_value
           );
           setOnSelectedExplorerItems([
             onConextMenuPath.split("/").slice(0, -1).join("/") +
               "/" +
-              renameValue,
+              rename_value,
           ]);
+          setTagLabel(rename_value);
         }
       }
     } else {
-      setRenameValue(access_dir_name_by_path(onConextMenuPath));
+      setTagLabel(access_dir_name_by_path(onConextMenuPath));
     }
     command_executed();
     setOnConextMenuPath(null);
@@ -786,10 +785,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         config={{
           reference: tagRef,
           type: "folder",
-          label: renameValue,
-          label_on_change: (value) => {
-            setRenameValue(value);
-          },
+          label: tagLabel,
           label_on_submit: handle_rename_on_sumbit,
           style: memoized_tag_style,
         }}
@@ -872,37 +868,36 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   const [onPause, setOnPause] = useState(false);
   const hoverTimeout = useRef(null);
 
-  const [renameValue, setRenameValue] = useState(
-    access_dir_name_by_path(file_path)
-  );
+  const [tagLabel, setTagLabel] = useState(access_dir_name_by_path(file_path));
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = useCallback((change_or_not) => {
+  const handle_rename_on_sumbit = useCallback((rename_value, change_or_not) => {
     if (change_or_not) {
-      if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
+      if (access_dir_name_by_path(onConextMenuPath) !== rename_value) {
         let parent_path = onConextMenuPath.split("/").slice(0, -1);
         if (parent_path.length === 1) {
           parent_path = "root";
         } else {
           parent_path = parent_path.join("/");
         }
-        if (check_if_file_name_duplicate(parent_path, renameValue)) {
+        if (check_if_file_name_duplicate(parent_path, rename_value)) {
           alert("Duplicate Name Detected");
         } else {
-          rename_file_by_path(onConextMenuPath, renameValue);
+          rename_file_by_path(onConextMenuPath, rename_value);
           setScrollToPath(
             onConextMenuPath.split("/").slice(0, -1).join("/") +
               "/" +
-              renameValue
+              rename_value
           );
           setOnSelectedExplorerItems([
             onConextMenuPath.split("/").slice(0, -1).join("/") +
               "/" +
-              renameValue,
+              rename_value,
           ]);
+          setTagLabel(rename_value);
         }
       }
     } else {
-      setRenameValue(access_dir_name_by_path(onConextMenuPath));
+      setTagLabel(access_dir_name_by_path(onConextMenuPath));
     }
     command_executed();
     setOnConextMenuPath(null);
@@ -1123,10 +1118,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         config={{
           reference: tagRef,
           type: "file",
-          label: renameValue,
-          label_on_change: (value) => {
-            setRenameValue(value);
-          },
+          label: tagLabel,
           label_on_submit: handle_rename_on_sumbit,
           style: memoized_tag_style,
         }}

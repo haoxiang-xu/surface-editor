@@ -46,7 +46,6 @@ const CustomizedTag = ({
   reference,
   type,
   label,
-  label_on_change,
   label_on_submit,
   style,
   icon,
@@ -56,8 +55,12 @@ const CustomizedTag = ({
   const inputRef = useRef(null);
   const moreOptionLabelRef = useRef(null);
 
+  const [tagLabel, setTagLabel] = useState(label);
   const [tagStyle, setTagStyle] = useState(style);
 
+  useEffect(() => {
+    setTagLabel(label);
+  }, [label]);
   useEffect(() => {
     if (!spanRef.current) return;
     const spanWidth = spanRef.current.offsetWidth;
@@ -75,7 +78,7 @@ const CustomizedTag = ({
     let width = padding_x * 2;
     let left = padding_x;
     if (style.inputMode) {
-      width += containerWidth;
+      width += style.maxWidth;
     } else if (style.fullSizeMode) {
       width += spanWidth;
     } else {
@@ -89,7 +92,6 @@ const CustomizedTag = ({
       return {
         ...prevData,
         width: width,
-
         top: style.top,
         left: `calc(0% + ${left}px)`,
         right: style.right,
@@ -101,11 +103,8 @@ const CustomizedTag = ({
         padding_y: padding_y,
 
         transform: "translate(0%, -50%)",
-        border: style.border,
-        borderRadius: style.borderRadius,
         backgroundColor: style.backgroundColor,
         color: style.color,
-        boxShadow: style.boxShadow,
 
         icon_transform: style.icon_transform,
         moreOptionLabel: style.fullSizeMode
@@ -224,20 +223,18 @@ const CustomizedTag = ({
         <input
           ref={inputRef}
           type="text"
-          value={label}
+          value={tagLabel}
           onChange={(event) => {
-            if (label_on_change) {
-              label_on_change(event.target.value);
-            }
+            setTagLabel(event.target.value);
           }}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               inputRef.current.blur();
-              label_on_submit(true);
+              label_on_submit(tagLabel, true);
             }
             if (event.key === "Escape") {
               inputRef.current.blur();
-              label_on_submit(false);
+              label_on_submit(tagLabel, false);
             }
           }}
           onDragStart={(event) => {
@@ -263,6 +260,8 @@ const CustomizedTag = ({
             background: "transparent",
             border: "none",
             outline: "none",
+
+            border: "1px solid #C8C8C8",
           }}
         />
       ) : (
@@ -450,7 +449,6 @@ const Tag = ({ config }) => {
       const reference = processed_config.reference || null;
       const type = processed_config.type || "default";
       const label = processed_config.label || "";
-      const label_on_change = processed_config.label_on_change || null;
       const label_on_submit = processed_config.label_on_submit || null;
       const icon = processed_config.icon || null;
       let style = {};
@@ -513,7 +511,6 @@ const Tag = ({ config }) => {
         reference,
         type,
         label,
-        label_on_change,
         label_on_submit,
         icon,
         style,
