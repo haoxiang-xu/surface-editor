@@ -1,11 +1,6 @@
-const {
-  app,
-  BrowserWindow,
-  Menu,
-  ipcMain,
-  dialog,
-} = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
 const localShortcut = require("electron-localshortcut");
+const { exec } = require("child_process");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -14,10 +9,9 @@ const {
 } = require("./src/CONSTs/extensionsToLanguagesMatchingList.js");
 
 let mainWindow;
-let zoomLevel = 0;
 const menuTemplate = [
   {
-    label: "Vecoder",
+    label: "Surface Editor",
     submenu: [{ role: "about" }, { role: "quit" }, { type: "separator" }],
   },
   {
@@ -28,21 +22,22 @@ const menuTemplate = [
       { type: "separator" },
     ],
   },
-  // {
-  //   label: "Edit",
-  //   submenu: [
-  //     { label: "Undo", accelerator: "CmdOrCtrl+Z", role: "undo" },
-  //     { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
-  //     { type: "separator" },
-  //     { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
-  //     { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
-  //     { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
-  //   ],
-  // },
-  // Other menu items...
 ];
 
 const createWindow = () => {
+  const checkServerAndLoadURL = (url) => {
+    axios
+      .get(url)
+      .then(() => {
+        // Server is up and running, load the URL
+        mainWindow.loadURL(url);
+      })
+      .catch((error) => {
+        console.error("Server not ready, retrying...", error);
+        // Wait for a bit before trying again
+        setTimeout(() => checkServerAndLoadURL(url), 2000); // Adjust the delay as needed
+      });
+  };
   // Initialize the browser window.
   if (process.platform === "darwin") {
     mainWindow = new BrowserWindow({
@@ -159,19 +154,6 @@ const createWindow = () => {
   // Optionally open the DevTools.
   mainWindow.webContents.openDevTools();
 };
-const checkServerAndLoadURL = (url) => {
-  axios
-    .get(url)
-    .then(() => {
-      // Server is up and running, load the URL
-      mainWindow.loadURL(url);
-    })
-    .catch((error) => {
-      console.error("Server not ready, retrying...", error);
-      // Wait for a bit before trying again
-      setTimeout(() => checkServerAndLoadURL(url), 2000); // Adjust the delay as needed
-    });
-};
 
 const openFolderStructureDialog = () => {
   dialog
@@ -272,19 +254,10 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
   }
 };
 
-const getFilesInDir = async (dirPath) => {
-  try {
-    const dirents = await fs.readdir(dirPath, { withFileTypes: true });
-    const fileNames = dirents.map((dirent) => {
-      return dirent.name;
-    });
-    return fileNames;
-  } catch (error) {
-    throw error;
-  }
-};
+app.whenReady().then(() => {
+  createWindow();
+});
 
-app.whenReady().then(createWindow);
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
