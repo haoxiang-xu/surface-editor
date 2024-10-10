@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { throttle } from "lodash";
-const { stringify, parse } = require('flatted');
+const { stringify, parse } = require("flatted");
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import Icon from "../icon/icon";
 import { iconManifest } from "../icon/icon_manifest";
@@ -58,7 +58,6 @@ const CustomizedTag = ({
 
   const [tagStyle, setTagStyle] = useState(style);
   const [tagMaxWidth, setTagMaxWidth] = useState(style.maxWidth);
-  const [inputMode, setInputMode] = useState(style.inputMode);
 
   useEffect(() => {
     if (!spanRef.current) return;
@@ -87,7 +86,6 @@ const CustomizedTag = ({
       width += 16 + 4;
       left += 16 + 4;
     }
-    setInputMode(style.inputMode);
     setTagStyle((prevData) => {
       return {
         ...prevData,
@@ -115,10 +113,6 @@ const CustomizedTag = ({
           ? false
           : spanWidth > tagMaxWidth &&
             tagMaxWidth > more_option_label_font_size,
-
-        fullSizeMode: style.fullSizeMode,
-        transparentMode: style.transparentMode,
-        inputMode: style.inputMode,
       };
     });
   }, [style, tagMaxWidth, spanRef, icon]);
@@ -138,7 +132,7 @@ const CustomizedTag = ({
   }, [style, inputRef, spanRef]);
   useEffect(() => {
     setTagMaxWidth(style.maxWidth);
-  }, [style]);
+  }, [style.maxWidth]);
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -150,7 +144,8 @@ const CustomizedTag = ({
         inputRef.current.setSelectionRange(0, label.length);
       }
     }
-  }, [inputMode]);
+  }, [style.inputMode]);
+
   return (
     <div
       ref={reference}
@@ -180,11 +175,11 @@ const CustomizedTag = ({
             : "transparent"
           : tagStyle.backgroundColor,
         overflow: "hidden",
-        opacity: tagStyle.opacity !== undefined ? tagStyle.opacity : 1,
-        boxShadow: tagStyle.boxShadow || "none",
-        border: tagStyle.border || "none",
-        backdropFilter: tagStyle.backdropFilter || "none",
-        pointerEvents: inputMode ? "auto" : "none",
+        opacity: style.opacity !== undefined ? style.opacity : 1,
+        boxShadow: style.boxShadow || "none",
+        border: style.border || "none",
+        backdropFilter: style.backdropFilter || "none",
+        pointerEvents: style.inputMode ? "auto" : "none",
       }}
     >
       {icon && icon in iconManifest ? (
@@ -229,7 +224,7 @@ const CustomizedTag = ({
       >
         {label}
       </span>
-      {tagStyle.inputMode ? (
+      {style.inputMode ? (
         <input
           ref={inputRef}
           type="text"

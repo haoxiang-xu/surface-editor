@@ -240,6 +240,13 @@ app.whenReady().then(() => {
   create_main_window();
   register_window_state_event_listeners();
 });
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    create_main_window();
+  } else {
+    mainWindow.show();
+  }
+});
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
