@@ -830,6 +830,7 @@ const RootDataManager = React.memo(({ children }) => {
       new_path = new_path.join("/");
 
       let newDir = { ...dir };
+      
       newDir = recursive_replace_path(newDir, path, new_path);
       newDir[parent_path].sub_items = newDir[parent_path].sub_items.map(
         (item) => {

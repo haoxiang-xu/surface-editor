@@ -260,8 +260,6 @@ const CustomizedTag = ({
             background: "transparent",
             border: "none",
             outline: "none",
-
-            border: "1px solid #C8C8C8",
           }}
         />
       ) : (
