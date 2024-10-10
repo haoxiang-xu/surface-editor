@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
+
 import RootDataManager from "../root_data_manager/root_data_manager";
 import RootCommandManager from "../root_command_manager/root_command_manager";
-import TitleBar from "../../BUILTIN_COMPONENTs/title_bar/title_bar";
-import RootStackManager from "../../DEMO/root_stack_manager/root_stack_manager";
+import RootStackManager from "../root_stack_manager/root_stack_manager";
+
 import { RootEventContexts } from "./root_event_contexts";
+
+import TitleBar from "../../BUILTIN_COMPONENTs/title_bar/title_bar";
 import {
   SYSTEM_FRAME_BORDER,
   SYSTEM_FRAME_BORDER_RADIUS,
@@ -85,10 +88,7 @@ const RootEventListener = () => {
     }
     setIsOnTitleBar((prev) => {
       if (!prev) {
-        if (
-          mousePosition.y <= 8 ||
-          (!mouseActive && mousePosition.y <= 64)
-        ) {
+        if (mousePosition.y <= 8 || (!mouseActive && mousePosition.y <= 64)) {
           return true;
         }
         return prev;

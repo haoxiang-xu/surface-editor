@@ -15,18 +15,18 @@ import {
 import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 
 /* { import contexts } ---------------------------------------------------------------------- */
-import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
-import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts.js";
-import { RootStackContexts } from "./root_stack_contexts";
-import { RootEventContexts } from "../../DATA_MANAGERs/root_event_listener/root_event_contexts.js";
+import { RootDataContexts } from "../root_data_manager/root_data_contexts.js";
+import { RootCommandContexts } from "../root_command_manager/root_command_contexts.js";
+import { RootStackContexts } from "./root_stack_contexts.js";
+import { RootEventContexts } from "../root_event_listener/root_event_contexts.js";
 
 /* {} */
-import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
-import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts";
+import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts.js";
+import { stackStructureDragAndDropContexts } from "../../CONTEXTs/stackStructureDragAndDropContexts.js";
 /* { import contexts } ---------------------------------------------------------------------- */
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
+import { ICON_MANAGER } from "../../ICONs/icon_manager.js";
 const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
