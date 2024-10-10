@@ -41,4 +41,7 @@ contextBridge.exposeInMainWorld("osInfo", {
 contextBridge.exposeInMainWorld("rootEventListenerAPI", {
   windowTitleBarEventHandler: (isOnTitleBar) =>
     ipcRenderer.send("window-title-bar-event-handler", isOnTitleBar),
+  windowStateEventListener: (callback) => {
+    ipcRenderer.on("window-state-event-listener", (_, data) => callback(data));
+  },
 });

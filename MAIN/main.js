@@ -24,7 +24,7 @@ const menuTemplate = [
   },
 ];
 
-const createWindow = () => {
+const create_main_window = () => {
   const checkServerAndLoadURL = (url) => {
     axios
       .get(url)
@@ -113,33 +113,15 @@ const createWindow = () => {
     });
   }
   mainWindow.setTitle("");
-  mainWindow.on("maximize", () => {
-    mainWindow.webContents.send("window-state-changed", { isMaximized: true });
-  });
-  mainWindow.on("unmaximize", () => {
-    mainWindow.webContents.send("window-state-changed", { isMaximized: false });
-  });
-  mainWindow.on("enter-full-screen", () => {
-    mainWindow.webContents.send("window-state-changed", {
-      isMaximized: true,
-    });
-  });
-  mainWindow.on("leave-full-screen", () => {
-    mainWindow.webContents.send("window-state-changed", {
-      isMaximized: false,
-    });
-  });
 
   localShortcut.register(mainWindow, "CommandOrControl+=", () => {
     let zoomLevel = mainWindow.webContents.getZoomLevel();
     mainWindow.webContents.setZoomLevel(zoomLevel + 1);
   });
-
   localShortcut.register(mainWindow, "CommandOrControl+-", () => {
     let zoomLevel = mainWindow.webContents.getZoomLevel();
     mainWindow.webContents.setZoomLevel(zoomLevel - 1);
   });
-
   localShortcut.register(mainWindow, "CommandOrControl+0", () => {
     mainWindow.webContents.setZoomLevel(0);
   });
@@ -255,12 +237,13 @@ const read_dir = async (dirPath, rootPath = dirPath) => {
 };
 
 app.whenReady().then(() => {
-  createWindow();
+  create_main_window();
+  register_window_state_event_listeners();
 });
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    create_main_window();
   }
 });
 app.on("window-all-closed", () => {
@@ -298,6 +281,24 @@ ipcMain.on("window-control", (event, action) => {
 });
 
 /* { Root Event Listener } ---------------------------------------------------------------------------- */
+const register_window_state_event_listeners = () => {
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("window-state-event-listener", { isMaximized: true });
+  });
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("window-state-event-listener", { isMaximized: false });
+  });
+  mainWindow.on("enter-full-screen", () => {
+    mainWindow.webContents.send("window-state-event-listener", {
+      isMaximized: true,
+    });
+  });
+  mainWindow.on("leave-full-screen", () => {
+    mainWindow.webContents.send("window-state-event-listener", {
+      isMaximized: false,
+    });
+  });
+};
 ipcMain.on("window-title-bar-event-handler", (event, is_on_title_bar) => {
   if (process.platform === "darwin") {
     if (is_on_title_bar) {
@@ -310,7 +311,6 @@ ipcMain.on("window-title-bar-event-handler", (event, is_on_title_bar) => {
   }
 });
 /* { Root Event Listener } ---------------------------------------------------------------------------- */
-
 
 /* { Root Data Manager } ------------------------------------------------------------------------------ */
 ipcMain.on("trigger-read-dir", () => {
