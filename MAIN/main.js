@@ -299,6 +299,33 @@ const register_window_state_event_listeners = () => {
     });
   });
 };
+ipcMain.on("window-state-event-handler", (event, action) => {
+  switch (action) {
+    case "close":
+      mainWindow.close();
+      break;
+    case "minimize":
+      mainWindow.minimize();
+      break;
+    case "maximize":
+      if (process.platform === "win32") {
+        if (mainWindow.isMaximized()) {
+          mainWindow.unmaximize();
+        } else {
+          mainWindow.maximize();
+        }
+      } else if (process.platform === "darwin") {
+        if (mainWindow.isFullScreen()) {
+          mainWindow.setFullScreen(false);
+        } else {
+          mainWindow.setFullScreen(true);
+        }
+      }
+      break;
+    default:
+      break;
+  }
+});
 ipcMain.on("window-title-bar-event-handler", (event, is_on_title_bar) => {
   if (process.platform === "darwin") {
     if (is_on_title_bar) {

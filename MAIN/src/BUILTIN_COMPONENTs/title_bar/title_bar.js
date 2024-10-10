@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  useCallback,
+} from "react";
 import { TitleBarContexts } from "./title_bar_contexts";
 import Icon from "../icon/icon";
 
@@ -185,13 +191,13 @@ const Win32ControlPanel = () => {
 };
 const TitleBar = React.memo(({ isWindowMaximized }) => {
   const handleClose = () => {
-    window.electron.send("window-control", "close");
+    window.rootEventListenerAPI.windowStateEventHandler("close");
   };
   const handleMinimize = () => {
-    window.electron.send("window-control", "minimize");
+    window.rootEventListenerAPI.windowStateEventHandler("minimize");
   };
   const handleMaximize = () => {
-    window.electron.send("window-control", "maximize");
+    window.rootEventListenerAPI.windowStateEventHandler("maximize");
   };
 
   const render_title_bar = () => {

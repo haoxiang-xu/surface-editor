@@ -23,9 +23,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
       callback(data);
     });
   },
-  subscribeToWindowStateChange: (callback) => {
-    ipcRenderer.on("window-state-changed", (_, data) => callback(data));
-  },
   readFile: (absolutePath, relativePath) =>
     ipcRenderer.send("read-file", absolutePath, relativePath),
   onFileContent: (callback) =>
@@ -39,6 +36,9 @@ contextBridge.exposeInMainWorld("osInfo", {
   platform: process.platform,
 });
 contextBridge.exposeInMainWorld("rootEventListenerAPI", {
+  windowStateEventHandler: (action) => {
+    ipcRenderer.send("window-state-event-handler", action);
+  },
   windowTitleBarEventHandler: (isOnTitleBar) =>
     ipcRenderer.send("window-title-bar-event-handler", isOnTitleBar),
   windowStateEventListener: (callback) => {
