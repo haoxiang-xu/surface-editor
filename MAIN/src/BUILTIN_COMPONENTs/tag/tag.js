@@ -50,7 +50,7 @@ const CustomizedTag = ({
   style,
   icon,
 }) => {
-  console.log("tag/", label, new Date().getTime());
+  // console.log("tag/", label, new Date().getTime());
   const spanRef = useRef(null);
   const inputRef = useRef(null);
   const moreOptionLabelRef = useRef(null);
