@@ -21,6 +21,7 @@ import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_co
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 /* { Import Styling } ---------------------------------------------------------------------------------------- */
 import "./monaco_editor.css";
+import { on } from "events";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -1102,6 +1103,8 @@ const FileSelectionListContainer = ({}) => {
   const [tagPositions, setTagPositions] = useState([]);
   const [tagSizes, setTagSizes] = useState([]);
   const [initalRendered, setInitalRendered] = useState(false);
+
+  const dragLeaveTimeout = useRef(null);
 
   const render_tags = useCallback(() => {
     if (!tagRefs.current) return;
