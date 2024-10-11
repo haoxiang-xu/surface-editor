@@ -572,7 +572,7 @@ const RootDataManager = React.memo(({ children }) => {
   const [dir, setDir] = useState(DIRs);
   const [isDirLoaded, setIsDirLoaded] = useState(true);
   useEffect(() => {
-    window.electron.receive("directory-data", (data) => {
+    window.rootDataManagerAPI.dirDataListener("dir-data-listener", (data) => {
       if (data.is_dir_successfully_loaded) {
         setDir(data.dirs);
         setIsDirLoaded(true);
@@ -581,12 +581,12 @@ const RootDataManager = React.memo(({ children }) => {
       }
     });
     return () => {
-      window.electron.receive("directory-data", () => {});
+      window.rootDataManagerAPI.dirDataListener("dir-data-listener", () => {});
     };
   }, []);
   const read_dir_from_system = useCallback(() => {
     setIsDirLoaded(false);
-    window.electronAPI.triggerReadDir();
+    window.rootDataManagerAPI.loadDirEventHandler();
   }, []);
   const access_dir_name_by_path = useCallback(
     (path) => {

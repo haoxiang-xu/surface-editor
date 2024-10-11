@@ -137,105 +137,6 @@ const create_main_window = () => {
   mainWindow.webContents.openDevTools();
 };
 
-const openFolderStructureDialog = () => {
-  dialog
-    .showOpenDialog({
-      properties: ["openDirectory"],
-    })
-    .then((result) => {
-      if (!result.canceled) {
-        read_dir(result.filePaths[0], result.filePaths[0])
-          .then((dirs) => {
-            mainWindow.webContents.send("directory-data", {
-              is_dir_successfully_loaded: true,
-              dirs: dirs,
-            });
-          })
-          .catch((error) => console.error("Error reading directory:", error));
-      } else {
-        mainWindow.webContents.send("directory-data", {
-          is_dir_successfully_loaded: false,
-          dirs: null,
-        });
-      }
-    })
-    .catch((err) => {
-      mainWindow.webContents.send("directory-data", {
-        is_dir_successfully_loaded: false,
-        dirs: null,
-      });
-    });
-};
-const read_dir = async (dirPath, rootPath = dirPath) => {
-  try {
-    const dirents = await fs.readdir(dirPath, { withFileTypes: true });
-    const files = {};
-
-    const rootFile = rootPath.replace(/\\/g, "/").split("/").pop();
-
-    const basename = path.basename(dirPath);
-    let file_path = "";
-    if (dirPath === rootPath) {
-      file_path = `${rootFile}`;
-    } else {
-      const relativePath = path.relative(rootPath, dirPath).replace(/\\/g, "/");
-      file_path = `${rootFile}/${relativePath}`;
-    }
-
-    let dir = {
-      file_name: basename,
-      file_type: "folder",
-      file_path: file_path,
-      absolute_path: path.resolve(dirPath),
-      file_expand: false,
-      sub_items: [],
-    };
-    for (const dirent of dirents) {
-      const res = path.resolve(dirPath, dirent.name);
-      const relativePath = path.relative(rootPath, res).replace(/\\/g, "/");
-      const filePath = `${rootFile}/${relativePath}`;
-
-      if (dirent.isDirectory()) {
-        dir.sub_items.push(filePath);
-        const sub_dir = await read_dir(res, rootPath);
-        Object.assign(files, sub_dir);
-      } else {
-        files[filePath] = {
-          file_name: dirent.name,
-          file_type: "file",
-          file_path: filePath,
-          absolute_path: path.resolve(dirPath, dirent.name),
-          file_expand: false,
-          sub_items: [],
-        };
-        dir.sub_items.push(filePath);
-      }
-    }
-
-    dir.sub_items = dir.sub_items.sort((a, b) => {
-      if (files[a].file_type === "folder" && files[b].file_type === "file") {
-        return -1;
-      } else if (
-        files[a].file_type === "file" &&
-        files[b].file_type === "folder"
-      ) {
-        return 1;
-      } else {
-        return files[a].file_name.localeCompare(files[b].file_name);
-      }
-    });
-
-    if (dirPath === rootPath) {
-      files["root"] = dir;
-    } else {
-      files[file_path] = dir;
-    }
-    return files;
-  } catch (error) {
-    throw error;
-  }
-};
-
 app.whenReady().then(() => {
   create_main_window();
   register_window_state_event_listeners();
@@ -317,11 +218,111 @@ ipcMain.on("window-title-bar-event-handler", (event, is_on_title_bar) => {
 /* { Root Event Listener } ---------------------------------------------------------------------------- */
 
 /* { Root Data Manager } ------------------------------------------------------------------------------ */
-ipcMain.on("trigger-read-dir", () => {
-  mainWindow.webContents.send("read-dir-state-changed", {
+const load_explore_dir_dialog = () => {
+  const process_dir_raw_data = async (dirPath, rootPath = dirPath) => {
+    try {
+      const dirents = await fs.readdir(dirPath, { withFileTypes: true });
+      const files = {};
+
+      const rootFile = rootPath.replace(/\\/g, "/").split("/").pop();
+
+      const basename = path.basename(dirPath);
+      let file_path = "";
+      if (dirPath === rootPath) {
+        file_path = `${rootFile}`;
+      } else {
+        const relativePath = path
+          .relative(rootPath, dirPath)
+          .replace(/\\/g, "/");
+        file_path = `${rootFile}/${relativePath}`;
+      }
+
+      let dir = {
+        file_name: basename,
+        file_type: "folder",
+        file_path: file_path,
+        absolute_path: path.resolve(dirPath),
+        file_expand: false,
+        sub_items: [],
+      };
+      for (const dirent of dirents) {
+        const res = path.resolve(dirPath, dirent.name);
+        const relativePath = path.relative(rootPath, res).replace(/\\/g, "/");
+        const filePath = `${rootFile}/${relativePath}`;
+
+        if (dirent.isDirectory()) {
+          dir.sub_items.push(filePath);
+          const sub_dir = await process_dir_raw_data(res, rootPath);
+          Object.assign(files, sub_dir);
+        } else {
+          files[filePath] = {
+            file_name: dirent.name,
+            file_type: "file",
+            file_path: filePath,
+            absolute_path: path.resolve(dirPath, dirent.name),
+            file_expand: false,
+            sub_items: [],
+          };
+          dir.sub_items.push(filePath);
+        }
+      }
+
+      dir.sub_items = dir.sub_items.sort((a, b) => {
+        if (files[a].file_type === "folder" && files[b].file_type === "file") {
+          return -1;
+        } else if (
+          files[a].file_type === "file" &&
+          files[b].file_type === "folder"
+        ) {
+          return 1;
+        } else {
+          return files[a].file_name.localeCompare(files[b].file_name);
+        }
+      });
+
+      if (dirPath === rootPath) {
+        files["root"] = dir;
+      } else {
+        files[file_path] = dir;
+      }
+      return files;
+    } catch (error) {
+      throw error;
+    }
+  };
+  dialog
+    .showOpenDialog({
+      properties: ["openDirectory"],
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        process_dir_raw_data(result.filePaths[0], result.filePaths[0])
+          .then((dirs) => {
+            mainWindow.webContents.send("dir-data-listener", {
+              is_dir_successfully_loaded: true,
+              dirs: dirs,
+            });
+          })
+          .catch((error) => console.error("Error reading directory:", error));
+      } else {
+        mainWindow.webContents.send("dir-data-listener", {
+          is_dir_successfully_loaded: false,
+          dirs: null,
+        });
+      }
+    })
+    .catch((err) => {
+      mainWindow.webContents.send("dir-data-listener", {
+        is_dir_successfully_loaded: false,
+        dirs: null,
+      });
+    });
+};
+ipcMain.on("load-dir-event-handler", () => {
+  mainWindow.webContents.send("load-dir-event-listener", {
     isDirLoaded: false,
   });
-  openFolderStructureDialog();
+  load_explore_dir_dialog();
 });
 ipcMain.on("read-file", async (event, absolutePath, relativePath) => {
   try {
