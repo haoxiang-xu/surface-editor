@@ -109,7 +109,7 @@ const CustomizedTag = ({
         icon_transform: style.icon_transform,
         moreOptionLabel: style.fullSizeMode
           ? false
-          : spanWidth > style.maxWidth &&
+          : spanWidth > style.maxWidth + more_option_label_font_size &&
             style.maxWidth > more_option_label_font_size,
       };
     });
