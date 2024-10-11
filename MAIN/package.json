@@ -29,7 +29,7 @@
   "main": "main.js",
   "scripts": {
     "react-start": "cross-env BROWSER=none PORT=3000 react-scripts start",
-    "electron-start": "electron .",
+    "electron-start": "electron . --no-sandbox",
     "start": "concurrently \"npm run react-start\" \"npm run electron-start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",

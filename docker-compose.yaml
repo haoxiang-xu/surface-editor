@@ -1,33 +1,17 @@
 version: "3.9"
 services:
-  component_lib_testing_application:
-    build: ./frontend_application/component_lib_testing_application
-    container_name: component_lib_testing_application_container
+  main:
+    build: ./MAIN
+    container_name: surface_editor_main
     ports:
-      - "5000:5000"
+      - "3000:3000"
     stdin_open: true
     tty: true
     environment:
-      - PORT=5000
+      - PORT=3000
+      - CHOKIDAR_USEPOLLING=true
     volumes:
-      - ./frontend_application/component_lib_testing_application:/app
-
-  backend_file_services:
-    build: ./backend_services/file_services
-    container_name: backend_file_services_container
-    ports:
-      - "8000:8000"
-    environment:
-      - PORT=8000
-    volumes:
-      - ./backend_services/file_services:/app
-
-  backend_code_services:
-    build: ./backend_services/code_services
-    container_name: backend_code_services_container
-    ports:
-      - "8200:8200"
-    environment:
-      - PORT=8200
-    volumes:
-      - ./backend_services/code_services:/app
+      - ./MAIN:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run start
