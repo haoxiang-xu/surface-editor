@@ -60,459 +60,6 @@ const R = 30;
 const G = 30;
 const B = 30;
 
-const FileSelectionBar = ({
-  code_editor_container_ref_index,
-  //HORIZONTAL OR VERTICAL MODE
-  mode,
-
-  onDeleteMonacoEditorPath,
-  setOnDeleteMonacoEditorPath,
-}) => {
-  const {
-    draggedItem,
-    setDraggedItem,
-    draggedOverItem,
-    setDraggedOverItem,
-    dragCommand,
-    setDragCommand,
-  } = useContext(globalDragAndDropContexts);
-  const { access_file_name_by_path_in_file } = useContext(RootDataContexts);
-  const {
-    id,
-    onSelectedMonacoIndex,
-    setOnSelectedMonacoIndex,
-    monacoPaths,
-    setMonacoPaths,
-    monacoCores,
-    setMonacoCores,
-    item_on_drag,
-    item_on_drop,
-  } = useContext(MonacoEditorContexts);
-
-  const [forceRefresh, setForceRefresh] = useState(false);
-  const refresh = () => {
-    setForceRefresh(!forceRefresh);
-  };
-
-  /* File Selection Bar parameters & Functions ==================================================== */
-  const fileSelectionBarContainerRef = useRef(null);
-  const fileItemRefs = useRef([]);
-  const [onDragIndex, setOnDragIndex] = useState(-1);
-  const [onDropIndex, setOnDropIndex] = useState(-1);
-  const [onSwapIndex, setOnSwapIndex] = useState(-1);
-  const [onDeleteIndex, setOnDeleteIndex] = useState(-1);
-
-  const onFileDelete = (e) => (index) => {
-    e.stopPropagation();
-    setOnDeleteMonacoEditorPath(monacoPaths[index]);
-    setOnDeleteIndex(index);
-  };
-  useEffect(() => {
-    if (onDeleteMonacoEditorPath === null && onDeleteIndex !== -1) {
-      const editedFiles = [...monacoPaths];
-      editedFiles.splice(onDeleteIndex, 1);
-      setMonacoPaths(editedFiles);
-      if (onSelectedMonacoIndex === onDeleteIndex) {
-        setOnSelectedMonacoIndex(-1);
-      } else {
-        if (onSelectedMonacoIndex > onDeleteIndex) {
-          setOnSelectedMonacoIndex(onSelectedMonacoIndex - 1);
-        }
-      }
-      setOnDeleteIndex(-1);
-    }
-  }, [onDeleteMonacoEditorPath]);
-  const onFileDragStart = (e, index) => {
-    e.stopPropagation();
-    e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
-    setOnSelectedMonacoIndex(index);
-    setOnDragIndex(index);
-    setDraggedItem({
-      source:
-        "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-      content: monacoPaths[index],
-      monaco_cores: monacoCores[monacoPaths[index]],
-    });
-    item_on_drag(e, {
-      source: id,
-      ghost_image: "tag",
-      content: {
-        type: "file",
-        path: monacoPaths[index],
-      },
-    });
-  };
-  const onFileDragEnd = (e, index) => {
-    e.stopPropagation();
-
-    document.body.style.cursor = "";
-
-    if (onDropIndex !== -1) {
-      const editedFiles = [...monacoPaths];
-
-      if (onDragIndex < onDropIndex) {
-        const dragedFile = editedFiles.splice(onDragIndex, 1)[0];
-        editedFiles.splice(onDropIndex - 1, 0, dragedFile);
-        setOnSelectedMonacoIndex(
-          Math.min(onDropIndex - 1, monacoPaths.length - 1)
-        );
-      } else {
-        const dragedFile = editedFiles.splice(onDragIndex, 1)[0];
-        editedFiles.splice(onDropIndex, 0, dragedFile);
-        setOnSelectedMonacoIndex(Math.min(onDropIndex, monacoPaths.length - 1));
-      }
-      setMonacoPaths(editedFiles);
-    }
-    if (onDropIndex === -1 && draggedOverItem !== null) {
-      setDragCommand("APPEND TO TARGET");
-    } else {
-      setOnDragIndex(-1);
-      setOnDropIndex(-1);
-      setOnSwapIndex(-1);
-      setDraggedItem(null);
-    }
-    item_on_drop(e);
-  };
-  const fileSelectionBarOnDragOver = (e) => {
-    e.preventDefault();
-    const targetElement = e.target.closest(
-      ".file_selection_bar_item1114, " +
-        ".file_selection_bar_item_selected1114, " +
-        ".file_selection_bar_item_vertical0123, " +
-        ".file_selection_bar_item_selected_vertical0123"
-    );
-    if (targetElement && fileSelectionBarContainerRef.current) {
-      const childrenArray = Array.from(
-        fileSelectionBarContainerRef.current.children
-      );
-      const dropIndex = childrenArray.indexOf(targetElement);
-      if (dropIndex !== onDropIndex && dropIndex !== -1) {
-        if (onDragIndex === -1) {
-          setDraggedOverItem(monacoPaths[dropIndex]);
-        }
-        setOnDropIndex(dropIndex);
-      }
-    }
-  };
-  const fileSelectionBarOnDragLeave = (e) => {
-    e.stopPropagation();
-    setOnDropIndex(-1);
-    setOnSwapIndex(-1);
-    setDraggedOverItem(null);
-  };
-  useEffect(() => {
-    setOnSwapIndex(onDropIndex);
-  }, [onDropIndex]);
-  useEffect(() => {
-    if (onSelectedMonacoIndex !== -1) {
-      const itemScrollLeft =
-        fileItemRefs.current[onSelectedMonacoIndex]?.offsetLeft;
-      const itemWidth =
-        fileItemRefs.current[onSelectedMonacoIndex]?.offsetWidth;
-      const containerScrollLeft =
-        fileSelectionBarContainerRef.current.scrollLeft;
-      const containerWidth = fileSelectionBarContainerRef.current?.offsetWidth;
-
-      if (itemScrollLeft < containerScrollLeft) {
-        fileSelectionBarContainerRef.current.scrollLeft = itemScrollLeft;
-      } else if (
-        itemScrollLeft + itemWidth >
-        containerScrollLeft + containerWidth
-      ) {
-        fileSelectionBarContainerRef.current.scrollLeft = itemScrollLeft;
-      }
-    }
-  }, [onSelectedMonacoIndex]);
-  useEffect(() => {
-    if (onDropIndex !== -1 && dragCommand === "APPEND TO TARGET") {
-      const editedFiles = [...monacoPaths];
-      if (monacoPaths.indexOf(draggedItem.content) !== -1) {
-        const LocalOnDragIndex = monacoPaths.indexOf(draggedItem.content);
-
-        if (LocalOnDragIndex < onDropIndex) {
-          const dragedFile = editedFiles.splice(LocalOnDragIndex, 1)[0];
-          editedFiles.splice(onDropIndex, 0, dragedFile);
-          setOnSelectedMonacoIndex(
-            Math.min(onDropIndex - 1, monacoPaths.length - 1)
-          );
-        } else {
-          const dragedFile = editedFiles.splice(LocalOnDragIndex, 1)[0];
-          editedFiles.splice(onDropIndex, 0, dragedFile);
-          setOnSelectedMonacoIndex(
-            Math.min(onDropIndex, monacoPaths.length - 1)
-          );
-        }
-        setMonacoPaths(editedFiles);
-
-        setOnSelectedMonacoIndex(onDropIndex);
-
-        setOnDragIndex(-1);
-        setOnDropIndex(-1);
-        setOnSwapIndex(-1);
-        setDraggedItem(null);
-        setDraggedOverItem(null);
-        setDragCommand("DELETE FROM SOURCE");
-      } else {
-        if (draggedItem.source === "vecoder_explorer") {
-          setDragCommand("WAITING FOR MODEL APPEND");
-        } else {
-          setDragCommand("WAITING FOR MODEL APPEND THEN DELETE FROM SOURCE");
-        }
-        const dragedFile = draggedItem.content;
-        editedFiles.splice(onDropIndex, 0, dragedFile);
-        const draggedMonacoCore = draggedItem.monaco_cores;
-        const editedMonacoCore = { ...monacoCores };
-        editedMonacoCore[dragedFile] = draggedMonacoCore;
-        setMonacoPaths(editedFiles);
-        setMonacoCores(editedMonacoCore);
-        setOnSelectedMonacoIndex(onDropIndex);
-
-        setOnDragIndex(-1);
-        setOnDropIndex(-1);
-        setOnSwapIndex(-1);
-        setDraggedItem(null);
-        setDraggedOverItem(null);
-      }
-    }
-    if (onDragIndex !== -1 && dragCommand === "DELETE FROM SOURCE") {
-      const editedFiles = [...monacoPaths];
-      const editedMonacoCore = { ...monacoCores };
-      delete editedMonacoCore[monacoPaths[onDragIndex]];
-      editedFiles.splice(onDragIndex, 1);
-      setMonacoPaths(editedFiles);
-      setMonacoCores(editedMonacoCore);
-      setOnSelectedMonacoIndex(null);
-
-      setOnDragIndex(-1);
-      setOnDropIndex(-1);
-      setOnSwapIndex(-1);
-      setDragCommand(null);
-    }
-  }, [dragCommand, monacoPaths, monacoCores]);
-  useEffect(() => {
-    setOnDropIndex(-1);
-  }, [draggedOverItem]);
-
-  /* File Selection Bar parameters & Functions ==================================================== */
-
-  /* Styling----------------------------------------------------------------------------------- */
-  const spanRefs = useRef([]);
-  useEffect(() => {
-    refresh();
-  }, [spanRefs.current[onSelectedMonacoIndex]?.offsetWidth]);
-  /* Styling----------------------------------------------------------------------------------- */
-
-  return (
-    <div
-      className={
-        mode === "horizontal_stack_horizontal_mode"
-          ? "file_selection_bar_container1114"
-          : "file_selection_bar_container_vertical0122"
-      }
-      ref={fileSelectionBarContainerRef}
-      onDragOver={(e) => {
-        fileSelectionBarOnDragOver(e);
-      }}
-      onDragLeave={(e) => {
-        fileSelectionBarOnDragLeave(e);
-      }}
-    >
-      {monacoPaths.map((filePath, index) => {
-        let className;
-        let containerStyle = {};
-        switch (true) {
-          case index === onSelectedMonacoIndex:
-            if (mode === "horizontal_stack_horizontal_mode") {
-              className = "file_selection_bar_item_selected1114";
-              containerStyle = {
-                width: spanRefs.current[index]?.offsetWidth + 54 + "px",
-              };
-            } else {
-              className = "file_selection_bar_item_selected_vertical0123";
-              containerStyle = {
-                height: spanRefs.current[index]?.offsetWidth + 54 + "px",
-              };
-            }
-            if (index === onDragIndex) {
-              if (mode === "horizontal_stack_horizontal_mode") {
-                containerStyle = {
-                  width: 0 + "px",
-                  height: 30 + "px",
-                  opacity: 0,
-                  margin: "0px 0px 0px 0px",
-                  overflow: "hidden",
-                  transition: "width 0.12s ease, opacity 0.12s ease",
-                };
-              } else {
-                containerStyle = {
-                  width: 30 + "px",
-                  height: 0 + "px",
-                  opacity: 0,
-                  margin: "0px 0px 0px 0px",
-                  overflow: "hidden",
-                  transition: "height 0.12s ease, opacity 0.12s ease",
-                };
-              }
-            }
-            break;
-          case index === onDropIndex:
-            if (mode === "horizontal_stack_horizontal_mode") {
-              className = "file_selection_bar_item1114";
-              containerStyle = {
-                width: spanRefs.current[index]?.offsetWidth + 38 + "px",
-                transition: "opacity 0.32s ease",
-              };
-            } else {
-              className = "file_selection_bar_item_vertical0123";
-              containerStyle = {
-                height: spanRefs.current[index]?.offsetWidth + 38 + "px",
-                transition: "opacity 0.32s ease",
-              };
-            }
-            break;
-          default:
-            if (mode === "horizontal_stack_horizontal_mode") {
-              className = "file_selection_bar_item1114";
-              containerStyle = {
-                width: spanRefs.current[index]?.offsetWidth + 38 + "px",
-              };
-            } else {
-              className = "file_selection_bar_item_vertical0123";
-              containerStyle = {
-                height: spanRefs.current[index]?.offsetWidth + 38 + "px",
-              };
-            }
-        }
-        if (onDragIndex !== -1) {
-          containerStyle = { ...containerStyle, backgroundColor: "#252525" };
-        }
-        return (
-          <div
-            key={filePath}
-            ref={(el) => (fileItemRefs.current[index] = el)}
-            className={className}
-            draggable={true}
-            onDragStart={(e) => {
-              onFileDragStart(e, index);
-            }}
-            onDragEnd={(e) => {
-              onFileDragEnd(e);
-            }}
-            onClick={() => {
-              setOnSelectedMonacoIndex(index);
-            }}
-            style={containerStyle}
-          >
-            <span
-              ref={(el) => (spanRefs.current[index] = el)}
-              className={
-                mode === "horizontal_stack_horizontal_mode"
-                  ? "file_selection_bar_file_text1114"
-                  : "file_selection_bar_file_text_vertical0123"
-              }
-              style={
-                index === onSelectedMonacoIndex
-                  ? {
-                      color: "#cccccc",
-                      left:
-                        mode === "horizontal_stack_horizontal_mode"
-                          ? "47px"
-                          : "50%",
-                      top:
-                        mode === "horizontal_stack_horizontal_mode"
-                          ? "50%"
-                          : "47px",
-                      transition:
-                        "color 0.2s ease, left 0.2s ease, top 0.2s ease",
-                    }
-                  : {
-                      color: "#8c8c8c",
-                      transition:
-                        "color 0.2s ease, left 0.2s ease, top 0.2s ease",
-                    }
-              }
-            >
-              {access_file_name_by_path_in_file(filePath)}
-            </span>
-            <img
-              src={
-                FILE_TYPE_ICON_MANAGER[
-                  access_file_name_by_path_in_file(filePath).split(".").pop()
-                ]?.ICON512
-              }
-              className={
-                mode === "horizontal_stack_horizontal_mode"
-                  ? "file_selection_bar_item_filetype_icon1114"
-                  : "file_selection_bar_item_filetype_icon_vertical0123"
-              }
-              alt="close"
-              style={
-                index === onSelectedMonacoIndex
-                  ? {
-                      opacity: "1",
-                      padding:
-                        mode === "horizontal_stack_horizontal_mode"
-                          ? "7px 0px 0px 28px"
-                          : "28px 0px 0px 7px",
-                      transition: "padding 0.2s ease",
-                      pointerEvents: "none",
-                    }
-                  : {
-                      opacity: "0.64",
-                      padding: "7px 0px 0px 7px",
-                      transition: "padding 0.2s ease",
-                      pointerEvents: "none",
-                    }
-              }
-            />
-            <img
-              src={SYSTEM_ICON_MANAGER.close.ICON512}
-              className={
-                mode === "horizontal_stack_horizontal_mode"
-                  ? "file_selection_bar_item_close_icon1114"
-                  : "file_selection_bar_item_close_icon_vertical0123"
-              }
-              style={
-                onSelectedMonacoIndex === index
-                  ? { opacity: "1" }
-                  : {
-                      opacity: "0",
-                      pointerEvents: "none",
-                    }
-              }
-              alt="close"
-              draggable="false"
-              onDragOver={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-              }}
-              onClick={(e) => {
-                onFileDelete(e)(index);
-              }}
-            />
-            {/* Drag and Drop Invisible Overlay ---------------------------------------------- */}
-            {onDragIndex !== -1 || draggedItem != null ? (
-              <div
-                className="file_selection_bar_item_overlay_invisible0206"
-                style={containerStyle}
-              ></div>
-            ) : null}
-            {/* Drag and Drop HighLight Overlay ---------------------------------------------- */}
-            {index === onDropIndex ? (
-              <div
-                className="file_selection_bar_item_overlay_highlight0206"
-                style={{ ...containerStyle, backgroundColor: "#ffffff" }}
-              ></div>
-            ) : null}
-          </div>
-        );
-      })}
-      {/* {onDragIndex !== -1 || draggedItem !== null ? (
-        <DirItemGhostDragImage draggedDirItemPath={draggedItem?.content} />
-      ) : null} */}
-    </div>
-  );
-};
 const MonacoEditorGroup = ({
   code_editor_container_ref_index,
   setOnSelectedContent,
@@ -1020,7 +567,7 @@ const FileSelectionListItem = ({
       <Tag
         config={{
           reference: reference,
-          type: "file",
+          type: "file_page",
           label: access_dir_name_by_path(file_path),
           style: memoized_tag_style,
         }}
@@ -1036,7 +583,7 @@ const FileSelectionListItem = ({
             transform: "translate(0%, -50%)",
             position: "absolute",
             top: "50%",
-            left: -default_selecion_list_icon_offset + 4 + tagLeft,
+            left: -default_selecion_list_icon_offset + tagLeft,
             width: 16,
             height: 16,
             padding: 1,
@@ -1102,9 +649,7 @@ const FileSelectionListContainer = ({}) => {
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
   const [tagPositions, setTagPositions] = useState([]);
   const [tagSizes, setTagSizes] = useState([]);
-  const [initalRendered, setInitalRendered] = useState(false);
-
-  const dragLeaveTimeout = useRef(null);
+  const [requiredRerender, setRequiredRerender] = useState(true);
 
   const render_tags = useCallback(() => {
     if (!tagRefs.current) return;
@@ -1119,7 +664,7 @@ const FileSelectionListContainer = ({}) => {
       if (i === onDragedMonacoIndex) {
         position_x += 0;
       } else if (i === onSelectedMonacoIndex) {
-        position_x += default_selecion_list_icon_offset;
+        position_x += default_selecion_list_icon_offset + 6;
       }
       tagPositions.push(position_x);
       if (i !== onDragedMonacoIndex) {
@@ -1147,7 +692,7 @@ const FileSelectionListContainer = ({}) => {
   ]);
 
   useEffect(() => {
-    if (initalRendered) return;
+    if (!requiredRerender) return;
     const intervalId = setInterval(() => {
       if (tagPositions.length === 0 || tagSizes.length === 0) {
         render_tags();
@@ -1159,11 +704,11 @@ const FileSelectionListContainer = ({}) => {
           }
         }
         clearInterval(intervalId);
-        setInitalRendered(true);
+        setRequiredRerender(false);
       }
     }, 100);
     return () => clearInterval(intervalId);
-  }, [tagPositions, tagSizes, initalRendered]);
+  }, [tagPositions, tagSizes, requiredRerender]);
   useEffect(() => {
     if (!tagRefs.current) return;
     tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);

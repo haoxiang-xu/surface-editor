@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { throttle } from "lodash";
 const { stringify, parse } = require("flatted");
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
@@ -58,11 +64,7 @@ const CustomizedTag = ({
   const [tagLabel, setTagLabel] = useState(label);
   const [tagStyle, setTagStyle] = useState(style);
 
-  useEffect(() => {
-    setTagLabel(label);
-  }, [label]);
-  useEffect(() => {
-    if (!spanRef.current) return;
+  const render_tag_style = useCallback(() => {
     const spanWidth = spanRef.current.offsetWidth;
     let containerWidth = 0;
     if (style.inputMode) {
@@ -114,6 +116,14 @@ const CustomizedTag = ({
       };
     });
   }, [style, spanRef, icon]);
+
+  useEffect(() => {
+    setTagLabel(label);
+  }, [label]);
+  useEffect(() => {
+    if (!spanRef.current) return;
+    render_tag_style();
+  }, [style, spanRef, icon]);
   useEffect(() => {
     const spanHeight = spanRef.current.offsetHeight;
     let inputHeight = 0;
@@ -162,7 +172,7 @@ const CustomizedTag = ({
         height: tagStyle.height,
 
         /* { Tag Styling } ------------------------- */
-        borderRadius: style.borderRadius || 7,
+        borderRadius: style.borderRadius !== undefined ? style.borderRadius : 7,
         display: "inline-block",
         backgroundColor: style.transparentMode
           ? style.fullSizeMode
@@ -349,6 +359,45 @@ const FileTag = ({ config }) => {
 
   return <CustomizedTag {...process_tag_config(config)} />;
 };
+const FilePageTag = ({ config }) => {
+  const process_tag_config = (config) => {
+    let processed_config = { ...config };
+
+    if (config.style.backgroundColor === undefined) {
+      processed_config.style.backgroundColor = "#323232";
+    }
+    if (config.style.color === undefined) {
+      processed_config.style.color = "#C0C0C0";
+    }
+    if (config.style.padding_x === undefined) {
+      processed_config.style.padding_x = 5;
+    }
+    if (config.style.padding_y === undefined) {
+      processed_config.style.padding_y = 7;
+    }
+    if (config.style.boxShadow === undefined) {
+      processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
+    }
+    if (config.icon === undefined || config.icon === null) {
+      processed_config.icon = config.label.split(".").pop().toUpperCase();
+      if (!config.style.noWidthLimitMode) {
+        if (processed_config.icon in iconManifest) {
+          processed_config.style.maxWidth = config.style.maxWidth - 12;
+        } else {
+          processed_config.style.maxWidth = config.style.maxWidth - 2;
+        }
+      } else {
+        processed_config.style.maxWidth = config.style.maxWidth;
+      }
+    }
+    processed_config.style.pointerEvents = "none";
+
+    processed_config.style.borderRadius = `${default_border_radius}px ${default_border_radius}px 0px 0px`;
+    return processed_config;
+  };
+
+  return <CustomizedTag {...process_tag_config(config)} />;
+};
 const FolderTag = ({ config }) => {
   const process_tag_config = (config) => {
     let processed_config = { ...config };
@@ -522,6 +571,8 @@ const Tag = ({ config }) => {
           return <KeyTag config={process_tag_config(config)} />;
         case "file":
           return <FileTag config={process_tag_config(config)} />;
+        case "file_page":
+          return <FilePageTag config={process_tag_config(config)} />;
         case "folder":
           return <FolderTag config={process_tag_config(config)} />;
         case "string":
