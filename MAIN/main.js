@@ -366,12 +366,10 @@ let terminalProcess = pty.spawn(
     env: process.env,
   }
 );
-
 // Handle messages from the renderer process
 ipcMain.on("terminal-input", (event, input) => {
   terminalProcess.write(input);
 });
-
 // Send terminal output back to the renderer
 terminalProcess.on("data", (data) => {
   if (mainWindow) {
