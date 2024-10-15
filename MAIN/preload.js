@@ -37,3 +37,10 @@ contextBridge.exposeInMainWorld("rootDataManagerAPI", {
     ipcRenderer.on("load-dir-event-listener", (_, data) => callback(data));
   },
 });
+contextBridge.exposeInMainWorld("communicationAPI", {
+  sendMessage: (channel, data) => ipcRenderer.send(channel, data),
+  onMessage: (channel, callback) =>
+    ipcRenderer.on(channel, (event, ...args) => callback(...args)),
+  removeMessageListener: (channel, callback) =>
+    ipcRenderer.removeListener(channel, callback),
+});

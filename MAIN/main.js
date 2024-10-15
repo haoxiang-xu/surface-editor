@@ -1,7 +1,9 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
 const localShortcut = require("electron-localshortcut");
+const pty = require("node-pty");
 const { exec } = require("child_process");
 const path = require("path");
+const os = require("os");
 const axios = require("axios");
 const fs = require("fs").promises;
 const {
@@ -352,3 +354,27 @@ ipcMain.on("read-file", async (event, absolutePath, relativePath) => {
   }
 });
 /* { Root Data Manager } ------------------------------------------------------------------------------ */
+
+let terminalProcess = pty.spawn(
+  os.platform() === "win32" ? "cmd.exe" : "bash",
+  [],
+  {
+    name: "xterm-color",
+    cols: 80,
+    rows: 30,
+    cwd: process.env.HOME,
+    env: process.env,
+  }
+);
+
+// Handle messages from the renderer process
+ipcMain.on("terminal-input", (event, input) => {
+  terminalProcess.write(input);
+});
+
+// Send terminal output back to the renderer
+terminalProcess.on("data", (data) => {
+  if (mainWindow) {
+    mainWindow.webContents.send("terminal-output", data);
+  }
+});

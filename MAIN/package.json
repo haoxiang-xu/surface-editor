@@ -24,7 +24,8 @@
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
     "react-textarea-autosize": "^8.5.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xterm": "^5.3.0"
   },
   "main": "main.js",
   "scripts": {
@@ -32,6 +33,7 @@
     "electron-start": "electron . --no-sandbox",
     "start": "concurrently \"npm run react-start\" \"npm run electron-start\"",
     "build": "react-scripts build",
+    "rebuild": "electron-rebuild",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -40,7 +42,8 @@
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "electron": "^26.6.10",
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^24.13.3",
+    "electron-rebuild": "^3.2.9"
   },
   "browserslist": {
     "production": [

@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import RootEventListener from "./DATA_MANAGERs/root_event_listener/root_event_listener";
 
+import TerminalComponent from "./DEMO/terminal/terminal_component";
+
 import "./App.css";
 
 function App() {
@@ -13,6 +15,7 @@ function App() {
       ></link>
       <Routes>
         <Route path="/" element={<RootEventListener />} />
+        <Route path="/terminal" element={<TerminalComponent />} />
       </Routes>
     </Router>
   );
