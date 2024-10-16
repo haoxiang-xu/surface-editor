@@ -120,14 +120,13 @@ const RootCommandManager = React.memo(({ children }) => {
       if (event) {
         event.stopPropagation();
       }
-      if (
-        onDragItem &&
-        onDragItem.callback_to_delete &&
-        onDropItem &&
-        onDropItem.callback_to_append
-      ) {
-        onDragItem.callback_to_delete(onDragItem, onDropItem);
-        onDropItem.callback_to_append(onDragItem, onDropItem);
+      if (onDragItem && onDropItem) {
+        if (onDragItem.callback_to_delete) {
+          onDragItem.callback_to_delete(onDragItem, onDropItem);
+        }
+        if (onDropItem.callback_to_append) {
+          onDropItem.callback_to_append(onDragItem, onDropItem);
+        }
       }
 
       setOnDrag(false);

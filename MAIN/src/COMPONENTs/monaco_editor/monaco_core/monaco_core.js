@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
 import MonacoEditor from "@monaco-editor/react";
 import { MonacoDiffEditor, monaco, Range } from "react-monaco-editor";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
@@ -23,6 +29,7 @@ const MonacoCore = ({
   editor_setDiffContent,
   onDeleteMonacoEditorPath,
   setOnDeleteMonacoEditorPath,
+  setMonacoCallbacks,
 }) => {
   let EDITOR_FONT_SIZE;
   switch (window.osInfo.platform) {
@@ -234,6 +241,17 @@ const MonacoCore = ({
       setOnDeleteMonacoEditorPath(null);
     }
   }, [onDeleteMonacoEditorPath]);
+  useEffect(() => {
+    setMonacoCallbacks((prev) => ({
+      ...prev,
+      [editor_filePath]: {
+        callback_to_delete: callback_to_delete_monaco_core,
+      },
+    }));
+  }, []);
+  const callback_to_delete_monaco_core = useCallback(() => {
+    monacoRef.current.setModel(null);
+  }, []);
   /*Delete Monaco Editor Path===========================================*/
 
   return (

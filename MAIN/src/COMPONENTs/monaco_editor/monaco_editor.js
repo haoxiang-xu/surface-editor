@@ -70,6 +70,8 @@ const MonacoEditorGroup = ({
 
   onDeleteMonacoEditorPath,
   setOnDeleteMonacoEditorPath,
+
+  setMonacoCallbacks,
 }) => {
   const { onSelectedMonacoIndex, monacoPaths } =
     useContext(MonacoEditorContexts);
@@ -94,6 +96,7 @@ const MonacoEditorGroup = ({
         //editor_setDiffContent={setDiffContent}
         onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
         setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
+        setMonacoCallbacks={setMonacoCallbacks}
       ></MonacoCore>
     );
   });
@@ -430,6 +433,7 @@ const FileSelectionListItem = ({
     setMonacoPaths,
     item_on_drag,
     item_on_drop,
+    monacoCallbacks,
   } = useContext(MonacoEditorContexts);
   const containerRef = useRef(null);
   const [zIndex, setZIndex] = useState(6);
@@ -449,6 +453,12 @@ const FileSelectionListItem = ({
   const to_delete_tag = useCallback(
     (onDragItem, onDropItem) => {
       setOnSelectedMonacoIndex(-1);
+      if (
+        monacoCallbacks[onDragItem.content.path]?.callback_to_delete !==
+        undefined
+      ) {
+        monacoCallbacks[onDragItem.content.path].callback_to_delete();
+      }
       const to_delete_index = monacoPaths.indexOf(onDragItem.content.path);
       setMonacoPaths((prevData) => {
         return prevData.filter((path, index) => index !== to_delete_index);
@@ -799,6 +809,7 @@ const FileSelectionListContainer = ({}) => {
         });
       }
       setRequiredRerender(true);
+      setOnSelectedMonacoIndex(-1);
     },
     [onDragedMonacoIndex, onDragOverPosition, tagPositions, monacoPaths]
   );
@@ -894,6 +905,8 @@ const MonacoEditor = ({
 
   const [monacoPaths, setMonacoPaths] = useState(data?.monaco_paths);
   const [monacoCores, setMonacoCores] = useState(data?.monaco_cores);
+  const [monacoCallbacks, setMonacoCallbacks] = useState({});
+
   const access_monaco_core_by_path = (path) => {
     return monacoCores[path];
   };
@@ -982,6 +995,8 @@ const MonacoEditor = ({
         item_on_drag,
         item_on_drag_over,
         item_on_drop,
+        monacoCallbacks,
+        setMonacoCallbacks,
       }}
     >
       <MonacoEditorContextMenuWrapper>
@@ -1008,7 +1023,7 @@ const MonacoEditor = ({
               opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
             }}
           >
-            {/* <MonacoEditorGroup
+            <MonacoEditorGroup
               code_editor_container_ref_index={code_editor_container_ref_index}
               setOnSelectedContent={setOnSelectedCotent}
               onAppendContent={onAppendContent}
@@ -1017,7 +1032,8 @@ const MonacoEditor = ({
               mode={mode}
               onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
               setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-            /> */}
+              setMonacoCallbacks={setMonacoCallbacks}
+            />
           </div>
           <FileSelectionListContainer />
         </div>
