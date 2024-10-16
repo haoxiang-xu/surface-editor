@@ -236,12 +236,6 @@ const MonacoCore = ({
 
   /*Delete Monaco Editor Path===========================================*/
   useEffect(() => {
-    if (onDeleteMonacoEditorPath === editor_filePath) {
-      monacoRef.current.setModel(null);
-      setOnDeleteMonacoEditorPath(null);
-    }
-  }, [onDeleteMonacoEditorPath]);
-  useEffect(() => {
     setMonacoCallbacks((prev) => ({
       ...prev,
       [editor_filePath]: {

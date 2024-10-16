@@ -626,6 +626,7 @@ const FileSelectionListItem = ({
           }}
           onClick={(e) => {
             e.stopPropagation();
+            to_delete_tag({ content: { path: file_path } });
           }}
           onMouseEnter={(e) => {
             e.stopPropagation();

@@ -877,8 +877,7 @@ const RootDataManager = React.memo(({ children }) => {
     (path) => {
       const currentItem = dir[path];
       if (currentItem && currentItem.absolute_path) {
-        return currentItem.absolute_path;
-      } else {
+        return currentItem.absolute_path;      } else {
         return path;
       }
     },
