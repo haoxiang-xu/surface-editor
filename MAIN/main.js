@@ -324,7 +324,7 @@ ipcMain.on("load-dir-event-handler", () => {
   });
   load_explore_dir_dialog();
 });
-ipcMain.on("read-file", async (event, absolutePath, relativePath) => {
+ipcMain.on("load-file-event-handler", async (event, absolutePath, relativePath) => {
   try {
     const stats = await fs.stat(absolutePath);
     if (stats.isFile()) {
@@ -338,16 +338,16 @@ ipcMain.on("read-file", async (event, absolutePath, relativePath) => {
           EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
         fileContent: content,
       };
-      event.reply("file-content", openedFile, relativePath);
+      event.reply("load-file-event-listener", "success", openedFile, relativePath);
     } else {
-      event.reply("file-error", "The provided path is a directory, not a file");
+      event.reply("load-file-event-listener", "error: the provided path is a directory, not a file", null, null);
     }
   } catch (error) {
     console.error("Failed to read file:", error);
     if (error.code === "ENOENT") {
-      event.reply("file-error", "File does not exist");
+      event.reply("load-file-event-listener", "error: file does not exist", null, null);
     } else {
-      event.reply("file-error", error.message || "Failed to read file");
+      event.reply("load-file-event-listener", error.message || "error: failed to read file", null, null);
     }
   }
 });

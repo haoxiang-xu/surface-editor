@@ -502,18 +502,20 @@ const RootDataManager = React.memo(({ children }) => {
   /* { FILE } ========================================================================================================================== */
   const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
   useEffect(() => {
-    window.electronAPI.onFileContent((content, relativePath) => {
-      const newFile = { [relativePath]: content };
-      setFile((prevData) => {
-        return {
-          ...prevData,
-          ...newFile,
-        };
-      });
-    });
-    window.electronAPI.onFileError((error) => {
-      console.error("Error:", error);
-    });
+    window.rootDataManagerAPI.loadFileEventListener(
+      (message, content, relativePath) => {
+        const newFile = { [relativePath]: content };
+        if (!newFile) {
+          console.error(message);
+        }
+        setFile((prevData) => {
+          return {
+            ...prevData,
+            ...newFile,
+          };
+        });
+      }
+    );
   }, [file]);
   const update_file_content_by_path = useCallback(
     (path, data) => {
@@ -549,7 +551,7 @@ const RootDataManager = React.memo(({ children }) => {
       return file[path].fileContent;
     } else {
       //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
-      window.electronAPI.readFile(
+      window.rootDataManagerAPI.loadFileEventHandler(
         access_file_absolute_path_by_path(path),
         path
       );
@@ -830,7 +832,7 @@ const RootDataManager = React.memo(({ children }) => {
       new_path = new_path.join("/");
 
       let newDir = { ...dir };
-      
+
       newDir = recursive_replace_path(newDir, path, new_path);
       newDir[parent_path].sub_items = newDir[parent_path].sub_items.map(
         (item) => {
@@ -877,7 +879,8 @@ const RootDataManager = React.memo(({ children }) => {
     (path) => {
       const currentItem = dir[path];
       if (currentItem && currentItem.absolute_path) {
-        return currentItem.absolute_path;      } else {
+        return currentItem.absolute_path;
+      } else {
         return path;
       }
     },

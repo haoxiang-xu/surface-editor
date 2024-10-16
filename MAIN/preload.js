@@ -3,14 +3,6 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("electronAPI", {
   toggleWindowButtons: (shouldHide) =>
     ipcRenderer.send("toggle-window-buttons", shouldHide),
-  readFile: (absolutePath, relativePath) =>
-    ipcRenderer.send("read-file", absolutePath, relativePath),
-  onFileContent: (callback) =>
-    ipcRenderer.on("file-content", (event, content, relativePath) =>
-      callback(content, relativePath)
-    ),
-  onFileError: (callback) =>
-    ipcRenderer.on("file-error", (event, error) => callback(error)),
 });
 contextBridge.exposeInMainWorld("osInfo", {
   platform: process.platform,
@@ -36,4 +28,10 @@ contextBridge.exposeInMainWorld("rootDataManagerAPI", {
   loadDirEventListener: (callback) => {
     ipcRenderer.on("load-dir-event-listener", (_, data) => callback(data));
   },
+  loadFileEventHandler: (absolutePath, relativePath) =>
+    ipcRenderer.send("load-file-event-handler", absolutePath, relativePath),
+  loadFileEventListener: (callback) =>
+    ipcRenderer.on("load-file-event-listener", (event, message, content, relativePath) =>
+      callback(message, content, relativePath)
+    ),
 });
