@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import RootEventListener from "./DATA_MANAGERs/root_event_listener/root_event_listener";
+import Chat from "./DEMO/chat/chatbox";
 
 import "./App.css";
 
@@ -13,6 +14,7 @@ function App() {
       ></link>
       <Routes>
         <Route path="/" element={<RootEventListener />} />
+        <Route path="/chat" element={<Chat />} />
       </Routes>
     </Router>
   );
