@@ -774,11 +774,7 @@ const FileSelectionListContainer = ({}) => {
     (onDragItem, onDropItem) => {
       if (!onDragItem || !onDropItem) return;
       let on_drop_index = monacoPaths.indexOf(onDropItem.content.path);
-      if (
-        onDragOverPosition.x <
-        (tagPositions[onDropItem.content.path].width + default_tag_max_width) /
-          2
-      ) {
+      if (onDropItem.content.append_to_left) {
         if (onDragedMonacoIndex !== -1 && onDragedMonacoIndex < on_drop_index) {
           on_drop_index -= 1;
         }
@@ -818,15 +814,21 @@ const FileSelectionListContainer = ({}) => {
       return;
     }
     if (onDragOveredMonacoIndex === -1) return;
+    if (!tagPositions[monacoPaths[onDragOveredMonacoIndex]]) return;
     item_on_drag_over(null, {
       source: id,
       content: {
         type: "file",
         path: monacoPaths[onDragOveredMonacoIndex],
+        append_to_left:
+          onDragOverPosition.x <
+          (tagPositions[monacoPaths[onDragOveredMonacoIndex]].width +
+            default_tag_max_width) /
+            2,
       },
       callback_to_append: to_append_tag,
     });
-  }, [onDragOveredMonacoIndex, monacoPaths]);
+  }, [onDragOveredMonacoIndex, monacoPaths, onDragOverPosition, tagPositions]);
   /* { drag and drop } ============================================================ */
 
   useEffect(() => {
