@@ -370,7 +370,11 @@ const FilePageTag = ({ config }) => {
       processed_config.style.color = "#C0C0C0";
     }
     if (config.style.padding_x === undefined) {
-      processed_config.style.padding_x = 5;
+      if (config.style.verticalMode) {
+        processed_config.style.padding_x = 7;
+      } else {
+        processed_config.style.padding_x = 5;
+      }
     }
     if (config.style.padding_y === undefined) {
       processed_config.style.padding_y = 7;
@@ -392,7 +396,13 @@ const FilePageTag = ({ config }) => {
     }
     processed_config.style.pointerEvents = "none";
 
-    processed_config.style.borderRadius = `${default_border_radius}px ${default_border_radius}px 0px 0px`;
+    if (config.style.verticalMode) {
+      processed_config.style.icon_transform = "rotate(-90deg)";
+      processed_config.style.borderRadius = `${default_border_radius}px ${default_border_radius}px ${default_border_radius}px ${default_border_radius}px`;
+    } else {
+      processed_config.style.icon_transform = "rotate(0deg)";
+      processed_config.style.borderRadius = `${default_border_radius}px ${default_border_radius}px 0px 0px`;
+    }
     return processed_config;
   };
 

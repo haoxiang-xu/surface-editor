@@ -420,6 +420,7 @@ const FileSelectionListItem = ({
   const { access_dir_name_by_path } = useContext(RootDataContexts);
   const {
     id,
+    mode,
     width,
     onSelectedMonacoIndex,
     setOnSelectedMonacoIndex,
@@ -543,8 +544,9 @@ const FileSelectionListItem = ({
       backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
         B + tagColorOffset
       }, 1 )`,
+      verticalMode: mode.includes("vertical"),
     };
-  }, [tagLeft, tagColorOffset]);
+  }, [tagLeft, tagColorOffset, mode]);
 
   return (
     <div
@@ -664,6 +666,7 @@ const FileSelectionListContainer = ({}) => {
   const {
     id,
     mode,
+    height,
     width,
     onDragedMonacoIndex,
     setOnDragMonacoIndex,
@@ -678,6 +681,14 @@ const FileSelectionListContainer = ({}) => {
   } = useContext(MonacoEditorContexts);
 
   const containerRef = useRef(null);
+  const [containerStyle, setContainerStyle] = useState({
+    width: 0,
+    transform: "rotate(0deg)",
+    top: 6,
+    left: 6,
+    right: 6,
+    height: 28,
+  });
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
   const [tags, setTags] = useState([]);
   const [tagPositions, setTagPositions] = useState([]);
@@ -844,6 +855,28 @@ const FileSelectionListContainer = ({}) => {
   /* { drag and drop } ============================================================ */
 
   useEffect(() => {
+    if (mode.includes("vertical")) {
+      setContainerStyle({
+        width: height - 32,
+        transform: "rotate(90deg)",
+        top: 6 - 37,
+        left: 4,
+        right: undefined,
+        height: 32,
+      });
+    } else {
+      setContainerStyle({
+        width: undefined,
+        transform: "rotate(0deg)",
+        top: 6,
+        left: 6,
+        right: 6,
+        height: 28,
+      });
+    }
+  }, [mode, height, width]);
+
+  useEffect(() => {
     if (onSelectedMonacoIndex === -1) return;
     if (containerRef.current) {
       containerRef.current.scrollTo({
@@ -857,13 +890,16 @@ const FileSelectionListContainer = ({}) => {
     <div
       ref={containerRef}
       style={{
-        transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
+        transition: "transform 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+        transform: containerStyle.transform,
+        transformOrigin: "0 100%",
         position: "absolute",
-        top: 6,
-        left: 6,
-        right: 6,
+        top: containerStyle.top,
+        left: containerStyle.left,
+        right: containerStyle.right,
 
-        height: 28,
+        width: containerStyle.width,
+        height: containerStyle.height,
 
         borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         overflow: "hidden",
@@ -884,6 +920,7 @@ const FileSelectionListContainer = ({}) => {
 const MonacoEditor = ({
   id,
   width,
+  height,
   mode,
   code_editor_container_ref_index,
   command,
@@ -968,6 +1005,7 @@ const MonacoEditor = ({
       value={{
         id,
         width,
+        height,
         mode,
         command,
         setCommand,
