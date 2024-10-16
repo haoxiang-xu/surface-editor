@@ -388,7 +388,8 @@ const StackComponentContainer = React.memo(
     /* { command } ============================================================================================== */
 
     /* { drag and drop } ---------------------------------------------------------------------------------------- */
-    const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
+    const { item_on_drag, item_on_drag_over, item_on_drop } =
+      useContext(RootCommandContexts);
     /* { drag and drop } ---------------------------------------------------------------------------------------- */
 
     return (
@@ -425,6 +426,7 @@ const StackComponentContainer = React.memo(
               data={data}
               setData={setData}
               item_on_drag={item_on_drag}
+              item_on_drag_over={item_on_drag_over}
               item_on_drop={item_on_drop}
               code_editor_container_ref_index={code_editor_container_ref_index}
             />

@@ -97,24 +97,46 @@ const RootCommandManager = React.memo(({ children }) => {
   /* { Drag and Drop } =============================================================================== */
   const [onDrag, setOnDrag] = useState(false);
   const [onDragItem, setOnDragItem] = useState(null);
+  const [onDropItem, setOnDropItem] = useState(null);
   const [onDragPosition, setOnDragPosition] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    console.log("onDragItem", onDragItem);
-  }, [onDragItem]);
 
   const item_on_drag = useCallback((event, on_drag_item) => {
-    event.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
     setOnDragItem(on_drag_item);
     setOnDrag(true);
 
     unload_context_menu();
   }, []);
-  const item_on_drop = useCallback((event) => {
-    event.stopPropagation();
-    setOnDrag(false);
-    setOnDragItem(null);
-    setOnDragPosition({ x: 0, y: 0 });
+  const item_on_drag_over = useCallback((event, on_drop_item) => {
+    if (event) {
+      event.stopPropagation();
+    }
+    setOnDropItem(on_drop_item);
   }, []);
+  const item_on_drop = useCallback(
+    (event) => {
+      if (event) {
+        event.stopPropagation();
+      }
+      if (
+        onDragItem &&
+        onDragItem.callback_to_delete &&
+        onDropItem &&
+        onDropItem.callback_to_append
+      ) {
+        onDragItem.callback_to_delete(onDragItem, onDropItem);
+        onDropItem.callback_to_append(onDragItem, onDropItem);
+      }
+
+      setOnDrag(false);
+      setOnDragItem(null);
+      setOnDropItem(null);
+      setOnDragPosition({ x: 0, y: 0 });
+    },
+    [onDragItem, onDropItem]
+  );
   /* { Drag and Drop } =============================================================================== */
 
   return (
@@ -141,6 +163,7 @@ const RootCommandManager = React.memo(({ children }) => {
         onDragPosition,
         setOnDragPosition,
         item_on_drag,
+        item_on_drag_over,
         item_on_drop,
         /* { Drag and Drop } ------------------------ */
       }}

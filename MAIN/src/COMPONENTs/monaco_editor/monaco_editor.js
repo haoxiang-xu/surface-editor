@@ -412,6 +412,7 @@ const FileSelectionListItem = ({
   file_path,
   tag_position,
   tag_size,
+  setTagPositions,
 }) => {
   const { access_dir_name_by_path } = useContext(RootDataContexts);
   const {
@@ -425,6 +426,8 @@ const FileSelectionListItem = ({
     setOnDragOverMonacoIndex,
     onDragOverPosition,
     setOnDragOverPosition,
+    monacoPaths,
+    setMonacoPaths,
     item_on_drag,
     item_on_drop,
   } = useContext(MonacoEditorContexts);
@@ -442,6 +445,22 @@ const FileSelectionListItem = ({
     onHover: false,
   });
   const [tagOpacity, setTagOpacity] = useState(1);
+
+  const to_delete_tag = useCallback(
+    (onDragItem, onDropItem) => {
+      setOnSelectedMonacoIndex(-1);
+      const to_delete_index = monacoPaths.indexOf(onDragItem.content.path);
+      setMonacoPaths((prevData) => {
+        return prevData.filter((path, index) => index !== to_delete_index);
+      });
+      setTagPositions((prevData) => {
+        const new_data = { ...prevData };
+        delete new_data[onDragItem.content.path];
+        return new_data;
+      });
+    },
+    [file_path, monacoPaths]
+  );
 
   useEffect(() => {
     setItemWidth(
@@ -489,7 +508,7 @@ const FileSelectionListItem = ({
       }
       setOnDragOverMonacoIndex(index);
     },
-    [containerRef, onDragOveredMonacoIndex]
+    [containerRef, onDragedMonacoIndex, onDragOveredMonacoIndex]
   );
   useEffect(() => {
     if (onDragOveredMonacoIndex === index) {
@@ -548,13 +567,13 @@ const FileSelectionListItem = ({
             type: "file",
             path: file_path,
           },
+          callback_to_delete: to_delete_tag,
         });
       }}
       onDragEnd={(e) => {
         e.stopPropagation();
         setOnDragMonacoIndex(-1);
         setOnDragOverMonacoIndex(-1);
-        setOnDragOverPosition({ x: 0, y: 0 });
         item_on_drop(e);
       }}
       onDragOver={(e) => {
@@ -630,8 +649,9 @@ const FileSelectionListItem = ({
   );
 };
 const FileSelectionListContainer = ({}) => {
-  const { onDragItem, onDragPosition } = useContext(RootCommandContexts);
+  const { onDragItem } = useContext(RootCommandContexts);
   const {
+    id,
     mode,
     width,
     onDragedMonacoIndex,
@@ -639,66 +659,87 @@ const FileSelectionListContainer = ({}) => {
     onDragOveredMonacoIndex,
     setOnDragOverMonacoIndex,
     onSelectedMonacoIndex,
+    setOnSelectedMonacoIndex,
     onDragOverPosition,
-    setOnDragOverPosition,
     monacoPaths,
     setMonacoPaths,
+    item_on_drag_over,
   } = useContext(MonacoEditorContexts);
 
   const containerRef = useRef(null);
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
+  const [tags, setTags] = useState([]);
   const [tagPositions, setTagPositions] = useState([]);
-  const [tagSizes, setTagSizes] = useState([]);
   const [requiredRerender, setRequiredRerender] = useState(true);
 
+  /* { render tags } ============================================================== */
   const render_tags = useCallback(() => {
     if (!tagRefs.current) return;
     if (!containerRef.current) return;
 
-    let tagPositions = [];
-    let tagSizes = [];
+    let tags = [];
+    let tag_positions = [];
 
     let position_x = 0;
 
     for (let i = 0; i < monacoPaths.length; i++) {
+      let tagPosition = {};
+      let tag_width = tagRefs.current[i]?.current?.offsetWidth;
+
+      if (isNaN(tag_width)) {
+        tag_width = tagPositions[monacoPaths[i]]?.width;
+      }
+      if (isNaN(tag_width)) {
+        tag_width = default_tag_max_width;
+      }
+
       if (i === onDragedMonacoIndex) {
         position_x += 0;
       } else if (i === onSelectedMonacoIndex) {
         position_x += default_selecion_list_icon_offset + 6;
       }
-      tagPositions.push(position_x);
+      tagPosition.x = position_x;
       if (i !== onDragedMonacoIndex) {
-        position_x +=
-          tagRefs.current[i]?.current?.offsetWidth +
-          0.5 * default_selecion_list_item_padding;
+        position_x += tag_width + 0.5 * default_selecion_list_item_padding;
       }
       if (i === onDragOveredMonacoIndex) {
         position_x += default_tag_max_width;
       }
-      tagSizes.push({
-        width: tagRefs.current[i]?.current?.offsetWidth,
-        height: tagRefs.current[i]?.current?.offsetHeight,
-      });
+      tagPosition.width = tag_width;
+      tagPosition.height = tagRefs.current[i]?.current?.offsetHeight;
+      tags.push(
+        <FileSelectionListItem
+          key={monacoPaths[i]}
+          index={i}
+          containerListRef={containerRef}
+          reference={tagRefs.current[i]}
+          file_path={monacoPaths[i]}
+          tag_position={tagPosition.x}
+          tag_size={{ width: tagPosition.width, height: tagPosition.height }}
+          setTagPositions={setTagPositions}
+        />
+      );
+      tag_positions[monacoPaths[i]] = tagPosition;
     }
-    setTagPositions(tagPositions);
-    setTagSizes(tagSizes);
+    setTagPositions(tag_positions);
+    setTags(tags);
   }, [
     monacoPaths,
     tagRefs.current,
     containerRef.current,
+    tagPositions,
     onSelectedMonacoIndex,
     onDragedMonacoIndex,
     onDragOveredMonacoIndex,
   ]);
-
   useEffect(() => {
     if (!requiredRerender) return;
     const intervalId = setInterval(() => {
-      if (tagPositions.length === 0 || tagSizes.length === 0) {
+      if (Object.keys(tagPositions).length === 0) {
         render_tags();
       } else {
         for (let i = 0; i < monacoPaths.length; i++) {
-          if (isNaN(tagPositions[i])) {
+          if (isNaN(tagPositions[Object.keys(tagPositions)[0]].height)) {
             render_tags();
             return;
           }
@@ -708,19 +749,11 @@ const FileSelectionListContainer = ({}) => {
       }
     }, 100);
     return () => clearInterval(intervalId);
-  }, [tagPositions, tagSizes, requiredRerender]);
-  useEffect(() => {
-    if (!tagRefs.current) return;
-    tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
-    for (let i = 0; i < monacoPaths.length; i++) {
-      tagRefs.current[i] = React.createRef();
-    }
-  }, [monacoPaths]);
+  }, [tagPositions, requiredRerender]);
   useEffect(() => {
     render_tags();
   }, [
     width,
-    monacoPaths,
     tagRefs.current,
     containerRef.current,
     onSelectedMonacoIndex,
@@ -728,11 +761,74 @@ const FileSelectionListContainer = ({}) => {
     onDragOveredMonacoIndex,
   ]);
   useEffect(() => {
+    if (!tagRefs.current) return;
+    tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
+    for (let i = 0; i < monacoPaths.length; i++) {
+      tagRefs.current[i] = React.createRef();
+    }
+  }, [monacoPaths]);
+  /* { render tags } ============================================================== */
+
+  /* { drag and drop } ============================================================ */
+  const to_append_tag = useCallback(
+    (onDragItem, onDropItem) => {
+      if (!onDragItem || !onDropItem) return;
+      let on_drop_index = monacoPaths.indexOf(onDropItem.content.path);
+      if (
+        onDragOverPosition.x <
+        (tagPositions[onDropItem.content.path].width + default_tag_max_width) /
+          2
+      ) {
+        if (onDragedMonacoIndex !== -1 && onDragedMonacoIndex < on_drop_index) {
+          on_drop_index -= 1;
+        }
+        setMonacoPaths((prevData) => {
+          return [
+            ...prevData.slice(0, on_drop_index),
+            onDragItem.content.path,
+            ...prevData.slice(on_drop_index),
+          ];
+        });
+      } else {
+        if (onDragedMonacoIndex !== -1 && onDragedMonacoIndex < on_drop_index) {
+          on_drop_index -= 1;
+        }
+        on_drop_index += 1;
+        setMonacoPaths((prevData) => {
+          return [
+            ...prevData.slice(0, on_drop_index),
+            onDragItem.content.path,
+            ...prevData.slice(on_drop_index),
+          ];
+        });
+      }
+      setRequiredRerender(true);
+    },
+    [onDragedMonacoIndex, onDragOverPosition, tagPositions, monacoPaths]
+  );
+  useEffect(() => {
     if (onDragItem) return;
     setOnDragMonacoIndex(-1);
     setOnDragOverMonacoIndex(-1);
-    setOnDragOverPosition({ x: 0, y: 0 });
   }, [onDragItem]);
+  useEffect(() => {
+    /* on drag index cannot be set to on drag overed index ------------------------ */
+    if (onDragOveredMonacoIndex === onDragedMonacoIndex) {
+      setOnDragOverMonacoIndex(-1);
+      return;
+    }
+    if (onDragOveredMonacoIndex === -1) return;
+    item_on_drag_over(null, {
+      source: id,
+      content: {
+        type: "file",
+        path: monacoPaths[onDragOveredMonacoIndex],
+      },
+      callback_to_append: to_append_tag,
+    });
+  }, [onDragOveredMonacoIndex, monacoPaths]);
+  /* { drag and drop } ============================================================ */
+
   useEffect(() => {
     if (onSelectedMonacoIndex === -1) return;
     if (containerRef.current) {
@@ -742,12 +838,6 @@ const FileSelectionListContainer = ({}) => {
       });
     }
   }, [onSelectedMonacoIndex, containerRef.current]);
-
-  useEffect(() => {
-    if (onDragOveredMonacoIndex === onDragedMonacoIndex) {
-      setOnDragOverMonacoIndex(-1);
-    }
-  }, [onDragOveredMonacoIndex]);
 
   return (
     <div
@@ -769,22 +859,9 @@ const FileSelectionListContainer = ({}) => {
         e.preventDefault();
         e.stopPropagation();
         setOnDragOverMonacoIndex(-1);
-        setOnDragOverPosition({ x: 0, y: 0 });
       }}
     >
-      {monacoPaths.map((filePath, index) => {
-        return (
-          <FileSelectionListItem
-            key={filePath}
-            index={index}
-            containerListRef={containerRef}
-            reference={tagRefs.current[index]}
-            file_path={filePath}
-            tag_position={tagPositions[index]}
-            tag_size={tagSizes[index]}
-          />
-        );
-      })}
+      {tags}
     </div>
   );
 };
@@ -801,6 +878,7 @@ const MonacoEditor = ({
   data,
   setData,
   item_on_drag,
+  item_on_drag_over,
   item_on_drop,
 }) => {
   //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
@@ -900,6 +978,7 @@ const MonacoEditor = ({
         onAppendContent,
         setOnAppendContent,
         item_on_drag,
+        item_on_drag_over,
         item_on_drop,
       }}
     >
@@ -927,7 +1006,7 @@ const MonacoEditor = ({
               opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
             }}
           >
-            <MonacoEditorGroup
+            {/* <MonacoEditorGroup
               code_editor_container_ref_index={code_editor_container_ref_index}
               setOnSelectedContent={setOnSelectedCotent}
               onAppendContent={onAppendContent}
@@ -936,7 +1015,7 @@ const MonacoEditor = ({
               mode={mode}
               onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
               setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-            />
+            /> */}
           </div>
           <FileSelectionListContainer />
         </div>
