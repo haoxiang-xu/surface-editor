@@ -29,52 +29,15 @@ const CODE = ({ language, children }) => {
       <div
         style={{
           position: "absolute",
-          top: 10,
-          right: 8,
-
-          width: 36,
-          padding: `${default_font_size}px`,
-          borderRadius: `${default_border_radius - 4}px`,
-          backgroundColor: `rgb(${R}, ${G}, ${B})`,
-        }}
-      >
-        <Icon
-          src="copy"
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: 4,
-            transform: "translateY(-50%)",
-          }}
-        />
-        <span
-          style={{
-            position: "absolute",
-            top: "50%",
-            right: 4,
-            transform: "translateY(-55%)",
-
-            fontSize: `${default_font_size + 3}px`,
-            color: `rgb(${R + default_font_color_offset}, ${
-              G + default_font_color_offset
-            }, ${B + default_font_color_offset})`,
-          }}
-        >
-          copy
-        </span>
-      </div>
-      <div
-        style={{
-          position: "absolute",
           top: 5,
           right: 5,
           left: 5,
 
-          height: default_font_size * 2.8,
+          height: default_font_size * 2.3,
 
-          opacity: 0.72,
-          borderRadius: `${default_border_radius - 3}px ${
-            default_border_radius - 3
+          opacity: 1,
+          borderRadius: `${default_border_radius - 4}px ${
+            default_border_radius - 4
           }px 0 0`,
           backgroundColor: `rgb(${R + default_forground_color_offset / 2}, ${
             G + default_forground_color_offset / 2
@@ -85,10 +48,12 @@ const CODE = ({ language, children }) => {
         <span
           style={{
             position: "absolute",
-            top: 6,
-            left: 12,
+            top: "50%",
 
-            fontSize: `${default_font_size + 3}px`,
+            transform: "translateY(-55%)",
+            left: 8,
+
+            fontSize: `${default_font_size + 1}px`,
             color: `rgb(${R + default_font_color_offset}, ${
               G + default_font_color_offset
             }, ${B + default_font_color_offset})`,
@@ -96,6 +61,49 @@ const CODE = ({ language, children }) => {
         >
           {language}
         </span>
+        <div
+          style={{
+            position: "absolute",
+            top: 1,
+            right: 1,
+
+            width: 28,
+            padding: `${default_font_size}px`,
+            border: `1px solid rgba(${R + default_forground_color_offset}, ${
+              G + default_forground_color_offset
+            }, ${B + default_forground_color_offset} , 0)`,
+            borderRadius: `${default_border_radius - 4}px`,
+          }}
+        >
+          <Icon
+            src="copy"
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: 4,
+              transform: "translateY(-50%)",
+              PointerEvents: "none",
+              userSelect: "none",
+            }}
+          />
+          <span
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: 4,
+              transform: "translateY(-55%)",
+
+              fontSize: `${default_font_size}px`,
+              color: `rgb(${R + default_font_color_offset}, ${
+                G + default_font_color_offset
+              }, ${B + default_font_color_offset})`,
+              PointerEvents: "none",
+              userSelect: "none",
+            }}
+          >
+            copy
+          </span>
+        </div>
       </div>
       <CodeBlock
         text={children}
@@ -106,9 +114,9 @@ const CODE = ({ language, children }) => {
         codeBlock
         customStyle={{
           fontSize: `${default_font_size}px`,
-          backgroundColor: `rgb(${R}, ${G}, ${B})`,
+          backgroundColor: `rgb(${R - 8}, ${G - 8}, ${B - 8})`,
           paddingTop: 32,
-          borderRadius: 7,
+          borderRadius: default_border_radius,
           overflowX: "auto",
           maxWidth: "100%",
         }}
@@ -175,40 +183,239 @@ const TXT = ({ children }) => {
     </span>
   );
 };
+const HTML = ({ children }) => {
+  return <div dangerouslySetInnerHTML={{ __html: children }} />;
+};
 
 const Span = ({ children }) => {
   const [processedContent, setProcessedContent] = useState(children);
 
   useEffect(() => {
-    const processedContent = (raw_content) => {
-      return raw_content;
+    const extract_CODE = (raw_content) => {
+      const find_first_code_block = (raw_content) => {
+        const start_code_block = "```";
+        const end_code_block = "```";
+        const start_code_block_index = raw_content.indexOf(start_code_block);
+
+        const sliced_content = raw_content.slice(start_code_block_index + 3);
+
+        const end_code_block_index =
+          sliced_content.indexOf(end_code_block) + start_code_block_index + 3;
+        if (start_code_block_index === -1) return null;
+        if (end_code_block_index === -1) return null;
+        if (end_code_block_index < start_code_block_index) return null;
+
+        return raw_content.slice(
+          start_code_block_index,
+          end_code_block_index + end_code_block.length
+        );
+      };
+      const process_code_block = (code_block) => {
+        const language = code_block.slice(3, code_block.indexOf("\n")).trim();
+        const last_line_index = code_block.lastIndexOf("\n");
+        const content = code_block.slice(
+          code_block.indexOf("\n") + 1,
+          last_line_index
+        );
+        return { language, content };
+      };
+
+      let unprocessed_content = raw_content;
+      let processed_content = [];
+
+      while (find_first_code_block(unprocessed_content) !== null) {
+        const code_block = find_first_code_block(unprocessed_content);
+
+        const start_index = unprocessed_content.indexOf(code_block);
+        const end_index = start_index + code_block.length;
+
+        const pre_content = unprocessed_content.slice(0, start_index);
+        const post_content = unprocessed_content.slice(end_index);
+        const code_content = unprocessed_content.slice(start_index, end_index);
+
+        if (pre_content.length > 0) {
+          processed_content.push({ type: "RAW", content: pre_content });
+        }
+        const processed_code_block = process_code_block(code_content);
+        processed_content.push({
+          type: "CODE",
+          language: processed_code_block.language,
+          content: processed_code_block.content,
+        });
+
+        unprocessed_content = post_content;
+      }
+      if (unprocessed_content.length > 0) {
+        processed_content.push({ type: "RAW", content: unprocessed_content });
+      }
+      return processed_content;
     };
-    setProcessedContent(processedContent(children));
+    const extract_HTML = (raw_content) => {
+      const find_first_HTML_tag = (raw_content) => {
+        const start_tag_open_index = raw_content.indexOf("<");
+        const start_tag_close_index = raw_content.indexOf(">");
+        if (start_tag_open_index === -1) return null;
+        if (start_tag_close_index < start_tag_open_index) return null;
+        return raw_content.slice(
+          start_tag_open_index,
+          start_tag_close_index + 1
+        );
+      };
+
+      let unprocessed_content = raw_content;
+      let processed_content = [];
+
+      while (find_first_HTML_tag(unprocessed_content) !== null) {
+        const start_tag = find_first_HTML_tag(unprocessed_content);
+        const end_tag = start_tag.replace("<", "</");
+
+        const start_index = unprocessed_content.indexOf(start_tag);
+        const end_index = unprocessed_content.indexOf(end_tag);
+
+        const pre_content = unprocessed_content.slice(0, start_index);
+        const post_content = unprocessed_content.slice(
+          end_index + end_tag.length
+        );
+        const html_content = unprocessed_content.slice(
+          start_index,
+          end_index + end_tag.length
+        );
+        if (pre_content.length > 0) {
+          processed_content.push({ type: "RAW", content: pre_content });
+        }
+        processed_content.push({ type: "HTML", content: html_content });
+        unprocessed_content = post_content;
+      }
+      if (unprocessed_content.length > 0) {
+        processed_content.push({ type: "RAW", content: unprocessed_content });
+      }
+      return processed_content;
+    };
+    const extrace_LaTeX = (raw_content) => {
+      const find_first_LaTeX = (raw_content) => {
+        const start_LaTeX = "$";
+        const end_LaTeX = "$";
+        const start_LaTeX_index = raw_content.indexOf(start_LaTeX);
+        const sliced_content = raw_content.slice(start_LaTeX_index + 1);
+        const end_LaTeX_index =
+          sliced_content.indexOf(end_LaTeX) + start_LaTeX_index + 1;
+        if (start_LaTeX_index === -1) return null;
+        if (end_LaTeX_index === -1) return null;
+        if (end_LaTeX_index < start_LaTeX_index) return null;
+        return raw_content.slice(
+          start_LaTeX_index,
+          end_LaTeX_index + end_LaTeX.length
+        );
+      };
+
+      let unprocessed_content = raw_content;
+      let processed_content = [];
+
+      while (find_first_LaTeX(unprocessed_content) !== null) {
+        const LaTeX = find_first_LaTeX(unprocessed_content);
+        const start_index = unprocessed_content.indexOf(LaTeX);
+        const end_index = start_index + LaTeX.length;
+
+        const pre_content = unprocessed_content.slice(0, start_index);
+        const post_content = unprocessed_content.slice(end_index);
+        const LaTeX_content = unprocessed_content.slice(start_index, end_index);
+
+        if (pre_content.length > 0) {
+          processed_content.push({ type: "RAW", content: pre_content });
+        }
+        processed_content.push({ type: "LaTeX", content: LaTeX_content });
+        unprocessed_content = post_content;
+      }
+      if (unprocessed_content.length > 0) {
+        processed_content.push({ type: "RAW", content: unprocessed_content });
+      }
+      return processed_content;
+    };
+    const process_content = (raw_content) => {
+      const extract_and_merge = (raw_content) => {
+        const apply_extract_function = (
+          processing_content,
+          extract_function
+        ) => {
+          for (let i = 0; i < processing_content.length; i++) {
+            if (processing_content[i].type === "RAW") {
+              const processed_sub_content = extract_function(
+                processing_content[i].content
+              );
+              processing_content.splice(i, 1, ...processed_sub_content);
+            }
+          }
+          return processing_content;
+        };
+        let processed_content = [];
+        processed_content = extract_CODE(raw_content);
+        processed_content = apply_extract_function(
+          processed_content,
+          extract_HTML
+        );
+        processed_content = apply_extract_function(
+          processed_content,
+          extrace_LaTeX
+        );
+        return processed_content;
+      };
+      let processed_content = extract_and_merge(raw_content);
+      for (let i = 0; i < processed_content.length; i++) {
+        if (processed_content[i].type === "HTML") {
+          processed_content[i].component = (
+            <div key={i} style={{ display: "block" }}>
+              <HTML>{processed_content[i].content}</HTML>
+            </div>
+          );
+        } else if (processed_content[i].type === "CODE") {
+          processed_content[i].component = (
+            <div key={i} style={{ display: "block" }}>
+              <CODE language={processed_content[i].language}>
+                {processed_content[i].content}
+              </CODE>
+            </div>
+          );
+        } else if (processed_content[i].type === "LaTeX") {
+          processed_content[i].component = (
+            <div key={i} style={{ display: "inline-block" }}>
+              <LaTeX>{processed_content[i].content}</LaTeX>
+            </div>
+          );
+        } else {
+          processed_content[i].component = (
+            <div key={i} style={{ display: "inline-block" }}>
+              <MD>{processed_content[i].content}</MD>
+            </div>
+          );
+        }
+      }
+      return processed_content.map((content) => content.component);
+    };
+    setProcessedContent(process_content(children));
   }, [children]);
 
   return (
     <div
       style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
+        position: "relative",
 
-        width: "50%",
-
-        transform: "translate(-50%, -50%)",
+        left: 0,
+        right: 0,
 
         /* { style } --------------------------------------------------------------------- */
         padding: `${default_font_size}px`,
-        borderRadius: `${default_border_radius + 8}px`,
+        borderRadius: `${default_border_radius}px`,
         backgroundColor: `rgb(${R + default_forground_color_offset}, ${
           G + default_forground_color_offset
         }, ${B + default_forground_color_offset})`,
         color: `rgb(${R + default_font_color_offset}, ${
           G + default_font_color_offset
         }, ${B + default_font_color_offset})`,
+
+        overflow: "hidden",
       }}
     >
-      <TXT>{processedContent}</TXT>
+      {processedContent}
     </div>
   );
 };

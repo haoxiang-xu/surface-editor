@@ -54,7 +54,7 @@ const default_border_radius = 5;
 const default_selecion_list_icon_offset = 22;
 const default_tag_max_width = 128;
 
-const default_onhover_item_background_color_offset = 24;
+const default_onhover_item_background_color_offset = 16;
 
 const R = 30;
 const G = 30;
@@ -876,7 +876,6 @@ const FileSelectionListContainer = ({}) => {
       });
     }
   }, [mode, height, width]);
-
   useEffect(() => {
     if (onSelectedMonacoIndex === -1) return;
     if (containerRef.current) {
@@ -891,6 +890,7 @@ const FileSelectionListContainer = ({}) => {
     <div
       ref={containerRef}
       style={{
+        transition: "all 0.12s cubic-bezier(0.32, 1, 0.32, 1)",
         transform: containerStyle.transform,
         transformOrigin: "0 100%",
         position: "absolute",
