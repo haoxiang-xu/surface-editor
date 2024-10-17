@@ -562,6 +562,7 @@ const FileSelectionListItem = ({
         bottom: default_selecion_list_item_padding / 2,
         zIndex: zIndex,
         opacity: tagOpacity,
+        backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
       }}
       onMouseUp={() => {
         setOnSelectedMonacoIndex(index);
@@ -890,7 +891,6 @@ const FileSelectionListContainer = ({}) => {
     <div
       ref={containerRef}
       style={{
-        transition: "transform 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
         transform: containerStyle.transform,
         transformOrigin: "0 100%",
         position: "absolute",
@@ -996,8 +996,6 @@ const MonacoEditor = ({
   }, [monacoCores]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
 
-  const [onDeleteMonacoEditorPath, setOnDeleteMonacoEditorPath] =
-    useState(null);
   const [onSelectedCotent, setOnSelectedCotent] = useState(null);
   const [onAppendContent, setOnAppendContent] = useState(null);
 
@@ -1026,8 +1024,6 @@ const MonacoEditor = ({
         access_monaco_core_by_path,
         update_monaco_core_view_state,
         update_monaco_core_model,
-        onDeleteMonacoEditorPath,
-        setOnDeleteMonacoEditorPath,
         onSelectedCotent,
         setOnSelectedCotent,
         onAppendContent,
@@ -1070,8 +1066,6 @@ const MonacoEditor = ({
               setOnAppendContent={setOnAppendContent}
               //HORIZONTAL OR VERTICAL MODE
               mode={mode}
-              onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-              setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
               setMonacoCallbacks={setMonacoCallbacks}
             />
           </div>

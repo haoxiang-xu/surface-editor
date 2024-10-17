@@ -191,7 +191,10 @@ const CustomizedTag = ({
         <Icon
           src={icon}
           style={{
-            transition: "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
+            transition:
+              style.verticalMode !== undefined
+                ? "none"
+                : "transform 0.12s cubic-bezier(0.32, 0.96, 0.32, 1.08)",
             position: "absolute",
             transform: tagStyle.icon_transform
               ? `translate(0%, -50%) ${tagStyle.icon_transform}`

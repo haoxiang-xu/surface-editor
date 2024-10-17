@@ -27,8 +27,6 @@ const MonacoCore = ({
   //Diff Editor optional parameters
   editor_diffContent,
   editor_setDiffContent,
-  onDeleteMonacoEditorPath,
-  setOnDeleteMonacoEditorPath,
   setMonacoCallbacks,
 }) => {
   let EDITOR_FONT_SIZE;
