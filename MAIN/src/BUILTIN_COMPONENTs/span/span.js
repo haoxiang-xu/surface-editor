@@ -4,6 +4,7 @@ import Latex from "react-latex-next";
 import "katex/dist/katex.min.css";
 import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
 import { CodeBlock, dracula } from "react-code-blocks";
+import ReactShowdown from "react-showdown";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
 const R = 30;
@@ -114,6 +115,9 @@ const CODE = ({ language, children }) => {
       />
     </div>
   );
+};
+const MD = ({ children }) => {
+  return <ReactShowdown markdown={children} />;
 };
 const TAG = ({ children }) => {
   const tagRef = useRef();
