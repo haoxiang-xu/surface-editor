@@ -373,13 +373,13 @@ const FilePageTag = ({ config }) => {
       processed_config.style.color = "#C0C0C0";
     }
     if (config.style.padding_x === undefined) {
-      processed_config.style.padding_x = 7;
+      processed_config.style.padding_x = 9;
     }
     if (config.style.padding_y === undefined) {
-      processed_config.style.padding_y = 7;
+      processed_config.style.padding_y = 6;
     }
     if (config.style.boxShadow === undefined) {
-      processed_config.style.boxShadow = "0px 4px 16px rgba(0, 0, 0, 0.32)";
+      processed_config.style.boxShadow = "none";
     }
     if (config.icon === undefined || config.icon === null) {
       processed_config.icon = config.label.split(".").pop().toUpperCase();
@@ -397,11 +397,10 @@ const FilePageTag = ({ config }) => {
 
     if (config.style.verticalMode) {
       processed_config.style.icon_transform = "rotate(-90deg)";
-      processed_config.style.borderRadius = `${default_border_radius}px`;
     } else {
       processed_config.style.icon_transform = "rotate(0deg)";
-      processed_config.style.borderRadius = `${default_border_radius}px ${default_border_radius}px 0 0`;
     }
+    processed_config.style.borderRadius = `${default_border_radius}px`;
     return processed_config;
   };
 

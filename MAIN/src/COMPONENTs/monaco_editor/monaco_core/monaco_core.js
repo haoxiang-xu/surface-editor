@@ -293,7 +293,7 @@ const defineTheme = (monaco) => {
     colors: {
       "editor.foreground": "#cccccc",
       "editorCursor.foreground": "#ffcc00",
-      "editor.background": "#202020",
+      "editor.background": "#1e1e1e",
     },
   });
   monaco.editor.setTheme("customTheme");

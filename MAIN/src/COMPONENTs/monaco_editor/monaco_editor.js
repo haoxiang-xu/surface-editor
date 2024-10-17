@@ -55,6 +55,7 @@ const default_selecion_list_icon_offset = 22;
 const default_tag_max_width = 128;
 
 const default_onhover_item_background_color_offset = 16;
+const default_onhover_item_border_color_offset = 64;
 
 const R = 30;
 const G = 30;
@@ -538,15 +539,15 @@ const FileSelectionListItem = ({
       top: "50%",
       left: tagLeft,
       transform: "translate(0%, -50%)",
-      boxShadow: "none",
       pointerEvents: "none",
       maxWidth: default_tag_max_width,
+      boxShadow: index === onSelectedMonacoIndex ? "0px 0px 16px 0px rgba(0, 0, 0, 0.32)" : "none",
       backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
         B + tagColorOffset
       }, 1 )`,
       verticalMode: mode.includes("vertical"),
     };
-  }, [tagLeft, tagColorOffset, mode]);
+  }, [tagLeft, tagColorOffset, mode, index, onSelectedMonacoIndex]);
 
   return (
     <div
@@ -556,7 +557,7 @@ const FileSelectionListItem = ({
         transition:
           "left 0.32s cubic-bezier(0.32, 1, 0.32, 1), width 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
-        top: 0,
+        top: 4,
         left: tag_position ? tag_position : 0,
         width: itemWidth,
         bottom: default_selecion_list_item_padding / 2,
@@ -685,7 +686,7 @@ const FileSelectionListContainer = ({}) => {
   const [containerStyle, setContainerStyle] = useState({
     width: 0,
     transform: "rotate(0deg)",
-    top: 6,
+    top: 7,
     left: 6,
     right: 6,
     height: 28,
@@ -860,8 +861,8 @@ const FileSelectionListContainer = ({}) => {
       setContainerStyle({
         width: height - 32,
         transform: "rotate(90deg)",
-        top: 6 - 37,
-        left: 4,
+        top: 7 - 37,
+        left: 6,
         right: undefined,
         height: 32,
       });
@@ -869,7 +870,7 @@ const FileSelectionListContainer = ({}) => {
       setContainerStyle({
         width: undefined,
         transform: "rotate(0deg)",
-        top: 6,
+        top: 7,
         left: 6,
         right: 6,
         height: 28,
@@ -902,9 +903,8 @@ const FileSelectionListContainer = ({}) => {
         height: containerStyle.height,
 
         borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-        overflow: "hidden",
-        padding: default_selecion_list_item_padding / 2,
-        backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
+        padding: `${default_selecion_list_item_padding / 2}px 0px 0px 0px`,
+        border: "1px solid rgba( 225, 225, 225, 0 )",
       }}
       onDragLeave={(e) => {
         e.preventDefault();
@@ -1049,12 +1049,10 @@ const MonacoEditor = ({
               left: 6,
               right: 6,
               bottom: 6,
-              padding: "0px 8px 8px 0px",
+              padding: "10px 10px 10px 0px",
 
               boxSizing: "border-box",
-              backgroundColor: "#202020",
-              borderRadius: "0px 0px 5px 5px",
-              border: "1px solid #282828",
+              borderRadius: 5,
               // boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
               opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
             }}
