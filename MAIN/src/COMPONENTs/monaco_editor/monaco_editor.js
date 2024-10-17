@@ -904,6 +904,7 @@ const FileSelectionListContainer = ({}) => {
         borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
         overflow: "hidden",
         padding: default_selecion_list_item_padding / 2,
+        backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
       }}
       onDragLeave={(e) => {
         e.preventDefault();
