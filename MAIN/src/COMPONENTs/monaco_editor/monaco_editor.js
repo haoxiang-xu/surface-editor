@@ -664,7 +664,6 @@ const FileSelectionListItem = ({
   );
 };
 const FileSelectionListContainer = ({}) => {
-  const { onDragItem } = useContext(RootCommandContexts);
   const {
     id,
     mode,
@@ -825,14 +824,10 @@ const FileSelectionListContainer = ({}) => {
       }
       setRequiredRerender(true);
       setOnSelectedMonacoIndex(-1);
+      setOnDragOverMonacoIndex(-1);
     },
     [onDragedMonacoIndex, onDragOverPosition, tagPositions, monacoPaths]
   );
-  useEffect(() => {
-    if (onDragItem) return;
-    setOnDragMonacoIndex(-1);
-    setOnDragOverMonacoIndex(-1);
-  }, [onDragItem]);
   useEffect(() => {
     /* on drag index cannot be set to on drag overed index ------------------------ */
     if (onDragOveredMonacoIndex === onDragedMonacoIndex) {
@@ -911,6 +906,7 @@ const FileSelectionListContainer = ({}) => {
         e.preventDefault();
         e.stopPropagation();
         setOnDragOverMonacoIndex(-1);
+        item_on_drag_over(e, null);
       }}
     >
       {tags}
