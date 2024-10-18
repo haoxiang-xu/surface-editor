@@ -541,7 +541,10 @@ const FileSelectionListItem = ({
       transform: "translate(0%, -50%)",
       pointerEvents: "none",
       maxWidth: default_tag_max_width,
-      boxShadow: index === onSelectedMonacoIndex ? "0px 0px 16px 0px rgba(0, 0, 0, 0.32)" : "none",
+      boxShadow:
+        index === onSelectedMonacoIndex
+          ? "0px 0px 16px 0px rgba(0, 0, 0, 0.32)"
+          : "none",
       backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
         B + tagColorOffset
       }, 1 )`,
@@ -1039,19 +1042,24 @@ const MonacoEditor = ({
         ></link>
         <div style={{ height: "100%" }}>
           <div
+            draggable={onSelectedMonacoIndex === -1 ? false : true}
             style={{
               transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
               position: "absolute",
               top: 38,
-              left: 6,
-              right: 6,
-              bottom: 6,
-              padding: "10px 10px 10px 0px",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              padding: "16px 16px 16px 0px",
 
               boxSizing: "border-box",
               borderRadius: 5,
               // boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
               opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
+            }}
+            onDragStart={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
             }}
           >
             <MonacoEditorGroup

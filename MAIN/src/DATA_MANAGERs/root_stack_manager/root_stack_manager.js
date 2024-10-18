@@ -843,6 +843,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         height: filters[id]
           ? filters[id].size.height
           : containers[id].size.height,
+        pointerEvents: onFrameResize ? "none" : "auto",
       }}
     >
       <div
