@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
 import Input from "../../BUILTIN_COMPONENTs/input/input";
+import send_icon from "./send.png";
 
 const R = 30;
 const G = 30;
@@ -8,62 +9,12 @@ const B = 30;
 
 const default_forground_color_offset = 12;
 const default_font_color_offset = 128;
-const default_font_size = 12;
 const default_border_radius = 7;
 
-const fake_assistant_msg = `Here’s a step-by-step demo on how to install Homebrew on your Mac:
-
-## Step-by-Step Guide:
-
-### 1. Open Terminal
-
-- Use \`Cmd + Space\` to open Spotlight Search, type Terminal, and press Enter.
-- Alternatively, you can open the Terminal from \`Applications > Utilities > Terminal\`.
-
-### 2. Run the Homebrew Installation Command
-
-- In your terminal, paste the following command and press Enter:
-
-\`\`\`bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-\`\`\`
-
-- This command fetches and runs the official Homebrew installation script.
-
-### 3. Enter Your Password
-
-- During the installation process, you may be prompted to enter your macOS password. Type your password and press Enter. (Note: The password will not be visible as you type.)
-
-### 4. Follow the On-Screen Instructions
-
-- Homebrew will provide some prompts during the installation, such as asking for permission to install developer tools (if not already installed). If you see this prompt, select Install and proceed.
-
-### 5. Add Homebrew to Your PATH
-
-- After the installation completes, Homebrew will suggest adding the Homebrew directory to your PATH. This step ensures that you can run Homebrew commands from anywhere in the terminal.
-- Follow the instructions provided by Homebrew to add it to your shell configuration file:
-
-\`\`\`bash
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
-\`\`\``;
-const fake_terminal_msg = `\`\`\`bash
-(base)  red@RedMac  ~/desktop  cd CLONERepo
-(base)  red@RedMac  ~/desktop/CLONERepo  ls
-Icon?          audio-slicer   so-vits-svc    surface-editor
-(base)  red@RedMac  ~/desktop/CLONERepo  cd surface-editor
-(base)  red@RedMac  ~/desktop/CLONERepo/surface-editor   version_0.0.2  cd f
-rontend_application/component_lib_testing_application
-(base)  red@RedMac  ~/desktop/CLONERepo/surface-editor/frontend_application/component_lib_testing_application   version_0.0.2  npm start
-\`\`\``;
-const FAKE_DATA = [
-  { role: "user", message: "Do me a demo on how to install homebrew on Mac" },
-  { role: "assistant", message: fake_assistant_msg },
-  { role: "terminal", message: fake_terminal_msg },
-];
-
-const Message = ({ role, message, is_last_index }) => {
-  const [style, setStyle] = useState({});
+const MessageSection = ({ role, message, is_last_index }) => {
+  const [style, setStyle] = useState({
+    backgroundColor: `rgba(${R}, ${G}, ${B}, 0)`,
+  });
 
   useEffect(() => {
     if (role === "assistant") {
@@ -84,25 +35,25 @@ const Message = ({ role, message, is_last_index }) => {
   return (
     <div
       style={{
+        transition: "margin-left 0.32s cubic-bezier(0.32, 0, 0.32, 1)",
+        transition: "width 0.32s cubic-bezier(0.32, 0, 0.32, 1)",
         position: "relative",
-        width: role === "user" ? "50%" : "100%",
-        marginLeft: role === "user" ? "50%" : "0",
+        maxWidth: role === "user" ? 328 : "100%",
+
+        left: role === "user" ? "calc(100% - 328px)" : 0,
         marginBottom: is_last_index ? 64 : 16,
         borderRadius: default_border_radius,
+        boxShadow:
+          role === "user" ? `0px 4px 16px rgba(0, 0, 0, 0.16)` : "none",
       }}
     >
       <Markdown style={style}>{message}</Markdown>
     </div>
   );
 };
-const ScrollingSpace = ({ imported_messages, set_imported_messages }) => {
-  const [messages, setMessages] = useState(
-    imported_messages !== undefined ? imported_messages : FAKE_DATA
-  );
-  useEffect(() => {
-    if (!imported_messages) return;
-    setMessages(imported_messages);
-  }, [imported_messages]);
+const ScrollingSection = ({ messages }) => {
+  const scrollRef = useRef(null);
+
   useEffect(() => {
     const styleElement = document.createElement("style");
     styleElement.innerHTML = `
@@ -137,9 +88,15 @@ const ScrollingSpace = ({ imported_messages, set_imported_messages }) => {
       document.head.removeChild(styleElement);
     };
   }, []);
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <div
+      ref={scrollRef}
       className="scrolling-space"
       style={{
         position: "absolute",
@@ -154,11 +111,12 @@ const ScrollingSpace = ({ imported_messages, set_imported_messages }) => {
         overflowX: "hidden",
         overflowY: "overlay",
         boxSizing: "border-box",
+        scrollBehavior: "smooth",
       }}
     >
       {messages
         ? messages.map((msg, index) => (
-            <Message
+            <MessageSection
               key={index}
               role={msg.role}
               message={msg.message}
@@ -176,7 +134,29 @@ const ScrollingSpace = ({ imported_messages, set_imported_messages }) => {
     </div>
   );
 };
-const InputSpace = ({ inputValue, setInputValue }) => {
+const InputSection = ({ inputValue, setInputValue, on_input_submit }) => {
+  const [style, setStyle] = useState({
+    colorOffset: 0,
+  });
+  const [onHover, setOnHover] = useState(false);
+  const [onClicked, setOnClicked] = useState(false);
+
+  useEffect(() => {
+    if (onClicked) {
+      setStyle({
+        colorOffset: 64,
+      });
+    } else if (onHover) {
+      setStyle({
+        colorOffset: 16,
+      });
+    } else {
+      setStyle({
+        colorOffset: 0,
+      });
+    }
+  }, [onHover, onClicked]);
+
   return (
     <>
       <div
@@ -193,6 +173,7 @@ const InputSpace = ({ inputValue, setInputValue }) => {
       <Input
         value={inputValue}
         setValue={setInputValue}
+        onSubmit={on_input_submit}
         style={{
           transition: "height 0.08s cubic-bezier(0.32, 0, 0.32, 1)",
           position: "fixed",
@@ -210,12 +191,58 @@ const InputSpace = ({ inputValue, setInputValue }) => {
           boxShadow: `0px 4px 32px rgba(0, 0, 0, 0.64)`,
         }}
       />
+      <img
+        src={send_icon}
+        alt="send"
+        style={{
+          transition: "all 0.08s cubic-bezier(0.32, 0, 0.32, 1)",
+
+          position: "fixed",
+          transform: "translate(-50%, -50%)",
+
+          bottom: 16,
+          right: 8,
+          width: 16,
+          height: 16,
+          cursor: "pointer",
+
+          opacity: onClicked ? 1 : 0.64,
+
+          padding: 8,
+          borderRadius: default_border_radius - 4,
+          backgroundColor: `rgba(${
+            R + default_forground_color_offset + style.colorOffset
+          }, ${G + default_forground_color_offset + style.colorOffset}, ${
+            B + default_forground_color_offset + style.colorOffset
+          }, 1)`,
+        }}
+        onMouseEnter={() => {
+          setOnHover(true);
+        }}
+        onMouseLeave={() => {
+          setOnHover(false);
+          setOnClicked(false);
+        }}
+        onMouseDown={() => {
+          setOnClicked(true);
+        }}
+        onMouseUp={() => {
+          setOnClicked(false);
+        }}
+        onClick={on_input_submit}
+      />
     </>
   );
 };
 
 const Chat = ({ messages, setMessages }) => {
   const [inputValue, setInputValue] = useState("");
+
+  const on_input_submit = useCallback(() => {
+    if (inputValue === "") return;
+    setMessages([...messages, { role: "user", message: inputValue }]);
+    setInputValue("");
+  }, [inputValue, messages]);
 
   return (
     <div
@@ -230,11 +257,12 @@ const Chat = ({ messages, setMessages }) => {
         backgroundColor: `rgb(${R}, ${G}, ${B})`,
       }}
     >
-      <ScrollingSpace
-        imported_messages={messages}
-        set_imported_messages={setMessages}
+      <ScrollingSection messages={messages} />
+      <InputSection
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        on_input_submit={on_input_submit}
       />
-      <InputSpace inputValue={inputValue} setInputValue={setInputValue} />
     </div>
   );
 };

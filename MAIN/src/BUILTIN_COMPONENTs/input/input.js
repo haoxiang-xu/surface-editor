@@ -7,9 +7,9 @@ const R = 30;
 const G = 30;
 const B = 30;
 
-const default_max_rows = 32;
+const default_max_rows = 16;
 
-const Input = ({ value, setValue, ...props }) => {
+const Input = ({ value, setValue, onSubmit, ...props }) => {
   const inputRef = useRef(null);
   const [height, setHeight] = useState(0);
 
@@ -31,6 +31,12 @@ const Input = ({ value, setValue, ...props }) => {
         ref={inputRef}
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && e.shiftKey) {
+            e.preventDefault();
+            onSubmit();
+          }
+        }}
         minRows={1}
         maxRows={default_max_rows}
         style={{
