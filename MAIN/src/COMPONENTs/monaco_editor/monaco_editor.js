@@ -543,7 +543,7 @@ const FileSelectionListItem = ({
       maxWidth: default_tag_max_width,
       boxShadow:
         index === onSelectedMonacoIndex
-          ? "0px 0px 16px 0px rgba(0, 0, 0, 0.32)"
+          ? "0px 0px 16px 0px rgba(0, 0, 0, 0.16)"
           : "none",
       backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
         B + tagColorOffset
