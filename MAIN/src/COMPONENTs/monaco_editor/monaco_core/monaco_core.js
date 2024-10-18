@@ -32,13 +32,13 @@ const MonacoCore = ({
   let EDITOR_FONT_SIZE;
   switch (window.osInfo.platform) {
     case "darwin": // macOS
-      EDITOR_FONT_SIZE = 10;
+      EDITOR_FONT_SIZE = 12;
       break;
     case "win32": // Windows
-      EDITOR_FONT_SIZE = 12;
+      EDITOR_FONT_SIZE = 14;
       break;
     default:
-      EDITOR_FONT_SIZE = 12;
+      EDITOR_FONT_SIZE = 14;
   }
   const {
     file,

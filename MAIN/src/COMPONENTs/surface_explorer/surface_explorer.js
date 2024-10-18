@@ -48,9 +48,9 @@ const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const padding = { top: 43, right: 6, bottom: 6, left: 6 };
-const default_explorer_item_height = 22;
 const default_x_axis_offset = 10;
-const default_font_size = 12;
+const default_font_size = 14;
+const default_explorer_item_height = default_font_size + 10;
 const default_indicator_padding = 4;
 const default_border_width = 1;
 const default_scrollbar_width = 10;

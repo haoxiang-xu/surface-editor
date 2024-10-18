@@ -41,11 +41,13 @@ const default_max_tag_width = 128;
 const default_tag_padding_x = 6;
 const default_tag_padding_y = 3;
 
-const default_tag_font_size = 12;
+const default_tag_font_size = 14;
 const default_border_radius = 4;
 
+const default_icon_size = 18;
+
 const default_tag_layer = 8;
-const more_option_label_font_size = 12;
+const more_option_label_font_size = 14;
 
 /* { Tag types } ================================================================================= */
 const CustomizedTag = ({
@@ -87,8 +89,8 @@ const CustomizedTag = ({
       width += containerWidth;
     }
     if (icon && icon in iconManifest) {
-      width += 16 + 4;
-      left += 16 + 4;
+      width += default_icon_size + 4;
+      left += default_icon_size + 4;
     }
     setTagStyle((prevData) => {
       return {
@@ -202,8 +204,8 @@ const CustomizedTag = ({
             top: "50%",
             left: style.padding_x || default_tag_padding_x,
 
-            width: 16,
-            height: 16,
+            width: default_icon_size,
+            height: default_icon_size,
 
             borderRadius: 2,
             load: "lazy",
@@ -348,7 +350,7 @@ const FileTag = ({ config }) => {
       processed_config.icon = config.label.split(".").pop().toUpperCase();
       if (!config.style.noWidthLimitMode) {
         if (processed_config.icon in iconManifest) {
-          processed_config.style.maxWidth = config.style.maxWidth - 12;
+          processed_config.style.maxWidth = config.style.maxWidth - (default_icon_size - 5);
         } else {
           processed_config.style.maxWidth = config.style.maxWidth - 2;
         }
