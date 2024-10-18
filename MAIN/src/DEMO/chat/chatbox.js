@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
+import Input from "../../BUILTIN_COMPONENTs/input/input";
 
 const R = 30;
 const G = 30;
@@ -61,7 +62,7 @@ const FAKE_DATA = [
   { role: "terminal", message: fake_terminal_msg },
 ];
 
-const Message = ({ role, message }) => {
+const Message = ({ role, message, is_last_index }) => {
   const [style, setStyle] = useState({});
 
   useEffect(() => {
@@ -86,7 +87,7 @@ const Message = ({ role, message }) => {
         position: "relative",
         width: role === "user" ? "50%" : "100%",
         marginLeft: role === "user" ? "50%" : "0",
-        marginBottom: 32,
+        marginBottom: is_last_index ? 64 : 16,
         borderRadius: default_border_radius,
       }}
     >
@@ -102,28 +103,67 @@ const ScrollingSpace = ({ imported_messages, set_imported_messages }) => {
     if (!imported_messages) return;
     setMessages(imported_messages);
   }, [imported_messages]);
+  useEffect(() => {
+    const styleElement = document.createElement("style");
+    styleElement.innerHTML = `
+      .scrolling-space::-webkit-scrollbar {
+        width: 12px; /* Custom width for the vertical scrollbar */
+      }
+
+      .scrolling-space::-webkit-scrollbar-track {
+        background-color: rgba(${R}, ${G}, ${B}, 1); /* Scrollbar track color */
+      }
+
+      .scrolling-space::-webkit-scrollbar-thumb {
+        background-color: rgba(${R + default_forground_color_offset}, ${
+      G + default_forground_color_offset
+    }, ${B + default_forground_color_offset}, 1);
+        border-radius: 6px;
+        border: 3px solid rgba(${R}, ${G}, ${B}, 1);
+      }
+      .scrolling-space::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(${R + default_forground_color_offset + 32}, ${
+      G + default_forground_color_offset + 32
+    }, ${B + default_forground_color_offset + 32}, 1);
+      }
+      .scrolling-space::-webkit-scrollbar:horizontal {
+        display: none;
+      }
+    `;
+    document.head.appendChild(styleElement);
+
+    // Cleanup style when the component unmounts
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
 
   return (
     <div
+      className="scrolling-space"
       style={{
         position: "absolute",
 
-        top: "0",
-        left: "50%",
+        top: 0,
+        left: 0,
+        bottom: 4,
+
         width: "100%",
-        height: "100%",
-        padding: 16,
 
-        transform: "translateX(-50%)",
-
-        overflowY: "auto",
+        padding: 32,
         overflowX: "hidden",
+        overflowY: "overlay",
         boxSizing: "border-box",
       }}
     >
       {messages
         ? messages.map((msg, index) => (
-            <Message key={index} role={msg.role} message={msg.message} />
+            <Message
+              key={index}
+              role={msg.role}
+              message={msg.message}
+              is_last_index={index === messages.length - 1 ? true : false}
+            />
           ))
         : null}
       <div
@@ -136,7 +176,47 @@ const ScrollingSpace = ({ imported_messages, set_imported_messages }) => {
     </div>
   );
 };
+const InputSpace = ({ inputValue, setInputValue }) => {
+  return (
+    <>
+      <div
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 16,
+          height: 64,
+
+          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
+        }}
+      ></div>
+      <Input
+        value={inputValue}
+        setValue={setInputValue}
+        style={{
+          transition: "height 0.08s cubic-bezier(0.32, 0, 0.32, 1)",
+          position: "fixed",
+
+          bottom: 24,
+          left: 16,
+          right: 16,
+
+          height: 24,
+
+          borderRadius: default_border_radius,
+          backgroundColor: `rgba(${R + default_forground_color_offset}, ${
+            G + default_forground_color_offset
+          }, ${B + default_forground_color_offset}, 1)`,
+          boxShadow: `0px 4px 32px rgba(0, 0, 0, 0.64)`,
+        }}
+      />
+    </>
+  );
+};
+
 const Chat = ({ messages, setMessages }) => {
+  const [inputValue, setInputValue] = useState("");
+
   return (
     <div
       style={{
@@ -154,6 +234,7 @@ const Chat = ({ messages, setMessages }) => {
         imported_messages={messages}
         set_imported_messages={setMessages}
       />
+      <InputSpace inputValue={inputValue} setInputValue={setInputValue} />
     </div>
   );
 };

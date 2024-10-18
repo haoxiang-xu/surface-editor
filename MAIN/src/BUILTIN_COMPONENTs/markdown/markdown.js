@@ -16,11 +16,33 @@ const B = 30;
 const default_forground_color_offset = 12;
 const default_front_object_color_offset = 50;
 const default_font_color_offset = 128;
-const default_font_size = 12;
-const default_border_radius = 7;
+const default_font_size = 14;
+const default_border_radius = 10;
 const default_tag_max_Width = 128;
 
 const CodeSection = ({ language, children }) => {
+  const [onHover, setOnHover] = useState(false);
+  const [onClicked, setOnClicked] = useState(false);
+  const [style, setStyle] = useState({
+    backgroundColor: `rgba(225, 225, 225, 0)`,
+  });
+
+  useEffect(() => {
+    if (onClicked) {
+      setStyle({
+        backgroundColor: `rgba(225, 225, 225, 0.16)`,
+      });
+    } else if (onHover) {
+      setStyle({
+        backgroundColor: `rgba(225, 225, 225, 0.08)`,
+      });
+    } else {
+      setStyle({
+        backgroundColor: `rgba(225, 225, 225, 0)`,
+      });
+    }
+  }, [onHover, onClicked]);
+
   return (
     <div
       className="code-section"
@@ -31,20 +53,20 @@ const CodeSection = ({ language, children }) => {
       <div
         style={{
           position: "absolute",
-          top: 5,
-          right: 5,
-          left: 5,
+          top: 7,
+          right: 7,
+          left: 7,
 
-          height: default_font_size * 2.3,
+          height: default_font_size + 20,
 
           opacity: 1,
-          borderRadius: `${default_border_radius - 4}px ${
-            default_border_radius - 4
+          borderRadius: `${default_border_radius - 6}px ${
+            default_border_radius - 6
           }px 0 0`,
           backgroundColor: `rgb(${R + default_forground_color_offset / 2}, ${
             G + default_forground_color_offset / 2
           }, ${B + default_forground_color_offset / 2})`,
-          boxShadow: `0 2px 8px rgba(0, 0, 0, 0.32)`,
+          boxShadow: `0 2px 16px rgba(0, 0, 0, 0.64)`,
         }}
       >
         <span
@@ -52,7 +74,7 @@ const CodeSection = ({ language, children }) => {
             position: "absolute",
             top: "50%",
 
-            transform: "translateY(-55%)",
+            transform: "translateY(-50%)",
             left: 8,
 
             fontSize: `${default_font_size + 1}px`,
@@ -66,16 +88,29 @@ const CodeSection = ({ language, children }) => {
         <div
           style={{
             position: "absolute",
-            top: 1,
-            right: 1,
+            top: 6,
+            right: 5,
 
             width: 28,
-            padding: `${default_font_size}px`,
+            padding: `${default_font_size - 4}px ${default_font_size}px ${
+              default_font_size - 4
+            }px ${default_font_size}px`,
             border: `1px solid rgba(${R + default_forground_color_offset}, ${
               G + default_forground_color_offset
             }, ${B + default_forground_color_offset} , 0)`,
-            borderRadius: `${default_border_radius - 4}px`,
+            borderRadius: `${default_border_radius - 7}px`,
+            backgroundColor: style.backgroundColor,
           }}
+          onMouseEnter={() => setOnHover(true)}
+          onMouseLeave={() => {
+            setOnHover(false);
+            setOnClicked(false);
+          }}
+          onMouseDown={() => {
+            setOnClicked(true);
+            navigator.clipboard.writeText(children);
+          }}
+          onMouseUp={() => setOnClicked(false)}
         >
           <Icon
             src="copy"
@@ -117,11 +152,13 @@ const CodeSection = ({ language, children }) => {
         customStyle={{
           fontSize: `${default_font_size}px`,
           backgroundColor: `rgb(${R - 8}, ${G - 8}, ${B - 8})`,
-          paddingTop: 32,
+          paddingTop: 36,
           borderRadius: default_border_radius,
           overflowX: "auto",
           overflowY: "hidden",
           maxWidth: "100%",
+          boxShadow: `0 2px 16px rgba(0, 0, 0, 0.32)`,
+          border: `2px solid rgba(${225}, ${255}, ${225} , 0.16)`,
         }}
       />
     </div>
@@ -205,7 +242,7 @@ const TextSection = ({ children }) => {
   return (
     <span
       style={{
-        fontSize: `${default_font_size + 2}px`,
+        fontSize: `${default_font_size}px`,
       }}
     >
       {children}
