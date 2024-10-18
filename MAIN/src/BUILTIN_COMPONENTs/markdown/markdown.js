@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 /* { import external render libraries } ------------------------------------------------- */
 import Latex from "react-latex-next";
 import "katex/dist/katex.min.css";
-import Tag from "../../BUILTIN_COMPONENTs/tag/tag";
+import Tag from "../tag/tag";
 import { CodeBlock, dracula } from "react-code-blocks";
 import ReactShowdown from "react-showdown";
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import Icon from "../icon/icon";
+/* { style } --------------------------------------------------------------------- */
+import "./markdown.css";
 
 const R = 30;
 const G = 30;
@@ -18,12 +20,12 @@ const default_font_size = 12;
 const default_border_radius = 7;
 const default_tag_max_Width = 128;
 
-const CODE = ({ language, children }) => {
+const CodeSection = ({ language, children }) => {
   return (
     <div
+      className="code-section"
       style={{
         position: "relative",
-        marginTop: default_font_size,
       }}
     >
       <div
@@ -108,7 +110,7 @@ const CODE = ({ language, children }) => {
       <CodeBlock
         text={children}
         language={language}
-        showLineNumbers
+        showLineNumbers={true}
         theme={dracula}
         wrapLines={false}
         codeBlock
@@ -118,16 +120,43 @@ const CODE = ({ language, children }) => {
           paddingTop: 32,
           borderRadius: default_border_radius,
           overflowX: "auto",
+          overflowY: "hidden",
           maxWidth: "100%",
         }}
       />
     </div>
   );
 };
-const MD = ({ children }) => {
-  return <ReactShowdown markdown={children} />;
+const SingleLineCodeSection = ({ language, children }) => {
+  return (
+    <CodeBlock
+      text={children}
+      language={language}
+      showLineNumbers={false}
+      theme={dracula}
+      wrapLines={false}
+      codeBlock
+      customStyle={{
+        display: "inline-block",
+        fontSize: `${default_font_size}px`,
+        color: `rgb(${R + default_font_color_offset}, ${
+          G + default_font_color_offset
+        }, ${B + default_font_color_offset})`,
+        backgroundColor: `rgb(${R - 8}, ${G - 8}, ${B - 8})`,
+        borderRadius: default_border_radius,
+        overflowY: "hidden",
+      }}
+    />
+  );
 };
-const TAG = ({ children }) => {
+const MarkDownSection = ({ children }) => {
+  return (
+    <div className="markdown-section" style={{ display: "inline-block" }}>
+      <ReactShowdown markdown={children} />
+    </div>
+  );
+};
+const TagSection = ({ children }) => {
   const tagRef = useRef();
 
   return (
@@ -158,7 +187,7 @@ const TAG = ({ children }) => {
     </div>
   );
 };
-const LaTeX = ({ children }) => {
+const LaTeXSection = ({ children }) => {
   return (
     <div
       style={{
@@ -172,7 +201,7 @@ const LaTeX = ({ children }) => {
     </div>
   );
 };
-const TXT = ({ children }) => {
+const TextSection = ({ children }) => {
   return (
     <span
       style={{
@@ -183,15 +212,15 @@ const TXT = ({ children }) => {
     </span>
   );
 };
-const HTML = ({ children }) => {
+const HTMLSection = ({ children }) => {
   return <div dangerouslySetInnerHTML={{ __html: children }} />;
 };
 
-const Span = ({ children }) => {
+const Markdown = ({ children, style }) => {
   const [processedContent, setProcessedContent] = useState(children);
 
   useEffect(() => {
-    const extract_CODE = (raw_content) => {
+    const extract_code = (raw_content) => {
       const find_first_code_block = (raw_content) => {
         const start_code_block = "```";
         const end_code_block = "```";
@@ -212,11 +241,10 @@ const Span = ({ children }) => {
       };
       const process_code_block = (code_block) => {
         const language = code_block.slice(3, code_block.indexOf("\n")).trim();
+        const first_line_index = code_block.indexOf("\n");
         const last_line_index = code_block.lastIndexOf("\n");
-        const content = code_block.slice(
-          code_block.indexOf("\n") + 1,
-          last_line_index
-        );
+
+        const content = code_block.slice(first_line_index + 1, last_line_index);
         return { language, content };
       };
 
@@ -239,6 +267,61 @@ const Span = ({ children }) => {
         const processed_code_block = process_code_block(code_content);
         processed_content.push({
           type: "CODE",
+          language: processed_code_block.language,
+          content: processed_code_block.content,
+        });
+
+        unprocessed_content = post_content;
+      }
+      if (unprocessed_content.length > 0) {
+        processed_content.push({ type: "RAW", content: unprocessed_content });
+      }
+      return processed_content;
+    };
+    const extract_single_line_code = (raw_content) => {
+      const find_first_code_block = (raw_content) => {
+        const start_code_block = "`";
+        const end_code_block = "`";
+        const start_code_block_index = raw_content.indexOf(start_code_block);
+
+        const sliced_content = raw_content.slice(start_code_block_index + 1);
+
+        const end_code_block_index =
+          sliced_content.indexOf(end_code_block) + start_code_block_index + 1;
+        if (start_code_block_index === -1) return null;
+        if (end_code_block_index === -1) return null;
+        if (end_code_block_index < start_code_block_index) return null;
+
+        return raw_content.slice(
+          start_code_block_index,
+          end_code_block_index + end_code_block.length
+        );
+      };
+      const process_code_block = (code_block) => {
+        const language = code_block.slice(1, code_block.indexOf("\n")).trim();
+        const content = code_block.slice(1, -1);
+        return { language, content };
+      };
+
+      let unprocessed_content = raw_content;
+      let processed_content = [];
+
+      while (find_first_code_block(unprocessed_content) !== null) {
+        const code_block = find_first_code_block(unprocessed_content);
+
+        const start_index = unprocessed_content.indexOf(code_block);
+        const end_index = start_index + code_block.length;
+
+        const pre_content = unprocessed_content.slice(0, start_index);
+        const post_content = unprocessed_content.slice(end_index);
+        const code_content = unprocessed_content.slice(start_index, end_index);
+
+        if (pre_content.length > 0) {
+          processed_content.push({ type: "RAW", content: pre_content });
+        }
+        const processed_code_block = process_code_block(code_content);
+        processed_content.push({
+          type: "SLCODE",
           language: processed_code_block.language,
           content: processed_code_block.content,
         });
@@ -331,6 +414,7 @@ const Span = ({ children }) => {
       }
       return processed_content;
     };
+
     const process_content = (raw_content) => {
       const extract_and_merge = (raw_content) => {
         const apply_extract_function = (
@@ -348,11 +432,15 @@ const Span = ({ children }) => {
           return processing_content;
         };
         let processed_content = [];
-        processed_content = extract_CODE(raw_content);
-        processed_content = apply_extract_function(
-          processed_content,
-          extract_HTML
-        );
+        processed_content = extract_code(raw_content);
+        // processed_content = apply_extract_function(
+        //   processed_content,
+        //   extract_single_line_code
+        // );
+        // processed_content = apply_extract_function(
+        //   processed_content,
+        //   extract_HTML
+        // );
         processed_content = apply_extract_function(
           processed_content,
           extrace_LaTeX
@@ -364,27 +452,42 @@ const Span = ({ children }) => {
         if (processed_content[i].type === "HTML") {
           processed_content[i].component = (
             <div key={i} style={{ display: "block" }}>
-              <HTML>{processed_content[i].content}</HTML>
+              <HTMLSection>{processed_content[i].content}</HTMLSection>
             </div>
           );
         } else if (processed_content[i].type === "CODE") {
           processed_content[i].component = (
             <div key={i} style={{ display: "block" }}>
-              <CODE language={processed_content[i].language}>
+              <CodeSection language={processed_content[i].language}>
                 {processed_content[i].content}
-              </CODE>
+              </CodeSection>
+            </div>
+          );
+        } else if (processed_content[i].type === "SLCODE") {
+          processed_content[i].component = (
+            <div
+              key={i}
+              style={{
+                display: "inline",
+                position: "relative",
+                top: default_font_size / 2,
+              }}
+            >
+              <SingleLineCodeSection language={processed_content[i].language}>
+                {processed_content[i].content}
+              </SingleLineCodeSection>
             </div>
           );
         } else if (processed_content[i].type === "LaTeX") {
           processed_content[i].component = (
             <div key={i} style={{ display: "inline-block" }}>
-              <LaTeX>{processed_content[i].content}</LaTeX>
+              <LaTeXSection>{processed_content[i].content}</LaTeXSection>
             </div>
           );
         } else {
           processed_content[i].component = (
-            <div key={i} style={{ display: "inline-block" }}>
-              <MD>{processed_content[i].content}</MD>
+            <div key={i} style={{ display: "inline" }}>
+              <MarkDownSection>{processed_content[i].content}</MarkDownSection>
             </div>
           );
         }
@@ -399,15 +502,19 @@ const Span = ({ children }) => {
       style={{
         position: "relative",
 
+        top: 0,
         left: 0,
         right: 0,
 
         /* { style } --------------------------------------------------------------------- */
         padding: `${default_font_size}px`,
-        borderRadius: `${default_border_radius}px`,
-        backgroundColor: `rgb(${R + default_forground_color_offset}, ${
-          G + default_forground_color_offset
-        }, ${B + default_forground_color_offset})`,
+        borderRadius: `${default_border_radius + 4}px`,
+        backgroundColor:
+          style && style.backgroundColor
+            ? style.backgroundColor
+            : `rgb(${R + default_forground_color_offset}, ${
+                G + default_forground_color_offset
+              }, ${B + default_forground_color_offset})`,
         color: `rgb(${R + default_font_color_offset}, ${
           G + default_font_color_offset
         }, ${B + default_font_color_offset})`,
@@ -420,4 +527,4 @@ const Span = ({ children }) => {
   );
 };
 
-export default Span;
+export default Markdown;
