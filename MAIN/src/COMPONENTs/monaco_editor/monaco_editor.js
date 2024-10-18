@@ -797,6 +797,7 @@ const FileSelectionListContainer = ({}) => {
   const to_append_tag = useCallback(
     (onDragItem, onDropItem) => {
       if (!onDragItem || !onDropItem) return;
+      if (onDragItem.content.type !== "file") return;
       let on_drop_index = monacoPaths.indexOf(onDropItem.content.path);
       if (onDropItem.content.append_to_left) {
         if (onDragedMonacoIndex !== -1 && onDragedMonacoIndex < on_drop_index) {
