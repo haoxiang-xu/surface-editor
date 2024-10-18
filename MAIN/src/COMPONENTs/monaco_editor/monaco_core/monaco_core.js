@@ -59,7 +59,6 @@ const MonacoCore = ({
   const { draggedItem, dragCommand, setDragCommand } = useContext(
     globalDragAndDropContexts
   );
-  const { onDragIndex } = useContext(stackStructureDragAndDropContexts);
 
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
   const monacoRef = useRef();
@@ -218,18 +217,6 @@ const MonacoCore = ({
       setMonacoViewState(null);
     }
   }, [draggedItem]);
-  useEffect(() => {
-    if (onDragIndex !== -1) {
-      setMonacoModel(monacoRef.current.getModel());
-      setMonacoViewState(monacoRef.current.saveViewState());
-      monacoRef.current.setModel(null);
-    } else if (onDragIndex === -1 && monacoModel && monacoViewState) {
-      monacoRef.current.setModel(monacoModel);
-      monacoRef.current.restoreViewState(monacoViewState);
-      setMonacoModel(null);
-      setMonacoViewState(null);
-    }
-  }, [onDragIndex]);
   /*Drag and Drop Save and Reload Model=================================*/
 
   /*Delete Monaco Editor Path===========================================*/

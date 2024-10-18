@@ -104,6 +104,7 @@ const RootCommandManager = React.memo(({ children }) => {
     if (event) {
       event.stopPropagation();
     }
+    unload_context_menu();
     setOnDragItem(on_drag_item);
     setOnDrag(true);
 
