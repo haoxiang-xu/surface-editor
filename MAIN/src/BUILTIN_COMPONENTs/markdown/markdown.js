@@ -205,7 +205,7 @@ const TextSection = ({ children }) => {
   return (
     <span
       style={{
-        fontSize: `${default_font_size}px`,
+        fontSize: `${default_font_size + 2}px`,
       }}
     >
       {children}
@@ -417,6 +417,9 @@ const Markdown = ({ children, style }) => {
 
     const process_content = (raw_content) => {
       const extract_and_merge = (raw_content) => {
+        if (style && style.plainText === true) {
+          return [{ type: "TXT", content: raw_content }];
+        }
         const apply_extract_function = (
           processing_content,
           extract_function
@@ -484,6 +487,12 @@ const Markdown = ({ children, style }) => {
               <LaTeXSection>{processed_content[i].content}</LaTeXSection>
             </div>
           );
+        } else if (processed_content[i].type === "TXT") {
+          processed_content[i].component = (
+            <div key={i} style={{ display: "inline" }}>
+              <TextSection>{processed_content[i].content}</TextSection>
+            </div>
+          );
         } else {
           processed_content[i].component = (
             <div key={i} style={{ display: "inline" }}>
@@ -495,7 +504,7 @@ const Markdown = ({ children, style }) => {
       return processed_content.map((content) => content.component);
     };
     setProcessedContent(process_content(children));
-  }, [children]);
+  }, [children, style]);
 
   return (
     <div

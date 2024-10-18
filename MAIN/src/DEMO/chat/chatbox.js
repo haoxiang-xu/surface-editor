@@ -56,7 +56,7 @@ rontend_application/component_lib_testing_application
 (base)  red@RedMac  ~/desktop/CLONERepo/surface-editor/frontend_application/component_lib_testing_application   version_0.0.2  npm start
 \`\`\``;
 const FAKE_DATA = [
-  { role: "user", message: "Do me a demo on how to install homebrew on Mac " },
+  { role: "user", message: "Do me a demo on how to install homebrew on Mac" },
   { role: "assistant", message: fake_assistant_msg },
   { role: "terminal", message: fake_terminal_msg },
 ];
@@ -74,7 +74,9 @@ const Message = ({ role, message }) => {
         backgroundColor: `#b45200`,
       });
     } else {
-      setStyle({});
+      setStyle({
+        plainText: true,
+      });
     }
   }, [role]);
 
