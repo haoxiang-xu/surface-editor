@@ -15,7 +15,6 @@ function App() {
       <Routes>
         <Route path="/" element={<RootEventListener />} />
         <Route path="/chat" element={<ChatPageDemo />} />
-        <Route path="/terminal" element={<ZshThemeTerminal />} />
       </Routes>
     </Router>
   );
