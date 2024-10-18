@@ -467,6 +467,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
     setOnFrameResize,
   } = useContext(RootStackContexts);
 
+  const hoverTimer = useRef(null);
   const [onHover, setOnHover] = useState(false);
   const [onPause, setOnPause] = useState(false);
   const [onClick, setOnClick] = useState(false);
@@ -587,6 +588,19 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
     setResizerColor(`rgba(${R + 16}, ${G + 16}, ${B + 16}, 1)`);
     setZIndex(null);
   }, [onHover, onPause, onClick]);
+  const handleMouseEnter = () => {
+    hoverTimer.current = setTimeout(() => {
+      setOnHover(true);
+    }, 200);
+    setOnPause(true);
+  };
+  const handleMouseLeave = () => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+    }
+    setOnHover(false);
+    setOnPause(false);
+  };
 
   switch (stack_structure_type) {
     case "horizontal_stack":
@@ -603,12 +617,10 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
             zIndex: zIndex,
           }}
           onMouseEnter={() => {
-            setOnHover(true);
-            setOnPause(true);
+            handleMouseEnter();
           }}
           onMouseLeave={() => {
-            setOnHover(false);
-            setOnPause(false);
+            handleMouseLeave();
           }}
           onMouseDown={(event) => {
             event.stopPropagation();
@@ -655,12 +667,10 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
             zIndex: zIndex,
           }}
           onMouseEnter={() => {
-            setOnHover(true);
-            setOnPause(true);
+            handleMouseEnter();
           }}
           onMouseLeave={() => {
-            setOnHover(false);
-            setOnPause(false);
+            handleMouseLeave();
           }}
           onMouseDown={(event) => {
             event.stopPropagation();
