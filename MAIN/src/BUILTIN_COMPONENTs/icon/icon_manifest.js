@@ -42,6 +42,7 @@ export const iconManifest = {
 
   /* { Image } */
   PNG: () => import("./SVGs/file_types/png.svg"),
+  SVG: () => import("./SVGs/file_types/svg.svg"),
 
   /* { Document } */
   TXT: () => import("./SVGs/file_types/txt.svg"),
