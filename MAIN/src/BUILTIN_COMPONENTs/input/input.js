@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
 const default_font_size = 14;
+const default_padding = default_font_size;
 
 const R = 30;
 const G = 30;
@@ -41,14 +42,17 @@ const Input = ({ value, setValue, onSubmit, ...props }) => {
         maxRows={default_max_rows}
         style={{
           position: "absolute",
-          left: 6,
-          bottom: 6,
-          right: 32,
+
+          top: "50%",
+          left: default_padding,
+          right: default_padding,
+
+          transform: "translateY(-50%)",
 
           color: "#CCCCCC",
           textAlign: "left",
           backgroundColor: `rgba(${R}, ${G}, ${B}, 0)`,
-          padding: 8,
+          padding: 0,
           fontSize: default_font_size,
           fontFamily: "inherit",
           borderRadius: 0,

@@ -175,14 +175,13 @@ const InputSection = ({ inputValue, setInputValue, on_input_submit }) => {
         setValue={setInputValue}
         onSubmit={on_input_submit}
         style={{
-          transition: "height 0.08s cubic-bezier(0.32, 0, 0.32, 1)",
+          transition: "height 0.04s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "fixed",
 
           bottom: 24,
           left: 16,
           right: 16,
-
-          height: 24,
+          padding: "8px 64px 8px 8px",
 
           borderRadius: default_border_radius,
           backgroundColor: `rgba(${R + default_forground_color_offset}, ${
