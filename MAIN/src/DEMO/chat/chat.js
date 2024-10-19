@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
 import Input from "../../BUILTIN_COMPONENTs/input/input";
-import send_icon from "./send.png";
+import send_icon from "./send.svg";
 
 const R = 30;
 const G = 30;

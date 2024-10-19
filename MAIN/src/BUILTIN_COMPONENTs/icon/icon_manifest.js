@@ -14,6 +14,12 @@ export const iconManifest = {
   search: () => import("./SVGs/UI/search.svg"),
   copy: () => import("./SVGs/UI/copy.svg"),
   paste: () => import("./SVGs/UI/paste.svg"),
+  save: () => import("./SVGs/UI/save.svg"),
+  send: () => import("./SVGs/UI/send.svg"),
+  run: () => import("./SVGs/UI/run.svg"),
+  settings: () => import("./SVGs/UI/settings.svg"),
+  pen: () => import("./SVGs/UI/pen.svg"),
+  hammer: () => import("./SVGs/UI/hammer.svg"),
 
   /* {win32} */
   win32_maximize: () => import("./SVGs/UI/win32/maximize.svg"),
