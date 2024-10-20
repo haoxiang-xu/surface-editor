@@ -3,7 +3,7 @@ import React, {
   useRef,
   useEffect,
   useContext,
-  memo,
+  useMemo,
   useCallback,
 } from "react";
 import axios from "axios";
@@ -14,12 +14,14 @@ import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 /* { Import Contexts } --------------------------------------------------------------------------------------- */
 import { globalDragAndDropContexts } from "../../CONTEXTs/globalDragAndDropContexts";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts";
+import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 import { MonacoEditorContexts } from "./monaco_editor_contexts";
 import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_contexts";
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 /* { Import Styling } ---------------------------------------------------------------------------------------- */
 import "./monaco_editor.css";
+import { on } from "events";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -52,465 +54,13 @@ const default_border_radius = 5;
 const default_selecion_list_icon_offset = 22;
 const default_tag_max_width = 128;
 
-const default_onhover_item_background_color_offset = 24;
+const default_onhover_item_background_color_offset = 16;
+const default_onhover_item_border_color_offset = 64;
 
 const R = 30;
 const G = 30;
 const B = 30;
 
-const FileSelectionBar = ({
-  code_editor_container_ref_index,
-  //HORIZONTAL OR VERTICAL MODE
-  mode,
-
-  onDeleteMonacoEditorPath,
-  setOnDeleteMonacoEditorPath,
-}) => {
-  const {
-    draggedItem,
-    setDraggedItem,
-    draggedOverItem,
-    setDraggedOverItem,
-    dragCommand,
-    setDragCommand,
-  } = useContext(globalDragAndDropContexts);
-  const { access_file_name_by_path_in_file } = useContext(RootDataContexts);
-  const {
-    id,
-    onSelectedMonacoIndex,
-    setOnSelectedMonacoIndex,
-    monacoPaths,
-    setMonacoPaths,
-    monacoCores,
-    setMonacoCores,
-    item_on_drag,
-    item_on_drop,
-  } = useContext(MonacoEditorContexts);
-
-  const [forceRefresh, setForceRefresh] = useState(false);
-  const refresh = () => {
-    setForceRefresh(!forceRefresh);
-  };
-
-  /* File Selection Bar parameters & Functions ==================================================== */
-  const fileSelectionBarContainerRef = useRef(null);
-  const fileItemRefs = useRef([]);
-  const [onDragIndex, setOnDragIndex] = useState(-1);
-  const [onDropIndex, setOnDropIndex] = useState(-1);
-  const [onSwapIndex, setOnSwapIndex] = useState(-1);
-  const [onDeleteIndex, setOnDeleteIndex] = useState(-1);
-
-  const onFileDelete = (e) => (index) => {
-    e.stopPropagation();
-    setOnDeleteMonacoEditorPath(monacoPaths[index]);
-    setOnDeleteIndex(index);
-  };
-  useEffect(() => {
-    if (onDeleteMonacoEditorPath === null && onDeleteIndex !== -1) {
-      const editedFiles = [...monacoPaths];
-      editedFiles.splice(onDeleteIndex, 1);
-      setMonacoPaths(editedFiles);
-      if (onSelectedMonacoIndex === onDeleteIndex) {
-        setOnSelectedMonacoIndex(-1);
-      } else {
-        if (onSelectedMonacoIndex > onDeleteIndex) {
-          setOnSelectedMonacoIndex(onSelectedMonacoIndex - 1);
-        }
-      }
-      setOnDeleteIndex(-1);
-    }
-  }, [onDeleteMonacoEditorPath]);
-  const onFileDragStart = (e, index) => {
-    e.stopPropagation();
-    e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
-    setOnSelectedMonacoIndex(index);
-    setOnDragIndex(index);
-    setDraggedItem({
-      source:
-        "vecoder_editor" + "/" + code_editor_container_ref_index.toString(),
-      content: monacoPaths[index],
-      monaco_cores: monacoCores[monacoPaths[index]],
-    });
-    item_on_drag(e, {
-      source: id,
-      ghost_image: "tag",
-      content: {
-        type: "file",
-        path: monacoPaths[index],
-      },
-    });
-  };
-  const onFileDragEnd = (e, index) => {
-    e.stopPropagation();
-
-    document.body.style.cursor = "";
-
-    if (onDropIndex !== -1) {
-      const editedFiles = [...monacoPaths];
-
-      if (onDragIndex < onDropIndex) {
-        const dragedFile = editedFiles.splice(onDragIndex, 1)[0];
-        editedFiles.splice(onDropIndex - 1, 0, dragedFile);
-        setOnSelectedMonacoIndex(
-          Math.min(onDropIndex - 1, monacoPaths.length - 1)
-        );
-      } else {
-        const dragedFile = editedFiles.splice(onDragIndex, 1)[0];
-        editedFiles.splice(onDropIndex, 0, dragedFile);
-        setOnSelectedMonacoIndex(Math.min(onDropIndex, monacoPaths.length - 1));
-      }
-      setMonacoPaths(editedFiles);
-    }
-    if (onDropIndex === -1 && draggedOverItem !== null) {
-      setDragCommand("APPEND TO TARGET");
-    } else {
-      setOnDragIndex(-1);
-      setOnDropIndex(-1);
-      setOnSwapIndex(-1);
-      setDraggedItem(null);
-    }
-    item_on_drop(e);
-  };
-  const fileSelectionBarOnDragOver = (e) => {
-    e.preventDefault();
-    const targetElement = e.target.closest(
-      ".file_selection_bar_item1114, " +
-        ".file_selection_bar_item_selected1114, " +
-        ".file_selection_bar_item_vertical0123, " +
-        ".file_selection_bar_item_selected_vertical0123"
-    );
-    if (targetElement && fileSelectionBarContainerRef.current) {
-      const childrenArray = Array.from(
-        fileSelectionBarContainerRef.current.children
-      );
-      const dropIndex = childrenArray.indexOf(targetElement);
-      if (dropIndex !== onDropIndex && dropIndex !== -1) {
-        if (onDragIndex === -1) {
-          setDraggedOverItem(monacoPaths[dropIndex]);
-        }
-        setOnDropIndex(dropIndex);
-      }
-    }
-  };
-  const fileSelectionBarOnDragLeave = (e) => {
-    e.stopPropagation();
-    setOnDropIndex(-1);
-    setOnSwapIndex(-1);
-    setDraggedOverItem(null);
-  };
-  useEffect(() => {
-    setOnSwapIndex(onDropIndex);
-  }, [onDropIndex]);
-  useEffect(() => {
-    if (onSelectedMonacoIndex !== -1) {
-      const itemScrollLeft =
-        fileItemRefs.current[onSelectedMonacoIndex]?.offsetLeft;
-      const itemWidth =
-        fileItemRefs.current[onSelectedMonacoIndex]?.offsetWidth;
-      const containerScrollLeft =
-        fileSelectionBarContainerRef.current.scrollLeft;
-      const containerWidth = fileSelectionBarContainerRef.current?.offsetWidth;
-
-      if (itemScrollLeft < containerScrollLeft) {
-        fileSelectionBarContainerRef.current.scrollLeft = itemScrollLeft;
-      } else if (
-        itemScrollLeft + itemWidth >
-        containerScrollLeft + containerWidth
-      ) {
-        fileSelectionBarContainerRef.current.scrollLeft = itemScrollLeft;
-      }
-    }
-  }, [onSelectedMonacoIndex]);
-  useEffect(() => {
-    if (onDropIndex !== -1 && dragCommand === "APPEND TO TARGET") {
-      const editedFiles = [...monacoPaths];
-      if (monacoPaths.indexOf(draggedItem.content) !== -1) {
-        const LocalOnDragIndex = monacoPaths.indexOf(draggedItem.content);
-
-        if (LocalOnDragIndex < onDropIndex) {
-          const dragedFile = editedFiles.splice(LocalOnDragIndex, 1)[0];
-          editedFiles.splice(onDropIndex, 0, dragedFile);
-          setOnSelectedMonacoIndex(
-            Math.min(onDropIndex - 1, monacoPaths.length - 1)
-          );
-        } else {
-          const dragedFile = editedFiles.splice(LocalOnDragIndex, 1)[0];
-          editedFiles.splice(onDropIndex, 0, dragedFile);
-          setOnSelectedMonacoIndex(
-            Math.min(onDropIndex, monacoPaths.length - 1)
-          );
-        }
-        setMonacoPaths(editedFiles);
-
-        setOnSelectedMonacoIndex(onDropIndex);
-
-        setOnDragIndex(-1);
-        setOnDropIndex(-1);
-        setOnSwapIndex(-1);
-        setDraggedItem(null);
-        setDraggedOverItem(null);
-        setDragCommand("DELETE FROM SOURCE");
-      } else {
-        if (draggedItem.source === "vecoder_explorer") {
-          setDragCommand("WAITING FOR MODEL APPEND");
-        } else {
-          setDragCommand("WAITING FOR MODEL APPEND THEN DELETE FROM SOURCE");
-        }
-        const dragedFile = draggedItem.content;
-        editedFiles.splice(onDropIndex, 0, dragedFile);
-        const draggedMonacoCore = draggedItem.monaco_cores;
-        const editedMonacoCore = { ...monacoCores };
-        editedMonacoCore[dragedFile] = draggedMonacoCore;
-        setMonacoPaths(editedFiles);
-        setMonacoCores(editedMonacoCore);
-        setOnSelectedMonacoIndex(onDropIndex);
-
-        setOnDragIndex(-1);
-        setOnDropIndex(-1);
-        setOnSwapIndex(-1);
-        setDraggedItem(null);
-        setDraggedOverItem(null);
-      }
-    }
-    if (onDragIndex !== -1 && dragCommand === "DELETE FROM SOURCE") {
-      const editedFiles = [...monacoPaths];
-      const editedMonacoCore = { ...monacoCores };
-      delete editedMonacoCore[monacoPaths[onDragIndex]];
-      editedFiles.splice(onDragIndex, 1);
-      setMonacoPaths(editedFiles);
-      setMonacoCores(editedMonacoCore);
-      setOnSelectedMonacoIndex(null);
-
-      setOnDragIndex(-1);
-      setOnDropIndex(-1);
-      setOnSwapIndex(-1);
-      setDragCommand(null);
-    }
-  }, [dragCommand, monacoPaths, monacoCores]);
-  useEffect(() => {
-    setOnDropIndex(-1);
-  }, [draggedOverItem]);
-
-  /* File Selection Bar parameters & Functions ==================================================== */
-
-  /* Styling----------------------------------------------------------------------------------- */
-  const spanRefs = useRef([]);
-  useEffect(() => {
-    refresh();
-  }, [spanRefs.current[onSelectedMonacoIndex]?.offsetWidth]);
-  /* Styling----------------------------------------------------------------------------------- */
-
-  return (
-    <div
-      className={
-        mode === "horizontal_stack_horizontal_mode"
-          ? "file_selection_bar_container1114"
-          : "file_selection_bar_container_vertical0122"
-      }
-      ref={fileSelectionBarContainerRef}
-      onDragOver={(e) => {
-        fileSelectionBarOnDragOver(e);
-      }}
-      onDragLeave={(e) => {
-        fileSelectionBarOnDragLeave(e);
-      }}
-    >
-      {monacoPaths.map((filePath, index) => {
-        let className;
-        let containerStyle = {};
-        switch (true) {
-          case index === onSelectedMonacoIndex:
-            if (mode === "horizontal_stack_horizontal_mode") {
-              className = "file_selection_bar_item_selected1114";
-              containerStyle = {
-                width: spanRefs.current[index]?.offsetWidth + 54 + "px",
-              };
-            } else {
-              className = "file_selection_bar_item_selected_vertical0123";
-              containerStyle = {
-                height: spanRefs.current[index]?.offsetWidth + 54 + "px",
-              };
-            }
-            if (index === onDragIndex) {
-              if (mode === "horizontal_stack_horizontal_mode") {
-                containerStyle = {
-                  width: 0 + "px",
-                  height: 30 + "px",
-                  opacity: 0,
-                  margin: "0px 0px 0px 0px",
-                  overflow: "hidden",
-                  transition: "width 0.12s ease, opacity 0.12s ease",
-                };
-              } else {
-                containerStyle = {
-                  width: 30 + "px",
-                  height: 0 + "px",
-                  opacity: 0,
-                  margin: "0px 0px 0px 0px",
-                  overflow: "hidden",
-                  transition: "height 0.12s ease, opacity 0.12s ease",
-                };
-              }
-            }
-            break;
-          case index === onDropIndex:
-            if (mode === "horizontal_stack_horizontal_mode") {
-              className = "file_selection_bar_item1114";
-              containerStyle = {
-                width: spanRefs.current[index]?.offsetWidth + 38 + "px",
-                transition: "opacity 0.32s ease",
-              };
-            } else {
-              className = "file_selection_bar_item_vertical0123";
-              containerStyle = {
-                height: spanRefs.current[index]?.offsetWidth + 38 + "px",
-                transition: "opacity 0.32s ease",
-              };
-            }
-            break;
-          default:
-            if (mode === "horizontal_stack_horizontal_mode") {
-              className = "file_selection_bar_item1114";
-              containerStyle = {
-                width: spanRefs.current[index]?.offsetWidth + 38 + "px",
-              };
-            } else {
-              className = "file_selection_bar_item_vertical0123";
-              containerStyle = {
-                height: spanRefs.current[index]?.offsetWidth + 38 + "px",
-              };
-            }
-        }
-        if (onDragIndex !== -1) {
-          containerStyle = { ...containerStyle, backgroundColor: "#252525" };
-        }
-        return (
-          <div
-            key={filePath}
-            ref={(el) => (fileItemRefs.current[index] = el)}
-            className={className}
-            draggable={true}
-            onDragStart={(e) => {
-              onFileDragStart(e, index);
-            }}
-            onDragEnd={(e) => {
-              onFileDragEnd(e);
-            }}
-            onClick={() => {
-              setOnSelectedMonacoIndex(index);
-            }}
-            style={containerStyle}
-          >
-            <span
-              ref={(el) => (spanRefs.current[index] = el)}
-              className={
-                mode === "horizontal_stack_horizontal_mode"
-                  ? "file_selection_bar_file_text1114"
-                  : "file_selection_bar_file_text_vertical0123"
-              }
-              style={
-                index === onSelectedMonacoIndex
-                  ? {
-                      color: "#cccccc",
-                      left:
-                        mode === "horizontal_stack_horizontal_mode"
-                          ? "47px"
-                          : "50%",
-                      top:
-                        mode === "horizontal_stack_horizontal_mode"
-                          ? "50%"
-                          : "47px",
-                      transition:
-                        "color 0.2s ease, left 0.2s ease, top 0.2s ease",
-                    }
-                  : {
-                      color: "#8c8c8c",
-                      transition:
-                        "color 0.2s ease, left 0.2s ease, top 0.2s ease",
-                    }
-              }
-            >
-              {access_file_name_by_path_in_file(filePath)}
-            </span>
-            <img
-              src={
-                FILE_TYPE_ICON_MANAGER[
-                  access_file_name_by_path_in_file(filePath).split(".").pop()
-                ]?.ICON512
-              }
-              className={
-                mode === "horizontal_stack_horizontal_mode"
-                  ? "file_selection_bar_item_filetype_icon1114"
-                  : "file_selection_bar_item_filetype_icon_vertical0123"
-              }
-              alt="close"
-              style={
-                index === onSelectedMonacoIndex
-                  ? {
-                      opacity: "1",
-                      padding:
-                        mode === "horizontal_stack_horizontal_mode"
-                          ? "7px 0px 0px 28px"
-                          : "28px 0px 0px 7px",
-                      transition: "padding 0.2s ease",
-                      pointerEvents: "none",
-                    }
-                  : {
-                      opacity: "0.64",
-                      padding: "7px 0px 0px 7px",
-                      transition: "padding 0.2s ease",
-                      pointerEvents: "none",
-                    }
-              }
-            />
-            <img
-              src={SYSTEM_ICON_MANAGER.close.ICON512}
-              className={
-                mode === "horizontal_stack_horizontal_mode"
-                  ? "file_selection_bar_item_close_icon1114"
-                  : "file_selection_bar_item_close_icon_vertical0123"
-              }
-              style={
-                onSelectedMonacoIndex === index
-                  ? { opacity: "1" }
-                  : {
-                      opacity: "0",
-                      pointerEvents: "none",
-                    }
-              }
-              alt="close"
-              draggable="false"
-              onDragOver={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-              }}
-              onClick={(e) => {
-                onFileDelete(e)(index);
-              }}
-            />
-            {/* Drag and Drop Invisible Overlay ---------------------------------------------- */}
-            {onDragIndex !== -1 || draggedItem != null ? (
-              <div
-                className="file_selection_bar_item_overlay_invisible0206"
-                style={containerStyle}
-              ></div>
-            ) : null}
-            {/* Drag and Drop HighLight Overlay ---------------------------------------------- */}
-            {index === onDropIndex ? (
-              <div
-                className="file_selection_bar_item_overlay_highlight0206"
-                style={{ ...containerStyle, backgroundColor: "#ffffff" }}
-              ></div>
-            ) : null}
-          </div>
-        );
-      })}
-      {/* {onDragIndex !== -1 || draggedItem !== null ? (
-        <DirItemGhostDragImage draggedDirItemPath={draggedItem?.content} />
-      ) : null} */}
-    </div>
-  );
-};
 const MonacoEditorGroup = ({
   code_editor_container_ref_index,
   setOnSelectedContent,
@@ -521,6 +71,8 @@ const MonacoEditorGroup = ({
 
   onDeleteMonacoEditorPath,
   setOnDeleteMonacoEditorPath,
+
+  setMonacoCallbacks,
 }) => {
   const { onSelectedMonacoIndex, monacoPaths } =
     useContext(MonacoEditorContexts);
@@ -545,6 +97,7 @@ const MonacoEditorGroup = ({
         //editor_setDiffContent={setDiffContent}
         onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
         setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
+        setMonacoCallbacks={setMonacoCallbacks}
       ></MonacoCore>
     );
   });
@@ -606,7 +159,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       id: "customizeAPI",
       icon: SYSTEM_ICON_MANAGER.customize.ICON512,
       label: "customize API",
-      quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
+      quick_view_background: "wrench_screwdriver",
       clickable: true,
       sub_items: ["customizeRequest"],
     },
@@ -624,7 +177,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       id: "continue",
       clickable: true,
       label: "continue...",
-      icon: SYSTEM_ICON_MANAGER.continue.ICON512,
+      icon: "pen",
       quick_view_background: SYSTEM_ICON_MANAGER.continue.ICON16,
     },
     fix: {
@@ -632,7 +185,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       id: "fix",
       clickable: true,
       label: "fix...",
-      icon: SYSTEM_ICON_MANAGER.fix.ICON512,
+      icon: "hammer",
       quick_view_background: SYSTEM_ICON_MANAGER.fix.ICON16,
     },
     br: {
@@ -856,146 +409,20 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
 };
 
 /* { File Selection List Sub Component } --------------------------------------------------------------------------------------- */
-const FileSelectionListBackgroundIndicator = ({ index }) => {
-  const { onSelectedMonacoIndex, onDragOveredMonacoIndex, onDragOverPosition } =
-    useContext(MonacoEditorContexts);
-  const [backgroundColorOffset, setBackgroundColorOffset] = useState(0);
-  const [borderRadius, setBorderRadius] = useState({
-    center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-    left_border: `0px 0px 0px ${default_border_radius}px`,
-    left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-    right_border: `0px 0px ${default_border_radius}px 0px`,
-    right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-  });
-  const [top, setTop] = useState(default_selecion_list_item_padding);
-  const [left, setLeft] = useState(0);
-
-  useEffect(() => {
-    if (index === onSelectedMonacoIndex) {
-      setBackgroundColorOffset(default_onhover_item_background_color_offset);
-      setBorderRadius({
-        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-        left_border: `0px 0px 0px ${default_border_radius}px`,
-        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-        right_border: `0px 0px ${default_border_radius}px 0px`,
-        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-      });
-      setTop(0);
-      setLeft(-default_selecion_list_icon_offset);
-    } else if (index === onDragOveredMonacoIndex) {
-      setBackgroundColorOffset(default_onhover_item_background_color_offset);
-      setBorderRadius({
-        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-        left_border: `0px 0px 0px ${default_border_radius}px`,
-        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-        right_border: `0px 0px ${default_border_radius}px 0px`,
-        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-      });
-      setTop(0);
-      setLeft(default_tag_max_width);
-    } else {
-      setBackgroundColorOffset(16);
-      setBorderRadius({
-        center: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-        left_border: `0px 0px 0px ${default_border_radius}px`,
-        left_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-        right_border: `0px 0px ${default_border_radius}px 0px`,
-        right_cover: `0px 0px ${default_border_radius}px ${default_border_radius}px`,
-      });
-      setTop(0);
-      setLeft(0);
-    }
-  }, [onSelectedMonacoIndex]);
-
-  return (
-    <>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          position: "absolute",
-          top: top,
-          left: left,
-          right: -default_selecion_list_item_padding / 2,
-          bottom: 0,
-          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
-            G + backgroundColorOffset
-          }, ${B + backgroundColorOffset}, 1 )`,
-          borderRadius: `${borderRadius.center}`,
-        }}
-      ></div>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          position: "absolute",
-          top: "50%",
-          left: `${-default_selecion_list_item_padding + left}px`,
-          bottom: "0px",
-
-          width: `${default_selecion_list_item_padding}px`,
-
-          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
-            G + backgroundColorOffset
-          }, ${B + backgroundColorOffset}, 1 )`,
-          borderRadius: `${borderRadius.left_border}`,
-        }}
-      ></div>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          position: "absolute",
-          top: `50%`,
-          left: `${-default_selecion_list_item_padding + left}px`,
-          bottom: "0px",
-
-          width: `${default_selecion_list_item_padding}px`,
-
-          backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
-          borderRadius: `${borderRadius.left_cover}`,
-        }}
-      ></div>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          position: "absolute",
-          top: "50%",
-          right: `${-1.5 * default_selecion_list_item_padding}px`,
-          bottom: "0px",
-
-          width: `${default_selecion_list_item_padding}px`,
-
-          backgroundColor: `rgba( ${R + backgroundColorOffset}, ${
-            G + backgroundColorOffset
-          }, ${B + backgroundColorOffset}, 1 )`,
-          borderRadius: `${borderRadius.right_border}`,
-        }}
-      ></div>
-      <div
-        style={{
-          transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
-          position: "absolute",
-          top: `50%`,
-          right: `${-1.5 * default_selecion_list_item_padding}px`,
-          bottom: "0px",
-
-          width: `${default_selecion_list_item_padding}px`,
-
-          backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
-          borderRadius: `${borderRadius.right_cover}`,
-        }}
-      ></div>{" "}
-    </>
-  );
-};
 const FileSelectionListItem = ({
+  containerListRef,
   reference,
   index,
   file_path,
   tag_position,
   tag_size,
+  setTagPositions,
 }) => {
   const { access_dir_name_by_path } = useContext(RootDataContexts);
   const {
     id,
+    mode,
+    width,
     onSelectedMonacoIndex,
     setOnSelectedMonacoIndex,
     onDragedMonacoIndex,
@@ -1004,20 +431,56 @@ const FileSelectionListItem = ({
     setOnDragOverMonacoIndex,
     onDragOverPosition,
     setOnDragOverPosition,
+    monacoPaths,
+    setMonacoPaths,
     item_on_drag,
     item_on_drop,
+    monacoCallbacks,
   } = useContext(MonacoEditorContexts);
   const containerRef = useRef(null);
   const [zIndex, setZIndex] = useState(6);
-  const [tagSize, setTagSize] = useState({ width: 0, height: 0 });
+  const [itemWidth, setItemWidth] = useState(0);
+  const [tagSize, setTagSize] = useState({
+    width: default_tag_max_width,
+    height: 0,
+  });
+  const [tagLeft, setTagLeft] = useState(0);
   const [tagColorOffset, setTagColorOffset] = useState(0);
   const [closeButtonStyle, setCloseButtonStyle] = useState({
     backgroundColorOffset: 32,
     onHover: false,
   });
-
   const [tagOpacity, setTagOpacity] = useState(1);
 
+  const to_delete_tag = useCallback(
+    (onDragItem, onDropItem) => {
+      setOnSelectedMonacoIndex(-1);
+      if (
+        monacoCallbacks[onDragItem.content.path]?.callback_to_delete !==
+        undefined
+      ) {
+        monacoCallbacks[onDragItem.content.path].callback_to_delete();
+      }
+      const to_delete_index = monacoPaths.indexOf(onDragItem.content.path);
+      setMonacoPaths((prevData) => {
+        return prevData.filter((path, index) => index !== to_delete_index);
+      });
+      setTagPositions((prevData) => {
+        const new_data = { ...prevData };
+        delete new_data[onDragItem.content.path];
+        return new_data;
+      });
+    },
+    [file_path, monacoPaths]
+  );
+
+  useEffect(() => {
+    setItemWidth(
+      onDragOveredMonacoIndex === index
+        ? tagSize.width + default_tag_max_width + "px"
+        : tagSize.width + "px"
+    );
+  }, [tag_size, onDragOveredMonacoIndex, index]);
   useEffect(() => {
     if (index === onDragedMonacoIndex) {
       setZIndex(6);
@@ -1047,6 +510,7 @@ const FileSelectionListItem = ({
   }, [tag_size]);
   const update_on_drag_over_position = useCallback(
     (event, index) => {
+      if (index === onDragedMonacoIndex) return;
       if (onDragOveredMonacoIndex === index && containerRef) {
         const rect = containerRef.current.getBoundingClientRect();
         setOnDragOverPosition({
@@ -1056,25 +520,53 @@ const FileSelectionListItem = ({
       }
       setOnDragOverMonacoIndex(index);
     },
-    [containerRef, onDragOveredMonacoIndex]
+    [containerRef, onDragedMonacoIndex, onDragOveredMonacoIndex]
   );
+  useEffect(() => {
+    if (onDragOveredMonacoIndex === index) {
+      if (onDragOverPosition.x < (tag_size.width + default_tag_max_width) / 2) {
+        setTagLeft(default_tag_max_width);
+      } else {
+        setTagLeft(0);
+      }
+    } else {
+      setTagLeft(0);
+    }
+  }, [onDragOverPosition, onDragOveredMonacoIndex, tag_position, tag_size]);
+
+  const memoized_tag_style = useMemo(() => {
+    return {
+      top: "50%",
+      left: tagLeft,
+      transform: "translate(0%, -50%)",
+      pointerEvents: "none",
+      maxWidth: default_tag_max_width,
+      boxShadow:
+        index === onSelectedMonacoIndex
+          ? "0px 0px 16px 0px rgba(0, 0, 0, 0.16)"
+          : "none",
+      backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
+        B + tagColorOffset
+      }, 1 )`,
+      verticalMode: mode.includes("vertical"),
+    };
+  }, [tagLeft, tagColorOffset, mode, index, onSelectedMonacoIndex]);
 
   return (
     <div
       ref={containerRef}
       draggable={true}
       style={{
-        transition: "left 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+        transition:
+          "left 0.32s cubic-bezier(0.32, 1, 0.32, 1), width 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
         position: "absolute",
-        top: 0,
-        left: tag_position + "px",
-        width:
-          onDragOveredMonacoIndex === index
-            ? tagSize.width + default_tag_max_width + "px"
-            : tagSize.width + "px",
+        top: 4,
+        left: tag_position ? tag_position : 0,
+        width: itemWidth,
         bottom: default_selecion_list_item_padding / 2,
         zIndex: zIndex,
         opacity: tagOpacity,
+        backgroundColor: `rgba( ${R}, ${G}, ${B}, 1 )`,
       }}
       onMouseUp={() => {
         setOnSelectedMonacoIndex(index);
@@ -1082,8 +574,9 @@ const FileSelectionListItem = ({
       onDragStart={(e) => {
         e.stopPropagation();
         e.dataTransfer.setDragImage(GHOST_IMAGE, 0, 0);
-        setOnSelectedMonacoIndex(index);
         setOnDragMonacoIndex(index);
+        setOnDragOverMonacoIndex(-1);
+        setOnSelectedMonacoIndex(index);
         item_on_drag(e, {
           source: id,
           ghost_image: "tag",
@@ -1091,48 +584,42 @@ const FileSelectionListItem = ({
             type: "file",
             path: file_path,
           },
+          callback_to_delete: to_delete_tag,
         });
       }}
       onDragEnd={(e) => {
         e.stopPropagation();
         setOnDragMonacoIndex(-1);
         setOnDragOverMonacoIndex(-1);
-        setOnDragOverPosition({ x: 0, y: 0 });
         item_on_drop(e);
       }}
       onDragOver={(e) => {
         update_on_drag_over_position(e, index);
       }}
+      onDragLeave={(e) => {
+        e.stopPropagation();
+      }}
     >
-      <FileSelectionListBackgroundIndicator index={index} />
       <Tag
         config={{
           reference: reference,
-          type: "file",
+          type: "file_page",
           label: access_dir_name_by_path(file_path),
-          style: {
-            transparentMode: true,
-            top: "50%",
-            transform: "translate(0%, -50%)",
-            boxShadow: "none",
-            pointerEvents: "none",
-            maxWidth: 128,
-            backgroundColor: `rgba( ${R + tagColorOffset}, ${
-              G + tagColorOffset
-            }, ${B + tagColorOffset}, 1 )`,
-          },
+          style: memoized_tag_style,
         }}
       />
       {index === onSelectedMonacoIndex ? (
         <Icon
+          draggable={false}
           src="close"
           style={{
-            transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+            transition:
+              "left 0.32s cubic-bezier(0.32, 1, 0.32, 1), backgroundColor 0.12s ease",
 
             transform: "translate(0%, -50%)",
             position: "absolute",
             top: "50%",
-            left: -default_selecion_list_icon_offset + 4,
+            left: -default_selecion_list_icon_offset + tagLeft,
             width: 16,
             height: 16,
             padding: 1,
@@ -1146,17 +633,32 @@ const FileSelectionListItem = ({
           }}
           onClick={(e) => {
             e.stopPropagation();
+            to_delete_tag({ content: { path: file_path } });
           }}
-          onMouseEnter={() => {
+          onMouseEnter={(e) => {
+            e.stopPropagation();
             setCloseButtonStyle({
               backgroundColorOffset: 64,
               onHover: true,
             });
           }}
-          onMouseLeave={() => {
+          onMouseLeave={(e) => {
+            e.stopPropagation();
             setCloseButtonStyle({
               backgroundColorOffset: 32,
               onHover: false,
+            });
+          }}
+          onMouseDown={() => {
+            setCloseButtonStyle({
+              backgroundColorOffset: 128,
+              onHover: true,
+            });
+          }}
+          onMouseUp={() => {
+            setCloseButtonStyle({
+              backgroundColorOffset: 64,
+              onHover: true,
             });
           }}
         />
@@ -1166,21 +668,124 @@ const FileSelectionListItem = ({
 };
 const FileSelectionListContainer = ({}) => {
   const {
+    id,
     mode,
+    height,
+    width,
     onDragedMonacoIndex,
+    setOnDragMonacoIndex,
     onDragOveredMonacoIndex,
     setOnDragOverMonacoIndex,
     onSelectedMonacoIndex,
+    setOnSelectedMonacoIndex,
     onDragOverPosition,
-    setOnDragOverPosition,
     monacoPaths,
     setMonacoPaths,
+    item_on_drag_over,
   } = useContext(MonacoEditorContexts);
 
+  const containerRef = useRef(null);
+  const [containerStyle, setContainerStyle] = useState({
+    width: 0,
+    transform: "rotate(0deg)",
+    top: 7,
+    left: 6,
+    right: 6,
+    height: 28,
+  });
   const tagRefs = useRef(monacoPaths.map(() => React.createRef()));
+  const [tags, setTags] = useState([]);
   const [tagPositions, setTagPositions] = useState([]);
-  const [tagSizes, setTagSizes] = useState([]);
+  const [requiredRerender, setRequiredRerender] = useState(true);
 
+  /* { render tags } ============================================================== */
+  const render_tags = useCallback(() => {
+    if (!tagRefs.current) return;
+    if (!containerRef.current) return;
+
+    let tags = [];
+    let tag_positions = [];
+
+    let position_x = 0;
+
+    for (let i = 0; i < monacoPaths.length; i++) {
+      let tagPosition = {};
+      let tag_width = tagRefs.current[i]?.current?.offsetWidth;
+
+      if (isNaN(tag_width)) {
+        tag_width = tagPositions[monacoPaths[i]]?.width;
+      }
+      if (isNaN(tag_width)) {
+        tag_width = default_tag_max_width;
+      }
+
+      if (i === onDragedMonacoIndex) {
+        position_x += 0;
+      } else if (i === onSelectedMonacoIndex) {
+        position_x += default_selecion_list_icon_offset + 6;
+      }
+      tagPosition.x = position_x;
+      if (i !== onDragedMonacoIndex) {
+        position_x += tag_width + 0.5 * default_selecion_list_item_padding;
+      }
+      if (i === onDragOveredMonacoIndex) {
+        position_x += default_tag_max_width;
+      }
+      tagPosition.width = tag_width;
+      tagPosition.height = tagRefs.current[i]?.current?.offsetHeight;
+      tags.push(
+        <FileSelectionListItem
+          key={monacoPaths[i]}
+          index={i}
+          containerListRef={containerRef}
+          reference={tagRefs.current[i]}
+          file_path={monacoPaths[i]}
+          tag_position={tagPosition.x}
+          tag_size={{ width: tagPosition.width, height: tagPosition.height }}
+          setTagPositions={setTagPositions}
+        />
+      );
+      tag_positions[monacoPaths[i]] = tagPosition;
+    }
+    setTagPositions(tag_positions);
+    setTags(tags);
+  }, [
+    monacoPaths,
+    tagRefs.current,
+    containerRef.current,
+    tagPositions,
+    onSelectedMonacoIndex,
+    onDragedMonacoIndex,
+    onDragOveredMonacoIndex,
+  ]);
+  useEffect(() => {
+    if (!requiredRerender) return;
+    const intervalId = setInterval(() => {
+      if (Object.keys(tagPositions).length === 0) {
+        render_tags();
+      } else {
+        for (let i = 0; i < monacoPaths.length; i++) {
+          if (isNaN(tagPositions[Object.keys(tagPositions)[0]].height)) {
+            render_tags();
+            return;
+          }
+        }
+        clearInterval(intervalId);
+        setRequiredRerender(false);
+      }
+    }, 100);
+    return () => clearInterval(intervalId);
+  }, [tagPositions, requiredRerender]);
+  useEffect(() => {
+    render_tags();
+  }, [
+    width,
+    tagRefs.current,
+    containerRef.current,
+    onSelectedMonacoIndex,
+    onDragedMonacoIndex,
+    onDragOveredMonacoIndex,
+  ]);
   useEffect(() => {
     if (!tagRefs.current) return;
     tagRefs.current = tagRefs.current.slice(0, monacoPaths.length);
@@ -1188,74 +793,126 @@ const FileSelectionListContainer = ({}) => {
       tagRefs.current[i] = React.createRef();
     }
   }, [monacoPaths]);
-  useEffect(() => {
-    if (!tagRefs.current) return;
-    const render_tags = () => {
-      let tagPositions = [];
-      let tagSizes = [];
+  /* { render tags } ============================================================== */
 
-      let position_x = 0;
-
-      for (let i = 0; i < monacoPaths.length; i++) {
-        if (i === onDragedMonacoIndex) {
-          position_x += 0;
-        } else if (i === onSelectedMonacoIndex) {
-          position_x += default_selecion_list_icon_offset;
+  /* { drag and drop } ============================================================ */
+  const to_append_tag = useCallback(
+    (onDragItem, onDropItem) => {
+      if (!onDragItem || !onDropItem) return;
+      if (onDragItem.content.type !== "file") return;
+      let on_drop_index = monacoPaths.indexOf(onDropItem.content.path);
+      if (onDropItem.content.append_to_left) {
+        if (onDragedMonacoIndex !== -1 && onDragedMonacoIndex < on_drop_index) {
+          on_drop_index -= 1;
         }
-        tagPositions.push(position_x);
-        if (i !== onDragedMonacoIndex) {
-          position_x +=
-            tagRefs.current[i]?.current?.offsetWidth +
-            1.5 * default_selecion_list_item_padding;
+        setMonacoPaths((prevData) => {
+          return [
+            ...prevData.slice(0, on_drop_index),
+            onDragItem.content.path,
+            ...prevData.slice(on_drop_index),
+          ];
+        });
+      } else {
+        if (onDragedMonacoIndex !== -1 && onDragedMonacoIndex < on_drop_index) {
+          on_drop_index -= 1;
         }
-        if (i === onDragOveredMonacoIndex) {
-          position_x += default_tag_max_width;
-        }
-        tagSizes.push({
-          width: tagRefs.current[i]?.current?.offsetWidth,
-          height: tagRefs.current[i]?.current?.offsetHeight,
+        on_drop_index += 1;
+        setMonacoPaths((prevData) => {
+          return [
+            ...prevData.slice(0, on_drop_index),
+            onDragItem.content.path,
+            ...prevData.slice(on_drop_index),
+          ];
         });
       }
-      setTagPositions(tagPositions);
-      setTagSizes(tagSizes);
-    };
-    render_tags();
-  }, [
-    monacoPaths,
-    tagRefs.current,
-    onSelectedMonacoIndex,
-    onDragedMonacoIndex,
-    onDragOveredMonacoIndex,
-  ]);
+      setRequiredRerender(true);
+      setOnSelectedMonacoIndex(-1);
+      setOnDragOverMonacoIndex(-1);
+    },
+    [onDragedMonacoIndex, onDragOverPosition, tagPositions, monacoPaths]
+  );
+  useEffect(() => {
+    /* on drag index cannot be set to on drag overed index ------------------------ */
+    if (onDragOveredMonacoIndex === onDragedMonacoIndex) {
+      setOnDragOverMonacoIndex(-1);
+      return;
+    }
+    if (onDragOveredMonacoIndex === -1) return;
+    if (!tagPositions[monacoPaths[onDragOveredMonacoIndex]]) return;
+    item_on_drag_over(null, {
+      source: id,
+      content: {
+        type: "file",
+        path: monacoPaths[onDragOveredMonacoIndex],
+        append_to_left:
+          onDragOverPosition.x <
+          (tagPositions[monacoPaths[onDragOveredMonacoIndex]].width +
+            default_tag_max_width) /
+            2,
+      },
+      callback_to_append: to_append_tag,
+    });
+  }, [onDragOveredMonacoIndex, monacoPaths, onDragOverPosition, tagPositions]);
+  /* { drag and drop } ============================================================ */
+
+  useEffect(() => {
+    if (mode.includes("vertical")) {
+      setContainerStyle({
+        width: height - 32,
+        transform: "rotate(90deg)",
+        top: 7 - 37,
+        left: 6,
+        right: undefined,
+        height: 32,
+      });
+    } else {
+      setContainerStyle({
+        width: undefined,
+        transform: "rotate(0deg)",
+        top: 7,
+        left: 6,
+        right: 6,
+        height: 28,
+      });
+    }
+  }, [mode, height, width]);
+  useEffect(() => {
+    if (onSelectedMonacoIndex === -1) return;
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        left: tagPositions[onSelectedMonacoIndex] - 0.5 * default_tag_max_width,
+        behavior: "smooth",
+      });
+    }
+  }, [onSelectedMonacoIndex, containerRef.current]);
 
   return (
     <div
+      ref={containerRef}
       style={{
-        transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
+        transition: "all 0.12s cubic-bezier(0.32, 1, 0.32, 1)",
+        transform: containerStyle.transform,
+        transformOrigin: "0 100%",
         position: "absolute",
-        top: 6,
-        left: 6,
-        right: 6,
+        top: containerStyle.top,
+        left: containerStyle.left,
+        right: containerStyle.right,
 
-        height: 28,
+        width: containerStyle.width,
+        height: containerStyle.height,
 
         borderRadius: `${default_border_radius}px ${default_border_radius}px 0px 0px`,
-        overflow: "hidden",
-        padding: default_selecion_list_item_padding / 2,
+        padding: `${default_selecion_list_item_padding / 2}px 0px 0px 0px`,
+        border: "1px solid rgba( 225, 225, 225, 0 )",
+      }}
+      onDragLeave={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setOnDragOverMonacoIndex(-1);
+        item_on_drag_over(e, null);
       }}
     >
-      {monacoPaths.map((filePath, index) => {
-        return (
-          <FileSelectionListItem
-            key={filePath}
-            index={index}
-            reference={tagRefs.current[index]}
-            file_path={filePath}
-            tag_position={tagPositions[index]}
-            tag_size={tagSizes[index]}
-          />
-        );
-      })}
+      {tags}
     </div>
   );
 };
@@ -1263,6 +920,8 @@ const FileSelectionListContainer = ({}) => {
 
 const MonacoEditor = ({
   id,
+  width,
+  height,
   mode,
   code_editor_container_ref_index,
   command,
@@ -1271,6 +930,7 @@ const MonacoEditor = ({
   data,
   setData,
   item_on_drag,
+  item_on_drag_over,
   item_on_drop,
 }) => {
   //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
@@ -1284,6 +944,8 @@ const MonacoEditor = ({
 
   const [monacoPaths, setMonacoPaths] = useState(data?.monaco_paths);
   const [monacoCores, setMonacoCores] = useState(data?.monaco_cores);
+  const [monacoCallbacks, setMonacoCallbacks] = useState({});
+
   const access_monaco_core_by_path = (path) => {
     return monacoCores[path];
   };
@@ -1320,17 +982,20 @@ const MonacoEditor = ({
     });
   }, [monacoPaths]);
   useEffect(() => {
-    setData((prevData) => {
-      return {
-        ...prevData,
-        monaco_cores: monacoCores,
-      };
-    });
+    const timeoutId = setTimeout(() => {
+      setData((prevData) => {
+        if (prevData.monaco_cores === monacoCores) return prevData;
+        return {
+          ...prevData,
+          monaco_cores: monacoCores,
+        };
+      });
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
   }, [monacoCores]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
 
-  const [onDeleteMonacoEditorPath, setOnDeleteMonacoEditorPath] =
-    useState(null);
   const [onSelectedCotent, setOnSelectedCotent] = useState(null);
   const [onAppendContent, setOnAppendContent] = useState(null);
 
@@ -1338,6 +1003,8 @@ const MonacoEditor = ({
     <MonacoEditorContexts.Provider
       value={{
         id,
+        width,
+        height,
         mode,
         command,
         setCommand,
@@ -1357,14 +1024,15 @@ const MonacoEditor = ({
         access_monaco_core_by_path,
         update_monaco_core_view_state,
         update_monaco_core_model,
-        onDeleteMonacoEditorPath,
-        setOnDeleteMonacoEditorPath,
         onSelectedCotent,
         setOnSelectedCotent,
         onAppendContent,
         setOnAppendContent,
         item_on_drag,
+        item_on_drag_over,
         item_on_drop,
+        monacoCallbacks,
+        setMonacoCallbacks,
       }}
     >
       <MonacoEditorContextMenuWrapper>
@@ -1374,21 +1042,24 @@ const MonacoEditor = ({
         ></link>
         <div style={{ height: "100%" }}>
           <div
+            draggable={onSelectedMonacoIndex === -1 ? false : true}
             style={{
               transition: "all 0.24s cubic-bezier(0.32, 1, 0.32, 1)",
               position: "absolute",
               top: 38,
-              left: 6,
-              right: 6,
-              bottom: 6,
-              padding: "0px 8px 8px 0px",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              padding: "16px 16px 16px 0px",
 
               boxSizing: "border-box",
-              backgroundColor: "#202020",
-              borderRadius: "0px 0px 5px 5px",
-              border: "1px solid #282828",
+              borderRadius: 5,
               // boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
               opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
+            }}
+            onDragStart={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
             }}
           >
             <MonacoEditorGroup
@@ -1398,17 +1069,9 @@ const MonacoEditor = ({
               setOnAppendContent={setOnAppendContent}
               //HORIZONTAL OR VERTICAL MODE
               mode={mode}
-              onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-              setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
+              setMonacoCallbacks={setMonacoCallbacks}
             />
           </div>
-          {/* <FileSelectionBar
-            code_editor_container_ref_index={code_editor_container_ref_index}
-            //HORIZONTAL OR VERTICAL MODE
-            mode={mode}
-            onDeleteMonacoEditorPath={onDeleteMonacoEditorPath}
-            setOnDeleteMonacoEditorPath={setOnDeleteMonacoEditorPath}
-          /> */}
           <FileSelectionListContainer />
         </div>
       </MonacoEditorContextMenuWrapper>

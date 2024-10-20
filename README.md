@@ -1,4 +1,6 @@
-# Surface Editor
+# <img src="./MAIN/assets/logos/logo_pink_32.png"/> Surface Editor
+
+![darwin32_demo_ui](./MAIN/assets/images/darwin32_demo_ui.png)
 
 ## [ Table of Contents ]
 
@@ -17,8 +19,6 @@
 
 ## [ About the Project ]
 
-![surface_editor_logo](https://github.com/haoxiang-xu/surface-editor/assets/59581718/adb02c67-443f-4ff0-90f1-9f4ea2d97bc5)
-
 ### <a id="codeeditor-llms"></a>CodeEditor+LLMs (Large Language Models):
 
 <span style="opacity: 0.64">CodeEditor+LLMs is a state-of-the-art Code Editor that leverages the power of large language models to assist in coding. By utilizing a vector database, it establishes intricate relationships between files and code segments. This advanced interconnectivity is designed to significantly enhance the efficiency of developers by providing context-aware insights and coding suggestions.</span>
@@ -26,9 +26,6 @@
 ### <a id="ai-enhanced-ui"></a>AI-Enhanced UI:
 
 <span style="opacity: 0.64">This is a specialized UI designed specifically for AI supported application. While most AI applications focus primarily on functionality, they often overlook the importance of a better user experience. We possess incredibly powerful LLMs, but our interactions with them still resemble the command-line interface era. I believe that instead of merely providing code editors or IDE extensions for LLMs, we need a comprehensive overhaul of the entire code editor UI to align with the new paradigm of AI interaction in this era.</span>
-
-![WIN UI](https://github.com/haoxiang-xu/surface-editor/assets/59581718/0b287c27-b582-43e4-a82f-7e53790c7b6b)
-![MAC UI](https://github.com/haoxiang-xu/surface-editor/assets/59581718/c7e0e523-f704-4ee7-9ecf-ebd280143db5)
 
 ### <a id="built-with"></a>BUILT WITH
 
@@ -38,6 +35,7 @@
 <!-- [![Figma][Figma-shield]][Figma-url] -->
 <!-- [![VSC][VSC-shield]][VSC-install] -->
 <!-- [![Nodemon][Nodemon-shield]][Nodemon-url] -->
+
 [![OpenAI][OpenAI-shield]][OpenAI-url]
 [![React][React-shield]][React-url]
 [![Express][Express-shield]][Express-url]
@@ -51,66 +49,66 @@
 ### <a id="contributors"></a>CONTRIBUTORs
 
 <a href="https://github.com/haoxiang-xu">
-  <img src="https://github.com/haoxiang-xu.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/haoxiang-xu.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/XinquanGe">
-  <img src="https://github.com/XinquanGe.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/XinquanGe.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/WenruiChen">
-  <img src="https://github.com/WenruiChen.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/WenruiChen.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/GorgeousGrace">
-  <img src="https://github.com/GorgeousGrace.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/GorgeousGrace.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/fountainfang">
-  <img src="https://github.com/fountainfang.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/fountainfang.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/William-316">
-  <img src="https://github.com/William-316.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/William-316.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/skywalker007-cpu">
-  <img src="https://github.com/skywalker007-cpu.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/skywalker007-cpu.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/7ito">
-  <img src="https://github.com/7ito.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/7ito.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/andrewyang0620">
-  <img src="https://github.com/andrewyang0620.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/andrewyang0620.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/BobbyZhu24">
-  <img src="https://github.com/BobbyZhu24.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/BobbyZhu24.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/duyiyang">
-  <img src="https://github.com/duyiyang.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/duyiyang.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/KiritoLoh">
-  <img src="https://github.com/KiritoLoh.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/KiritoLoh.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/lucas-xu51">
-  <img src="https://github.com/lucas-xu51.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/lucas-xu51.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/prussia1891">
-  <img src="https://github.com/prussia1891.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/prussia1891.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/Stevensayhello">
-  <img src="https://github.com/Stevensayhello.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/Stevensayhello.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/Xinying-Q">
-  <img src="https://github.com/Xinying-Q.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/Xinying-Q.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/yuan-yz-z">
-  <img src="https://github.com/yuan-yz-z.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/yuan-yz-z.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/Zecr">
-  <img src="https://github.com/Zecr.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/Zecr.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/zjy125">
-  <img src="https://github.com/zjy125.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/zjy125.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 
 ## [ To Everyone ]
@@ -130,6 +128,7 @@
 [![VSC][VSC-download-shield]][VSC-install]
 [![Docker][Docker-download-shield]][Docker-install]
 [![Postman][Postman-download-shield]][Postman-install]
+
 <!-- [![MongoDB][MongoDB-download-shield]][MongoDB-install] -->
 
 ### <a id="local-setup"></a>LOCAL SETUP
@@ -146,7 +145,7 @@
 
 - **Setup Frontend Testing Application**
 
-  - To Frontend Testing Application Directory `cd frontend_application/component_lib_testing_application`
+  - To Frontend Testing Application Directory `cd MAIN`
   - To install required modules `npm install`
   - Run Frontend Testing Application `npm start`
   - Heading to the Application `http://localhost:3000/`
@@ -159,17 +158,9 @@
   - Run Backend File Server `npm start`
   - Server will running on `http://localhost:8200/` in development mode
 
-- **Setup Backend File Server(optional)**
-
-  - To Backend File Server Directory `cd backend_services/file_services`
-  - To install required modules `npm install`
-  - Run Backend File Server `npm start`
-  - Server will running on `http://localhost:8000/` in development mode
-
 ### <a id="join-the-team"></a>JOIN THE DEVELOPMENT TEAM
 
 [![Discord][Discord-shield]][Discord-url]
-
 
 [vscode-repo-shield]: https://img.shields.io/badge/Open_With_Visual_Studio_Code-222222?style=for-the-badge&logo=VisualStudioCode&logoColor=FFFFFF&labelColor=007ACC
 [vscode-repo-url]: git-client://clone?repo=https%3A%2F%2Fgithub.com%2Fhaoxiang-xu%2Fvecoder

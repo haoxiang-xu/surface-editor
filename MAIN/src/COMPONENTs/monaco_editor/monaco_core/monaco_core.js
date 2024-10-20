@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
 import MonacoEditor from "@monaco-editor/react";
 import { MonacoDiffEditor, monaco, Range } from "react-monaco-editor";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
@@ -21,19 +27,18 @@ const MonacoCore = ({
   //Diff Editor optional parameters
   editor_diffContent,
   editor_setDiffContent,
-  onDeleteMonacoEditorPath,
-  setOnDeleteMonacoEditorPath,
+  setMonacoCallbacks,
 }) => {
   let EDITOR_FONT_SIZE;
   switch (window.osInfo.platform) {
     case "darwin": // macOS
-      EDITOR_FONT_SIZE = 10;
+      EDITOR_FONT_SIZE = 12;
       break;
     case "win32": // Windows
-      EDITOR_FONT_SIZE = 12;
+      EDITOR_FONT_SIZE = 14;
       break;
     default:
-      EDITOR_FONT_SIZE = 12;
+      EDITOR_FONT_SIZE = 14;
   }
   const {
     file,
@@ -54,7 +59,6 @@ const MonacoCore = ({
   const { draggedItem, dragCommand, setDragCommand } = useContext(
     globalDragAndDropContexts
   );
-  const { onDragIndex } = useContext(stackStructureDragAndDropContexts);
 
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
   const monacoRef = useRef();
@@ -213,27 +217,20 @@ const MonacoCore = ({
       setMonacoViewState(null);
     }
   }, [draggedItem]);
-  useEffect(() => {
-    if (onDragIndex !== -1) {
-      setMonacoModel(monacoRef.current.getModel());
-      setMonacoViewState(monacoRef.current.saveViewState());
-      monacoRef.current.setModel(null);
-    } else if (onDragIndex === -1 && monacoModel && monacoViewState) {
-      monacoRef.current.setModel(monacoModel);
-      monacoRef.current.restoreViewState(monacoViewState);
-      setMonacoModel(null);
-      setMonacoViewState(null);
-    }
-  }, [onDragIndex]);
   /*Drag and Drop Save and Reload Model=================================*/
 
   /*Delete Monaco Editor Path===========================================*/
   useEffect(() => {
-    if (onDeleteMonacoEditorPath === editor_filePath) {
-      monacoRef.current.setModel(null);
-      setOnDeleteMonacoEditorPath(null);
-    }
-  }, [onDeleteMonacoEditorPath]);
+    setMonacoCallbacks((prev) => ({
+      ...prev,
+      [editor_filePath]: {
+        callback_to_delete: callback_to_delete_monaco_core,
+      },
+    }));
+  }, []);
+  const callback_to_delete_monaco_core = useCallback(() => {
+    monacoRef.current.setModel(null);
+  }, []);
   /*Delete Monaco Editor Path===========================================*/
 
   return (
@@ -283,7 +280,7 @@ const defineTheme = (monaco) => {
     colors: {
       "editor.foreground": "#cccccc",
       "editorCursor.foreground": "#ffcc00",
-      "editor.background": "#202020",
+      "editor.background": "#1e1e1e",
     },
   });
   monaco.editor.setTheme("customTheme");

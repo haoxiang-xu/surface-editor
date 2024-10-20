@@ -218,12 +218,12 @@ const ContextItemButton = ({
           /* POSITION -------------- */
           position: "absolute",
           top: "50%",
-          left: 3,
+          left: 2,
           transform: "translate(0%, -50%)",
 
           /* SIZE ------------------ */
-          width: 16,
-          height: 16,
+          width: 18,
+          height: 18,
 
           /* STYLE ----------------- */
           backgroundImage: !isIconLoaded
@@ -240,8 +240,8 @@ const ContextItemButton = ({
             left: "0px",
 
             /* SIZE ------------------ */
-            width: 16,
-            height: 16,
+            width: 18,
+            height: 18,
             userSelect: "none",
           }}
           loading="lazy"

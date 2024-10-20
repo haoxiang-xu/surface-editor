@@ -48,9 +48,9 @@ const GHOST_IMAGE = ICON_MANAGER().GHOST_IMAGE;
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const padding = { top: 43, right: 6, bottom: 6, left: 6 };
-const default_explorer_item_height = 22;
 const default_x_axis_offset = 10;
-const default_font_size = 12;
+const default_font_size = 14;
+const default_explorer_item_height = default_font_size + 10;
 const default_indicator_padding = 4;
 const default_border_width = 1;
 const default_scrollbar_width = 10;
@@ -242,7 +242,7 @@ const ExplorerSearchBar = ({ filterKeyWord, setFilterKeyWord }) => {
           border: "none",
           color: "#FFFFFF",
           font: "inherit",
-          fontSize: default_font_size,
+          fontSize: default_font_size + 2,
           outline: "none",
           opacity: style.opacity,
         }}
@@ -502,6 +502,7 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
     setOnHoverExplorerItem,
     setFirstVisibleItem,
     scrollbarVisible,
+    setScrollToPath,
   } = useContext(SurfaceExplorerContexts);
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
     SurfaceExplorerContextMenuContexts
@@ -531,31 +532,40 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
   const [onHover, setOnHover] = useState(false);
   const hoverTimeout = useRef(null);
 
-  const [renameValue, setRenameValue] = useState(
-    access_dir_name_by_path(file_path)
-  );
+  const [tagLabel, setTagLabel] = useState(access_dir_name_by_path(file_path));
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = (change_or_not) => {
+  const handle_rename_on_sumbit = useCallback((rename_value, change_or_not) => {
     if (change_or_not) {
-      if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
+      if (access_dir_name_by_path(onConextMenuPath) !== rename_value) {
         let parent_path = onConextMenuPath.split("/").slice(0, -1);
         if (parent_path.length === 1) {
           parent_path = "root";
         } else {
           parent_path = parent_path.join("/");
         }
-        if (check_if_file_name_duplicate(parent_path, renameValue)) {
+        if (check_if_file_name_duplicate(parent_path, rename_value)) {
           alert("Duplicate Name Detected");
         } else {
-          rename_file_by_path(onConextMenuPath, renameValue);
+          rename_file_by_path(onConextMenuPath, rename_value);
+          setScrollToPath(
+            onConextMenuPath.split("/").slice(0, -1).join("/") +
+              "/" +
+              rename_value
+          );
+          setOnSelectedExplorerItems([
+            onConextMenuPath.split("/").slice(0, -1).join("/") +
+              "/" +
+              rename_value,
+          ]);
+          setTagLabel(rename_value);
         }
       }
     } else {
-      setRenameValue(access_dir_name_by_path(onConextMenuPath));
+      setTagLabel(access_dir_name_by_path(onConextMenuPath));
     }
     command_executed();
     setOnConextMenuPath(null);
-  };
+  });
   useEffect(() => {
     setOnRenameMode(
       command.content?.command_title === "rename" &&
@@ -574,15 +584,19 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
     } else if (onHover) {
       setStyle({
@@ -592,33 +606,48 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
       setOnHoverExplorerItem(file_path);
     } else {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
     }
-  }, [onHover, onRenameMode, width, scrollbarVisible, explorerListWidth]);
+  }, [
+    onHover,
+    onRenameMode,
+    width,
+    scrollbarVisible,
+    explorerListWidth,
+    position_x,
+  ]);
   useEffect(() => {
     if (tagRef.current) {
       if (
@@ -635,6 +664,36 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onPause]);
+
+  const memoized_tag_style = useMemo(
+    () => ({
+      top: fullSizeMode
+        ? position_y + explorerListTop - explorerScrollPosition
+        : 0,
+      borderRadius: 4,
+      padding_x: 3,
+      padding_y: 2,
+      fontSize: default_font_size,
+      backgroundColor: style.backgroundColor,
+      boxShadow: "none",
+      maxWidth: style.maxWidth,
+      fullSizeMode: fullSizeMode,
+      transparentMode: true,
+      inputMode: onRenameMode,
+      isExpanded: isExpanded,
+    }),
+    [
+      fullSizeMode,
+      position_y,
+      explorerListTop,
+      explorerScrollPosition,
+      default_font_size,
+      style.backgroundColor,
+      style.maxWidth,
+      onRenameMode,
+      isExpanded,
+    ]
+  );
 
   return (
     <div
@@ -660,13 +719,25 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
           : "0px 4px 16px rgba(0, 0, 0, 0)",
       }}
       onMouseEnter={() => {
-        setOnHover(true);
+        setOnHover((prev) => {
+          if (prev) {
+            return prev;
+          } else {
+            return true;
+          }
+        });
         hoverTimeout.current = setTimeout(() => {
           setOnPause(true);
         }, 200);
       }}
       onMouseLeave={() => {
-        setOnHover(false);
+        setOnHover((prev) => {
+          if (prev) {
+            return false;
+          } else {
+            return prev;
+          }
+        });
         clearTimeout(hoverTimeout.current);
         if (hoverTimeout.current) {
           setOnPause(false);
@@ -714,27 +785,9 @@ const ExplorerItemFolderComponent = ({ file_path, position_y, position_x }) => {
         config={{
           reference: tagRef,
           type: "folder",
-          label: renameValue,
-          label_on_change: (value) => {
-            setRenameValue(value);
-          },
+          label: tagLabel,
           label_on_submit: handle_rename_on_sumbit,
-          style: {
-            top: fullSizeMode
-              ? position_y + explorerListTop - explorerScrollPosition
-              : 0,
-            borderRadius: 4,
-            padding_x: 3,
-            padding_y: 2,
-            fontSize: default_font_size,
-            backgroundColor: style.backgroundColor,
-            boxShadow: "none",
-            isExpanded: isExpanded,
-            maxWidth: style.maxWidth,
-            fullSizeMode: fullSizeMode,
-            transparentMode: true,
-            inputMode: onRenameMode,
-          },
+          style: memoized_tag_style,
         }}
       />
     </div>
@@ -792,6 +845,7 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
     setOnHoverExplorerItem,
     setFirstVisibleItem,
     scrollbarVisible,
+    setScrollToPath,
   } = useContext(SurfaceExplorerContexts);
 
   const { onConextMenuPath, setOnConextMenuPath } = useContext(
@@ -814,31 +868,40 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
   const [onPause, setOnPause] = useState(false);
   const hoverTimeout = useRef(null);
 
-  const [renameValue, setRenameValue] = useState(
-    access_dir_name_by_path(file_path)
-  );
+  const [tagLabel, setTagLabel] = useState(access_dir_name_by_path(file_path));
   const [onRenameMode, setOnRenameMode] = useState(false);
-  const handle_rename_on_sumbit = (change_or_not) => {
+  const handle_rename_on_sumbit = useCallback((rename_value, change_or_not) => {
     if (change_or_not) {
-      if (access_dir_name_by_path(onConextMenuPath) !== renameValue) {
+      if (access_dir_name_by_path(onConextMenuPath) !== rename_value) {
         let parent_path = onConextMenuPath.split("/").slice(0, -1);
         if (parent_path.length === 1) {
           parent_path = "root";
         } else {
           parent_path = parent_path.join("/");
         }
-        if (check_if_file_name_duplicate(parent_path, renameValue)) {
+        if (check_if_file_name_duplicate(parent_path, rename_value)) {
           alert("Duplicate Name Detected");
         } else {
-          rename_file_by_path(onConextMenuPath, renameValue);
+          rename_file_by_path(onConextMenuPath, rename_value);
+          setScrollToPath(
+            onConextMenuPath.split("/").slice(0, -1).join("/") +
+              "/" +
+              rename_value
+          );
+          setOnSelectedExplorerItems([
+            onConextMenuPath.split("/").slice(0, -1).join("/") +
+              "/" +
+              rename_value,
+          ]);
+          setTagLabel(rename_value);
         }
       }
     } else {
-      setRenameValue(access_dir_name_by_path(onConextMenuPath));
+      setTagLabel(access_dir_name_by_path(onConextMenuPath));
     }
     command_executed();
     setOnConextMenuPath(null);
-  };
+  });
   useEffect(() => {
     setOnRenameMode(
       command.content?.command_title === "rename" &&
@@ -857,15 +920,19 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
     } else if (onHover) {
       setStyle({
@@ -875,33 +942,48 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           surface_explorer_fixed_styling.backgroundColorB + 32
         }, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
       setOnHoverExplorerItem(file_path);
     } else {
       setStyle({
         backgroundColor: `rgba( ${surface_explorer_fixed_styling.backgroundColorR}, ${surface_explorer_fixed_styling.backgroundColorG}, ${surface_explorer_fixed_styling.backgroundColorB}, 1)`,
         maxWidth: scrollbarVisible
-          ? explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width -
-            default_scrollbar_width
-          : explorerListWidth -
-            position_x -
-            2 * default_indicator_padding -
-            2 * default_border_width,
+          ? Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width -
+                default_scrollbar_width
+            )
+          : Number(
+              explorerListWidth -
+                position_x -
+                2 * default_indicator_padding -
+                2 * default_border_width
+            ),
       });
     }
-  }, [onHover, onRenameMode, width, scrollbarVisible, explorerListWidth]);
+  }, [
+    onHover,
+    onRenameMode,
+    width,
+    scrollbarVisible,
+    explorerListWidth,
+    position_x,
+  ]);
   useEffect(() => {
     if (tagRef.current) {
       if (
@@ -918,6 +1000,34 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
       }
     }
   }, [explorerListWidth, onPause]);
+
+  const memoized_tag_style = useMemo(
+    () => ({
+      top: fullSizeMode
+        ? position_y + explorerListTop - explorerScrollPosition
+        : 0,
+      borderRadius: 4,
+      padding_x: 3,
+      padding_y: 2,
+      fontSize: default_font_size,
+      backgroundColor: style.backgroundColor,
+      boxShadow: "none",
+      maxWidth: style.maxWidth,
+      fullSizeMode: fullSizeMode,
+      transparentMode: true,
+      inputMode: onRenameMode,
+    }),
+    [
+      fullSizeMode,
+      position_y,
+      explorerListTop,
+      explorerScrollPosition,
+      default_font_size,
+      style.backgroundColor,
+      style.maxWidth,
+      onRenameMode,
+    ]
+  );
 
   return (
     <div
@@ -943,13 +1053,25 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
           : "0px 4px 16px rgba(0, 0, 0, 0)",
       }}
       onMouseEnter={() => {
-        setOnHover(true);
+        setOnHover((prev) => {
+          if (prev) {
+            return prev;
+          } else {
+            return true;
+          }
+        });
         hoverTimeout.current = setTimeout(() => {
           setOnPause(true);
         }, 200);
       }}
       onMouseLeave={() => {
-        setOnHover(false);
+        setOnHover((prev) => {
+          if (prev) {
+            return false;
+          } else {
+            return prev;
+          }
+        });
         clearTimeout(hoverTimeout.current);
         if (hoverTimeout.current) {
           setOnPause(false);
@@ -996,26 +1118,9 @@ const ExplorerItemFileComponent = ({ file_path, position_y, position_x }) => {
         config={{
           reference: tagRef,
           type: "file",
-          label: renameValue,
-          label_on_change: (value) => {
-            setRenameValue(value);
-          },
+          label: tagLabel,
           label_on_submit: handle_rename_on_sumbit,
-          style: {
-            top: fullSizeMode
-              ? position_y + explorerListTop - explorerScrollPosition
-              : 0,
-            borderRadius: 4,
-            padding_x: 3,
-            padding_y: 2,
-            fontSize: default_font_size,
-            backgroundColor: style.backgroundColor,
-            boxShadow: "none",
-            maxWidth: style.maxWidth,
-            fullSizeMode: fullSizeMode,
-            transparentMode: true,
-            inputMode: onRenameMode,
-          },
+          style: memoized_tag_style,
         }}
       />
     </div>
@@ -1030,6 +1135,8 @@ const ExplorerList = ({ filteredDir }) => {
     height,
     explorerListRef,
     explorerScrollPosition,
+    scrollToPath,
+    setScrollToPath,
     scrollbarVisible,
     setScrollbarVisible,
     onSelectedExplorerItems,
@@ -1292,11 +1399,41 @@ const ExplorerList = ({ filteredDir }) => {
   }, [explorerItemPositions, onHoverExplorerItem]);
   useEffect(() => {
     if (explorerList.length * default_explorer_item_height > height) {
-      setScrollbarVisible(true);
+      setScrollbarVisible((prev) => {
+        if (!prev) {
+          return true;
+        } else {
+          return prev;
+        }
+      });
     } else {
-      setScrollbarVisible(false);
+      setScrollbarVisible((prev) => {
+        if (prev) {
+          return false;
+        } else {
+          return prev;
+        }
+      });
     }
   }, [explorerList, height]);
+  useEffect(() => {
+    if (!scrollToPath || !explorerItemPositions || !explorerListRef) return;
+    const position = explorerItemPositions.find(
+      (element) => element.file_path === scrollToPath
+    );
+    if (!position) return;
+    if (
+      position.position_y < explorerScrollPosition ||
+      position.position_y >
+        explorerScrollPosition + height - default_explorer_item_height
+    ) {
+      explorerListRef.current.scrollTo({
+        top: position.position_y - default_explorer_item_height,
+        behavior: "smooth",
+      });
+    }
+    setScrollToPath(null);
+  }, [scrollToPath, setScrollToPath, explorerItemPositions, explorerListRef]);
 
   return (
     <div
@@ -1363,8 +1500,15 @@ const ContextMenuWrapper = ({ children }) => {
     create_file_by_path,
     update_dir_expand_status_by_path,
   } = useContext(RootDataContexts);
-  const { id, command, setCommand, load_contextMenu, command_executed } =
-    useContext(SurfaceExplorerContexts);
+  const {
+    id,
+    command,
+    setCommand,
+    load_contextMenu,
+    command_executed,
+    scrollToPath,
+    setScrollToPath,
+  } = useContext(SurfaceExplorerContexts);
   const [onConextMenuPath, setOnConextMenuPath] = useState(null);
   const [onCopyFile, setOnCopyFile] = useState(null);
   const tagRef = useRef(null);
@@ -1474,6 +1618,7 @@ const ContextMenuWrapper = ({ children }) => {
             target: id,
             content: { command_title: "rename", command_content: {} },
           });
+          setScrollToPath(new_file_path);
           break;
         }
         case "newFolder": {
@@ -1495,6 +1640,7 @@ const ContextMenuWrapper = ({ children }) => {
             target: id,
             content: { command_title: "rename", command_content: {} },
           });
+          setScrollToPath(new_file_path);
           break;
         }
         case "rename": {
@@ -1632,7 +1778,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "delete",
         clickable: true,
         label: "delete",
-        icon: SYSTEM_ICON_MANAGER.trash.ICON512,
+        icon: "delete",
         quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
       },
       br: {
@@ -1690,7 +1836,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "delete",
         clickable: true,
         label: "delete",
-        icon: SYSTEM_ICON_MANAGER.trash.ICON512,
+        icon: "delete",
         quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
       },
       br: {
@@ -1776,6 +1922,7 @@ const SurfaceExplorer = ({
   const [explorerListWidth, setExplorerListWidth] = useState(0);
   const [explorerListTop, setExplorerListTop] = useState(0);
   const [explorerScrollPosition, setExplorerScrollPosition] = useState(0);
+  const [scrollToPath, setScrollToPath] = useState(null);
   const [scrollbarVisible, setScrollbarVisible] = useState(false);
   const [onSelectedExplorerItems, setOnSelectedExplorerItems] = useState([]);
   const [onHoverExplorerItem, setOnHoverExplorerItem] = useState(null);
@@ -1878,6 +2025,8 @@ const SurfaceExplorer = ({
         setExplorerListTop,
         explorerScrollPosition,
         setExplorerScrollPosition,
+        scrollToPath,
+        setScrollToPath,
         scrollbarVisible,
         setScrollbarVisible,
         onSelectedExplorerItems,

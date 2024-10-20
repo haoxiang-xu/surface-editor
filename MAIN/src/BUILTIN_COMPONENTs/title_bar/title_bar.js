@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  useCallback,
+} from "react";
 import { TitleBarContexts } from "./title_bar_contexts";
 import Icon from "../icon/icon";
 
@@ -10,7 +16,6 @@ const default_title_bar_style = {
   padding: 5,
   height: 40,
 };
-
 const default_button_style = {
   width: 36,
   height: 30,
@@ -183,15 +188,15 @@ const Win32ControlPanel = () => {
     </div>
   );
 };
-const TitleBar = ({ isWindowMaximized }) => {
+const TitleBar = React.memo(({ isWindowMaximized }) => {
   const handleClose = () => {
-    window.electron.send("window-control", "close");
+    window.rootEventListenerAPI.windowStateEventHandler("close");
   };
   const handleMinimize = () => {
-    window.electron.send("window-control", "minimize");
+    window.rootEventListenerAPI.windowStateEventHandler("minimize");
   };
   const handleMaximize = () => {
-    window.electron.send("window-control", "maximize");
+    window.rootEventListenerAPI.windowStateEventHandler("maximize");
   };
 
   const render_title_bar = () => {
@@ -229,6 +234,6 @@ const TitleBar = ({ isWindowMaximized }) => {
       </div>
     </TitleBarContexts.Provider>
   );
-};
+});
 
 export default TitleBar;

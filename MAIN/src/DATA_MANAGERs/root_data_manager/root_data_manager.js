@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { RootDataContexts } from "./root_data_contexts";
 
 const DEFAULT_VECODER_EDITORS_CONTENT_DATA = {
@@ -496,24 +496,26 @@ const FAKE_STORAGE = {
   },
 };
 
-const RootDataManager = ({ children }) => {
-  //console.log("RDM", new Date().getTime());
+const RootDataManager = React.memo(({ children }) => {
+  // console.log("RDM", new Date().getTime());
 
   /* { FILE } ========================================================================================================================== */
   const [file, setFile] = useState(DEFAULT_VECODER_EDITORS_CONTENT_DATA);
   useEffect(() => {
-    window.electronAPI.onFileContent((content, relativePath) => {
-      const newFile = { [relativePath]: content };
-      setFile((prevData) => {
-        return {
-          ...prevData,
-          ...newFile,
-        };
-      });
-    });
-    window.electronAPI.onFileError((error) => {
-      console.error("Error:", error);
-    });
+    window.rootDataManagerAPI.loadFileEventListener(
+      (message, content, relativePath) => {
+        const newFile = { [relativePath]: content };
+        if (!newFile) {
+          console.error(message);
+        }
+        setFile((prevData) => {
+          return {
+            ...prevData,
+            ...newFile,
+          };
+        });
+      }
+    );
   }, [file]);
   const update_file_content_by_path = useCallback(
     (path, data) => {
@@ -549,7 +551,7 @@ const RootDataManager = ({ children }) => {
       return file[path].fileContent;
     } else {
       //AWAIT ELECTRONJS TO LOAD THAT PATH IN SYSTEM
-      window.electronAPI.readFile(
+      window.rootDataManagerAPI.loadFileEventHandler(
         access_file_absolute_path_by_path(path),
         path
       );
@@ -572,7 +574,7 @@ const RootDataManager = ({ children }) => {
   const [dir, setDir] = useState(DIRs);
   const [isDirLoaded, setIsDirLoaded] = useState(true);
   useEffect(() => {
-    window.electron.receive("directory-data", (data) => {
+    window.rootDataManagerAPI.dirDataListener("dir-data-listener", (data) => {
       if (data.is_dir_successfully_loaded) {
         setDir(data.dirs);
         setIsDirLoaded(true);
@@ -581,12 +583,12 @@ const RootDataManager = ({ children }) => {
       }
     });
     return () => {
-      window.electron.receive("directory-data", () => {});
+      window.rootDataManagerAPI.dirDataListener("dir-data-listener", () => {});
     };
   }, []);
   const read_dir_from_system = useCallback(() => {
     setIsDirLoaded(false);
-    window.electronAPI.triggerReadDir();
+    window.rootDataManagerAPI.loadDirEventHandler();
   }, []);
   const access_dir_name_by_path = useCallback(
     (path) => {
@@ -830,6 +832,7 @@ const RootDataManager = ({ children }) => {
       new_path = new_path.join("/");
 
       let newDir = { ...dir };
+
       newDir = recursive_replace_path(newDir, path, new_path);
       newDir[parent_path].sub_items = newDir[parent_path].sub_items.map(
         (item) => {
@@ -938,6 +941,7 @@ const RootDataManager = ({ children }) => {
     });
   }, []);
   /* Stack Structure Data and Functions ============================================================== */
+
   return (
     <RootDataContexts.Provider
       value={{
@@ -981,6 +985,6 @@ const RootDataManager = ({ children }) => {
       {children}
     </RootDataContexts.Provider>
   );
-};
+});
 
 export default RootDataManager;

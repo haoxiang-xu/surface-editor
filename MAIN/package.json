@@ -1,6 +1,6 @@
 {
-  "name": "vecoder",
-  "productName": "Vecoder",
+  "name": "surface_editor",
+  "productName": "Surface Editor",
   "author": {
     "name": "Haoxiang Xu",
     "email": "haoxiangxu1998@gmail.com"
@@ -13,21 +13,29 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
+    "electron-localshortcut": "^3.2.1",
     "esprima": "^4.0.1",
     "flatted": "^3.3.1",
+    "katex": "^0.16.11",
+    "node-pty": "^1.0.0",
     "react": "^18.2.0",
+    "react-code-blocks": "^0.1.6",
     "react-dom": "^18.2.0",
+    "react-latex-next": "^3.0.0",
     "react-monaco-editor": "^0.54.0",
     "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1",
+    "react-showdown": "^2.3.1",
     "react-spinners": "^0.13.8",
     "react-textarea-autosize": "^8.5.3",
-    "web-vitals": "^2.1.4"
+    "showdown": "^2.1.0",
+    "web-vitals": "^2.1.4",
+    "xterm": "^5.3.0"
   },
   "main": "main.js",
   "scripts": {
     "react-start": "cross-env BROWSER=none PORT=3000 react-scripts start",
-    "electron-start": "electron .",
+    "electron-start": "electron . --no-sandbox",
     "start": "concurrently \"npm run react-start\" \"npm run electron-start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
