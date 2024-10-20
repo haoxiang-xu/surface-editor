@@ -159,7 +159,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       id: "customizeAPI",
       icon: SYSTEM_ICON_MANAGER.customize.ICON512,
       label: "customize API",
-      quick_view_background: SYSTEM_ICON_MANAGER.customize.ICON16,
+      quick_view_background: "wrench_screwdriver",
       clickable: true,
       sub_items: ["customizeRequest"],
     },
@@ -177,7 +177,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       id: "continue",
       clickable: true,
       label: "continue...",
-      icon: SYSTEM_ICON_MANAGER.continue.ICON512,
+      icon: "pen",
       quick_view_background: SYSTEM_ICON_MANAGER.continue.ICON16,
     },
     fix: {
@@ -185,7 +185,7 @@ const MonacoEditorContextMenuWrapper = ({ children }) => {
       id: "fix",
       clickable: true,
       label: "fix...",
-      icon: SYSTEM_ICON_MANAGER.fix.ICON512,
+      icon: "hammer",
       quick_view_background: SYSTEM_ICON_MANAGER.fix.ICON16,
     },
     br: {
