@@ -8,9 +8,13 @@ const Icon = ({ src, ...props }) => {
 
   useEffect(() => {
     const fetchSVG = async () => {
-      const svg = await iconManifest[src]();
-      setIconSrc(svg.default);
-      setIsIconLoaded(true);
+      try {
+        const svg = await iconManifest[src]();
+        setIconSrc(svg.default);
+        setIsIconLoaded(true);
+      } catch (error) {
+        console.error(error);
+      }
     };
     if (!src) return;
     try {

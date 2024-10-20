@@ -1,11 +1,6 @@
-const {
-  app,
-  BrowserWindow,
-  Menu,
-  ipcMain,
-  dialog,
-  globalShortcut,
-} = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
+const localShortcut = require("electron-localshortcut");
+const { exec } = require("child_process");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -14,10 +9,9 @@ const {
 } = require("./src/CONSTs/extensionsToLanguagesMatchingList.js");
 
 let mainWindow;
-let zoomLevel = 0;
 const menuTemplate = [
   {
-    label: "Vecoder",
+    label: "Surface Editor",
     submenu: [{ role: "about" }, { role: "quit" }, { type: "separator" }],
   },
   {
@@ -28,29 +22,27 @@ const menuTemplate = [
       { type: "separator" },
     ],
   },
-  // {
-  //   label: "Edit",
-  //   submenu: [
-  //     { label: "Undo", accelerator: "CmdOrCtrl+Z", role: "undo" },
-  //     { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
-  //     { type: "separator" },
-  //     { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
-  //     { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
-  //     { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
-  //   ],
-  // },
-  // Other menu items...
 ];
 
-const createWindow = () => {
+const create_main_window = () => {
+  const checkServerAndLoadURL = (url) => {
+    axios
+      .get(url)
+      .then(() => {
+        // Server is up and running, load the URL
+        mainWindow.loadURL(url);
+      })
+      .catch((error) => {
+        console.error("Server not ready, retrying...", error);
+        // Wait for a bit before trying again
+        setTimeout(() => checkServerAndLoadURL(url), 2000); // Adjust the delay as needed
+      });
+  };
   // Initialize the browser window.
   if (process.platform === "darwin") {
     mainWindow = new BrowserWindow({
       title: "",
-      icon: path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
-      ),
+      icon: path.join(__dirname, "/assets/logos/logo_pink_512.png"),
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -69,16 +61,11 @@ const createWindow = () => {
       trafficLightPosition: { x: 14, y: 13 },
       backgroundColor: "#181818",
     });
-    app.dock.setIcon(
-      path.join(__dirname, "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png")
-    );
+    app.dock.setIcon(path.join(__dirname, "/assets/logos/logo_pink_512.png"));
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({
       title: "",
-      icon: path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
-      ),
+      icon: path.join(__dirname, "/assets/logos/logo_pink_512.png"),
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -99,10 +86,7 @@ const createWindow = () => {
   } else {
     mainWindow = new BrowserWindow({
       title: "",
-      icon: path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
-      ),
+      icon: path.join(__dirname, "/assets/logos/logo_pink_512.png"),
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -117,39 +101,18 @@ const createWindow = () => {
       frame: false,
     });
   }
-  mainWindow.setTitle("");
-  mainWindow.on("maximize", () => {
-    mainWindow.webContents.send("window-state-changed", { isMaximized: true });
-  });
-  mainWindow.on("unmaximize", () => {
-    mainWindow.webContents.send("window-state-changed", { isMaximized: false });
-  });
-  mainWindow.on("enter-full-screen", () => {
-    mainWindow.webContents.send("window-state-changed", {
-      isMaximized: true,
-    });
-  });
-  mainWindow.on("leave-full-screen", () => {
-    mainWindow.webContents.send("window-state-changed", {
-      isMaximized: false,
-    });
-  });
+  mainWindow.setTitle("Surface Editor");
 
-  globalShortcut.register("CommandOrControl+=", () => {
-    zoomLevel += 1;
-    mainWindow.webContents.setZoomLevel(zoomLevel);
+  localShortcut.register(mainWindow, "CommandOrControl+=", () => {
+    let zoomLevel = mainWindow.webContents.getZoomLevel();
+    mainWindow.webContents.setZoomLevel(zoomLevel + 1);
   });
-
-  // Register the Ctrl - Zoom Out
-  globalShortcut.register("CommandOrControl+-", () => {
-    zoomLevel -= 1;
-    mainWindow.webContents.setZoomLevel(zoomLevel);
+  localShortcut.register(mainWindow, "CommandOrControl+-", () => {
+    let zoomLevel = mainWindow.webContents.getZoomLevel();
+    mainWindow.webContents.setZoomLevel(zoomLevel - 1);
   });
-
-  // Optional: Reset zoom level with Ctrl+0
-  globalShortcut.register("CommandOrControl+0", () => {
-    zoomLevel = 0;
-    mainWindow.webContents.setZoomLevel(zoomLevel);
+  localShortcut.register(mainWindow, "CommandOrControl+0", () => {
+    mainWindow.webContents.setZoomLevel(0);
   });
 
   // Load the index.html of the app.
@@ -162,135 +125,16 @@ const createWindow = () => {
   // Optionally open the DevTools.
   mainWindow.webContents.openDevTools();
 };
-const checkServerAndLoadURL = (url) => {
-  axios
-    .get(url)
-    .then(() => {
-      // Server is up and running, load the URL
-      mainWindow.loadURL(url);
-    })
-    .catch((error) => {
-      console.error("Server not ready, retrying...", error);
-      // Wait for a bit before trying again
-      setTimeout(() => checkServerAndLoadURL(url), 2000); // Adjust the delay as needed
-    });
-};
 
-const openFolderStructureDialog = () => {
-  dialog
-    .showOpenDialog({
-      properties: ["openDirectory"],
-    })
-    .then((result) => {
-      if (!result.canceled) {
-        read_dir(result.filePaths[0], result.filePaths[0])
-          .then((dirs) => {
-            mainWindow.webContents.send("directory-data", {
-              is_dir_successfully_loaded: true,
-              dirs: dirs,
-            });
-          })
-          .catch((error) => console.error("Error reading directory:", error));
-      } else {
-        mainWindow.webContents.send("directory-data", {
-          is_dir_successfully_loaded: false,
-          dirs: null,
-        });
-      }
-    })
-    .catch((err) => {
-      mainWindow.webContents.send("directory-data", {
-        is_dir_successfully_loaded: false,
-        dirs: null,
-      });
-    });
-};
-const read_dir = async (dirPath, rootPath = dirPath) => {
-  try {
-    const dirents = await fs.readdir(dirPath, { withFileTypes: true });
-    const files = {};
-
-    const rootFile = rootPath.replace(/\\/g, "/").split("/").pop();
-
-    const basename = path.basename(dirPath);
-    let file_path = "";
-    if (dirPath === rootPath) {
-      file_path = `${rootFile}`;
-    } else {
-      const relativePath = path.relative(rootPath, dirPath).replace(/\\/g, "/");
-      file_path = `${rootFile}/${relativePath}`;
-    }
-
-    let dir = {
-      file_name: basename,
-      file_type: "folder",
-      file_path: file_path,
-      absolute_path: path.resolve(dirPath),
-      file_expand: false,
-      sub_items: [],
-    };
-    for (const dirent of dirents) {
-      const res = path.resolve(dirPath, dirent.name);
-      const relativePath = path.relative(rootPath, res).replace(/\\/g, "/");
-      const filePath = `${rootFile}/${relativePath}`;
-
-      if (dirent.isDirectory()) {
-        dir.sub_items.push(filePath);
-        const sub_dir = await read_dir(res, rootPath);
-        Object.assign(files, sub_dir);
-      } else {
-        files[filePath] = {
-          file_name: dirent.name,
-          file_type: "file",
-          file_path: filePath,
-          absolute_path: path.resolve(dirPath, dirent.name),
-          file_expand: false,
-          sub_items: [],
-        };
-        dir.sub_items.push(filePath);
-      }
-    }
-
-    dir.sub_items = dir.sub_items.sort((a, b) => {
-      if (files[a].file_type === "folder" && files[b].file_type === "file") {
-        return -1;
-      } else if (
-        files[a].file_type === "file" &&
-        files[b].file_type === "folder"
-      ) {
-        return 1;
-      } else {
-        return files[a].file_name.localeCompare(files[b].file_name);
-      }
-    });
-
-    if (dirPath === rootPath) {
-      files["root"] = dir;
-    } else {
-      files[file_path] = dir;
-    }
-    return files;
-  } catch (error) {
-    throw error;
-  }
-};
-
-const getFilesInDir = async (dirPath) => {
-  try {
-    const dirents = await fs.readdir(dirPath, { withFileTypes: true });
-    const fileNames = dirents.map((dirent) => {
-      return dirent.name;
-    });
-    return fileNames;
-  } catch (error) {
-    throw error;
-  }
-};
-
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  create_main_window();
+  register_window_state_event_listeners();
+});
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    create_main_window();
+  } else {
+    mainWindow.show();
   }
 });
 app.on("window-all-closed", () => {
@@ -299,7 +143,30 @@ app.on("window-all-closed", () => {
   }
 });
 
-ipcMain.on("window-control", (event, action) => {
+/* { Root Event Listener } ---------------------------------------------------------------------------- */
+const register_window_state_event_listeners = () => {
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("window-state-event-listener", {
+      isMaximized: true,
+    });
+  });
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("window-state-event-listener", {
+      isMaximized: false,
+    });
+  });
+  mainWindow.on("enter-full-screen", () => {
+    mainWindow.webContents.send("window-state-event-listener", {
+      isMaximized: true,
+    });
+  });
+  mainWindow.on("leave-full-screen", () => {
+    mainWindow.webContents.send("window-state-event-listener", {
+      isMaximized: false,
+    });
+  });
+};
+ipcMain.on("window-state-event-handler", (event, action) => {
   switch (action) {
     case "close":
       mainWindow.close();
@@ -326,44 +193,174 @@ ipcMain.on("window-control", (event, action) => {
       break;
   }
 });
-ipcMain.on("toggle-window-buttons", (event, shouldHide) => {
+ipcMain.on("window-title-bar-event-handler", (event, is_on_title_bar) => {
   if (process.platform === "darwin") {
-    setTimeout(() => {
-      mainWindow.setWindowButtonVisibility(!shouldHide);
-      mainWindow.setWindowButtonPosition({ x: 17, y: 15 });
-    }, 110);
+    if (is_on_title_bar) {
+      setTimeout(() => {
+        mainWindow.setTrafficLightPosition({ x: 14, y: 13 });
+      }, 60);
+    } else {
+      mainWindow.setTrafficLightPosition({ x: 14, y: -23 });
+    }
   }
 });
-ipcMain.on("trigger-read-dir", () => {
-  mainWindow.webContents.send("read-dir-state-changed", {
+/* { Root Event Listener } ---------------------------------------------------------------------------- */
+
+/* { Root Data Manager } ------------------------------------------------------------------------------ */
+const load_explore_dir_dialog = () => {
+  const process_dir_raw_data = async (dirPath, rootPath = dirPath) => {
+    try {
+      const dirents = await fs.readdir(dirPath, { withFileTypes: true });
+      const files = {};
+
+      const rootFile = rootPath.replace(/\\/g, "/").split("/").pop();
+
+      const basename = path.basename(dirPath);
+      let file_path = "";
+      if (dirPath === rootPath) {
+        file_path = `${rootFile}`;
+      } else {
+        const relativePath = path
+          .relative(rootPath, dirPath)
+          .replace(/\\/g, "/");
+        file_path = `${rootFile}/${relativePath}`;
+      }
+
+      let dir = {
+        file_name: basename,
+        file_type: "folder",
+        file_path: file_path,
+        absolute_path: path.resolve(dirPath),
+        file_expand: false,
+        sub_items: [],
+      };
+      for (const dirent of dirents) {
+        const res = path.resolve(dirPath, dirent.name);
+        const relativePath = path.relative(rootPath, res).replace(/\\/g, "/");
+        const filePath = `${rootFile}/${relativePath}`;
+
+        if (dirent.isDirectory()) {
+          dir.sub_items.push(filePath);
+          const sub_dir = await process_dir_raw_data(res, rootPath);
+          Object.assign(files, sub_dir);
+        } else {
+          files[filePath] = {
+            file_name: dirent.name,
+            file_type: "file",
+            file_path: filePath,
+            absolute_path: path.resolve(dirPath, dirent.name),
+            file_expand: false,
+            sub_items: [],
+          };
+          dir.sub_items.push(filePath);
+        }
+      }
+
+      dir.sub_items = dir.sub_items.sort((a, b) => {
+        if (files[a].file_type === "folder" && files[b].file_type === "file") {
+          return -1;
+        } else if (
+          files[a].file_type === "file" &&
+          files[b].file_type === "folder"
+        ) {
+          return 1;
+        } else {
+          return files[a].file_name.localeCompare(files[b].file_name);
+        }
+      });
+
+      if (dirPath === rootPath) {
+        files["root"] = dir;
+      } else {
+        files[file_path] = dir;
+      }
+      return files;
+    } catch (error) {
+      throw error;
+    }
+  };
+  dialog
+    .showOpenDialog({
+      properties: ["openDirectory"],
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        process_dir_raw_data(result.filePaths[0], result.filePaths[0])
+          .then((dirs) => {
+            mainWindow.webContents.send("dir-data-listener", {
+              is_dir_successfully_loaded: true,
+              dirs: dirs,
+            });
+          })
+          .catch((error) => console.error("Error reading directory:", error));
+      } else {
+        mainWindow.webContents.send("dir-data-listener", {
+          is_dir_successfully_loaded: false,
+          dirs: null,
+        });
+      }
+    })
+    .catch((err) => {
+      mainWindow.webContents.send("dir-data-listener", {
+        is_dir_successfully_loaded: false,
+        dirs: null,
+      });
+    });
+};
+ipcMain.on("load-dir-event-handler", () => {
+  mainWindow.webContents.send("load-dir-event-listener", {
     isDirLoaded: false,
   });
-  openFolderStructureDialog();
+  load_explore_dir_dialog();
 });
-ipcMain.on("read-file", async (event, absolutePath, relativePath) => {
-  try {
-    const stats = await fs.stat(absolutePath);
-    if (stats.isFile()) {
-      const content = await fs.readFile(absolutePath, "utf8");
-      const openedFile = {
-        fileName: path.basename(absolutePath),
-        filePath: relativePath,
-        fileAbsolutePath: absolutePath,
-        fileType: "file",
-        fileLanguage:
-          EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
-        fileContent: content,
-      };
-      event.reply("file-content", openedFile, relativePath);
-    } else {
-      event.reply("file-error", "The provided path is a directory, not a file");
-    }
-  } catch (error) {
-    console.error("Failed to read file:", error);
-    if (error.code === "ENOENT") {
-      event.reply("file-error", "File does not exist");
-    } else {
-      event.reply("file-error", error.message || "Failed to read file");
+ipcMain.on(
+  "load-file-event-handler",
+  async (event, absolutePath, relativePath) => {
+    try {
+      const stats = await fs.stat(absolutePath);
+      if (stats.isFile()) {
+        const content = await fs.readFile(absolutePath, "utf8");
+        const openedFile = {
+          fileName: path.basename(absolutePath),
+          filePath: relativePath,
+          fileAbsolutePath: absolutePath,
+          fileType: "file",
+          fileLanguage:
+            EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
+          fileContent: content,
+        };
+        event.reply(
+          "load-file-event-listener",
+          "success",
+          openedFile,
+          relativePath
+        );
+      } else {
+        event.reply(
+          "load-file-event-listener",
+          "error: the provided path is a directory, not a file",
+          null,
+          null
+        );
+      }
+    } catch (error) {
+      console.error("Failed to read file:", error);
+      if (error.code === "ENOENT") {
+        event.reply(
+          "load-file-event-listener",
+          "error: file does not exist",
+          null,
+          null
+        );
+      } else {
+        event.reply(
+          "load-file-event-listener",
+          error.message || "error: failed to read file",
+          null,
+          null
+        );
+      }
     }
   }
-});
+);
+/* { Root Data Manager } ------------------------------------------------------------------------------ */

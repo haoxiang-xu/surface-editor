@@ -7,8 +7,8 @@ import { RootCommandContexts } from "./root_command_contexts";
 import ContextMenu from "../../BUILTIN_COMPONENTs/context_menu/context_menu";
 import GhostImage from "../../BUILTIN_COMPONENTs/ghost_image/ghost_image";
 
-const RootCommandManager = ({ children }) => {
-  //console.log("RDM/RCM", new Date().getTime());
+const RootCommandManager = React.memo(({ children }) => {
+  // console.log("RDM/RCM", new Date().getTime());
   const [cmd, setCmd] = useCustomizedState({}, compareJson);
   const push_command_by_id = useCallback(
     (id, command) => {
@@ -97,45 +97,47 @@ const RootCommandManager = ({ children }) => {
   /* { Drag and Drop } =============================================================================== */
   const [onDrag, setOnDrag] = useState(false);
   const [onDragItem, setOnDragItem] = useState(null);
-  useEffect(() => {
-    console.log("onDragItem", onDragItem);
-  }, [onDragItem]);
+  const [onDropItem, setOnDropItem] = useState(null);
+  const [onDragPosition, setOnDragPosition] = useState({ x: 0, y: 0 });
 
-  const item_on_drag = (event, on_drag_item) => {
-    event.stopPropagation();
+  const item_on_drag = useCallback((event, on_drag_item) => {
+    if (event) {
+      event.stopPropagation();
+    }
+    unload_context_menu();
     setOnDragItem(on_drag_item);
     setOnDrag(true);
 
     unload_context_menu();
-  };
-  const item_on_drop = (event) => {
-    event.stopPropagation();
-    setOnDrag(false);
-    setOnDragItem(null);
-  };
-  /* { Drag and Drop } =============================================================================== */
-
-  /* { Global Key Event Listener } =================================================================== */
-  const [pressedKeys, setPressedKeys] = useState(new Set());
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      setPressedKeys((prev) => new Set(prev).add(event.key));
-    };
-    const handleKeyUp = (event) => {
-      const newPressedKeys = new Set(pressedKeys);
-      newPressedKeys.delete(event.key);
-      setPressedKeys(newPressedKeys);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
   }, []);
-  /* { Global Key Event Listener } =================================================================== */
+  const item_on_drag_over = useCallback((event, on_drop_item) => {
+    if (event) {
+      event.stopPropagation();
+    }
+    setOnDropItem(on_drop_item);
+  }, []);
+  const item_on_drop = useCallback(
+    (event) => {
+      if (event) {
+        event.stopPropagation();
+      }
+      if (onDragItem && onDropItem) {
+        if (onDragItem.callback_to_delete) {
+          onDragItem.callback_to_delete(onDragItem, onDropItem);
+        }
+        if (onDropItem.callback_to_append) {
+          onDropItem.callback_to_append(onDragItem, onDropItem);
+        }
+      }
+
+      setOnDrag(false);
+      setOnDragItem(null);
+      setOnDropItem(null);
+      setOnDragPosition({ x: 0, y: 0 });
+    },
+    [onDragItem, onDropItem]
+  );
+  /* { Drag and Drop } =============================================================================== */
 
   return (
     <RootCommandContexts.Provider
@@ -158,13 +160,12 @@ const RootCommandManager = ({ children }) => {
         setOnDrag,
         onDragItem,
         setOnDragItem,
+        onDragPosition,
+        setOnDragPosition,
         item_on_drag,
+        item_on_drag_over,
         item_on_drop,
         /* { Drag and Drop } ------------------------ */
-
-        /* { Global Key Event Listener } ------------ */
-        pressedKeys,
-        /* { Global Key Event Listener } ------------ */
       }}
     >
       <div onClick={unload_context_menu}>
@@ -174,6 +175,6 @@ const RootCommandManager = ({ children }) => {
       </div>
     </RootCommandContexts.Provider>
   );
-};
+});
 
 export default RootCommandManager;
