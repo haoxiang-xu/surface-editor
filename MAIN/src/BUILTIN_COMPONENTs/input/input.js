@@ -49,9 +49,12 @@ const Input = ({ value, setValue, onSubmit, ...props }) => {
 
           transform: "translateY(-50%)",
 
-          color: "#CCCCCC",
+          color:
+            props && props.style && props.style.color
+              ? props.style.color
+              : `#FFFFFF`,
           textAlign: "left",
-          backgroundColor: `rgba(${R}, ${G}, ${B}, 0)`,
+          backgroundColor: `rgba(0, 0, 0, 0)`,
           padding: 0,
           fontSize: default_font_size,
           fontFamily: "inherit",

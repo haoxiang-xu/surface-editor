@@ -10,32 +10,6 @@ const { stringify, parse } = require("flatted");
 /* { Import ICONs } ------------------------------------------------------------------------------------------ */
 import Icon from "../icon/icon";
 import { iconManifest } from "../icon/icon_manifest";
-import { ICON_MANAGER } from "../../ICONs/icon_manager";
-
-/* { ICONs } ------------------------------------------------------------------------------------------------- */
-let FILE_TYPE_ICON_MANAGER = {
-  default: {
-    ICON: null,
-    LABEL_COLOR: "#C8C8C8",
-  },
-};
-try {
-  FILE_TYPE_ICON_MANAGER = ICON_MANAGER().FILE_TYPE_ICON_MANAGER;
-} catch (e) {
-  console.log(e);
-}
-let SYSTEM_ICON_MANAGER = {
-  default: {
-    ICON: null,
-    LABEL_COLOR: "#C8C8C8",
-  },
-};
-try {
-  SYSTEM_ICON_MANAGER = ICON_MANAGER().SYSTEM_ICON_MANAGER;
-} catch (e) {
-  console.log(e);
-}
-/* { ICONs } ------------------------------------------------------------------------------------------------- */
 
 const default_max_tag_width = 128;
 const default_tag_padding_x = 6;
@@ -350,7 +324,8 @@ const FileTag = ({ config }) => {
       processed_config.icon = config.label.split(".").pop().toUpperCase();
       if (!config.style.noWidthLimitMode) {
         if (processed_config.icon in iconManifest) {
-          processed_config.style.maxWidth = config.style.maxWidth - (default_icon_size - 5);
+          processed_config.style.maxWidth =
+            config.style.maxWidth - (default_icon_size - 5);
         } else {
           processed_config.style.maxWidth = config.style.maxWidth - 2;
         }
