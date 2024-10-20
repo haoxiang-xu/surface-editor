@@ -1,12 +1,6 @@
-<div style="text-align: center;">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&display=swap"
-    rel="stylesheet"
-  ></link>
-  <img src="./MAIN/assets/logos/logo_mona_lisa_512.png" style="width: 128px" alt="surface_editor_logo"/>
+# <img src="./MAIN/assets/logos/logo_mona_lisa_32.png"/> Surface Editor
 
-  <span style="font-family: Jost; font-size: 32">Surface Editor</span>
-</div>
+![darwin32_demo_ui](./MAIN/assets/images/darwin32_demo_ui.png)
 
 ## [ Table of Contents ]
 
@@ -33,8 +27,6 @@
 
 <span style="opacity: 0.64">This is a specialized UI designed specifically for AI supported application. While most AI applications focus primarily on functionality, they often overlook the importance of a better user experience. We possess incredibly powerful LLMs, but our interactions with them still resemble the command-line interface era. I believe that instead of merely providing code editors or IDE extensions for LLMs, we need a comprehensive overhaul of the entire code editor UI to align with the new paradigm of AI interaction in this era.</span>
 
-![MAC UI](./MAIN/assets/images/darwin32_demo_ui.png)
-
 ### <a id="built-with"></a>BUILT WITH
 
 <!-- [![Github][Github-shield]][Github-url] -->
@@ -57,66 +49,66 @@
 ### <a id="contributors"></a>CONTRIBUTORs
 
 <a href="https://github.com/haoxiang-xu">
-  <img src="https://github.com/haoxiang-xu.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/haoxiang-xu.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/XinquanGe">
-  <img src="https://github.com/XinquanGe.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/XinquanGe.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/WenruiChen">
-  <img src="https://github.com/WenruiChen.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/WenruiChen.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/GorgeousGrace">
-  <img src="https://github.com/GorgeousGrace.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/GorgeousGrace.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/fountainfang">
-  <img src="https://github.com/fountainfang.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/fountainfang.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/William-316">
-  <img src="https://github.com/William-316.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/William-316.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/skywalker007-cpu">
-  <img src="https://github.com/skywalker007-cpu.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/skywalker007-cpu.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/7ito">
-  <img src="https://github.com/7ito.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/7ito.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/andrewyang0620">
-  <img src="https://github.com/andrewyang0620.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/andrewyang0620.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/BobbyZhu24">
-  <img src="https://github.com/BobbyZhu24.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/BobbyZhu24.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/duyiyang">
-  <img src="https://github.com/duyiyang.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/duyiyang.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/KiritoLoh">
-  <img src="https://github.com/KiritoLoh.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/KiritoLoh.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/lucas-xu51">
-  <img src="https://github.com/lucas-xu51.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/lucas-xu51.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/prussia1891">
-  <img src="https://github.com/prussia1891.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/prussia1891.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/Stevensayhello">
-  <img src="https://github.com/Stevensayhello.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/Stevensayhello.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/Xinying-Q">
-  <img src="https://github.com/Xinying-Q.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/Xinying-Q.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/yuan-yz-z">
-  <img src="https://github.com/yuan-yz-z.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/yuan-yz-z.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 </a>
 <a href="https://github.com/Zecr">
-  <img src="https://github.com/Zecr.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/Zecr.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 <a href="https://github.com/zjy125">
-  <img src="https://github.com/zjy125.png" width="45" height="45" style="border-radius: 50%; border: 5px solid #181818;">
+  <img src="https://github.com/zjy125.png" width="45" height="45" style="border-radius: 30%; border: 0px solid #181818;">
 </a>
 
 ## [ To Everyone ]
