@@ -20,6 +20,7 @@ export const iconManifest = {
   settings: () => import("./SVGs/UI/settings.svg"),
   pen: () => import("./SVGs/UI/pen.svg"),
   hammer: () => import("./SVGs/UI/hammer.svg"),
+  delete: () => import("./SVGs/UI/delete.svg"),
 
   /* {win32} */
   win32_maximize: () => import("./SVGs/UI/win32/maximize.svg"),

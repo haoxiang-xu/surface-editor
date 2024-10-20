@@ -1778,7 +1778,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "delete",
         clickable: true,
         label: "delete",
-        icon: SYSTEM_ICON_MANAGER.trash.ICON512,
+        icon: "delete",
         quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
       },
       br: {
@@ -1836,7 +1836,7 @@ const ContextMenuWrapper = ({ children }) => {
         id: "delete",
         clickable: true,
         label: "delete",
-        icon: SYSTEM_ICON_MANAGER.trash.ICON512,
+        icon: "delete",
         quick_view_background: SYSTEM_ICON_MANAGER.trash.ICON16,
       },
       br: {
