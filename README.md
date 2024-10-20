@@ -1,4 +1,12 @@
-# Surface Editor
+<div style="text-align: center;">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&display=swap"
+    rel="stylesheet"
+  ></link>
+  <img src="./MAIN/assets/logos/logo_mona_lisa_512.png" style="width: 128px" alt="surface_editor_logo"/>
+
+  <span style="font-family: Jost; font-size: 32">Surface Editor</span>
+</div>
 
 ## [ Table of Contents ]
 
@@ -17,8 +25,6 @@
 
 ## [ About the Project ]
 
-![surface_editor_logo](https://github.com/haoxiang-xu/surface-editor/assets/59581718/adb02c67-443f-4ff0-90f1-9f4ea2d97bc5)
-
 ### <a id="codeeditor-llms"></a>CodeEditor+LLMs (Large Language Models):
 
 <span style="opacity: 0.64">CodeEditor+LLMs is a state-of-the-art Code Editor that leverages the power of large language models to assist in coding. By utilizing a vector database, it establishes intricate relationships between files and code segments. This advanced interconnectivity is designed to significantly enhance the efficiency of developers by providing context-aware insights and coding suggestions.</span>
@@ -27,8 +33,7 @@
 
 <span style="opacity: 0.64">This is a specialized UI designed specifically for AI supported application. While most AI applications focus primarily on functionality, they often overlook the importance of a better user experience. We possess incredibly powerful LLMs, but our interactions with them still resemble the command-line interface era. I believe that instead of merely providing code editors or IDE extensions for LLMs, we need a comprehensive overhaul of the entire code editor UI to align with the new paradigm of AI interaction in this era.</span>
 
-![WIN UI](https://github.com/haoxiang-xu/surface-editor/assets/59581718/0b287c27-b582-43e4-a82f-7e53790c7b6b)
-![MAC UI](https://github.com/haoxiang-xu/surface-editor/assets/59581718/c7e0e523-f704-4ee7-9ecf-ebd280143db5)
+![MAC UI](./MAIN/assets/images/darwin32_demo_ui.png)
 
 ### <a id="built-with"></a>BUILT WITH
 
