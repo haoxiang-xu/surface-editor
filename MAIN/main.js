@@ -42,10 +42,7 @@ const create_main_window = () => {
   if (process.platform === "darwin") {
     mainWindow = new BrowserWindow({
       title: "",
-      icon: path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
-      ),
+      icon: path.join(__dirname, "/assets/logos/logo_pink_512.png"),
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -64,16 +61,11 @@ const create_main_window = () => {
       trafficLightPosition: { x: 14, y: 13 },
       backgroundColor: "#181818",
     });
-    app.dock.setIcon(
-      path.join(__dirname, "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png")
-    );
+    app.dock.setIcon(path.join(__dirname, "/assets/logos/logo_pink_512.png"));
   } else if (process.platform === "win32") {
     mainWindow = new BrowserWindow({
       title: "",
-      icon: path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/win32_logo.png"
-      ),
+      icon: path.join(__dirname, "/assets/logos/logo_pink_512.png"),
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -94,10 +86,7 @@ const create_main_window = () => {
   } else {
     mainWindow = new BrowserWindow({
       title: "",
-      icon: path.join(
-        __dirname,
-        "src/ICONs/SYSTEM_ICONs/512X512/surface_editor_logo.png"
-      ),
+      icon: path.join(__dirname, "/assets/logos/logo_pink_512.png"),
       width: 1200,
       height: 800,
       webSecurity: true,
@@ -324,31 +313,54 @@ ipcMain.on("load-dir-event-handler", () => {
   });
   load_explore_dir_dialog();
 });
-ipcMain.on("load-file-event-handler", async (event, absolutePath, relativePath) => {
-  try {
-    const stats = await fs.stat(absolutePath);
-    if (stats.isFile()) {
-      const content = await fs.readFile(absolutePath, "utf8");
-      const openedFile = {
-        fileName: path.basename(absolutePath),
-        filePath: relativePath,
-        fileAbsolutePath: absolutePath,
-        fileType: "file",
-        fileLanguage:
-          EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
-        fileContent: content,
-      };
-      event.reply("load-file-event-listener", "success", openedFile, relativePath);
-    } else {
-      event.reply("load-file-event-listener", "error: the provided path is a directory, not a file", null, null);
-    }
-  } catch (error) {
-    console.error("Failed to read file:", error);
-    if (error.code === "ENOENT") {
-      event.reply("load-file-event-listener", "error: file does not exist", null, null);
-    } else {
-      event.reply("load-file-event-listener", error.message || "error: failed to read file", null, null);
+ipcMain.on(
+  "load-file-event-handler",
+  async (event, absolutePath, relativePath) => {
+    try {
+      const stats = await fs.stat(absolutePath);
+      if (stats.isFile()) {
+        const content = await fs.readFile(absolutePath, "utf8");
+        const openedFile = {
+          fileName: path.basename(absolutePath),
+          filePath: relativePath,
+          fileAbsolutePath: absolutePath,
+          fileType: "file",
+          fileLanguage:
+            EXTENSIONS_TO_LANGUAGES_MATCHING_LIST[path.extname(absolutePath)],
+          fileContent: content,
+        };
+        event.reply(
+          "load-file-event-listener",
+          "success",
+          openedFile,
+          relativePath
+        );
+      } else {
+        event.reply(
+          "load-file-event-listener",
+          "error: the provided path is a directory, not a file",
+          null,
+          null
+        );
+      }
+    } catch (error) {
+      console.error("Failed to read file:", error);
+      if (error.code === "ENOENT") {
+        event.reply(
+          "load-file-event-listener",
+          "error: file does not exist",
+          null,
+          null
+        );
+      } else {
+        event.reply(
+          "load-file-event-listener",
+          error.message || "error: failed to read file",
+          null,
+          null
+        );
+      }
     }
   }
-});
+);
 /* { Root Data Manager } ------------------------------------------------------------------------------ */
