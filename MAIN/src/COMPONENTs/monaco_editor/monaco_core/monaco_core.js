@@ -8,8 +8,6 @@ import React, {
 import MonacoEditor from "@monaco-editor/react";
 import { MonacoDiffEditor, monaco, Range } from "react-monaco-editor";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
-import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
-import { stackStructureDragAndDropContexts } from "../../../CONTEXTs/stackStructureDragAndDropContexts";
 import { MonacoEditorContexts } from "../monaco_editor_contexts";
 import { MonacoEditorContextMenuContexts } from "../monaco_editor_context_menu_contexts";
 import axios from "axios";
@@ -55,9 +53,6 @@ const MonacoCore = ({
   } = useContext(MonacoEditorContexts);
   const { load_editor_context_menu } = useContext(
     MonacoEditorContextMenuContexts
-  );
-  const { draggedItem, dragCommand, setDragCommand } = useContext(
-    globalDragAndDropContexts
   );
 
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
@@ -114,10 +109,7 @@ const MonacoCore = ({
       access_file_language_by_path(editor_filePath),
       monacoCores,
       monacoPaths,
-      access_monaco_core_by_path,
-      draggedItem,
-      dragCommand,
-      setDragCommand
+      access_monaco_core_by_path
     );
     defineTheme(monaco);
     registerCompletionProvider(monaco);
@@ -192,32 +184,6 @@ const MonacoCore = ({
     onMount: onEditorMount,
   };
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
-
-  /*Drag and Drop Save and Reload Model=================================*/
-  useEffect(() => {
-    if (
-      draggedItem &&
-      draggedItem.content === editor_filePath &&
-      draggedItem.source ===
-        "vecoder_editor" + "/" + code_editor_container_ref_index.toString()
-    ) {
-      setMonacoModel(monacoRef.current.getModel());
-      setMonacoViewState(monacoRef.current.saveViewState());
-
-      monacoRef.current.setModel(null);
-    } else if (
-      draggedItem === null &&
-      dragCommand === null &&
-      monacoModel &&
-      monacoViewState
-    ) {
-      monacoRef.current.setModel(monacoModel);
-      monacoRef.current.restoreViewState(monacoViewState);
-      setMonacoModel(null);
-      setMonacoViewState(null);
-    }
-  }, [draggedItem]);
-  /*Drag and Drop Save and Reload Model=================================*/
 
   /*Delete Monaco Editor Path===========================================*/
   useEffect(() => {
@@ -422,10 +388,7 @@ const applyEditorOptionsInMemory = (
   editor_language,
   monacoCores,
   monacoPaths,
-  access_monaco_core_by_path,
-  draggedItem,
-  dragCommand,
-  setDragCommand
+  access_monaco_core_by_path
 ) => {
   if (
     access_monaco_core_by_path(editor_filePath) &&
@@ -442,11 +405,6 @@ const applyEditorOptionsInMemory = (
     editor.restoreViewState(
       access_monaco_core_by_path(editor_filePath).viewState
     );
-  }
-  if (dragCommand === "WAITING FOR MODEL APPEND THEN DELETE FROM SOURCE") {
-    setDragCommand("DELETE FROM SOURCE");
-  } else if (dragCommand === "WAITING FOR MODEL APPEND") {
-    setDragCommand(null);
   }
 };
 ////Append Content Widget for monaco editor

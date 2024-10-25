@@ -21,7 +21,6 @@ import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_co
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 /* { Import Styling } ---------------------------------------------------------------------------------------- */
 import "./monaco_editor.css";
-import { on } from "events";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -927,8 +926,10 @@ const MonacoEditor = ({
   command,
   setCommand,
   load_contextMenu,
-  data,
-  setData,
+  privateData,
+  setPrivateData,
+  publicData,
+  setPublicData,
   item_on_drag,
   item_on_drag_over,
   item_on_drop,
@@ -936,19 +937,19 @@ const MonacoEditor = ({
   //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
   const [onSelectedMonacoIndex, setOnSelectedMonacoIndex] = useState(
-    data?.on_selected_monaco_core_index
+    privateData?.on_selected_monaco_core_index
   );
   const [onDragedMonacoIndex, setOnDragMonacoIndex] = useState(-1);
   const [onDragOveredMonacoIndex, setOnDragOverMonacoIndex] = useState(-1);
   const [onDragOverPosition, setOnDragOverPosition] = useState({ x: 0, y: 0 });
 
-  const [monacoPaths, setMonacoPaths] = useState(data?.monaco_paths);
-  const [monacoCores, setMonacoCores] = useState(data?.monaco_cores);
+  const [monacoPaths, setMonacoPaths] = useState(privateData?.monaco_paths);
+  const [monacoCores, setMonacoCores] = useState(publicData()?.monaco_cores);
   const [monacoCallbacks, setMonacoCallbacks] = useState({});
 
-  const access_monaco_core_by_path = (path) => {
-    return monacoCores[path];
-  };
+  const access_monaco_core_by_path = useCallback((path) => {
+    return publicData().monaco_cores[path];
+  }, [publicData]);
   const update_monaco_core_view_state = (path, view_state) => {
     setMonacoCores((prevData) => {
       return {
@@ -966,7 +967,7 @@ const MonacoEditor = ({
     });
   };
   useEffect(() => {
-    setData((prevData) => {
+    setPrivateData((prevData) => {
       return {
         ...prevData,
         on_selected_monaco_core_index: onSelectedMonacoIndex,
@@ -974,7 +975,7 @@ const MonacoEditor = ({
     });
   }, [onSelectedMonacoIndex]);
   useEffect(() => {
-    setData((prevData) => {
+    setPrivateData((prevData) => {
       return {
         ...prevData,
         monaco_paths: monacoPaths,
@@ -982,17 +983,11 @@ const MonacoEditor = ({
     });
   }, [monacoPaths]);
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setData((prevData) => {
-        if (prevData.monaco_cores === monacoCores) return prevData;
-        return {
-          ...prevData,
-          monaco_cores: monacoCores,
-        };
-      });
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
+    const prevData = publicData();
+    setPublicData({
+      ...prevData,
+      monaco_cores: monacoCores,
+    });
   }, [monacoCores]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
 

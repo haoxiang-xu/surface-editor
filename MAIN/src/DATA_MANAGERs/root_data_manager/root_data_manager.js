@@ -465,6 +465,12 @@ const FAKE_STORAGE = {
       "demo/index/style/code_editor.css",
       "demo/main.py",
     ],
+  },
+  monaco_editor_0003: {
+    on_selected_monaco_core_index: -1,
+    monaco_paths: ["demo/index/index.html", "demo/main.java"],
+  },
+  monaco_editor: {
     monaco_cores: {
       "demo/src/code_editor.js": {
         viewState: null,
@@ -478,12 +484,6 @@ const FAKE_STORAGE = {
         viewState: null,
         model: null,
       },
-    },
-  },
-  monaco_editor_0003: {
-    on_selected_monaco_core_index: -1,
-    monaco_paths: ["demo/index/index.html", "demo/main.java"],
-    monaco_cores: {
       "demo/index/index.html": {
         viewState: null,
         model: null,
@@ -890,6 +890,7 @@ const RootDataManager = React.memo(({ children }) => {
 
   /* { STORAGE } ======================================================================================================================= */
   const [storage, setStorage] = useState(FAKE_STORAGE);
+
   const access_storage_by_id = useCallback(
     (id) => {
       return storage[id];
@@ -909,6 +910,30 @@ const RootDataManager = React.memo(({ children }) => {
       setStorage((prevData) => {
         const newData = { ...prevData };
         delete newData[id];
+        return newData;
+      });
+    },
+    [storage]
+  );
+  const access_storage_by_type = useCallback(
+    (type) => {
+      return storage[type];
+    },
+    [storage]
+  );
+  const update_storage_by_type = useCallback(
+    (type, data) => {
+      setStorage((prevData) => {
+        return { ...prevData, [type]: data };
+      });
+    },
+    [storage]
+  );
+  const remove_storage_by_type = useCallback(
+    (type) => {
+      setStorage((prevData) => {
+        const newData = { ...prevData };
+        delete newData[type];
         return newData;
       });
     },
@@ -975,6 +1000,9 @@ const RootDataManager = React.memo(({ children }) => {
         access_storage_by_id,
         update_storage_by_id,
         remove_storage_by_id,
+        access_storage_by_type,
+        update_storage_by_type,
+        remove_storage_by_type,
 
         stackStructureOptionsData,
         setStackStructureOptionsData,

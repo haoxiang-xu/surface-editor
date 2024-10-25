@@ -7,7 +7,7 @@ import React, {
   memo,
   useMemo,
 } from "react";
-import { throttle } from "lodash";
+import { set, throttle } from "lodash";
 import {
   useCustomizedState,
   compareJson,
@@ -354,15 +354,29 @@ const StackComponentContainer = React.memo(
     /* { mode } ================================================================================================= */
 
     /* { data } ------------------------------------------------------------------------------------------------- */
-    const { access_storage_by_id, update_storage_by_id } =
-      useContext(RootDataContexts);
-    const [data, setData] = useCustomizedState(
+    const {
+      access_storage_by_id,
+      update_storage_by_id,
+      access_storage_by_type,
+      update_storage_by_type,
+    } = useContext(RootDataContexts);
+    const [privateData, setPrivateData] = useCustomizedState(
       access_storage_by_id(id),
       compareJson
     );
+    const publicData = useCallback(() => {
+      return access_storage_by_type(component_type);
+    }, [component_type, access_storage_by_type]);
+    const setPublicData = useCallback(
+      (data) => {
+        update_storage_by_type(component_type, data);
+      },
+      [component_type]
+    );
+
     useEffect(() => {
-      update_storage_by_id(String(id), data);
-    }, [data]);
+      update_storage_by_id(String(id), privateData);
+    }, [privateData]);
     /* { data } ------------------------------------------------------------------------------------------------- */
 
     /* { command } ============================================================================================== */
@@ -423,8 +437,10 @@ const StackComponentContainer = React.memo(
               setCommand={setCommand}
               load_contextMenu={load_contextMenu}
               command_executed={command_executed}
-              data={data}
-              setData={setData}
+              privateData={privateData}
+              setPrivateData={setPrivateData}
+              publicData={publicData}
+              setPublicData={setPublicData}
               item_on_drag={item_on_drag}
               item_on_drag_over={item_on_drag_over}
               item_on_drop={item_on_drop}
