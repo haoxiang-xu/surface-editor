@@ -377,25 +377,6 @@ class Car {
   `,
   },
 };
-const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
-  {
-    id: "surface_explorer_0004",
-    type: "surface_explorer",
-    stack_component_unique_tag: "surface_explorer_0004",
-  },
-  {
-    id: "monaco_editor_0002",
-    type: "monaco_editor",
-    stack_component_unique_tag: "monaco_editor_0002",
-    code_editor_container_ref_index: 1,
-  },
-  {
-    id: "monaco_editor_0003",
-    type: "monaco_editor",
-    stack_component_unique_tag: "monaco_editor_0003",
-    code_editor_container_ref_index: 2,
-  },
-];
 const DIRs = {
   root: {
     file_name: "demo",
@@ -890,7 +871,6 @@ const RootDataManager = React.memo(({ children }) => {
 
   /* { STORAGE } ======================================================================================================================= */
   const [storage, setStorage] = useState(FAKE_STORAGE);
-
   const access_storage_by_id = useCallback(
     (id) => {
       return storage[id];
@@ -941,32 +921,6 @@ const RootDataManager = React.memo(({ children }) => {
   );
   /* { STORAGE } ======================================================================================================================= */
 
-  /* Stack Structure Data and Functions ============================================================== */
-  const [stackStructureOptionsData, setStackStructureOptionsData] = useState(
-    DEFAULT_STACK_STRUCTURE_OPTIONS_DATA
-  );
-  const updateStackStructureContainerIndex = useCallback(
-    (originalIndex, newIndex) => {
-      setStackStructureOptionsData((prevData) => {
-        const newOptionsData = [...prevData];
-        const popedData = newOptionsData.splice(originalIndex, 1);
-        newOptionsData.splice(newIndex, 0, popedData[0]);
-
-        return newOptionsData;
-      });
-    },
-    []
-  );
-  const removeStackStructureContainerIndex = useCallback((index) => {
-    setStackStructureOptionsData((prevData) => {
-      const newOptionsData = [...prevData];
-      newOptionsData.splice(index, 1);
-
-      return newOptionsData;
-    });
-  }, []);
-  /* Stack Structure Data and Functions ============================================================== */
-
   return (
     <RootDataContexts.Provider
       value={{
@@ -1003,11 +957,6 @@ const RootDataManager = React.memo(({ children }) => {
         access_storage_by_type,
         update_storage_by_type,
         remove_storage_by_type,
-
-        stackStructureOptionsData,
-        setStackStructureOptionsData,
-        updateStackStructureContainerIndex,
-        removeStackStructureContainerIndex,
       }}
     >
       {children}

@@ -15,7 +15,6 @@ import axios from "axios";
 const MonacoCore = ({
   //Editor required parameters
   editor_filePath,
-  code_editor_container_ref_index,
   //Editor function parameters
   onAppendContent,
   setOnAppendContent,

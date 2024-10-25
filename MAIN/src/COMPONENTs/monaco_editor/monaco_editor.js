@@ -61,7 +61,6 @@ const G = 30;
 const B = 30;
 
 const MonacoEditorGroup = ({
-  code_editor_container_ref_index,
   setOnSelectedContent,
   onAppendContent,
   setOnAppendContent,
@@ -82,7 +81,6 @@ const MonacoEditorGroup = ({
         key={filePath}
         //Editor required parameters
         editor_filePath={filePath}
-        code_editor_container_ref_index={code_editor_container_ref_index}
         //Editor function parameters
         onAppendContent={onAppendContent}
         setOnAppendContent={setOnAppendContent}
@@ -923,7 +921,6 @@ const MonacoEditor = ({
   width,
   height,
   mode,
-  code_editor_container_ref_index,
   command,
   setCommand,
   load_contextMenu,
@@ -1062,7 +1059,6 @@ const MonacoEditor = ({
             }}
           >
             <MonacoEditorGroup
-              code_editor_container_ref_index={code_editor_container_ref_index}
               setOnSelectedContent={setOnSelectedCotent}
               onAppendContent={onAppendContent}
               setOnAppendContent={setOnAppendContent}

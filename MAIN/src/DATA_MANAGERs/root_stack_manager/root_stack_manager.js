@@ -204,14 +204,12 @@ const TESTING_STACK_STRUCTURE_2 = {
     id: "monaco_editor_0002",
     parent_id: "horizontal_stack_0001",
     type: "monaco_editor",
-    code_editor_container_ref_index: 1,
     sub_items: [],
   },
   monaco_editor_0003: {
     id: "monaco_editor_0003",
     parent_id: "horizontal_stack_0001",
     type: "monaco_editor",
-    code_editor_container_ref_index: 2,
     sub_items: [],
   },
 };
@@ -235,14 +233,12 @@ const TESTING_STACK_STRUCTURE_3 = {
     id: "monaco_editor_0002",
     parent_id: "root",
     type: "monaco_editor",
-    code_editor_container_ref_index: 1,
     sub_items: [],
   },
   monaco_editor_0003: {
     id: "monaco_editor_0003",
     parent_id: "root",
     type: "monaco_editor",
-    code_editor_container_ref_index: 2,
     sub_items: [],
   },
 };
@@ -269,7 +265,6 @@ const StackComponentContainer = React.memo(
     id,
     component_type,
     stack_structure_type,
-    code_editor_container_ref_index,
     width,
     height,
   }) => {
@@ -444,7 +439,6 @@ const StackComponentContainer = React.memo(
               item_on_drag={item_on_drag}
               item_on_drag_over={item_on_drag_over}
               item_on_drop={item_on_drop}
-              code_editor_container_ref_index={code_editor_container_ref_index}
             />
           ) : null}
         </globalDragAndDropContexts.Provider>
@@ -938,7 +932,6 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
             height={containers[id].size.height}
             stack_structure_type={parent_stack_type}
             component_type={stackStructure[id].type}
-            code_editor_container_ref_index={1}
           />
         )}
         <div
