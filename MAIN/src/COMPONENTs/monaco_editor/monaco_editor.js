@@ -454,12 +454,10 @@ const FileSelectionListItem = ({
   const to_delete_tag = useCallback(
     (onDragItem, onDropItem) => {
       setOnSelectedMonacoIndex(-1);
-      console.log("to_delete_tag", onDragItem, onDropItem);
-
       if (
         monacoCallbacks[onDragItem.content.path]?.callback_to_delete !==
           undefined &&
-        onDragItem.source !== onDropItem.source
+        onDragItem?.source !== onDropItem?.source
       ) {
         monacoCallbacks[onDragItem.content.path].callback_to_delete();
       }

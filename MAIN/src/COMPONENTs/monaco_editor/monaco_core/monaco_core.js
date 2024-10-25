@@ -92,8 +92,6 @@ const MonacoCore = ({
     setMonacoLanguage(access_file_language_by_path(editor_filePath));
   }, [file]);
 
-  const [monacoModel, setMonacoModel] = useState(null);
-  const [monacoViewState, setMonacoViewState] = useState(null);
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
 
   /*MONACO EDITOR FUNCTIONs======================================================================*/
@@ -195,6 +193,10 @@ const MonacoCore = ({
     }));
   }, []);
   const callback_to_delete_monaco_core = useCallback(() => {
+    const Model = monacoRef.current.getModel();
+    update_monaco_core_model(editor_filePath, Model);
+    const viewState = monacoRef.current.saveViewState();
+    update_monaco_core_view_state(editor_filePath, viewState);
     monacoRef.current.setModel(null);
   }, []);
   /*Delete Monaco Editor Path===========================================*/
@@ -358,12 +360,12 @@ const registerStateChangeListeners = (
   update_monaco_core_view_state,
   update_monaco_core_model
 ) => {
-  editor.onDidScrollChange((e) => {
-    const viewState = editor.saveViewState();
-    update_monaco_core_view_state(editor_filePath, viewState);
-    const Model = editor.getModel();
-    update_monaco_core_model(editor_filePath, Model);
-  });
+  // editor.onDidScrollChange((e) => {
+  //   const viewState = editor.saveViewState();
+  //   update_monaco_core_view_state(editor_filePath, viewState);
+  //   const Model = editor.getModel();
+  //   update_monaco_core_model(editor_filePath, Model);
+  // });
   editor.onDidChangeModelContent((e) => {
     const viewState = editor.saveViewState();
     update_monaco_core_view_state(editor_filePath, viewState);
