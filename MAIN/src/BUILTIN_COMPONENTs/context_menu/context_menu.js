@@ -218,7 +218,7 @@ const ContextItemButton = ({
           /* POSITION -------------- */
           position: "absolute",
           top: "50%",
-          left: 2,
+          left: 3,
           transform: "translate(0%, -50%)",
 
           /* SIZE ------------------ */
@@ -530,7 +530,7 @@ const ContextList = ({
           context_menu_fixed_styling.backgroundColorB + 64,
           255
         )}, 1)`,
-        backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 1)`,
+        backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 0)`,
         borderRadius: borderRadius,
         boxSizing: "border-box",
         boxShadow: context_menu_fixed_styling.boxShadow,
@@ -541,6 +541,24 @@ const ContextList = ({
         e.stopPropagation();
       }}
     >
+      <div
+        style={{
+          /*POSITION ---------------- */
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+
+          /*STYLE ------------------- */
+          backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 0.64)`,
+          backdropFilter: context_menu_fixed_styling.backdropFilter,
+        }}
+      >
+
+      </div>
+
+
       {sub_items.map((item, index) => {
         switch (contextStructure[item].type) {
           case "button":
