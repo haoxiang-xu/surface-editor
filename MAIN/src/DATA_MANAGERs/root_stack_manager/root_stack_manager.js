@@ -15,6 +15,7 @@ import {
 import { STACK_COMPONENT_CONFIG } from "../../CONSTs/stackComponentConfig.js";
 
 /* { import contexts } ---------------------------------------------------------------------- */
+import { RootConfigContexts } from "../root_config_manager/root_config_contexts.js";
 import { RootDataContexts } from "../root_data_manager/root_data_contexts.js";
 import { RootCommandContexts } from "../root_command_manager/root_command_contexts.js";
 import { RootStackContexts } from "./root_stack_contexts.js";
@@ -249,10 +250,6 @@ const default_resizer_size = 8;
 const default_resizer_layer = 12;
 const default_overlay_layer = 128;
 
-const R = 30;
-const G = 30;
-const B = 30;
-
 const MIN = 60;
 
 const TOP = 8;
@@ -261,13 +258,7 @@ const BOTTOM = default_component_padding;
 const LEFT = default_component_padding;
 
 const StackComponentContainer = React.memo(
-  ({
-    id,
-    component_type,
-    stack_structure_type,
-    width,
-    height,
-  }) => {
+  ({ id, component_type, stack_structure_type, width, height }) => {
     /* Children Item Drag and Drop  ============================================================================================================================================ */
     const [draggedItem, setDraggedItem] = useState(null);
     const [draggedOverItem, setDraggedOverItem] = useState(null);
@@ -476,6 +467,7 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
     onFrameResize,
     setOnFrameResize,
   } = useContext(RootStackContexts);
+  const { R, G, B } = useContext(RootConfigContexts);
 
   const hoverTimer = useRef(null);
   const [onHover, setOnHover] = useState(false);
@@ -732,6 +724,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     generate_vertical_sub_item_on_drag_filter,
     clean_filter,
   } = useContext(RootStackContexts);
+  const { R, G, B, on_hover, on_click } = useContext(RootConfigContexts);
   // console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
 
   const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
@@ -878,8 +871,8 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
 
           border: onDragStart
             ? "none"
-            : `1px solid rgba(${R + 8}, ${G + 8}, ${B + 8}, 1)`,
-          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
+            : `1px solid rgba(${R + 12}, ${G + 12}, ${B + 12}, 1)`,
+          backgroundColor: `rgba(${R + 6}, ${G + 6}, ${B + 6}, 1)`,
           boxShadow: onDragStart ? "none" : "0px 0px 4px 2px rgba(0,0,0,0.16)",
           borderRadius: default_component_border_radius,
           overflow: "hidden",
