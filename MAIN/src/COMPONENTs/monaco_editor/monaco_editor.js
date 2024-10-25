@@ -454,9 +454,12 @@ const FileSelectionListItem = ({
   const to_delete_tag = useCallback(
     (onDragItem, onDropItem) => {
       setOnSelectedMonacoIndex(-1);
+      console.log("to_delete_tag", onDragItem, onDropItem);
+
       if (
         monacoCallbacks[onDragItem.content.path]?.callback_to_delete !==
-        undefined
+          undefined &&
+        onDragItem.source !== onDropItem.source
       ) {
         monacoCallbacks[onDragItem.content.path].callback_to_delete();
       }
@@ -947,9 +950,12 @@ const MonacoEditor = ({
   const [monacoCores, setMonacoCores] = useState(publicData()?.monaco_cores);
   const [monacoCallbacks, setMonacoCallbacks] = useState({});
 
-  const access_monaco_core_by_path = useCallback((path) => {
-    return publicData().monaco_cores[path];
-  }, [publicData]);
+  const access_monaco_core_by_path = useCallback(
+    (path) => {
+      return publicData().monaco_cores[path];
+    },
+    [publicData]
+  );
   const update_monaco_core_view_state = (path, view_state) => {
     setMonacoCores((prevData) => {
       return {
