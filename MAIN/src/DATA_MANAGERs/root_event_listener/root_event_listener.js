@@ -19,23 +19,6 @@ const MainStack = React.memo(() => {
   );
   return <RootDataManager>{root_command_manager}</RootDataManager>;
 });
-const RootBackGround = () => {
-  const { R, G, B, A } = useContext(RootConfigContexts);
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        height: "100%",
-        width: "100%",
-
-        backgroundColor: `rgba(${R}, ${G}, ${B}, ${A})`,
-      }}
-    ></div>
-  );
-};
 
 const RootEventListener = () => {
   const [isWindowMaximized, setIsWindowMaximized] = useState(false);
@@ -146,7 +129,6 @@ const RootEventListener = () => {
             overflowX: "hidden",
           }}
         >
-          <RootBackGround />
           {isOnTitleBar ? (
             <TitleBar isWindowMaximized={isWindowMaximized} />
           ) : null}

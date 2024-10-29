@@ -1,5 +1,23 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { RootConfigContexts } from "./root_config_contexts";
+
+const AppBackground = () => {
+  const { R, G, B, A } = useContext(RootConfigContexts);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        height: "100%",
+        width: "100%",
+
+        backgroundColor: `rgba(${R}, ${G}, ${B}, ${A})`,
+      }}
+    ></div>
+  );
+};
 
 const RootConfigManager = ({ children }) => {
   const [R, setR] = useState(24);
@@ -41,6 +59,7 @@ const RootConfigManager = ({ children }) => {
     <RootConfigContexts.Provider
       value={{ R, setR, G, setG, B, setB, A, setA, customize_offset, on_hover, on_click }}
     >
+      <AppBackground />
       {children}
     </RootConfigContexts.Provider>
   );
