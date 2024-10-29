@@ -20,7 +20,7 @@ const MainStack = React.memo(() => {
   return <RootDataManager>{root_command_manager}</RootDataManager>;
 });
 const RootBackGround = () => {
-  const { R, G, B } = useContext(RootConfigContexts);
+  const { R, G, B, A } = useContext(RootConfigContexts);
 
   return (
     <div
@@ -31,7 +31,7 @@ const RootBackGround = () => {
         height: "100%",
         width: "100%",
 
-        backgroundColor: `rgb(${R}, ${G}, ${B})`,
+        backgroundColor: `rgba(${R}, ${G}, ${B}, ${A})`,
       }}
     ></div>
   );
