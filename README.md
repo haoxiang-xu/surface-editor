@@ -1,6 +1,6 @@
-# <img src="./MAIN/assets/logos/logo_pink_32.png"/> Surface Editor 
+# <img src="./MAIN/assets/logos/logo_pink_32.png"/> Surface Editor
 
-## The Only AI Code Editor that doesn't replace developers.
+## "The Only AI Code Editor That Doesn't Replace Developers - Simply a Useful Tool."
 
 ![darwin32_demo_ui](./MAIN/assets/images/darwin32_demo_ui.png)
 
