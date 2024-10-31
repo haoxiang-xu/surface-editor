@@ -36,11 +36,11 @@ const RootConfigManager = ({ children }) => {
       b: Math.min(255, Math.max(0, b * factor)),
     };
   };
-  const customize_offset = (R, G, B, offset) => {
+  const customize_offset = (R, G, B, A = 1, offset, mulitplier = 1) => {
     const factor = is_light_color(R, G, B) ? 1 - offset : 1 + offset;
-    const { r, g, b } = adjust_lightness(R, G, B, factor);
+    const { r, g, b } = adjust_lightness(R, G, B, factor * mulitplier);
 
-    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+    return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${A})`;
   };
   const on_hover = useCallback((R, G, B) => {
     const factor = is_light_color(R, G, B) ? 0.8 : 1.6;
@@ -57,7 +57,19 @@ const RootConfigManager = ({ children }) => {
 
   return (
     <RootConfigContexts.Provider
-      value={{ R, setR, G, setG, B, setB, A, setA, customize_offset, on_hover, on_click }}
+      value={{
+        R,
+        setR,
+        G,
+        setG,
+        B,
+        setB,
+        A,
+        setA,
+        customize_offset,
+        on_hover,
+        on_click,
+      }}
     >
       <AppBackground />
       {children}

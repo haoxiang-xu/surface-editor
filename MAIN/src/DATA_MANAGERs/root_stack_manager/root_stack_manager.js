@@ -724,7 +724,8 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     generate_vertical_sub_item_on_drag_filter,
     clean_filter,
   } = useContext(RootStackContexts);
-  const { R, G, B, on_hover, on_click } = useContext(RootConfigContexts);
+  const { R, G, B, on_hover, on_click, customize_offset } =
+    useContext(RootConfigContexts);
   // console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
 
   const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
@@ -871,8 +872,8 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
 
           border: onDragStart
             ? "none"
-            : `1px solid rgba(${R + 12}, ${G + 12}, ${B + 12}, 1)`,
-          backgroundColor: `rgba(${R + 6}, ${G + 6}, ${B + 6}, 1)`,
+            : `1px solid rgba(${225}, ${225}, ${225}, 0.08)`,
+          backgroundColor: customize_offset(R, G, B, 1, 0.24),
           boxShadow: onDragStart ? "none" : "0px 0px 4px 2px rgba(0,0,0,0.16)",
           borderRadius: default_component_border_radius,
           overflow: "hidden",
