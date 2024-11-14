@@ -1,6 +1,8 @@
-# Development Guide
+<a id="top"></a>
 
-## [ Table of Contents ]
+# <span style="font-size: 32px;">Development Guide</span>
+
+## Table of Contents
 
 - [Customized Componet Implementation](#Customized_Componet_Implementation)
   1. [Initilize your component](#Initilize_your_component)
@@ -11,11 +13,11 @@
 - [Variable Formating Guide](#Variable_formating_guide)
   <a id="Customized_Componet_Implementation"></a>
 
-## [ Customized Componet Implementation ]
-
 <a id="Initilize_your_component"></a>
 
-### STEP 1 COMPONENT INITILIZATION
+## Customized Componet Implementation [`^`](#top)
+
+### STEP 1 COMPONENT INITILIZATION [`^`](#Initilize_your_component)
 
 ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
@@ -23,7 +25,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 <a id="Handle_component_parameters"></a>
 
-### STEP 2 HANDLE COMPONENT PARAMETERs
+### STEP 2 HANDLE COMPONENT PARAMETERs [`^`](#Initilize_your_component)
 
 <span style="opacity: 0.64">Since your own component will be packed inside the `stack_frame` component, your component should have several parameters need to be handled.</span>
 
@@ -60,10 +62,11 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `publicData` & `setPublicData` (TYPE: JSON) <span style="opacity: 0.64">This variable is used to store the data that is shared by all components, and it will be set by the `root_stack_manager` component, so you don't need to worry about this variable. (stored using Type)</span>
 
 - `item_on_drag()` & `item_on_drag_over()` & `item_on_drop()` <span style="opacity: 0.64">Set of functions that will be called when the item is on drag, on drag over and on drop.
+  - <span style="opacity: 0.64">`item_on_drag()` [`SAMPLE ->`](#item_on_drag())</span>
 
 <a id="Access_to_system_data_and_functions"></a>
 
-### STEP 3 ACCESS TO SYSTEM DATA AND FUNCTIONs (Optional)
+### STEP 3 ACCESS TO SYSTEM DATA AND FUNCTIONs (Optional) [`^`](#Initilize_your_component)
 
 ### GLOBAL CONTEXTs & DATA MANAGERs:
 
@@ -83,9 +86,9 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 <a id="Define_your_own_context_menu"></a>
 
-### STEP 4 DEFINE CUSTOMIZED CONTEXT MENU (Optional)
+### STEP 4 DEFINE CUSTOMIZED CONTEXT MENU (Optional) [`^`](#Initilize_your_component)
 
-#### STEP 4.1 Declare Context Menu Structure
+#### STEP 4.1 Declare Context Menu Structure 
 
 <span style="opacity: 0.64">You can see this</span> [`SAMPLE 000_007`](#000_007) <span style="opacity: 0.64">to get a basic understand of how to declare a conext menu structure. </span>
 
@@ -95,20 +98,20 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 - `progress_context_menu_item` <span style="opacity: 0.64">it takes a json as variable and after you call this function it will generate a command just like `button` type context menu item will do.</span>
 
-### STEP 5 DEFINE OTHER REQURIED FILES
+### STEP 5 DEFINE OTHER REQURIED FILES [`^`](#Initilize_your_component)
 
-### STEP 6 DONE
+### STEP 6 DONE [`^`](#Initilize_your_component)
 
 <a id="Data_manager_variables_and_functions"></a>
 
-## [ Data Manager Variables and Functions ]
+## [ Data Manager Variables and Functions ] [`^`](#top)
 
 ### ROOT_DATA_MANAGER <a id="root_data_manager"></a>
 
 #### [dir] <a id="dir"></a>
 
 - `dir`
-- `isDirLoaded` & `setIsDirLoaded` <span style="opacity: 0.64">After `surface_explorer` opened a new folder or file, it will be set to `false` and after loading finish it will be set to `true`. You can access this value to see if the demand dir is opened but never try to use `setIsDirLoaded` to set a cusomized value.</span>
+- `isDirLoaded` & `setIsDirLoaded`
 - `update_path_under_dir`
 - `remove_path_under_dir`
 - `rename_file_under_dir`
@@ -141,17 +144,19 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 #### [cmd] <a id="cmd"></a>
 
 - `cmd`
-- `push_command_by_id`
-- `pop_command_by_id`
+- `push_command_by_id()`
+- `pop_command_by_id()`
 
 #### [context menu] <a id="context_menu"></a>
 
-- `load_context_menu`
-- `unload_context_menu`
+- `load_context_menu()`
+- `unload_context_menu()`
 
 #### [drag and drop] <a id="drag_and_drop"></a>
 
-- `item_on_drag` <span style="opacity: 0.64">when you need to call this function you must declare the `on_drag_item` as one of the input for this function, you can check out the formation of how you should define this json variable by this </span>[`SAMPLE 000_008`](#000_008)<span style="opacity: 0.64">.</span>
+- `item_on_drag()` [`SAMPLE ->`](#item_on_drag())
+- `item_on_drag_over()` [`SAMPLE ->`](#item_on_drag_over())
+- `item_on_drop()`
 
 <a id="Variable_formating_guide"></a>
 
@@ -303,23 +308,156 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `height` <span style="opacity: 0.64">(Optional) A button component default height will be 28, and br componet default height will be 8.</span>
 - `width` <span style="opacity: 0.64">(Optional) `context_menu` default width is 220.</span>
 
-#### [000_008] <a id="000_008"></a> On drag Item Structure
+#### <span style="font-size: 20px">`item_on_drag()` [`^`](#top)</span> <a id="item_on_drag()"></a>
 
-```
-{
-  source: 'component_id',
-  ghost_image: 'url',
-  content: {},
-}
-
-{
-  source: id,
-  ghost_image: 'tag',
-  content: {
-    type: "file",
-    path: filePath,
-  },
-}
-```
-
-- `ghost_image` on drag image, will be the original item in default, otherwise you can define your own image to display or even component to display.
+- `item_on_drag()` should be called when desired item is on drag, below is a sample code to show how to call this function.
+  ```jsx
+  <component
+    onDragStart={(e) => {
+      item_on_drag(e, {
+        source: 'component_id',
+        ghost_image: 'url',
+        content: {
+          type: "on_drag_item_type",
+          ...
+        },
+        callback_to_delete: () => {}
+      });
+    }}
+  ></component>
+  ```
+- below is how you should call the `item_on_drag()` function inside your component.
+  ```jsx
+  item_on_drag(e, on_drag_item)
+  ```
+- the `on_drag_item` should be a json object with the following structure:
+  ```jsx
+    {
+      "source": "component_id",
+      "ghost_image": "url",
+      "content": {
+        "type": "on_drag_item_type",
+        ...
+      },
+      "callback_to_delete": () => {}
+    }
+    ```
+  - `source` (TYPE: String) <span style="opacity: 0.64"> This variable is used to identify the source of the drag item, and it should be unique. And it will be provided as prop `id` for your component</span>
+  - `ghost_image` optional (TYPE: String) <span style="opacity: 0.64"> This variable is used to display the image when the item is on drag, it should be a url of the image, a customized `tag` or customized component</span>
+  - `content` (TYPE: JSON) <span style="opacity: 0.64"> This variable is used to store the data that you want to pass to the target component, and it should be a json object, the only required element inside of this JSON is type</span>
+  - `callback_to_delete` (TYPE: Function) <span style="opacity: 0.64"> This function is used to delete the item after the drag is finished, and it will be called after the drag is finished.</span>
+- here is a sample `on_drag_item` that is actually used in this project:
+  ```jsx
+  item_on_drag(e, {
+    source: id,
+    ghost_image: "tag",
+    content: {
+      type: "file",
+      path: file_path,
+    },
+    callback_to_delete: (onDragItem, onDropItem) => {
+      setOnSelectedMonacoIndex(-1);
+      if (
+        monacoCallbacks[onDragItem.content.path]?.callback_to_delete !==
+          undefined &&
+        onDragItem?.source !== onDropItem?.source
+      ) {
+        monacoCallbacks[onDragItem.content.path].callback_to_delete();
+      }
+      const to_delete_index = monacoPaths.indexOf(onDragItem.content.path);
+      setMonacoPaths((prevData) => {
+        return prevData.filter((path, index) => index !== to_delete_index);
+      });
+      setTagPositions((prevData) => {
+        const new_data = { ...prevData };
+        delete new_data[onDragItem.content.path];
+        return new_data;
+      });
+    },
+  });
+  ```
+#### <span style="font-size: 20px">`item_on_drag_over()` [`^`](#top)</span> <a id="item_on_drag_over()"></a> 
+- `item_on_drag_over()` should be called when desired item is on drag over, below is a sample code to show how to call this function.
+  ```jsx
+  <component
+    onDragOver={(e) => {
+      item_on_drag_over(e, {
+        source: 'component_id',
+        content: {
+          type: "on_drag_over_item_type",
+          ...
+        },
+        accept: ['accept_type1', 'accept_type2'],
+        callback_to_append: () => {}
+      });
+    }}
+  ></component>
+  ```
+- below is how you should call the `item_on_drag_over()` function inside your component.
+  ```jsx
+  item_on_drag_over(e, on_drag_over_item)
+  ```
+- the `on_drag_over_item` should be a json object with the following structure:
+  ```jsx
+  {
+    "source": "component_id",
+    "content": {
+      "type": "on_drag_over_item_type",
+      ...
+    },
+    "accept": ['accept_type1', 'accept_type2'],
+    "callback_to_append": () => {}
+  }
+  ```
+  - `source` (TYPE: String) <span style="opacity: 0.64"> This variable is used to identify the source of the drag item, and it should be unique. And it will be provided as prop `id` for your component</span>
+  - `content` (TYPE: JSON) <span style="opacity: 0.64"> This variable is used to store the data that you want to pass to the target component, and it should be a json object, the only required element inside of this JSON is type</span>
+  - `accept` (TYPE: List) <span style="opacity: 0.64"> This variable is used to identify the type of the item that you want to accept, and it should be a list of string</span>
+  - `callback_to_append` (TYPE: Function) <span style="opacity: 0.64"> This function is used to append the item after the drag is over, and it will be called after the drag is over.</span>
+- here is a sample `on_drag_over_item` that is actually used in this project:
+  ```jsx
+  item_on_drag_over(null, {
+    source: id,
+    content: {
+      type: "file",
+      path: monacoPaths[onDragOveredMonacoIndex],
+      append_to_left:
+        onDragOverPosition.x <
+        (tagPositions[monacoPaths[onDragOveredMonacoIndex]].width +
+          default_tag_max_width) /
+          2,
+    },
+    accepts: ["file"],
+    callback_to_append: (onDragItem, onDropItem) => {
+      if (!onDragItem || !onDropItem) return;
+      if (onDragItem.content.type !== "file") return;
+      let on_drop_index = monacoPaths.indexOf(onDropItem.content.path);
+      if (onDropItem.content.append_to_left) {
+        if (onDragedMonacoIndex !== -1 && onDragedMonacoIndex < on_drop_index) {
+          on_drop_index -= 1;
+        }
+        setMonacoPaths((prevData) => {
+          return [
+            ...prevData.slice(0, on_drop_index),
+            onDragItem.content.path,
+            ...prevData.slice(on_drop_index),
+          ];
+        });
+      } else {
+        if (onDragedMonacoIndex !== -1 && onDragedMonacoIndex < on_drop_index) {
+          on_drop_index -= 1;
+        }
+        on_drop_index += 1;
+        setMonacoPaths((prevData) => {
+          return [
+            ...prevData.slice(0, on_drop_index),
+            onDragItem.content.path,
+            ...prevData.slice(on_drop_index),
+          ];
+        });
+      }
+      setRequiredRerender(true);
+      setOnSelectedMonacoIndex(-1);
+      setOnDragOverMonacoIndex(-1);
+    },
+  });
+  ```
