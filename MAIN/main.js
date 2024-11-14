@@ -46,7 +46,7 @@ const create_main_window = () => {
       width: 1200,
       height: 800,
       webSecurity: true,
-      transparent: true,
+      transparent: false,
       resizable: true,
       maximizable: true,
       webPreferences: {
@@ -58,8 +58,8 @@ const create_main_window = () => {
       hasShadow: true,
       titleBarStyle: "hidden",
       trafficLightPosition: { x: 14, y: 13 },
-      vibrancy: 'sidebar',
-      visualEffectState: 'active'
+      vibrancy: "sidebar",
+      visualEffectState: "active",
     });
     app.dock.setIcon(path.join(__dirname, "/assets/logos/logo_pink_512.png"));
   } else if (process.platform === "win32") {
