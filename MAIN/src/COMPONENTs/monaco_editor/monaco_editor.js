@@ -848,6 +848,7 @@ const FileSelectionListContainer = ({}) => {
             default_tag_max_width) /
             2,
       },
+      accepts: ["file"],
       callback_to_append: to_append_tag,
     });
   }, [onDragOveredMonacoIndex, monacoPaths, onDragOverPosition, tagPositions]);

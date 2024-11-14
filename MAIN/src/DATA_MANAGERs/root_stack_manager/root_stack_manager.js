@@ -728,7 +728,8 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     useContext(RootConfigContexts);
   // console.log("RDM/RCM/stack_frame/", id, new Date().getTime());
 
-  const { item_on_drag, item_on_drop } = useContext(RootCommandContexts);
+  const { item_on_drag, item_on_drag_over, item_on_drop } =
+    useContext(RootCommandContexts);
 
   const containerRef = useRef(null);
   const [style, setStyle] = useState({
@@ -773,6 +774,14 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
           const newX = event.clientX - rect.left;
           const newY = event.clientY - rect.top;
           if (prevPosition.x !== newX || prevPosition.y !== newY) {
+            item_on_drag_over(event, {
+              source: id,
+              content: {
+                type: "stack_frame",
+                position: { x: newX, y: newY },
+              },
+              accepts: ["stack_frame"],
+            });
             return { x: newX, y: newY };
           }
           return prevPosition;
@@ -915,6 +924,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         onDragLeave={(e) => {
           e.preventDefault();
           setOnDragOver(false);
+          item_on_drag_over(e, null);
         }}
       >
         {stackStructure[id].type === "test" ? (

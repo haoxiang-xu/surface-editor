@@ -100,6 +100,11 @@ const RootCommandManager = React.memo(({ children }) => {
   const [onDropItem, setOnDropItem] = useState(null);
   const [onDragPosition, setOnDragPosition] = useState({ x: 0, y: 0 });
 
+  useEffect(() => {
+    console.log("onDragItem", onDragItem);
+    console.log("onDropItem", onDropItem);
+  }, [onDragItem, onDropItem]);
+
   const item_on_drag = useCallback((event, on_drag_item) => {
     if (event) {
       event.stopPropagation();
@@ -122,11 +127,16 @@ const RootCommandManager = React.memo(({ children }) => {
         event.stopPropagation();
       }
       if (onDragItem && onDropItem) {
-        if (onDragItem.callback_to_delete) {
-          onDragItem.callback_to_delete(onDragItem, onDropItem);
-        }
-        if (onDropItem.callback_to_append) {
-          onDropItem.callback_to_append(onDragItem, onDropItem);
+        if (
+          onDropItem.accepts &&
+          onDropItem.accepts.includes(onDragItem.content.type)
+        ) {
+          if (onDragItem.callback_to_delete) {
+            onDragItem.callback_to_delete(onDragItem, onDropItem);
+          }
+          if (onDropItem.callback_to_append) {
+            onDropItem.callback_to_append(onDragItem, onDropItem);
+          }
         }
       }
 
