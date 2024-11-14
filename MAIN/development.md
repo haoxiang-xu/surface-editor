@@ -2,20 +2,20 @@
 
 ## [ Table of Contents ]
 
-- [Implemented Your own Stack Component](#Implemented_Your_own_Stack_Component)
+- [Customized Componet Implementation](#Customized_Componet_Implementation)
   1. [Initilize your component](#Initilize_your_component)
   2. [Handle component parameters](#Handle_component_parameters)
   3. [Access to system data and functions (Optional)](#Access_to_system_data_and_functions)
   4. [Define your own context menu (Optional)](#Define_your_own_context_menu)
 - [Data Manager Variables and Functions](#Data_manager_variables_and_functions)
 - [Variable Formating Guide](#Variable_formating_guide)
-  <a id="Implemented_Your_own_Stack_Component"></a>
+  <a id="Customized_Componet_Implementation"></a>
 
-## [ Implemented Your own Stack Component ]
+## [ Customized Componet Implementation ]
 
 <a id="Initilize_your_component"></a>
 
-### STEP 1 INITILIZE YOUR COMPONENT
+### STEP 1 COMPONENT INITILIZATION
 
 ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
@@ -30,6 +30,8 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 ### PARAMETERs:
 
 - `id` (TYPE: String, MAX LENGTH: 64) <span style="opacity: 0.64"> (Since your component may need to interact with other components, to differentiate them, and to receive and send command between component, you need this variable. `id` will be assigned when this component be created and destoried after the component distoried, and once it created, it will be always the same.) </span>
+
+- `width` & `height` (TYPE: Number) <span style="opacity: 0.64"> This variable is the dimension of the component, and it will be set by the `root_stack_manager` component, so you don't need to worry about this variable. (Notice: this variables won't changing continuously during resizing, it will only change after the window size change finished or the component is created or destoried.) </span>
 
 - `mode` (TYPE: String) <span style="opacity: 0.64"> (Basically you can check the value that is stored inside this `mode` variable, and base on the value to render the content inside this Stack Div) </span>
 
@@ -49,11 +51,15 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - <span>"vertical*space*/\_vertical_mode"</sapn>
 
-- `command` & `setCommand` (TYPE: List) <span style="opacity: 0.64">To receive commands from outside for example the `context_menu` or other kind of `stack_component` you need to keep listening on value that is storing inside `command`, it will store the oldest command that is pending for this `stack_componet` to be execute. You should write your own logic to handle that command and after the command is executed, you should empty the `command` variable like this `setCommand([]);` so that a new pending command will be set into this variable.</span>
+- `command` & `setCommand` & `command_executed()` (TYPE: List) <span style="opacity: 0.64">To receive commands from outside for example the `context_menu` or other kind of `component` you need to keep listening on value that is storing inside `command`, it will store the oldest command that is pending for this `componet` to be execute. You should write your own logic to handle that command and after the command is executed, you should empty the `command` variable like this `setCommand([]);` or just call `command_executed()` so that a new pending command will be set into this variable.</span>
 
 - `load_contextMenu()`
 
-- `data` & `setData` (TYPE: Json) <span style="opacity: 0.64"> data allows you to store and reload your component data, so that your component won't lose the data after disposed. You can define any Json structure you like to store inside this variable.</span>
+- `privateData` & `setPrivateData` (TYPE: JSON) <span style="opacity: 0.64">This variable is used to store the data that is only used by this component, and it will be set by the `root_stack_manager` component, so you don't need to worry about this variable. (stored using ID)</span>
+
+- `publicData` & `setPublicData` (TYPE: JSON) <span style="opacity: 0.64">This variable is used to store the data that is shared by all components, and it will be set by the `root_stack_manager` component, so you don't need to worry about this variable. (stored using Type)</span>
+
+- `item_on_drag()` & `item_on_drag_over()` & `item_on_drop()` <span style="opacity: 0.64">Set of functions that will be called when the item is on drag, on drag over and on drop.
 
 <a id="Access_to_system_data_and_functions"></a>
 
@@ -65,7 +71,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - [`dir`](#dir) <span style="opacity: 0.64">Opened Folder and all subfolder will store recusively inside this variable as one single JSON structure.</span>
   - [`file`](#file) <span style="opacity: 0.64">You can access any file under opened root folder by passing relative path.</span>
-  - [`storage`](#storage) <span style="opacity: 0.64">storage allows you to store and reload your component data by the `id`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their id. You can see this</span> [`SAMPLE 000_006`](#000_006) <span style="opacity: 0.64">to have a basic picture of how this useState variable be formatted for `monaco_editor` component.</span>
+  - [`storage`](#storage) <span style="opacity: 0.64">storage allows you to store and reload your component data by the `id` or `type`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their id. You can see this</span> [`SAMPLE 000_006`](#000_006) <span style="opacity: 0.64">to have a basic picture of how this useState variable be formatted for `monaco_editor` component.</span>
 
 - [`root_command_manager`](#root_command_manager) (inorder to access this variable, you will need to get the premission from the user)
 
@@ -77,7 +83,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 <a id="Define_your_own_context_menu"></a>
 
-### STEP 4 DEFINE YOUR OWN CONTEXT MENU (Optional)
+### STEP 4 DEFINE CUSTOMIZED CONTEXT MENU (Optional)
 
 #### STEP 4.1 Declare Context Menu Structure
 
