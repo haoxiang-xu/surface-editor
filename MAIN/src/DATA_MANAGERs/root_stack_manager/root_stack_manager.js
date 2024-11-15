@@ -258,7 +258,14 @@ const BOTTOM = default_component_padding;
 const LEFT = default_component_padding;
 
 const StackComponentContainer = React.memo(
-  ({ id, component_type, stack_structure_type, width, height }) => {
+  ({
+    id,
+    component_type,
+    stack_structure_type,
+    width,
+    height,
+    setComponentCallBack,
+  }) => {
     /* Children Item Drag and Drop  ============================================================================================================================================ */
     const [draggedItem, setDraggedItem] = useState(null);
     const [draggedOverItem, setDraggedOverItem] = useState(null);
@@ -430,6 +437,7 @@ const StackComponentContainer = React.memo(
               item_on_drag={item_on_drag}
               item_on_drag_over={item_on_drag_over}
               item_on_drop={item_on_drop}
+              setComponentCallBack={setComponentCallBack}
             />
           ) : null}
         </globalDragAndDropContexts.Provider>
@@ -437,7 +445,7 @@ const StackComponentContainer = React.memo(
     );
   }
 );
-const StackTestingContainer = ({ id }) => {
+const StackTestingContainer = React.memo(({ id }) => {
   return (
     <span
       style={{
@@ -456,7 +464,7 @@ const StackTestingContainer = ({ id }) => {
       {id.slice(-2)}
     </span>
   );
-};
+});
 
 const StackFrameResizer = ({ id, index, stack_structure_type }) => {
   const {
@@ -723,6 +731,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     generate_horizontal_sub_item_on_drag_filter,
     generate_vertical_sub_item_on_drag_filter,
     clean_filter,
+    delete_stack_frame,
   } = useContext(RootStackContexts);
   const { R, G, B, on_hover, on_click, customize_offset } =
     useContext(RootConfigContexts);
@@ -748,6 +757,17 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     width: "calc(100% - 4px)",
     height: "calc(100% - 4px)",
   });
+  const [componentCallBack, setComponentCallBack] = useState({});
+  const callback_to_append = useCallback((onDragItem, onDropItem) => {
+    
+  }, [componentCallBack]);
+  const callback_to_delete = useCallback((onDragItem, onDropItem) => {
+    if (componentCallBack && componentCallBack.to_delete) {
+      componentCallBack.to_delete();
+    }
+    delete_stack_frame(id);
+  }, [componentCallBack, id]);
+
   useEffect(() => {
     if (onFrameResize) {
       setStyle({
@@ -781,6 +801,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
                 position: { x: newX, y: newY },
               },
               accepts: ["stack_frame"],
+              callback_to_append: callback_to_append,
             });
             return { x: newX, y: newY };
           }
@@ -897,6 +918,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
             content: {
               type: "stack_frame",
             },
+            callback_to_delete: callback_to_delete,
           });
           if (parent_stack_type === "horizontal_stack") {
             generate_horizontal_sub_item_on_drag_filter(
@@ -936,6 +958,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
             height={containers[id].size.height}
             stack_structure_type={parent_stack_type}
             component_type={stackStructure[id].type}
+            setComponentCallBack={setComponentCallBack}
           />
         )}
         <div
@@ -1209,6 +1232,11 @@ const RootStackManager = React.memo(() => {
 
   const [containers, setContainers] = useCustomizedState({}, compareJson);
   const [filters, setFilters] = useCustomizedState({}, compareJson);
+
+  // useEffect(() => {
+  //   console.log("stackStructure", stackStructure);
+  //   console.log("containers", containers);
+  // }, [stackStructure, containers]);
 
   const [rerendered, setRerendered] = useState(0);
 
@@ -1936,6 +1964,21 @@ const RootStackManager = React.memo(() => {
     setFilters({});
   }, [stackStructure, containers, filters]);
 
+  const delete_stack_frame = useCallback((id) => {
+    setStackStructure((prev) => {
+      const adjusted_stack_structure = { ...prev };
+      const parent_id = adjusted_stack_structure[id].parent_id;
+      const sub_items = adjusted_stack_structure[parent_id].sub_items;
+      const index = sub_items.indexOf(id);
+      if (index === -1) {
+        return adjusted_stack_structure;
+      }
+      adjusted_stack_structure[parent_id].sub_items.splice(index, 1);
+      console.log("adjusted_stack_structure", adjusted_stack_structure);
+      return adjusted_stack_structure;
+    });
+  }, [stackStructure]);
+
   useEffect(() => {
     const calculate_root_position_and_size = throttle(() => {
       const position = {
@@ -2003,6 +2046,7 @@ const RootStackManager = React.memo(() => {
         generate_vertical_sub_item_on_drag_filter,
         apply_filter,
         clean_filter,
+        delete_stack_frame,
       }}
     >
       {memorized_root_stack}

@@ -932,6 +932,7 @@ const MonacoEditor = ({
   item_on_drag,
   item_on_drag_over,
   item_on_drop,
+  setComponentCallBack,
 }) => {
   //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
@@ -991,6 +992,19 @@ const MonacoEditor = ({
       monaco_cores: monacoCores,
     });
   }, [monacoCores]);
+  useEffect(() => {
+    setComponentCallBack({
+      to_delete: () => {
+        for (let path in monacoCallbacks) {
+          if (monacoCallbacks[path]?.callback_to_delete !== undefined) {
+            monacoCallbacks[path].callback_to_delete();
+          }
+        }
+        setMonacoPaths([]);
+        setMonacoCores({});
+      },
+    });
+  }, [monacoCallbacks]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
 
   const [onSelectedCotent, setOnSelectedCotent] = useState(null);
