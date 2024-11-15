@@ -264,7 +264,6 @@ const StackComponentContainer = React.memo(
     stack_structure_type,
     width,
     height,
-    setComponentCallBack,
   }) => {
     /* Children Item Drag and Drop  ============================================================================================================================================ */
     const [draggedItem, setDraggedItem] = useState(null);
@@ -398,6 +397,20 @@ const StackComponentContainer = React.memo(
     const { item_on_drag, item_on_drag_over, item_on_drop } =
       useContext(RootCommandContexts);
     /* { drag and drop } ---------------------------------------------------------------------------------------- */
+
+    /* { component callback } ----------------------------------------------------------------------------------- */
+    const { componentCallBacks, setComponentCallBacks } = useContext(RootStackContexts);
+    const setComponentCallBack = useCallback(
+      (content) => {
+        setComponentCallBacks((prev) => {
+          let newCallBacks = { ...prev };
+          newCallBacks[id] = content;
+          return newCallBacks;
+        });
+      },
+      [componentCallBacks, id]
+    );
+    /* { component callback } ----------------------------------------------------------------------------------- */
 
     return (
       <stackStructureDragAndDropContexts.Provider
@@ -732,6 +745,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     generate_vertical_sub_item_on_drag_filter,
     clean_filter,
     delete_stack_frame,
+    componentCallBacks,
   } = useContext(RootStackContexts);
   const { R, G, B, on_hover, on_click, customize_offset } =
     useContext(RootConfigContexts);
@@ -757,19 +771,18 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     width: "calc(100% - 4px)",
     height: "calc(100% - 4px)",
   });
-  const [componentCallBack, setComponentCallBack] = useState({});
   const callback_to_append = useCallback(
     (onDragItem, onDropItem) => {},
-    [componentCallBack]
+    [componentCallBacks, id]
   );
   const callback_to_delete = useCallback(
     (onDragItem, onDropItem) => {
-      if (componentCallBack && componentCallBack.to_delete) {
-        componentCallBack.to_delete();
+      if (componentCallBacks[id] && componentCallBacks[id].to_delete) {
+        componentCallBacks[id].to_delete();
       }
       delete_stack_frame(id);
     },
-    [componentCallBack, id]
+    [componentCallBacks, id]
   );
 
   useEffect(() => {
@@ -962,7 +975,6 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
             height={containers[id].size.height}
             stack_structure_type={parent_stack_type}
             component_type={stackStructure[id].type}
-            setComponentCallBack={setComponentCallBack}
           />
         )}
         <div
@@ -1236,6 +1248,8 @@ const RootStackManager = React.memo(() => {
 
   const [containers, setContainers] = useCustomizedState({}, compareJson);
   const [filters, setFilters] = useCustomizedState({}, compareJson);
+
+  const [componentCallBacks, setComponentCallBacks] = useState({});
 
   // useEffect(() => {
   //   console.log("stackStructure", stackStructure);
@@ -2050,6 +2064,8 @@ const RootStackManager = React.memo(() => {
         setContainers,
         filters,
         setFilters,
+        componentCallBacks,
+        setComponentCallBacks,
         onFrameResize,
         setOnFrameResize,
         onFrameReposition,
