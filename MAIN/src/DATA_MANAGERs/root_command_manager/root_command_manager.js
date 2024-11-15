@@ -100,10 +100,10 @@ const RootCommandManager = React.memo(({ children }) => {
   const [onDropItem, setOnDropItem] = useState(null);
   const [onDragPosition, setOnDragPosition] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    console.log("onDragItem", onDragItem);
-    console.log("onDropItem", onDropItem);
-  }, [onDragItem, onDropItem]);
+  // useEffect(() => {
+  //   console.log("onDragItem", onDragItem);
+  //   console.log("onDropItem", onDropItem);
+  // }, [onDragItem, onDropItem]);
 
   const item_on_drag = useCallback((event, on_drag_item) => {
     if (event) {
