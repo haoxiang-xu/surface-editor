@@ -855,7 +855,7 @@ const FileSelectionListContainer = ({}) => {
   /* { drag and drop } ============================================================ */
 
   useEffect(() => {
-    if (mode.includes("vertical")) {
+    if (mode === "vertical_mode") {
       setContainerStyle({
         width: height - 32,
         transform: "rotate(90deg)",
@@ -995,9 +995,16 @@ const MonacoEditor = ({
   useEffect(() => {
     setComponentCallBack({
       to_delete: () => {
+        // for (let path in monacoCallbacks) {
+        //   if (monacoCallbacks[path]?.callback_to_delete !== undefined) {
+        //     monacoCallbacks[path].callback_to_delete();
+        //   }
+        // }
+      },
+      to_append: () => {
         for (let path in monacoCallbacks) {
-          if (monacoCallbacks[path]?.callback_to_delete !== undefined) {
-            monacoCallbacks[path].callback_to_delete();
+          if (monacoCallbacks[path]?.callback_to_load !== undefined) {
+            monacoCallbacks[path].callback_to_append();
           }
         }
       },
@@ -1064,7 +1071,7 @@ const MonacoEditor = ({
               boxSizing: "border-box",
               borderRadius: 5,
               // boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
-              opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
+              opacity: mode === "horizontal_stack_vertical_mode" ? 0 : 1,
             }}
             onDragStart={(e) => {
               e.stopPropagation();

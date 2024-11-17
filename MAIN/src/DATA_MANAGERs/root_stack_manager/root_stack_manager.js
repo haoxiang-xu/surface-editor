@@ -2045,8 +2045,8 @@ const RootStackManager = React.memo(() => {
       setStackStructure((prev) => {
         const adjusted_stack_structure = { ...prev };
         const parent_id = adjusted_stack_structure[id].parent_id;
-        const sub_items = adjusted_stack_structure[parent_id].sub_items;
-        const index = sub_items?.indexOf(id);
+        const sub_items = adjusted_stack_structure[parent_id]?.sub_items;
+        const index = sub_items.indexOf(id);
         if (index === -1) {
           return adjusted_stack_structure;
         }
@@ -2121,6 +2121,14 @@ const RootStackManager = React.memo(() => {
             new_vertical_stack_id;
           adjusted_stack_structure[to_append_id].parent_id =
             new_vertical_stack_id;
+          setContainers((prev) => {
+            const adjusted_containers = { ...prev };
+            adjusted_containers[new_vertical_stack_id] = {
+              position: { x: 0, y: 0 },
+              size: { width: 0, height: 100 },
+            };
+            return adjusted_containers;
+          });
         } else if (
           parent_stack_type === "vertical_stack" &&
           horizontal_append.includes(append_position)
@@ -2153,13 +2161,32 @@ const RootStackManager = React.memo(() => {
             new_vertical_stack_id;
           adjusted_stack_structure[to_append_id].parent_id =
             new_vertical_stack_id;
+          setContainers((prev) => {
+            const adjusted_containers = { ...prev };
+            adjusted_containers[new_horizontal_stack_id] = {
+              position: { x: 0, y: 0 },
+              size: { width: 100, height: 0 },
+            };
+            return adjusted_containers;
+          });
         }
-        // console.log("adjusted_stack_structure", adjusted_stack_structure);
         return adjusted_stack_structure;
       });
+      if (
+        componentCallBacks[to_append_id] &&
+        componentCallBacks[to_append_id].to_load
+      ) {
+        componentCallBacks[to_append_id].to_append();
+      }
+      if (
+        componentCallBacks[be_appended_id] &&
+        componentCallBacks[be_appended_id].to_load
+      ) {
+        componentCallBacks[be_appended_id].to_append();
+      }
       setRerendered((prev) => prev + 1);
     },
-    [stackStructure]
+    [stackStructure, containers, componentCallBacks]
   );
 
   useEffect(() => {
