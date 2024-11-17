@@ -1271,7 +1271,7 @@ const RootStackManager = React.memo(() => {
   }, [isOnTitleBar]);
 
   const [stackStructure, setStackStructure] = useState(
-    TESTING_STACK_STRUCTURE_3
+    TESTING_STACK_STRUCTURE_1
   );
   const [rootContainer, setRootContainer] = useState(null);
 
@@ -1280,10 +1280,10 @@ const RootStackManager = React.memo(() => {
 
   const [componentCallBacks, setComponentCallBacks] = useState({});
 
-  // useEffect(() => {
-  //   console.log("stackStructure", stackStructure);
-  //   console.log("containers", containers);
-  // }, [stackStructure, containers]);
+  useEffect(() => {
+    console.log("stackStructure", stackStructure);
+    console.log("containers", containers);
+  }, [stackStructure, containers]);
 
   const [rerendered, setRerendered] = useState(0);
 
@@ -2125,7 +2125,7 @@ const RootStackManager = React.memo(() => {
             const adjusted_containers = { ...prev };
             adjusted_containers[new_vertical_stack_id] = {
               position: { x: 0, y: 0 },
-              size: { width: 0, height: 100 },
+              size: { width: 0, height: 0 },
             };
             return adjusted_containers;
           });
@@ -2165,7 +2165,7 @@ const RootStackManager = React.memo(() => {
             const adjusted_containers = { ...prev };
             adjusted_containers[new_horizontal_stack_id] = {
               position: { x: 0, y: 0 },
-              size: { width: 100, height: 0 },
+              size: { width: 0, height: 0 },
             };
             return adjusted_containers;
           });
@@ -2185,6 +2185,9 @@ const RootStackManager = React.memo(() => {
         componentCallBacks[be_appended_id].to_append();
       }
       setRerendered((prev) => prev + 1);
+      setTimeout(() => {
+        setRerendered((prev) => prev + 1);
+      }, 128);
     },
     [stackStructure, containers, componentCallBacks]
   );
