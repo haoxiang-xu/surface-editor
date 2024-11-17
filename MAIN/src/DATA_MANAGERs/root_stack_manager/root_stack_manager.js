@@ -740,6 +740,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     generate_vertical_sub_item_on_drag_filter,
     clean_filter,
     delete_stack_frame,
+    append_stack_frame,
     componentCallBacks,
   } = useContext(RootStackContexts);
   const { R, G, B, on_hover, on_click, customize_offset } =
@@ -767,7 +768,9 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     height: "calc(100% - 4px)",
   });
   const callback_to_append = useCallback(
-    (onDragItem, onDropItem) => {},
+    (onDragItem, onDropItem) => {
+      append_stack_frame(onDragItem.source, id, onDropItem.content.append_to);
+    },
     [componentCallBacks, id]
   );
   const callback_to_delete = useCallback(
@@ -837,7 +840,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         content: {
           type: "stack_frame",
           position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
-          append_to: "top",
+          append_to: "bottom",
         },
         accepts: ["stack_frame"],
         callback_to_append: callback_to_append,
@@ -858,7 +861,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         content: {
           type: "stack_frame",
           position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
-          append_to: "bottom",
+          append_to: "top",
         },
         accepts: ["stack_frame"],
         callback_to_append: callback_to_append,
@@ -1277,10 +1280,10 @@ const RootStackManager = React.memo(() => {
 
   const [componentCallBacks, setComponentCallBacks] = useState({});
 
-  // useEffect(() => {
-  //   console.log("stackStructure", stackStructure);
-  //   console.log("containers", containers);
-  // }, [stackStructure, containers]);
+  useEffect(() => {
+    console.log("stackStructure", stackStructure);
+    console.log("containers", containers);
+  }, [stackStructure, containers]);
 
   const [rerendered, setRerendered] = useState(0);
 
@@ -2003,6 +2006,23 @@ const RootStackManager = React.memo(() => {
     [stackStructure, containers, filters]
   );
 
+  const generate_next_id_for_type = useCallback(
+    (type) => {
+      const keys = Object.keys(stackStructure);
+      let max = 0;
+      keys.forEach((key) => {
+        if (stackStructure[key].type === type) {
+          const id = parseInt(key.split("_")[1]);
+          if (id > max) {
+            max = id;
+          }
+        }
+      });
+      return `${type}_${max + 1}`;
+    },
+    [stackStructure]
+  );
+
   const clean_filter = useCallback(() => {
     setFilters({});
   }, [filters]);
@@ -2026,13 +2046,118 @@ const RootStackManager = React.memo(() => {
         const adjusted_stack_structure = { ...prev };
         const parent_id = adjusted_stack_structure[id].parent_id;
         const sub_items = adjusted_stack_structure[parent_id].sub_items;
-        const index = sub_items.indexOf(id);
+        const index = sub_items?.indexOf(id);
         if (index === -1) {
           return adjusted_stack_structure;
         }
         adjusted_stack_structure[parent_id].sub_items.splice(index, 1);
         return adjusted_stack_structure;
       });
+    },
+    [stackStructure]
+  );
+  const append_stack_frame = useCallback(
+    (be_appended_id, to_append_id, append_position) => {
+      setStackStructure((prev) => {
+        const horizontal_append = ["left", "right"];
+        const vertical_append = ["top", "bottom"];
+
+        const adjusted_stack_structure = { ...prev };
+        const parent_stack_id =
+          adjusted_stack_structure[to_append_id].parent_id;
+        const parent_stack_type =
+          adjusted_stack_structure[parent_stack_id].type;
+        if (
+          parent_stack_type === "horizontal_stack" &&
+          horizontal_append.includes(append_position)
+        ) {
+          adjusted_stack_structure[parent_stack_id].sub_items.splice(
+            adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+              to_append_id
+            ) + (append_position === "left" ? 0 : 1),
+            0,
+            be_appended_id
+          );
+        } else if (
+          parent_stack_type === "vertical_stack" &&
+          vertical_append.includes(append_position)
+        ) {
+          adjusted_stack_structure[parent_stack_id].sub_items.splice(
+            adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+              to_append_id
+            ) + (append_position === "top" ? 0 : 1),
+            0,
+            be_appended_id
+          );
+        } else if (
+          parent_stack_type === "horizontal_stack" &&
+          vertical_append.includes(append_position)
+        ) {
+          const new_vertical_stack_id =
+            generate_next_id_for_type("vertical_stack");
+          if (append_position === "top") {
+            adjusted_stack_structure[new_vertical_stack_id] = {
+              type: "vertical_stack",
+              parent_id: parent_stack_id,
+              sub_items: [be_appended_id, to_append_id],
+            };
+          } else {
+            adjusted_stack_structure[new_vertical_stack_id] = {
+              type: "vertical_stack",
+              parent_id: parent_stack_id,
+              sub_items: [to_append_id, be_appended_id],
+            };
+          }
+          const index =
+            adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+              to_append_id
+            );
+          if (index === -1) {
+            return adjusted_stack_structure;
+          }
+          adjusted_stack_structure[parent_stack_id].sub_items[index] =
+            new_vertical_stack_id;
+          adjusted_stack_structure[be_appended_id].parent_id =
+            new_vertical_stack_id;
+          adjusted_stack_structure[to_append_id].parent_id =
+            new_vertical_stack_id;
+        } else if (
+          parent_stack_type === "vertical_stack" &&
+          horizontal_append.includes(append_position)
+        ) {
+          const new_horizontal_stack_id =
+            generate_next_id_for_type("horizontal_stack");
+          if (append_position === "left") {
+            adjusted_stack_structure[new_horizontal_stack_id] = {
+              type: "horizontal_stack",
+              parent_id: parent_stack_id,
+              sub_items: [be_appended_id, to_append_id],
+            };
+          } else {
+            adjusted_stack_structure[new_horizontal_stack_id] = {
+              type: "horizontal_stack",
+              parent_id: parent_stack_id,
+              sub_items: [to_append_id, be_appended_id],
+            };
+          }
+          const index =
+            adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+              to_append_id
+            );
+          if (index === -1) {
+            return adjusted_stack_structure;
+          }
+          adjusted_stack_structure[parent_stack_id].sub_items[index] =
+            new_horizontal_stack_id;
+          adjusted_stack_structure[be_appended_id].parent_id =
+            new_vertical_stack_id;
+          adjusted_stack_structure[to_append_id].parent_id =
+            new_vertical_stack_id;
+        }
+        // console.log("adjusted_stack_structure", adjusted_stack_structure);
+        return adjusted_stack_structure;
+      });
+      setRerendered((prev) => prev + 1);
     },
     [stackStructure]
   );
@@ -2107,6 +2232,7 @@ const RootStackManager = React.memo(() => {
         apply_filter,
         clean_filter,
         delete_stack_frame,
+        append_stack_frame,
       }}
     >
       {memorized_root_stack}
