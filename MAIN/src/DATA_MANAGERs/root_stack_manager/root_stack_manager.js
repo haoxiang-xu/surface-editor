@@ -258,13 +258,7 @@ const BOTTOM = default_component_padding;
 const LEFT = default_component_padding;
 
 const StackComponentContainer = React.memo(
-  ({
-    id,
-    component_type,
-    stack_structure_type,
-    width,
-    height,
-  }) => {
+  ({ id, component_type, stack_structure_type, width, height }) => {
     /* Children Item Drag and Drop  ============================================================================================================================================ */
     const [draggedItem, setDraggedItem] = useState(null);
     const [draggedOverItem, setDraggedOverItem] = useState(null);
@@ -399,7 +393,8 @@ const StackComponentContainer = React.memo(
     /* { drag and drop } ---------------------------------------------------------------------------------------- */
 
     /* { component callback } ----------------------------------------------------------------------------------- */
-    const { componentCallBacks, setComponentCallBacks } = useContext(RootStackContexts);
+    const { componentCallBacks, setComponentCallBacks } =
+      useContext(RootStackContexts);
     const setComponentCallBack = useCallback(
       (content) => {
         setComponentCallBacks((prev) => {
@@ -811,15 +806,6 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
           const newX = event.clientX - rect.left;
           const newY = event.clientY - rect.top;
           if (prevPosition.x !== newX || prevPosition.y !== newY) {
-            item_on_drag_over(event, {
-              source: id,
-              content: {
-                type: "stack_frame",
-                position: { x: newX, y: newY },
-              },
-              accepts: ["stack_frame"],
-              callback_to_append: callback_to_append,
-            });
             return { x: newX, y: newY };
           }
           return prevPosition;
@@ -846,6 +832,16 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         width: "calc(100% - 4px)",
         height: "calc(50% - 2px)",
       });
+      item_on_drag_over(null, {
+        source: id,
+        content: {
+          type: "stack_frame",
+          position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
+          append_to: "top",
+        },
+        accepts: ["stack_frame"],
+        callback_to_append: callback_to_append,
+      });
     } else if (
       height > 2 * MIN &&
       onDragOverPosition.y < (height / width) * onDragOverPosition.x &&
@@ -856,6 +852,16 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         left: 2,
         width: "calc(100% - 4px)",
         height: "calc(50% - 2px)",
+      });
+      item_on_drag_over(null, {
+        source: id,
+        content: {
+          type: "stack_frame",
+          position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
+          append_to: "bottom",
+        },
+        accepts: ["stack_frame"],
+        callback_to_append: callback_to_append,
       });
     } else if (
       width > 2 * MIN &&
@@ -868,6 +874,16 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         width: "calc(50% - 2px)",
         height: "calc(100% - 4px)",
       });
+      item_on_drag_over(null, {
+        source: id,
+        content: {
+          type: "stack_frame",
+          position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
+          append_to: "left",
+        },
+        accepts: ["stack_frame"],
+        callback_to_append: callback_to_append,
+      });
     } else if (
       width > 2 * MIN &&
       onDragOverPosition.y < (height / width) * onDragOverPosition.x &&
@@ -878,6 +894,16 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         left: "50%",
         width: "calc(50% - 4px)",
         height: "calc(100% - 2px)",
+      });
+      item_on_drag_over(null, {
+        source: id,
+        content: {
+          type: "stack_frame",
+          position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
+          append_to: "right",
+        },
+        accepts: ["stack_frame"],
+        callback_to_append: callback_to_append,
       });
     } else {
       setOverlayStyle({
