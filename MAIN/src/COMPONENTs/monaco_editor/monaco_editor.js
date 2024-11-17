@@ -855,7 +855,7 @@ const FileSelectionListContainer = ({}) => {
   /* { drag and drop } ============================================================ */
 
   useEffect(() => {
-    if (mode === "vertical_mode") {
+    if (mode.includes("vertical_mode")) {
       setContainerStyle({
         width: height - 32,
         transform: "rotate(90deg)",
