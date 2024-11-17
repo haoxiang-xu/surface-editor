@@ -995,11 +995,11 @@ const MonacoEditor = ({
   useEffect(() => {
     setComponentCallBack({
       to_delete: () => {
-        // for (let path in monacoCallbacks) {
-        //   if (monacoCallbacks[path]?.callback_to_delete !== undefined) {
-        //     monacoCallbacks[path].callback_to_delete();
-        //   }
-        // }
+        for (let path in monacoCallbacks) {
+          if (monacoCallbacks[path]?.callback_to_delete !== undefined) {
+            monacoCallbacks[path].callback_to_delete();
+          }
+        }
       },
     });
   }, [monacoCallbacks]);

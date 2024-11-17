@@ -1280,10 +1280,10 @@ const RootStackManager = React.memo(() => {
 
   const [componentCallBacks, setComponentCallBacks] = useState({});
 
-  useEffect(() => {
-    console.log("stackStructure", stackStructure);
-    console.log("containers", containers);
-  }, [stackStructure, containers]);
+  // useEffect(() => {
+  //   console.log("stackStructure", stackStructure);
+  //   console.log("containers", containers);
+  // }, [stackStructure, containers]);
 
   const [rerendered, setRerendered] = useState(0);
 
