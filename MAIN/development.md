@@ -70,21 +70,10 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ### STEP 3 ACCESS TO SYSTEM DATA AND FUNCTIONs (Optional) [`^`](#Initilize_your_component)
 
-### GLOBAL CONTEXTs & DATA MANAGERs:
+### GLOBAL CONTEXTs:
 
-- [`root_data_manager`](#root_data_manager) <span style="opacity: 0.64">Root Data Manager allows you to access, update, delete files under the repository that currently opened by this program.</span>
-
-  - [`dir`](#dir) <span style="opacity: 0.64">Opened Folder and all subfolder will store recusively inside this variable as one single JSON structure.</span>
-  - [`file`](#file) <span style="opacity: 0.64">You can access any file under opened root folder by passing relative path.</span>
-  - [`storage`](#storage) <span style="opacity: 0.64">storage allows you to store and reload your component data by the `id` or `type`, but different with `data` which is just a local data storage. This variable allows you to access all component data by their id. You can see this</span> [`SAMPLE 000_006`](#000_006) <span style="opacity: 0.64">to have a basic picture of how this useState variable be formatted for `monaco_editor` component.</span>
-
-- [`root_command_manager`](#root_command_manager) (inorder to access this variable, you will need to get the premission from the user)
-
-  - [`cmd`](#cmd) <span style="opacity: 0.64">Basically this variable is acting like a communication channel across all component, Since the system is not running parallel, by using your component `id` for accessing the command, you will see a json stack, each is one command. See how each command is structured in this</span> [`SAMPLE 000_002`](#000_002)<span style="opacity: 0.64">.</span>
-  - [`context_menu`](#context_menu)
-  - [`drag and drop`](#drag_and_drop)
-
-- [`root_stack_manager`](#root_stack_manager)
+- `isDirLoaded` <span style="opacity: 0.64">To check if the dir is loaded or not, when this variable is `true`, it means the dir is loaded, and dir data are ready to be used.</span>
+- `read_dir_from_system()` <span style="opacity: 0.64">trigger this function to read the dir from the system, and it will update the `dir` and `isDirLoaded` variable.</span>
 
 <a id="Define_your_own_context_menu"></a>
 
@@ -133,7 +122,8 @@ Here is the project structure digram that shows how the data managers are struct
 #### [dir] <a id="dir"></a>
 
 - `dir` & `setDir` <span style="background-color: red; color: black">Forbiden to update</span>
-- `isDirLoaded` & `setIsDirLoaded`
+- `isDirLoaded` & `setIsDirLoaded` <span style="background-color: red; color: black">Forbiden to update</span>
+- `read_dir_from_system()`
 - `update_path_under_dir`
 - `remove_path_under_dir`
 - `rename_file_under_dir`
@@ -183,7 +173,7 @@ Here is the project structure digram that shows how the data managers are struct
 
 ### ROOT_STACK_MANAGER <a id="root_stack_manager"></a>
 
-#### [stackStructure] <a id="stackStructure"></a>
+#### [stack structure] <a id="stackStructure"></a>
 
 - `stackStructure` & `setStackStructure` <span style="background-color: red; color: black">Forbiden to update</span>
 - `containers` & `setContainers` <span style="background-color: red; color: black">Forbiden to update</span>
@@ -203,7 +193,7 @@ There are various built-in components that you can use to build your own customi
 
 ## [ Variable Formating Guide ] [$\uparrow$](#top)
 
-#### [ variable naming rules ]
+### [ variable naming rules ]
 
 - `UpperCaseSplitVariables` -> <span style="opacity: 0.64">Component Name & useContext() variables</span>
 - `lowerCaseSplitVariables` -> <span style="opacity: 0.64">useState() variables</span>
