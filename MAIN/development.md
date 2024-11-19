@@ -2,20 +2,21 @@
 
 # <span style="font-size: 32px;">Development Guide</span>
 
-## Table of Contents
+## [ Table of Contents ]
 
 - [Customized Componet Implementation](#Customized_Componet_Implementation)
   1. [Initilize your component](#Initilize_your_component)
   2. [Handle component parameters](#Handle_component_parameters)
   3. [Access to system data and functions (Optional)](#Access_to_system_data_and_functions)
   4. [Define your own context menu (Optional)](#Define_your_own_context_menu)
-- [Data Manager Variables and Functions](#Data_manager_variables_and_functions)
+- [Data Managers](#Data_managers)
+- [Built-in Components](#Built-in_Components)
 - [Variable Formating Guide](#Variable_formating_guide)
   <a id="Customized_Componet_Implementation"></a>
 
 <a id="Initilize_your_component"></a>
 
-## Customized Componet Implementation [`^`](#top)
+## [ Customized Componet Implementation ] [$\uparrow$](#top)
 
 ### STEP 1 COMPONENT INITILIZATION [`^`](#Initilize_your_component)
 
@@ -53,16 +54,17 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
   - <span>"vertical*space*/\_vertical_mode"</sapn>
 
-- `command` & `setCommand` & `command_executed()` (TYPE: List) <span style="opacity: 0.64">To receive commands from outside for example the `context_menu` or other kind of `component` you need to keep listening on value that is storing inside `command`, it will store the oldest command that is pending for this `componet` to be execute. You should write your own logic to handle that command and after the command is executed, you should empty the `command` variable like this `setCommand([]);` or just call `command_executed()` so that a new pending command will be set into this variable.</span>
+- `command` & `setCommand` & `load_contextMenu()` & `command_executed()` (TYPE: List) <span style="opacity: 0.64">To receive commands from outside for example the `context_menu` or other kind of `component` you need to keep listening on value that is storing inside `command`, it will store the oldest command that is pending for this `componet` to be execute. You should write your own logic to handle that command and after the command is executed, you should empty the `command` variable like this `setCommand([]);` or just call `command_executed()` so that a new pending command will be set into this variable.</span>
 
-- `load_contextMenu()`
+  - <span style="opacity: 0.64">`load_contextMenu()` [`SAMPLE` $\downarrow$](<#load_contextMenu()>)</span>
 
 - `privateData` & `setPrivateData` (TYPE: JSON) <span style="opacity: 0.64">This variable is used to store the data that is only used by this component, and it will be set by the `root_stack_manager` component, so you don't need to worry about this variable. (stored using ID)</span>
 
 - `publicData` & `setPublicData` (TYPE: JSON) <span style="opacity: 0.64">This variable is used to store the data that is shared by all components, and it will be set by the `root_stack_manager` component, so you don't need to worry about this variable. (stored using Type)</span>
 
 - `item_on_drag()` & `item_on_drag_over()` & `item_on_drop()` <span style="opacity: 0.64">Set of functions that will be called when the item is on drag, on drag over and on drop.
-  - <span style="opacity: 0.64">`item_on_drag()` [`SAMPLE ->`](#item_on_drag())</span>
+  - <span style="opacity: 0.64">`item_on_drag()` [`SAMPLE` $\downarrow$](<#item_on_drag()>)</span>
+  - <span style="opacity: 0.64">`item_on_drag_over()` [`SAMPLE` $\downarrow$](<#item_on_drag_over()>)</span>
 
 <a id="Access_to_system_data_and_functions"></a>
 
@@ -88,7 +90,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ### STEP 4 DEFINE CUSTOMIZED CONTEXT MENU (Optional) [`^`](#Initilize_your_component)
 
-#### STEP 4.1 Declare Context Menu Structure 
+#### STEP 4.1 Declare Context Menu Structure
 
 <span style="opacity: 0.64">You can see this</span> [`SAMPLE 000_007`](#000_007) <span style="opacity: 0.64">to get a basic understand of how to declare a conext menu structure. </span>
 
@@ -102,15 +104,35 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 ### STEP 6 DONE [`^`](#Initilize_your_component)
 
-<a id="Data_manager_variables_and_functions"></a>
+<a id="Data_managers"></a>
 
-## [ Data Manager Variables and Functions ] [`^`](#top)
+## [ Data Managers ] [$\uparrow$](#top)
+
+This system is wrapped by several data managers level by level, and you can access them by using `useContext()` hook. Below is the list of all data managers that you can access.
+
+Here is the project structure digram that shows how the data managers are structured and how your customized components are wrapped by them.
+
+```
+  ROOT
+  └── ROOT_CONFIG_MANAGER
+      └── ROOT_EVENT_LISTENER
+          └── ROOT_DATA_MANAGER
+              └── ROOT_COMMAND_MANAGER
+                  └── ROOT_STACK_MANAGER
+                      └── CUSTOMIZED_COMPONENT
+```
+
+### ROOT_EVENT_LISTENER <a id="root_event_listener"></a>
+
+- `pressedKeys` & `setPressedKeys` <span style="background-color: red; color: black">Forbiden to update</span>
+- `mouseActive` & `setMouseActive` <span style="background-color: red; color: black">Forbiden to update</span>
+- `mousePosition` & `setMousePosition` <span style="background-color: red; color: black">Forbiden to update</span>
 
 ### ROOT_DATA_MANAGER <a id="root_data_manager"></a>
 
 #### [dir] <a id="dir"></a>
 
-- `dir`
+- `dir` & `setDir` <span style="background-color: red; color: black">Forbiden to update</span>
 - `isDirLoaded` & `setIsDirLoaded`
 - `update_path_under_dir`
 - `remove_path_under_dir`
@@ -127,7 +149,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 #### [file] <a id="file"></a>
 
-- `file`
+- `file` & `setFile` <span style="background-color: red; color: black">Forbiden to update</span>
 - `update_file_content_by_path`
 - `access_file_name_by_path_in_file`
 - `access_file_content_by_path`
@@ -135,6 +157,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 #### [storage] <a id="storage"></a>
 
+- `storage` & `setStorage` <span style="background-color: red; color: black">Forbiden to update</span>
 - `access_storage_by_id`
 - `update_storage_by_id`
 - `remove_storage_by_id`
@@ -143,7 +166,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 #### [cmd] <a id="cmd"></a>
 
-- `cmd`
+- `cmd` & `setCmd` <span style="background-color: red; color: black">Forbiden to update</span>
 - `push_command_by_id()`
 - `pop_command_by_id()`
 
@@ -154,17 +177,35 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 
 #### [drag and drop] <a id="drag_and_drop"></a>
 
-- `item_on_drag()` [`SAMPLE ->`](#item_on_drag())
-- `item_on_drag_over()` [`SAMPLE ->`](#item_on_drag_over())
+- `item_on_drag()` [`SAMPLE` $\downarrow$](<#item_on_drag()>)
+- `item_on_drag_over()` [`SAMPLE` $\downarrow$](<#item_on_drag_over()>)
 - `item_on_drop()`
+
+### ROOT_STACK_MANAGER <a id="root_stack_manager"></a>
+
+#### [stackStructure] <a id="stackStructure"></a>
+
+- `stackStructure` & `setStackStructure` <span style="background-color: red; color: black">Forbiden to update</span>
+- `containers` & `setContainers` <span style="background-color: red; color: black">Forbiden to update</span>
+- `filters` & `setFilters` <span style="background-color: red; color: black">Forbiden to update</span>
+- `componentCallbacks` & `setComponentCallbacks`
 
 <a id="Variable_formating_guide"></a>
 
-## [ Variable Formating Guide ]
+<a id="Built-in_Components"></a>
+
+## [ Built-in Components ] [$\uparrow$](#top)
+
+There are various built-in components that you can use to build your own customized component. They might be called by `Data_Manager`s in some cases, but you still can use them in your own component. Below is the list of all built-in components that you can use. The benefit of using these components includes:
+
+- <span style="opacity: 0.64">You don't need to worry about the styling of the component, since the default styling of this component will be the same as the system, and dynamicallly change based on the system theme.</span>
+- <span style="opacity: 0.64">All built-in components are tested, optimized and work well with the system and other components.</span>
+
+## [ Variable Formating Guide ] [$\uparrow$](#top)
 
 #### [ variable naming rules ]
 
-- `UpperCaseSplitVariables` -> <span style="opacity: 0.64">useContext() variables</span>
+- `UpperCaseSplitVariables` -> <span style="opacity: 0.64">Component Name & useContext() variables</span>
 - `lowerCaseSplitVariables` -> <span style="opacity: 0.64">useState() variables</span>
 - `under_score_split_variables` -> <span style="opacity: 0.64">folders, files, json keys and functions</span>
 
@@ -308,7 +349,9 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
 - `height` <span style="opacity: 0.64">(Optional) A button component default height will be 28, and br componet default height will be 8.</span>
 - `width` <span style="opacity: 0.64">(Optional) `context_menu` default width is 220.</span>
 
-#### <span style="font-size: 20px">`item_on_drag()` [`^`](#top)</span> <a id="item_on_drag()"></a>
+<a id="item_on_drag()"></a>
+
+#### <span style="font-size: 20px">`item_on_drag()` [$\uparrow$](#top)</span>
 
 - `item_on_drag()` should be called when desired item is on drag, below is a sample code to show how to call this function.
   ```jsx
@@ -328,7 +371,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   ```
 - below is how you should call the `item_on_drag()` function inside your component.
   ```jsx
-  item_on_drag(e, on_drag_item)
+  item_on_drag(e, on_drag_item);
   ```
 - the `on_drag_item` should be a json object with the following structure:
   ```jsx
@@ -341,7 +384,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
       },
       "callback_to_delete": () => {}
     }
-    ```
+  ```
   - `source` (TYPE: String) <span style="opacity: 0.64"> This variable is used to identify the source of the drag item, and it should be unique. And it will be provided as prop `id` for your component</span>
   - `ghost_image` optional (TYPE: String) <span style="opacity: 0.64"> This variable is used to display the image when the item is on drag, it should be a url of the image, a customized `tag` or customized component</span>
   - `content` (TYPE: JSON) <span style="opacity: 0.64"> This variable is used to store the data that you want to pass to the target component, and it should be a json object, the only required element inside of this JSON is type</span>
@@ -376,7 +419,11 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
     },
   });
   ```
-#### <span style="font-size: 20px">`item_on_drag_over()` [`^`](#top)</span> <a id="item_on_drag_over()"></a> 
+
+<a id="item_on_drag_over()"></a>
+
+#### <span style="font-size: 20px">`item_on_drag_over()` [$\uparrow$](#top)</span>
+
 - `item_on_drag_over()` should be called when desired item is on drag over, below is a sample code to show how to call this function.
   ```jsx
   <component
@@ -395,7 +442,7 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
   ```
 - below is how you should call the `item_on_drag_over()` function inside your component.
   ```jsx
-  item_on_drag_over(e, on_drag_over_item)
+  item_on_drag_over(e, on_drag_over_item);
   ```
 - the `on_drag_over_item` should be a json object with the following structure:
   ```jsx
@@ -460,4 +507,41 @@ ADD YOUR COMPONENT TO `src/CONSTs/stackComponentConfig.js`
       setOnDragOverMonacoIndex(-1);
     },
   });
+  ```
+
+<a id="load_contextMenu()"></a>
+
+#### <span style="font-size: 20px">`load_contextMenu()` [$\uparrow$](#top)</span>
+
+- `load_contextMenu()` should be called when you want to load a context menu, below is a sample code to show how to call this function.
+  ```jsx
+  load_contextMenu(e, contextStructure);
+  ```
+  - `e` (TYPE: Event) <span style="opacity: 0.64"> This variable is the event that you want to load the context menu, and it should be a event object which is necessary for the system to know where to display the context menu</span>
+  - `contextStructure` (TYPE: JSON) <span style="opacity: 0.64"> This variable is the structure of the context menu, and it should be a json object which is necessary for the system to know how to render the context menu</span>
+- here is a sample `contextStructure` that is actually used in this project:
+  ```json
+  [
+    root: {
+      type: 'root',
+      sub_items: ['copy', 'component'],
+    },
+    copy: {
+      type: 'button'
+      id: 'copy',
+      clickable: true,
+      height: 100,
+      width: 512,
+      label: 'Copy',
+      short_cut_label: `Ctrl+C`
+      icon: 'url',
+      quick_view_background: `url`,
+      sub_items: ['id1', 'id2'],
+    },
+    component: {
+      type: `component`,
+      id: 'component',
+      path: `path_to_that_component`,
+    }
+  ]
   ```

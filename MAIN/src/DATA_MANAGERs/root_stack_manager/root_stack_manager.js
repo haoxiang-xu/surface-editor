@@ -2045,7 +2045,7 @@ const RootStackManager = React.memo(() => {
       setStackStructure((prev) => {
         const adjusted_stack_structure = { ...prev };
         const parent_id = adjusted_stack_structure[id].parent_id;
-        const sub_items = adjusted_stack_structure[parent_id]?.sub_items;
+        const sub_items = adjusted_stack_structure[parent_id].sub_items;
         const index = sub_items.indexOf(id);
         if (index === -1) {
           return adjusted_stack_structure;
