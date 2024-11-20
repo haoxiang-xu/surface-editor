@@ -25,6 +25,12 @@ const RootConfigManager = ({ children }) => {
   const [B, setB] = useState(24);
   const [A, setA] = useState(1);
 
+  const [palette, setPalette] = useState({
+    alert: { R: 255, G: 0, B: 0 },
+    accent: { R: 68, G: 124, B: 202 },
+    warning: { R: 255, G: 255, B: 0 },
+  });
+
   const is_light_color = (r, g, b) => {
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
     return brightness > 127;
@@ -66,6 +72,8 @@ const RootConfigManager = ({ children }) => {
         setB,
         A,
         setA,
+        palette,
+        setPalette,
         customize_offset,
         on_hover,
         on_click,

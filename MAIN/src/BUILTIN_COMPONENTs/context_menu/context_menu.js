@@ -50,7 +50,7 @@ const ContextItemButton = ({
   position_z,
   list_direction,
 }) => {
-  const { R, G, B, customize_offset } = useContext(RootConfigContexts);
+  const { R, G, B, palette, customize_offset } = useContext(RootConfigContexts);
   const {
     contextStructure,
     get_context_item_height,
@@ -94,14 +94,14 @@ const ContextItemButton = ({
   useEffect(() => {
     if (onClicked && contextStructure[unique_tag].clickable) {
       setStyle({
-        backgroundColor: customize_offset(R, G, B, 0.32, 0.96, 3.2),
+        backgroundColor: `rgba(${palette.accent.R}, ${palette.accent.G}, ${palette.accent.B}, 0.96)`,
         boxShadow: default_clickable_panel_styling.boxShadow.onClick,
         borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.onClick,
       });
     } else if (onHover && contextStructure[unique_tag].clickable) {
       setStyle({
-        backgroundColor: customize_offset(R, G, B, 0.32, 0.96, 1.6),
+        backgroundColor: `rgba(${palette.accent.R}, ${palette.accent.G}, ${palette.accent.B}, 0.64)`,
         boxShadow: default_clickable_panel_styling.boxShadow.onHover,
         borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.onHover,

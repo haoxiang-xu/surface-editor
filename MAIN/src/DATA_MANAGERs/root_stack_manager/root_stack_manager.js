@@ -1280,17 +1280,17 @@ const RootStackManager = React.memo(() => {
 
   const [componentCallBacks, setComponentCallBacks] = useState({});
 
-  useEffect(() => {
-    console.log("stackStructure", stackStructure);
-    console.log("containers", containers);
-  }, [stackStructure, containers]);
+  // useEffect(() => {
+  //   console.log("stackStructure", stackStructure);
+  //   console.log("containers", containers);
+  // }, [stackStructure, containers]);
 
   const [rerendered, setRerendered] = useState(0);
 
-  /* { State } ------ */
+  /* { State } -------------------------------------------------- */
   const [onFrameResize, setOnFrameResize] = useState(false);
   const [onFrameReposition, setOnFrameReposition] = useState(false);
-  /* { State } ------ */
+  /* { State } -------------------------------------------------- */
 
   const calculate_horizontal_intial_position_and_size = useCallback(
     (parent_container_id) => {
@@ -2043,8 +2043,12 @@ const RootStackManager = React.memo(() => {
   const delete_stack_frame = useCallback(
     (id) => {
       setStackStructure((prev) => {
+        console.log("delete_stack_frame", id);
         const adjusted_stack_structure = { ...prev };
         const parent_id = adjusted_stack_structure[id].parent_id;
+        if (!parent_id) {
+          return adjusted_stack_structure;
+        }
         const sub_items = adjusted_stack_structure[parent_id].sub_items;
         const index = sub_items.indexOf(id);
         if (index === -1) {
@@ -2174,13 +2178,13 @@ const RootStackManager = React.memo(() => {
       });
       if (
         componentCallBacks[to_append_id] &&
-        componentCallBacks[to_append_id].to_load
+        componentCallBacks[to_append_id].to_append
       ) {
         componentCallBacks[to_append_id].to_append();
       }
       if (
         componentCallBacks[be_appended_id] &&
-        componentCallBacks[be_appended_id].to_load
+        componentCallBacks[be_appended_id].to_append
       ) {
         componentCallBacks[be_appended_id].to_append();
       }
