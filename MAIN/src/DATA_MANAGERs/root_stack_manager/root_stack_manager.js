@@ -2042,140 +2042,134 @@ const RootStackManager = React.memo(() => {
 
   const delete_stack_frame = useCallback(
     (id) => {
-      setStackStructure((prev) => {
-        console.log("delete_stack_frame", id);
-        const adjusted_stack_structure = { ...prev };
-        const parent_id = adjusted_stack_structure[id].parent_id;
-        if (!parent_id) {
-          return adjusted_stack_structure;
-        }
-        const sub_items = adjusted_stack_structure[parent_id].sub_items;
-        const index = sub_items.indexOf(id);
-        if (index === -1) {
-          return adjusted_stack_structure;
-        }
-        adjusted_stack_structure[parent_id].sub_items.splice(index, 1);
+      const adjusted_stack_structure = { ...stackStructure };
+      const parent_id = adjusted_stack_structure[id].parent_id;
+      if (!parent_id) {
         return adjusted_stack_structure;
-      });
+      }
+      const sub_items = adjusted_stack_structure[parent_id].sub_items;
+      const index = sub_items.indexOf(id);
+      if (index === -1) {
+        return adjusted_stack_structure;
+      }
+      adjusted_stack_structure[parent_id].sub_items.splice(index, 1);
+      setStackStructure(adjusted_stack_structure);
     },
     [stackStructure]
   );
+
   const append_stack_frame = useCallback(
     (be_appended_id, to_append_id, append_position) => {
-      setStackStructure((prev) => {
-        const horizontal_append = ["left", "right"];
-        const vertical_append = ["top", "bottom"];
+      const horizontal_append = ["left", "right"];
+      const vertical_append = ["top", "bottom"];
 
-        const adjusted_stack_structure = { ...prev };
-        const parent_stack_id =
-          adjusted_stack_structure[to_append_id].parent_id;
-        const parent_stack_type =
-          adjusted_stack_structure[parent_stack_id].type;
-        if (
-          parent_stack_type === "horizontal_stack" &&
-          horizontal_append.includes(append_position)
-        ) {
-          adjusted_stack_structure[parent_stack_id].sub_items.splice(
-            adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
-              to_append_id
-            ) + (append_position === "left" ? 0 : 1),
-            0,
-            be_appended_id
-          );
-        } else if (
-          parent_stack_type === "vertical_stack" &&
-          vertical_append.includes(append_position)
-        ) {
-          adjusted_stack_structure[parent_stack_id].sub_items.splice(
-            adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
-              to_append_id
-            ) + (append_position === "top" ? 0 : 1),
-            0,
-            be_appended_id
-          );
-        } else if (
-          parent_stack_type === "horizontal_stack" &&
-          vertical_append.includes(append_position)
-        ) {
-          const new_vertical_stack_id =
-            generate_next_id_for_type("vertical_stack");
-          if (append_position === "top") {
-            adjusted_stack_structure[new_vertical_stack_id] = {
-              type: "vertical_stack",
-              parent_id: parent_stack_id,
-              sub_items: [be_appended_id, to_append_id],
-            };
-          } else {
-            adjusted_stack_structure[new_vertical_stack_id] = {
-              type: "vertical_stack",
-              parent_id: parent_stack_id,
-              sub_items: [to_append_id, be_appended_id],
-            };
-          }
-          const index =
-            adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
-              to_append_id
-            );
-          if (index === -1) {
-            return adjusted_stack_structure;
-          }
-          adjusted_stack_structure[parent_stack_id].sub_items[index] =
-            new_vertical_stack_id;
-          adjusted_stack_structure[be_appended_id].parent_id =
-            new_vertical_stack_id;
-          adjusted_stack_structure[to_append_id].parent_id =
-            new_vertical_stack_id;
-          setContainers((prev) => {
-            const adjusted_containers = { ...prev };
-            adjusted_containers[new_vertical_stack_id] = {
-              position: { x: 0, y: 0 },
-              size: { width: 0, height: 0 },
-            };
-            return adjusted_containers;
-          });
-        } else if (
-          parent_stack_type === "vertical_stack" &&
-          horizontal_append.includes(append_position)
-        ) {
-          const new_horizontal_stack_id =
-            generate_next_id_for_type("horizontal_stack");
-          if (append_position === "left") {
-            adjusted_stack_structure[new_horizontal_stack_id] = {
-              type: "horizontal_stack",
-              parent_id: parent_stack_id,
-              sub_items: [be_appended_id, to_append_id],
-            };
-          } else {
-            adjusted_stack_structure[new_horizontal_stack_id] = {
-              type: "horizontal_stack",
-              parent_id: parent_stack_id,
-              sub_items: [to_append_id, be_appended_id],
-            };
-          }
-          const index =
-            adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
-              to_append_id
-            );
-          if (index === -1) {
-            return adjusted_stack_structure;
-          }
-          adjusted_stack_structure[parent_stack_id].sub_items[index] =
-            new_horizontal_stack_id;
-          adjusted_stack_structure[be_appended_id].parent_id =
-            new_vertical_stack_id;
-          adjusted_stack_structure[to_append_id].parent_id =
-            new_vertical_stack_id;
-          setContainers((prev) => {
-            const adjusted_containers = { ...prev };
-            adjusted_containers[new_horizontal_stack_id] = {
-              position: { x: 0, y: 0 },
-              size: { width: 0, height: 0 },
-            };
-            return adjusted_containers;
-          });
+      const adjusted_stack_structure = { ...stackStructure };
+      const parent_stack_id = adjusted_stack_structure[to_append_id].parent_id;
+      const parent_stack_type = adjusted_stack_structure[parent_stack_id].type;
+      if (
+        parent_stack_type === "horizontal_stack" &&
+        horizontal_append.includes(append_position)
+      ) {
+        adjusted_stack_structure[parent_stack_id].sub_items.splice(
+          adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+            to_append_id
+          ) + (append_position === "left" ? 0 : 1),
+          0,
+          be_appended_id
+        );
+      } else if (
+        parent_stack_type === "vertical_stack" &&
+        vertical_append.includes(append_position)
+      ) {
+        adjusted_stack_structure[parent_stack_id].sub_items.splice(
+          adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+            to_append_id
+          ) + (append_position === "top" ? 0 : 1),
+          0,
+          be_appended_id
+        );
+      } else if (
+        parent_stack_type === "horizontal_stack" &&
+        vertical_append.includes(append_position)
+      ) {
+        const new_vertical_stack_id =
+          generate_next_id_for_type("vertical_stack");
+        if (append_position === "top") {
+          adjusted_stack_structure[new_vertical_stack_id] = {
+            type: "vertical_stack",
+            parent_id: parent_stack_id,
+            sub_items: [be_appended_id, to_append_id],
+          };
+        } else {
+          adjusted_stack_structure[new_vertical_stack_id] = {
+            type: "vertical_stack",
+            parent_id: parent_stack_id,
+            sub_items: [to_append_id, be_appended_id],
+          };
         }
-        return adjusted_stack_structure;
-      });
+        const index =
+          adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+            to_append_id
+          );
+        if (index === -1) {
+          return adjusted_stack_structure;
+        }
+        adjusted_stack_structure[parent_stack_id].sub_items[index] =
+          new_vertical_stack_id;
+        adjusted_stack_structure[be_appended_id].parent_id =
+          new_vertical_stack_id;
+        adjusted_stack_structure[to_append_id].parent_id =
+          new_vertical_stack_id;
+        setContainers((prev) => {
+          const adjusted_containers = { ...prev };
+          adjusted_containers[new_vertical_stack_id] = {
+            position: { x: 0, y: 0 },
+            size: { width: 0, height: 0 },
+          };
+          return adjusted_containers;
+        });
+      } else if (
+        parent_stack_type === "vertical_stack" &&
+        horizontal_append.includes(append_position)
+      ) {
+        const new_horizontal_stack_id =
+          generate_next_id_for_type("horizontal_stack");
+        if (append_position === "left") {
+          adjusted_stack_structure[new_horizontal_stack_id] = {
+            type: "horizontal_stack",
+            parent_id: parent_stack_id,
+            sub_items: [be_appended_id, to_append_id],
+          };
+        } else {
+          adjusted_stack_structure[new_horizontal_stack_id] = {
+            type: "horizontal_stack",
+            parent_id: parent_stack_id,
+            sub_items: [to_append_id, be_appended_id],
+          };
+        }
+        const index =
+          adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+            to_append_id
+          );
+        if (index === -1) {
+          return adjusted_stack_structure;
+        }
+        adjusted_stack_structure[parent_stack_id].sub_items[index] =
+          new_horizontal_stack_id;
+        adjusted_stack_structure[be_appended_id].parent_id =
+          new_vertical_stack_id;
+        adjusted_stack_structure[to_append_id].parent_id =
+          new_vertical_stack_id;
+        setContainers((prev) => {
+          const adjusted_containers = { ...prev };
+          adjusted_containers[new_horizontal_stack_id] = {
+            position: { x: 0, y: 0 },
+            size: { width: 0, height: 0 },
+          };
+          return adjusted_containers;
+        });
+      }
+      setStackStructure(adjusted_stack_structure);
       if (
         componentCallBacks[to_append_id] &&
         componentCallBacks[to_append_id].to_append
