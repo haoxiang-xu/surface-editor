@@ -1296,7 +1296,7 @@ const RootStackManager = React.memo(() => {
   }, [isOnTitleBar]);
 
   const [stackStructure, setStackStructure] = useState(
-    TESTING_STACK_STRUCTURE_4
+    TESTING_STACK_STRUCTURE_3
   );
   const [rootContainer, setRootContainer] = useState(null);
 
