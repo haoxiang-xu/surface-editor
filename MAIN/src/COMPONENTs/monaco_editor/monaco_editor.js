@@ -546,7 +546,7 @@ const FileSelectionListItem = ({
       backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
         B + tagColorOffset
       }, 1 )`,
-      verticalMode: mode.includes("vertical"),
+      verticalMode: mode === "horizontal_stack_vertical_mode" ? true : false,
     };
   }, [tagLeft, tagColorOffset, mode, index, onSelectedMonacoIndex]);
 
@@ -855,7 +855,7 @@ const FileSelectionListContainer = ({}) => {
   /* { drag and drop } ============================================================ */
 
   useEffect(() => {
-    if (mode.includes("vertical_mode")) {
+    if (mode === "horizontal_stack_vertical_mode") {
       setContainerStyle({
         width: height - 32,
         transform: "rotate(90deg)",

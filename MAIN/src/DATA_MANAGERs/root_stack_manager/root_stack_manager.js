@@ -1307,9 +1307,9 @@ const RootStackManager = React.memo(() => {
 
   const [rerendered, setRerendered] = useState(0);
 
-  useEffect(() => {
-    console.log(containers);
-  }, [containers]);
+  // useEffect(() => {
+  //   console.log(containers);
+  // }, [containers]);
 
   /* { State } -------------------------------------------------- */
   const [onFrameResize, setOnFrameResize] = useState(false);
