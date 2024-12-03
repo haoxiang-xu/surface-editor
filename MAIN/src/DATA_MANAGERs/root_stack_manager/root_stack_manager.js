@@ -243,6 +243,31 @@ const TESTING_STACK_STRUCTURE_3 = {
     sub_items: [],
   },
 };
+const TESTING_STACK_STRUCTURE_4 = {
+  root: {
+    id: "root",
+    type: "horizontal_stack",
+    sub_items: ["test_0001", "test_0002", "test_0003"],
+  },
+  test_0001: {
+    id: "test_0001",
+    parent_id: "root",
+    type: "test",
+    sub_items: [],
+  },
+  test_0002: {
+    id: "test_0002",
+    parent_id: "root",
+    type: "test",
+    sub_items: [],
+  },
+  test_0003: {
+    id: "test_0003",
+    parent_id: "root",
+    type: "test",
+    sub_items: [],
+  },
+};
 
 const default_component_padding = 8;
 const default_component_border_radius = 8;
@@ -1271,7 +1296,7 @@ const RootStackManager = React.memo(() => {
   }, [isOnTitleBar]);
 
   const [stackStructure, setStackStructure] = useState(
-    TESTING_STACK_STRUCTURE_2
+    TESTING_STACK_STRUCTURE_4
   );
   const [rootContainer, setRootContainer] = useState(null);
 
@@ -1280,12 +1305,11 @@ const RootStackManager = React.memo(() => {
 
   const [componentCallBacks, setComponentCallBacks] = useState({});
 
-  // useEffect(() => {
-  //   console.log("stackStructure", stackStructure);
-  //   console.log("containers", containers);
-  // }, [stackStructure, containers]);
-
   const [rerendered, setRerendered] = useState(0);
+
+  useEffect(() => {
+    console.log(containers);
+  }, [containers]);
 
   /* { State } -------------------------------------------------- */
   const [onFrameResize, setOnFrameResize] = useState(false);
@@ -2163,11 +2187,12 @@ const RootStackManager = React.memo(() => {
   );
   const append_stack_frame = useCallback(
     (be_appended_id, to_append_id, append_position) => {
-      return;
+      // return;
       const horizontal_append = ["left", "right"];
       const vertical_append = ["top", "bottom"];
 
       const adjusted_stack_structure = { ...stackStructure };
+      const adjusted_containers = { ...containers };
       const parent_stack_id = adjusted_stack_structure[to_append_id].parent_id;
       const parent_stack_type = adjusted_stack_structure[parent_stack_id].type;
       if (
@@ -2198,6 +2223,17 @@ const RootStackManager = React.memo(() => {
       ) {
         const new_vertical_stack_id =
           generate_next_id_for_type("vertical_stack");
+        const on_appned_container = adjusted_containers[to_append_id];
+        adjusted_containers[new_vertical_stack_id] = {
+          position: {
+            x: on_appned_container.position.x,
+            y: on_appned_container.position.y,
+          },
+          size: {
+            width: on_appned_container.size.width,
+            height: on_appned_container.size.height,
+          },
+        };
         if (append_position === "top") {
           adjusted_stack_structure[new_vertical_stack_id] = {
             type: "vertical_stack",
@@ -2238,6 +2274,17 @@ const RootStackManager = React.memo(() => {
       ) {
         const new_horizontal_stack_id =
           generate_next_id_for_type("horizontal_stack");
+        const on_appned_container = adjusted_containers[to_append_id];
+        adjusted_containers[new_vertical_stack_id] = {
+          position: {
+            x: on_appned_container.position.x,
+            y: on_appned_container.position.y,
+          },
+          size: {
+            width: on_appned_container.size.width,
+            height: on_appned_container.size.height,
+          },
+        };
         if (append_position === "left") {
           adjusted_stack_structure[new_horizontal_stack_id] = {
             type: "horizontal_stack",
@@ -2274,6 +2321,7 @@ const RootStackManager = React.memo(() => {
         });
       }
       setStackStructure(adjusted_stack_structure);
+      setContainers(adjusted_containers);
       if (
         componentCallBacks[to_append_id] &&
         componentCallBacks[to_append_id].to_append
@@ -2294,8 +2342,8 @@ const RootStackManager = React.memo(() => {
     [stackStructure, containers, componentCallBacks]
   );
 
-  useEffect(() => {
-    const calculate_root_position_and_size = throttle(() => {
+  const calculate_root_position_and_size = useCallback(
+    throttle(() => {
       const position = {
         x: LEFT,
         y: top,
@@ -2318,7 +2366,9 @@ const RootStackManager = React.memo(() => {
         };
       });
       setRerendered((prev) => prev + 1);
-    }, 100);
+    }, 100)
+  );
+  useEffect(() => {
     window.addEventListener("resize", calculate_root_position_and_size);
     calculate_root_position_and_size();
     return () => {
