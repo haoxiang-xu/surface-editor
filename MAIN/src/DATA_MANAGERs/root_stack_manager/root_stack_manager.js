@@ -633,7 +633,6 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
 
             cursor: "ew-resize",
             zIndex: zIndex,
-            backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
           }}
           onMouseEnter={() => {
             handleMouseEnter();
@@ -684,7 +683,6 @@ const StackFrameResizer = ({ id, index, stack_structure_type }) => {
 
             cursor: "ns-resize",
             zIndex: zIndex,
-            backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
           }}
           onMouseEnter={() => {
             handleMouseEnter();
@@ -1273,7 +1271,7 @@ const RootStackManager = React.memo(() => {
   }, [isOnTitleBar]);
 
   const [stackStructure, setStackStructure] = useState(
-    TESTING_STACK_STRUCTURE_1
+    TESTING_STACK_STRUCTURE_2
   );
   const [rootContainer, setRootContainer] = useState(null);
 
@@ -1393,6 +1391,8 @@ const RootStackManager = React.memo(() => {
         adjusted_containers[last_sub_container_id].position.x +
         adjusted_containers[last_sub_container_id].size.width;
 
+      let next_frame_x = 0;
+
       for (
         let i = 0;
         i < stackStructure[parent_container_id].sub_items.length;
@@ -1404,6 +1404,17 @@ const RootStackManager = React.memo(() => {
           adjusted_containers[sub_container_id].size.height =
             parent_container.size.height;
         }
+        if (adjusted_containers[sub_container_id].position.x > next_frame_x) {
+          adjusted_containers[sub_container_id].position.x = next_frame_x;
+        }
+        if (i === stackStructure[parent_container_id].sub_items.length - 1) {
+          adjusted_containers[sub_container_id].size.width =
+            parent_container.size.width -
+            adjusted_containers[sub_container_id].position.x;
+        }
+        next_frame_x =
+          adjusted_containers[sub_container_id].position.x +
+          adjusted_containers[sub_container_id].size.width;
       }
 
       if (pervious_parent_width === parent_container.size.width) {
@@ -1786,6 +1797,8 @@ const RootStackManager = React.memo(() => {
         adjusted_containers[last_sub_container_id].position.y +
         adjusted_containers[last_sub_container_id].size.height;
 
+      let next_frame_y = 0;
+
       for (
         let i = 0;
         i < stackStructure[parent_container_id].sub_items.length;
@@ -1797,6 +1810,17 @@ const RootStackManager = React.memo(() => {
           adjusted_containers[sub_container_id].size.width =
             parent_container.size.width;
         }
+        if (adjusted_containers[sub_container_id].position.y > next_frame_y) {
+          adjusted_containers[sub_container_id].position.y = next_frame_y;
+        }
+        if (i === stackStructure[parent_container_id].sub_items.length - 1) {
+          adjusted_containers[sub_container_id].size.height =
+            parent_container.size.height -
+            adjusted_containers[sub_container_id].position.y;
+        }
+        next_frame_y =
+          adjusted_containers[sub_container_id].position.y +
+          adjusted_containers[sub_container_id].size.height;
       }
 
       if (pervious_parent_height === parent_container.size.height) {
@@ -2130,11 +2154,16 @@ const RootStackManager = React.memo(() => {
       }
       adjusted_stack_structure[parent_id].sub_items.splice(index, 1);
       setStackStructure(adjusted_stack_structure);
+      setRerendered((prev) => prev + 1);
+      setTimeout(() => {
+        setRerendered((prev) => prev + 1);
+      }, 128);
     },
     [stackStructure]
   );
   const append_stack_frame = useCallback(
     (be_appended_id, to_append_id, append_position) => {
+      return;
       const horizontal_append = ["left", "right"];
       const vertical_append = ["top", "bottom"];
 
