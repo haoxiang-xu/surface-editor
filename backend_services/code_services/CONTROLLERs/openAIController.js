@@ -3,6 +3,7 @@ const router = express.Router();
 require("dotenv").config();
 
 const OpenAI = require("openai");
+let request_count = 0;
 
 router.post("/", async (req, res) => {
   try {
@@ -58,6 +59,15 @@ router.post("/jsonTesting", async (req, res) => {
     console.error(error);
     res.json({ openAIControllerError: String(error) });
   }
+});
+router.post("/continueTesting", async (req, res) => {
+  const randomResponseTime = Math.random() * 3000;
+  request_count++;
+  setTimeout(() => {
+    res.json({
+      data: "/* [FAKE SUGGESTION # " + request_count + "] */",
+    });
+  }, randomResponseTime);
 });
 router.post("/continue", async (req, res) => {
   try {
