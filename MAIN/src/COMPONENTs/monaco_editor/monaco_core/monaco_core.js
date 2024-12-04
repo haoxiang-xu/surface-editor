@@ -8,8 +8,6 @@ import React, {
 import MonacoEditor from "@monaco-editor/react";
 import { MonacoDiffEditor, monaco, Range } from "react-monaco-editor";
 import { RootDataContexts } from "../../../DATA_MANAGERs/root_data_manager/root_data_contexts";
-import { globalDragAndDropContexts } from "../../../CONTEXTs/globalDragAndDropContexts";
-import { stackStructureDragAndDropContexts } from "../../../CONTEXTs/stackStructureDragAndDropContexts";
 import { MonacoEditorContexts } from "../monaco_editor_contexts";
 import { MonacoEditorContextMenuContexts } from "../monaco_editor_context_menu_contexts";
 import axios from "axios";
@@ -17,7 +15,6 @@ import axios from "axios";
 const MonacoCore = ({
   //Editor required parameters
   editor_filePath,
-  code_editor_container_ref_index,
   //Editor function parameters
   onAppendContent,
   setOnAppendContent,
@@ -55,9 +52,6 @@ const MonacoCore = ({
   } = useContext(MonacoEditorContexts);
   const { load_editor_context_menu } = useContext(
     MonacoEditorContextMenuContexts
-  );
-  const { draggedItem, dragCommand, setDragCommand } = useContext(
-    globalDragAndDropContexts
   );
 
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
@@ -97,8 +91,6 @@ const MonacoCore = ({
     setMonacoLanguage(access_file_language_by_path(editor_filePath));
   }, [file]);
 
-  const [monacoModel, setMonacoModel] = useState(null);
-  const [monacoViewState, setMonacoViewState] = useState(null);
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
 
   /*MONACO EDITOR FUNCTIONs======================================================================*/
@@ -114,10 +106,7 @@ const MonacoCore = ({
       access_file_language_by_path(editor_filePath),
       monacoCores,
       monacoPaths,
-      access_monaco_core_by_path,
-      draggedItem,
-      dragCommand,
-      setDragCommand
+      access_monaco_core_by_path
     );
     defineTheme(monaco);
     registerCompletionProvider(monaco);
@@ -193,44 +182,37 @@ const MonacoCore = ({
   };
   /*MONACO EDITOR OPTIONS-----------------------------------------------------------------------*/
 
-  /*Drag and Drop Save and Reload Model=================================*/
-  useEffect(() => {
-    if (
-      draggedItem &&
-      draggedItem.content === editor_filePath &&
-      draggedItem.source ===
-        "vecoder_editor" + "/" + code_editor_container_ref_index.toString()
-    ) {
-      setMonacoModel(monacoRef.current.getModel());
-      setMonacoViewState(monacoRef.current.saveViewState());
-
-      monacoRef.current.setModel(null);
-    } else if (
-      draggedItem === null &&
-      dragCommand === null &&
-      monacoModel &&
-      monacoViewState
-    ) {
-      monacoRef.current.setModel(monacoModel);
-      monacoRef.current.restoreViewState(monacoViewState);
-      setMonacoModel(null);
-      setMonacoViewState(null);
-    }
-  }, [draggedItem]);
-  /*Drag and Drop Save and Reload Model=================================*/
-
   /*Delete Monaco Editor Path===========================================*/
   useEffect(() => {
     setMonacoCallbacks((prev) => ({
       ...prev,
       [editor_filePath]: {
         callback_to_delete: callback_to_delete_monaco_core,
+        callback_to_append: callback_to_append_monaco_core,
       },
     }));
   }, []);
   const callback_to_delete_monaco_core = useCallback(() => {
+    const Model = monacoRef.current.getModel();
+    update_monaco_core_model(editor_filePath, Model);
+    const viewState = monacoRef.current.saveViewState();
+    update_monaco_core_view_state(editor_filePath, viewState);
     monacoRef.current.setModel(null);
-  }, []);
+    monacoRef.current.dispose();
+  }, [monacoRef]);
+  const callback_to_append_monaco_core = useCallback(() => {
+    applyEditorOptionsInMemory(
+      monacoRef.current,
+      monaco,
+      monacoRef,
+      editor_filePath,
+      access_file_language_by_path(editor_filePath),
+      monacoCores,
+      monacoPaths,
+      access_monaco_core_by_path
+    );
+  }, [monacoRef, monaco, monacoPaths, monacoCores, editor_filePath]);
+
   /*Delete Monaco Editor Path===========================================*/
 
   return (
@@ -280,7 +262,7 @@ const defineTheme = (monaco) => {
     colors: {
       "editor.foreground": "#cccccc",
       "editorCursor.foreground": "#ffcc00",
-      "editor.background": "#1e1e1e",
+      "editor.background": "#1e1e1e00",
     },
   });
   monaco.editor.setTheme("customTheme");
@@ -297,48 +279,51 @@ const registerCompletionProvider = (monaco) => {
 ////Register inline completion provider for monaco editor
 const registerInlineCompletionProvider = async (monaco) => {
   const inlineCompletionProvider = {
-    provideInlineCompletions: (model, position, context, token) => {
+    provideInlineCompletions: async (model, position, context, token) => {
       const offset = 5;
       const contextText = model.getValueInRange({
-        startLineNumber: position.lineNumber - offset,
+        startLineNumber: Math.max(position.lineNumber - offset, 1),
         startColumn: 1,
         endLineNumber: position.lineNumber,
         endColumn: position.column,
       });
 
-      // const continueAPI = async () => {
-      //   const requestBody = {
-      //     language: "javascript",
-      //     propmt: contextText,
-      //   };
-
-      //   try {
-      //     const response = await axios.post(
-      //       "http://localhost:8200/openai/continue",
-      //       requestBody
-      //     );
-      //     return response;
-      //   } catch (e) {
-      //     console.log(e);
-      //   }
-      // };
-
-      return {
-        items: [
+      if (!contextText) {
+        return { items: [] };
+      }
+      try {
+        const response = await axios.post(
+          "http://localhost:8200/openai/continueTesting",
           {
-            insertText: "continueAPI()",
-            range: {
-              startLineNumber: position.lineNumber,
-              startColumn: position.column,
-              endLineNumber: position.lineNumber,
-              endColumn: position.column,
-            },
-          },
-        ],
-      };
+            language: "javascript",
+            prompt: contextText,
+          }
+        );
+        const suggestion = response?.data?.data || "";
+        if (suggestion) {
+          return {
+            items: [
+              {
+                insertText: suggestion,
+                range: {
+                  startLineNumber: position.lineNumber,
+                  startColumn: position.column,
+                  endLineNumber: position.lineNumber,
+                  endColumn: position.column,
+                },
+              },
+            ],
+          };
+        }
+        return { items: [] };
+      } catch (error) {
+        console.error("Error fetching completion:", error);
+        return { items: [] };
+      }
     },
     freeInlineCompletions: () => {},
   };
+
   monaco.languages.registerInlineCompletionsProvider(
     "javascript",
     inlineCompletionProvider
@@ -392,17 +377,21 @@ const registerStateChangeListeners = (
   update_monaco_core_view_state,
   update_monaco_core_model
 ) => {
-  editor.onDidScrollChange((e) => {
-    const viewState = editor.saveViewState();
-    update_monaco_core_view_state(editor_filePath, viewState);
-    const Model = editor.getModel();
-    update_monaco_core_model(editor_filePath, Model);
-  });
+  // editor.onDidScrollChange((e) => {
+  //   const viewState = editor.saveViewState();
+  //   const Model = editor.getModel();
+  //   if (Model && viewState) {
+  //     update_monaco_core_view_state(editor_filePath, viewState);
+  //     update_monaco_core_model(editor_filePath, Model);
+  //   }
+  // });
   editor.onDidChangeModelContent((e) => {
     const viewState = editor.saveViewState();
-    update_monaco_core_view_state(editor_filePath, viewState);
     const Model = editor.getModel();
-    update_monaco_core_model(editor_filePath, Model);
+    if (Model && viewState) {
+      update_monaco_core_view_state(editor_filePath, viewState);
+      update_monaco_core_model(editor_filePath, Model);
+    }
   });
   editor.onMouseDown((e) => {
     const { position } = e.target;
@@ -422,10 +411,7 @@ const applyEditorOptionsInMemory = (
   editor_language,
   monacoCores,
   monacoPaths,
-  access_monaco_core_by_path,
-  draggedItem,
-  dragCommand,
-  setDragCommand
+  access_monaco_core_by_path
 ) => {
   if (
     access_monaco_core_by_path(editor_filePath) &&
@@ -442,11 +428,6 @@ const applyEditorOptionsInMemory = (
     editor.restoreViewState(
       access_monaco_core_by_path(editor_filePath).viewState
     );
-  }
-  if (dragCommand === "WAITING FOR MODEL APPEND THEN DELETE FROM SOURCE") {
-    setDragCommand("DELETE FROM SOURCE");
-  } else if (dragCommand === "WAITING FOR MODEL APPEND") {
-    setDragCommand(null);
   }
 };
 ////Append Content Widget for monaco editor
