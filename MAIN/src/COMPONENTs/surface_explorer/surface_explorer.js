@@ -1909,8 +1909,6 @@ const SurfaceExplorer = ({
   setCommand,
   load_contextMenu,
   command_executed,
-  data,
-  setData,
   item_on_drag,
   item_on_drop,
 }) => {

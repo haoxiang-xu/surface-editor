@@ -21,7 +21,6 @@ import { MonacoEditorContextMenuContexts } from "./monaco_editor_context_menu_co
 import { ICON_MANAGER } from "../../ICONs/icon_manager";
 /* { Import Styling } ---------------------------------------------------------------------------------------- */
 import "./monaco_editor.css";
-import { on } from "events";
 
 /* { ICONs } ------------------------------------------------------------------------------------------------- */
 let FILE_TYPE_ICON_MANAGER = {
@@ -62,7 +61,6 @@ const G = 30;
 const B = 30;
 
 const MonacoEditorGroup = ({
-  code_editor_container_ref_index,
   setOnSelectedContent,
   onAppendContent,
   setOnAppendContent,
@@ -83,7 +81,6 @@ const MonacoEditorGroup = ({
         key={filePath}
         //Editor required parameters
         editor_filePath={filePath}
-        code_editor_container_ref_index={code_editor_container_ref_index}
         //Editor function parameters
         onAppendContent={onAppendContent}
         setOnAppendContent={setOnAppendContent}
@@ -457,7 +454,8 @@ const FileSelectionListItem = ({
       setOnSelectedMonacoIndex(-1);
       if (
         monacoCallbacks[onDragItem.content.path]?.callback_to_delete !==
-        undefined
+          undefined &&
+        onDragItem?.source !== onDropItem?.source
       ) {
         monacoCallbacks[onDragItem.content.path].callback_to_delete();
       }
@@ -548,7 +546,7 @@ const FileSelectionListItem = ({
       backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
         B + tagColorOffset
       }, 1 )`,
-      verticalMode: mode.includes("vertical"),
+      verticalMode: mode === "horizontal_stack_vertical_mode" ? true : false,
     };
   }, [tagLeft, tagColorOffset, mode, index, onSelectedMonacoIndex]);
 
@@ -850,13 +848,14 @@ const FileSelectionListContainer = ({}) => {
             default_tag_max_width) /
             2,
       },
+      accepts: ["file"],
       callback_to_append: to_append_tag,
     });
   }, [onDragOveredMonacoIndex, monacoPaths, onDragOverPosition, tagPositions]);
   /* { drag and drop } ============================================================ */
 
   useEffect(() => {
-    if (mode.includes("vertical")) {
+    if (mode === "horizontal_stack_vertical_mode") {
       setContainerStyle({
         width: height - 32,
         transform: "rotate(90deg)",
@@ -923,32 +922,37 @@ const MonacoEditor = ({
   width,
   height,
   mode,
-  code_editor_container_ref_index,
   command,
   setCommand,
   load_contextMenu,
-  data,
-  setData,
+  privateData,
+  setPrivateData,
+  publicData,
+  setPublicData,
   item_on_drag,
   item_on_drag_over,
   item_on_drop,
+  setComponentCallBack,
 }) => {
   //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
   const [onSelectedMonacoIndex, setOnSelectedMonacoIndex] = useState(
-    data?.on_selected_monaco_core_index
+    privateData?.on_selected_monaco_core_index
   );
   const [onDragedMonacoIndex, setOnDragMonacoIndex] = useState(-1);
   const [onDragOveredMonacoIndex, setOnDragOverMonacoIndex] = useState(-1);
   const [onDragOverPosition, setOnDragOverPosition] = useState({ x: 0, y: 0 });
 
-  const [monacoPaths, setMonacoPaths] = useState(data?.monaco_paths);
-  const [monacoCores, setMonacoCores] = useState(data?.monaco_cores);
+  const [monacoPaths, setMonacoPaths] = useState(privateData?.monaco_paths);
+  const [monacoCores, setMonacoCores] = useState(publicData()?.monaco_cores);
   const [monacoCallbacks, setMonacoCallbacks] = useState({});
 
-  const access_monaco_core_by_path = (path) => {
-    return monacoCores[path];
-  };
+  const access_monaco_core_by_path = useCallback(
+    (path) => {
+      return publicData().monaco_cores[path];
+    },
+    [publicData]
+  );
   const update_monaco_core_view_state = (path, view_state) => {
     setMonacoCores((prevData) => {
       return {
@@ -966,7 +970,7 @@ const MonacoEditor = ({
     });
   };
   useEffect(() => {
-    setData((prevData) => {
+    setPrivateData((prevData) => {
       return {
         ...prevData,
         on_selected_monaco_core_index: onSelectedMonacoIndex,
@@ -974,7 +978,7 @@ const MonacoEditor = ({
     });
   }, [onSelectedMonacoIndex]);
   useEffect(() => {
-    setData((prevData) => {
+    setPrivateData((prevData) => {
       return {
         ...prevData,
         monaco_paths: monacoPaths,
@@ -982,18 +986,30 @@ const MonacoEditor = ({
     });
   }, [monacoPaths]);
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setData((prevData) => {
-        if (prevData.monaco_cores === monacoCores) return prevData;
-        return {
-          ...prevData,
-          monaco_cores: monacoCores,
-        };
-      });
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
+    const prevData = publicData();
+    setPublicData({
+      ...prevData,
+      monaco_cores: monacoCores,
+    });
   }, [monacoCores]);
+  useEffect(() => {
+    setComponentCallBack({
+      to_delete: () => {
+        // for (let path in monacoCallbacks) {
+        //   if (monacoCallbacks[path]?.callback_to_delete !== undefined) {
+        //     monacoCallbacks[path].callback_to_delete();
+        //   }
+        // }
+      },
+      to_append: () => {
+        for (let path in monacoCallbacks) {
+          if (monacoCallbacks[path]?.callback_to_load !== undefined) {
+            monacoCallbacks[path].callback_to_append();
+          }
+        }
+      },
+    });
+  }, [monacoCallbacks]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
 
   const [onSelectedCotent, setOnSelectedCotent] = useState(null);
@@ -1055,7 +1071,7 @@ const MonacoEditor = ({
               boxSizing: "border-box",
               borderRadius: 5,
               // boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
-              opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
+              opacity: mode === "horizontal_stack_vertical_mode" ? 0 : 1,
             }}
             onDragStart={(e) => {
               e.stopPropagation();
@@ -1063,7 +1079,6 @@ const MonacoEditor = ({
             }}
           >
             <MonacoEditorGroup
-              code_editor_container_ref_index={code_editor_container_ref_index}
               setOnSelectedContent={setOnSelectedCotent}
               onAppendContent={onAppendContent}
               setOnAppendContent={setOnAppendContent}

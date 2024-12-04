@@ -14,6 +14,7 @@ import {
   customize_component_fixed_styling,
 } from "./context_menu_fixed_styling_config";
 
+import { RootConfigContexts } from "../../DATA_MANAGERs/root_config_manager/root_config_contexts";
 import { RootCommandContexts } from "../../DATA_MANAGERs/root_command_manager/root_command_contexts";
 import { ContextMenuContexts } from "./context_menu_contexts";
 
@@ -49,6 +50,7 @@ const ContextItemButton = ({
   position_z,
   list_direction,
 }) => {
+  const { R, G, B, palette, customize_offset } = useContext(RootConfigContexts);
   const {
     contextStructure,
     get_context_item_height,
@@ -92,30 +94,21 @@ const ContextItemButton = ({
   useEffect(() => {
     if (onClicked && contextStructure[unique_tag].clickable) {
       setStyle({
-        backgroundColor: `rgba(${
-          context_menu_fixed_styling.backgroundColorR + 64
-        }, ${context_menu_fixed_styling.backgroundColorG + 64}, ${
-          context_menu_fixed_styling.backgroundColorB + 64
-        }, 0.72)`,
+        backgroundColor: `rgba(${palette.accent.R}, ${palette.accent.G}, ${palette.accent.B}, 0.96)`,
         boxShadow: default_clickable_panel_styling.boxShadow.onClick,
         borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.onClick,
       });
     } else if (onHover && contextStructure[unique_tag].clickable) {
       setStyle({
-        backgroundColor: `rgba(${
-          context_menu_fixed_styling.backgroundColorR + 32
-        }, ${context_menu_fixed_styling.backgroundColorG + 32}, ${
-          context_menu_fixed_styling.backgroundColorB + 32
-        }, 0.72)`,
+        backgroundColor: `rgba(${palette.accent.R}, ${palette.accent.G}, ${palette.accent.B}, 0.64)`,
         boxShadow: default_clickable_panel_styling.boxShadow.onHover,
         borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.onHover,
       });
     } else {
       setStyle({
-        backgroundColor:
-          default_clickable_panel_styling.backgroundColor.default,
+        backgroundColor: null,
         boxShadow: default_clickable_panel_styling.boxShadow.default,
         borderRadius: setButtonBorderRadius(),
         transition: default_clickable_panel_styling.transition.default,
@@ -218,7 +211,7 @@ const ContextItemButton = ({
           /* POSITION -------------- */
           position: "absolute",
           top: "50%",
-          left: 2,
+          left: 3,
           transform: "translate(0%, -50%)",
 
           /* SIZE ------------------ */
@@ -452,6 +445,7 @@ const ContextList = ({
   direction,
   sub_items,
 }) => {
+  const { R, G, B, customize_offset } = useContext(RootConfigContexts);
   const {
     contextStructure,
     calculate_context_list_height,
@@ -521,16 +515,9 @@ const ContextList = ({
 
         /*STYLE ------------------- */
         border: `${context_menu_fixed_styling.border}px solid rgba(${Math.min(
-          context_menu_fixed_styling.backgroundColorR + 64,
+          R + 64,
           255
-        )}, ${Math.min(
-          context_menu_fixed_styling.backgroundColorG + 64,
-          255
-        )}, ${Math.min(
-          context_menu_fixed_styling.backgroundColorB + 64,
-          255
-        )}, 1)`,
-        backgroundColor: `rgba(${context_menu_fixed_styling.backgroundColorR}, ${context_menu_fixed_styling.backgroundColorG}, ${context_menu_fixed_styling.backgroundColorB}, 1)`,
+        )}, ${Math.min(G + 64, 255)}, ${Math.min(B + 64, 255)}, 1)`,
         borderRadius: borderRadius,
         boxSizing: "border-box",
         boxShadow: context_menu_fixed_styling.boxShadow,
@@ -541,6 +528,21 @@ const ContextList = ({
         e.stopPropagation();
       }}
     >
+      <div
+        style={{
+          /*POSITION ---------------- */
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+
+          /*STYLE ------------------- */
+          backgroundColor: customize_offset(R, G, B, 0.64, 0.32),
+          backdropFilter: context_menu_fixed_styling.backdropFilter,
+        }}
+      ></div>
+
       {sub_items.map((item, index) => {
         switch (contextStructure[item].type) {
           case "button":

@@ -122,11 +122,16 @@ const RootCommandManager = React.memo(({ children }) => {
         event.stopPropagation();
       }
       if (onDragItem && onDropItem) {
-        if (onDragItem.callback_to_delete) {
-          onDragItem.callback_to_delete(onDragItem, onDropItem);
-        }
-        if (onDropItem.callback_to_append) {
-          onDropItem.callback_to_append(onDragItem, onDropItem);
+        if (
+          onDropItem.accepts &&
+          onDropItem.accepts.includes(onDragItem.content.type)
+        ) {
+          if (onDragItem.callback_to_delete) {
+            onDragItem.callback_to_delete(onDragItem, onDropItem);
+          }
+          if (onDropItem.callback_to_append) {
+            onDropItem.callback_to_append(onDragItem, onDropItem);
+          }
         }
       }
 
