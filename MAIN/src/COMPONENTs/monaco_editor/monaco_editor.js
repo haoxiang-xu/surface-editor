@@ -546,7 +546,7 @@ const FileSelectionListItem = ({
       backgroundColor: `rgba( ${R + tagColorOffset}, ${G + tagColorOffset}, ${
         B + tagColorOffset
       }, 1 )`,
-      verticalMode: mode.includes("vertical"),
+      verticalMode: mode === "horizontal_stack_vertical_mode" ? true : false,
     };
   }, [tagLeft, tagColorOffset, mode, index, onSelectedMonacoIndex]);
 
@@ -855,7 +855,7 @@ const FileSelectionListContainer = ({}) => {
   /* { drag and drop } ============================================================ */
 
   useEffect(() => {
-    if (mode.includes("vertical")) {
+    if (mode === "horizontal_stack_vertical_mode") {
       setContainerStyle({
         width: height - 32,
         transform: "rotate(90deg)",
@@ -932,6 +932,7 @@ const MonacoEditor = ({
   item_on_drag,
   item_on_drag_over,
   item_on_drop,
+  setComponentCallBack,
 }) => {
   //console.log("RDM/RCM/stack_frame/monaco_editor", new Date().getTime());
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
@@ -991,6 +992,24 @@ const MonacoEditor = ({
       monaco_cores: monacoCores,
     });
   }, [monacoCores]);
+  useEffect(() => {
+    setComponentCallBack({
+      to_delete: () => {
+        // for (let path in monacoCallbacks) {
+        //   if (monacoCallbacks[path]?.callback_to_delete !== undefined) {
+        //     monacoCallbacks[path].callback_to_delete();
+        //   }
+        // }
+      },
+      to_append: () => {
+        for (let path in monacoCallbacks) {
+          if (monacoCallbacks[path]?.callback_to_load !== undefined) {
+            monacoCallbacks[path].callback_to_append();
+          }
+        }
+      },
+    });
+  }, [monacoCallbacks]);
   /* { Monaco Editor Data } --------------------------------------------------------------------------------------- */
 
   const [onSelectedCotent, setOnSelectedCotent] = useState(null);
@@ -1052,7 +1071,7 @@ const MonacoEditor = ({
               boxSizing: "border-box",
               borderRadius: 5,
               // boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.32)",
-              opacity: mode === "horizontal_stack_horizontal_mode" ? 1 : 0,
+              opacity: mode === "horizontal_stack_vertical_mode" ? 0 : 1,
             }}
             onDragStart={(e) => {
               e.stopPropagation();

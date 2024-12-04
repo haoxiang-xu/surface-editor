@@ -243,6 +243,31 @@ const TESTING_STACK_STRUCTURE_3 = {
     sub_items: [],
   },
 };
+const TESTING_STACK_STRUCTURE_4 = {
+  root: {
+    id: "root",
+    type: "horizontal_stack",
+    sub_items: ["test_0001", "test_0002", "test_0003"],
+  },
+  test_0001: {
+    id: "test_0001",
+    parent_id: "root",
+    type: "test",
+    sub_items: [],
+  },
+  test_0002: {
+    id: "test_0002",
+    parent_id: "root",
+    type: "test",
+    sub_items: [],
+  },
+  test_0003: {
+    id: "test_0003",
+    parent_id: "root",
+    type: "test",
+    sub_items: [],
+  },
+};
 
 const default_component_padding = 8;
 const default_component_border_radius = 8;
@@ -392,6 +417,21 @@ const StackComponentContainer = React.memo(
       useContext(RootCommandContexts);
     /* { drag and drop } ---------------------------------------------------------------------------------------- */
 
+    /* { component callback } ----------------------------------------------------------------------------------- */
+    const { componentCallBacks, setComponentCallBacks } =
+      useContext(RootStackContexts);
+    const setComponentCallBack = useCallback(
+      (content) => {
+        setComponentCallBacks((prev) => {
+          let newCallBacks = { ...prev };
+          newCallBacks[id] = content;
+          return newCallBacks;
+        });
+      },
+      [componentCallBacks, id]
+    );
+    /* { component callback } ----------------------------------------------------------------------------------- */
+
     return (
       <stackStructureDragAndDropContexts.Provider
         value={{
@@ -430,6 +470,7 @@ const StackComponentContainer = React.memo(
               item_on_drag={item_on_drag}
               item_on_drag_over={item_on_drag_over}
               item_on_drop={item_on_drop}
+              setComponentCallBack={setComponentCallBack}
             />
           ) : null}
         </globalDragAndDropContexts.Provider>
@@ -437,7 +478,7 @@ const StackComponentContainer = React.memo(
     );
   }
 );
-const StackTestingContainer = ({ id }) => {
+const StackTestingContainer = React.memo(({ id }) => {
   return (
     <span
       style={{
@@ -456,7 +497,7 @@ const StackTestingContainer = ({ id }) => {
       {id.slice(-2)}
     </span>
   );
-};
+});
 
 const StackFrameResizer = ({ id, index, stack_structure_type }) => {
   const {
@@ -723,6 +764,9 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     generate_horizontal_sub_item_on_drag_filter,
     generate_vertical_sub_item_on_drag_filter,
     clean_filter,
+    delete_stack_frame,
+    append_stack_frame,
+    componentCallBacks,
   } = useContext(RootStackContexts);
   const { R, G, B, on_hover, on_click, customize_offset } =
     useContext(RootConfigContexts);
@@ -748,6 +792,22 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
     width: "calc(100% - 4px)",
     height: "calc(100% - 4px)",
   });
+  const callback_to_append = useCallback(
+    (onDragItem, onDropItem) => {
+      append_stack_frame(onDragItem.source, id, onDropItem.content.append_to);
+    },
+    [componentCallBacks, id]
+  );
+  const callback_to_delete = useCallback(
+    (onDragItem, onDropItem) => {
+      if (componentCallBacks[id] && componentCallBacks[id].to_delete) {
+        componentCallBacks[id].to_delete();
+      }
+      delete_stack_frame(id);
+    },
+    [componentCallBacks, id]
+  );
+
   useEffect(() => {
     if (onFrameResize) {
       setStyle({
@@ -774,14 +834,6 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
           const newX = event.clientX - rect.left;
           const newY = event.clientY - rect.top;
           if (prevPosition.x !== newX || prevPosition.y !== newY) {
-            item_on_drag_over(event, {
-              source: id,
-              content: {
-                type: "stack_frame",
-                position: { x: newX, y: newY },
-              },
-              accepts: ["stack_frame"],
-            });
             return { x: newX, y: newY };
           }
           return prevPosition;
@@ -808,6 +860,16 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         width: "calc(100% - 4px)",
         height: "calc(50% - 2px)",
       });
+      item_on_drag_over(null, {
+        source: id,
+        content: {
+          type: "stack_frame",
+          position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
+          append_to: "bottom",
+        },
+        accepts: ["stack_frame"],
+        callback_to_append: callback_to_append,
+      });
     } else if (
       height > 2 * MIN &&
       onDragOverPosition.y < (height / width) * onDragOverPosition.x &&
@@ -818,6 +880,16 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         left: 2,
         width: "calc(100% - 4px)",
         height: "calc(50% - 2px)",
+      });
+      item_on_drag_over(null, {
+        source: id,
+        content: {
+          type: "stack_frame",
+          position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
+          append_to: "top",
+        },
+        accepts: ["stack_frame"],
+        callback_to_append: callback_to_append,
       });
     } else if (
       width > 2 * MIN &&
@@ -830,6 +902,16 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         width: "calc(50% - 2px)",
         height: "calc(100% - 4px)",
       });
+      item_on_drag_over(null, {
+        source: id,
+        content: {
+          type: "stack_frame",
+          position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
+          append_to: "left",
+        },
+        accepts: ["stack_frame"],
+        callback_to_append: callback_to_append,
+      });
     } else if (
       width > 2 * MIN &&
       onDragOverPosition.y < (height / width) * onDragOverPosition.x &&
@@ -840,6 +922,16 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
         left: "50%",
         width: "calc(50% - 4px)",
         height: "calc(100% - 2px)",
+      });
+      item_on_drag_over(null, {
+        source: id,
+        content: {
+          type: "stack_frame",
+          position: { x: onDragOverPosition.x, y: onDragOverPosition.y },
+          append_to: "right",
+        },
+        accepts: ["stack_frame"],
+        callback_to_append: callback_to_append,
       });
     } else {
       setOverlayStyle({
@@ -897,6 +989,7 @@ const StackFrame = ({ id, index, parent_stack_type, end }) => {
             content: {
               type: "stack_frame",
             },
+            callback_to_delete: callback_to_delete,
           });
           if (parent_stack_type === "horizontal_stack") {
             generate_horizontal_sub_item_on_drag_filter(
@@ -1026,7 +1119,6 @@ const VerticalStack = ({
         height: filters[id]
           ? filters[id].size.height + default_resizer_size / 2
           : containers[id].size.height + default_resizer_size / 2,
-
         overflow: "hidden",
       }}
     >
@@ -1128,6 +1220,7 @@ const HorizontalStack = ({
         position: "absolute",
         top: filters[id] ? filters[id].position.y : containers[id].position.y,
         left: filters[id] ? filters[id].position.x : containers[id].position.x,
+
         width: filters[id]
           ? filters[id].size.width + default_resizer_size / 2
           : containers[id].size.width + default_resizer_size / 2,
@@ -1210,51 +1303,100 @@ const RootStackManager = React.memo(() => {
   const [containers, setContainers] = useCustomizedState({}, compareJson);
   const [filters, setFilters] = useCustomizedState({}, compareJson);
 
+  const [componentCallBacks, setComponentCallBacks] = useState({});
+
   const [rerendered, setRerendered] = useState(0);
 
-  /* { State } ------ */
+  // useEffect(() => {
+  //   console.log(containers);
+  // }, [containers]);
+
+  /* { State } -------------------------------------------------- */
   const [onFrameResize, setOnFrameResize] = useState(false);
   const [onFrameReposition, setOnFrameReposition] = useState(false);
-  /* { State } ------ */
+  /* { State } -------------------------------------------------- */
 
   const calculate_horizontal_intial_position_and_size = useCallback(
     (parent_container_id) => {
       const adjusted_containers = { ...containers };
       const parent_container = adjusted_containers[parent_container_id];
 
-      const sub_container_width = parseInt(
-        parent_container.size.width /
-          stackStructure[parent_container_id].sub_items.length
-      );
-      const sub_container_height = parent_container.size.height;
-
-      let sub_container_x = 0;
-      const sub_container_y = 0;
-
-      let cutoff_width = parent_container.size.width;
-
-      for (
-        let i = 0;
-        i < stackStructure[parent_container_id].sub_items.length;
-        i++
+      if (
+        stackStructure[parent_container_id].sub_items.length * MIN <=
+        parent_container.size.width
       ) {
-        if (i === stackStructure[parent_container_id].sub_items.length - 1) {
-          adjusted_containers[
-            stackStructure[parent_container_id].sub_items[i]
-          ] = {
-            position: { x: sub_container_x, y: sub_container_y },
-            size: { width: cutoff_width, height: sub_container_height },
-          };
-        } else {
-          adjusted_containers[
-            stackStructure[parent_container_id].sub_items[i]
-          ] = {
-            position: { x: sub_container_x, y: sub_container_y },
-            size: { width: sub_container_width, height: sub_container_height },
-          };
+        const sub_container_width = parseInt(
+          parent_container.size.width /
+            stackStructure[parent_container_id].sub_items.length
+        );
+        const sub_container_height = parent_container.size.height;
+
+        let sub_container_x = 0;
+        const sub_container_y = 0;
+
+        let cutoff_width = parent_container.size.width;
+
+        for (
+          let i = 0;
+          i < stackStructure[parent_container_id].sub_items.length;
+          i++
+        ) {
+          if (i === stackStructure[parent_container_id].sub_items.length - 1) {
+            adjusted_containers[
+              stackStructure[parent_container_id].sub_items[i]
+            ] = {
+              position: { x: sub_container_x, y: sub_container_y },
+              size: { width: cutoff_width, height: sub_container_height },
+            };
+          } else {
+            adjusted_containers[
+              stackStructure[parent_container_id].sub_items[i]
+            ] = {
+              position: { x: sub_container_x, y: sub_container_y },
+              size: {
+                width: Math.max(sub_container_width, MIN),
+                height: sub_container_height,
+              },
+            };
+          }
+          sub_container_x += Math.max(sub_container_width, MIN);
+          cutoff_width -= Math.max(sub_container_width, MIN);
         }
-        sub_container_x += sub_container_width;
-        cutoff_width -= sub_container_width;
+      } else {
+        const sub_container_height = parent_container.size.height;
+
+        const sub_container_y = 0;
+
+        let cutoff_width = parent_container.size.width;
+
+        for (
+          let i = stackStructure[parent_container_id].sub_items.length - 1;
+          i >= 0;
+          i--
+        ) {
+          if (i === 0) {
+            adjusted_containers[
+              stackStructure[parent_container_id].sub_items[i]
+            ] = {
+              position: { x: 0, y: sub_container_y },
+              size: { width: MIN, height: sub_container_height },
+            };
+          } else {
+            adjusted_containers[
+              stackStructure[parent_container_id].sub_items[i]
+            ] = {
+              position: {
+                x: Math.max(cutoff_width - MIN, 0),
+                y: sub_container_y,
+              },
+              size: {
+                width: MIN,
+                height: sub_container_height,
+              },
+            };
+          }
+          cutoff_width = Math.max(cutoff_width - MIN, 0);
+        }
       }
       setContainers(adjusted_containers);
     },
@@ -1273,6 +1415,8 @@ const RootStackManager = React.memo(() => {
         adjusted_containers[last_sub_container_id].position.x +
         adjusted_containers[last_sub_container_id].size.width;
 
+      let next_frame_x = 0;
+
       for (
         let i = 0;
         i < stackStructure[parent_container_id].sub_items.length;
@@ -1284,6 +1428,17 @@ const RootStackManager = React.memo(() => {
           adjusted_containers[sub_container_id].size.height =
             parent_container.size.height;
         }
+        if (adjusted_containers[sub_container_id].position.x > next_frame_x) {
+          adjusted_containers[sub_container_id].position.x = next_frame_x;
+        }
+        if (i === stackStructure[parent_container_id].sub_items.length - 1) {
+          adjusted_containers[sub_container_id].size.width =
+            parent_container.size.width -
+            adjusted_containers[sub_container_id].position.x;
+        }
+        next_frame_x =
+          adjusted_containers[sub_container_id].position.x +
+          adjusted_containers[sub_container_id].size.width;
       }
 
       if (pervious_parent_width === parent_container.size.width) {
@@ -1571,41 +1726,85 @@ const RootStackManager = React.memo(() => {
       const adjusted_containers = { ...containers };
       const parent_container = adjusted_containers[parent_container_id];
 
-      const sub_container_height = parseInt(
-        parent_container.size.height /
-          stackStructure[parent_container_id].sub_items.length
-      );
-      const sub_container_width = parent_container.size.width;
-
-      let sub_container_y = 0;
-      const sub_container_x = 0;
-
-      let cutoff_height = parent_container.size.height;
-
-      for (
-        let i = 0;
-        i < stackStructure[parent_container_id].sub_items.length;
-        i++
+      if (
+        stackStructure[parent_container_id].sub_items.length * MIN <=
+        parent_container.size.height
       ) {
-        if (i === stackStructure[parent_container_id].sub_items.length - 1) {
-          adjusted_containers[
-            stackStructure[parent_container_id].sub_items[i]
-          ] = {
-            position: { x: sub_container_x, y: sub_container_y },
-            size: { width: sub_container_width, height: cutoff_height },
-          };
-        } else {
-          adjusted_containers[
-            stackStructure[parent_container_id].sub_items[i]
-          ] = {
-            position: { x: sub_container_x, y: sub_container_y },
-            size: { width: sub_container_width, height: sub_container_height },
-          };
+        const sub_container_height = parseInt(
+          parent_container.size.height /
+            stackStructure[parent_container_id].sub_items.length
+        );
+        const sub_container_width = parent_container.size.width;
+
+        let sub_container_y = 0;
+        const sub_container_x = 0;
+
+        let cutoff_height = parent_container.size.height;
+
+        for (
+          let i = 0;
+          i < stackStructure[parent_container_id].sub_items.length;
+          i++
+        ) {
+          if (i === stackStructure[parent_container_id].sub_items.length - 1) {
+            adjusted_containers[
+              stackStructure[parent_container_id].sub_items[i]
+            ] = {
+              position: { x: sub_container_x, y: sub_container_y },
+              size: { width: sub_container_width, height: cutoff_height },
+            };
+          } else {
+            adjusted_containers[
+              stackStructure[parent_container_id].sub_items[i]
+            ] = {
+              position: { x: sub_container_x, y: sub_container_y },
+              size: {
+                width: sub_container_width,
+                height: sub_container_height,
+              },
+            };
+          }
+          sub_container_y += sub_container_height;
+          cutoff_height -= sub_container_height;
         }
-        sub_container_y += sub_container_height;
-        cutoff_height -= sub_container_height;
+        setContainers(adjusted_containers);
+      } else {
+        const sub_container_width = parent_container.size.width;
+
+        const sub_container_x = 0;
+
+        let cutoff_height = parent_container.size.height;
+
+        for (
+          let i = stackStructure[parent_container_id].sub_items.length - 1;
+          i >= 0;
+          i--
+        ) {
+          if (i === 0) {
+            adjusted_containers[
+              stackStructure[parent_container_id].sub_items[i]
+            ] = {
+              position: { x: sub_container_x, y: 0 },
+              size: { width: sub_container_width, height: MIN },
+            };
+          } else {
+            adjusted_containers[
+              stackStructure[parent_container_id].sub_items[i]
+            ] = {
+              position: {
+                x: sub_container_x,
+                y: Math.max(cutoff_height - MIN, 0),
+              },
+              size: {
+                width: sub_container_width,
+                height: MIN,
+              },
+            };
+          }
+          cutoff_height = Math.max(cutoff_height - MIN, 0);
+        }
+        setContainers(adjusted_containers);
       }
-      setContainers(adjusted_containers);
     },
     [stackStructure, containers, filters]
   );
@@ -1622,6 +1821,8 @@ const RootStackManager = React.memo(() => {
         adjusted_containers[last_sub_container_id].position.y +
         adjusted_containers[last_sub_container_id].size.height;
 
+      let next_frame_y = 0;
+
       for (
         let i = 0;
         i < stackStructure[parent_container_id].sub_items.length;
@@ -1633,6 +1834,17 @@ const RootStackManager = React.memo(() => {
           adjusted_containers[sub_container_id].size.width =
             parent_container.size.width;
         }
+        if (adjusted_containers[sub_container_id].position.y > next_frame_y) {
+          adjusted_containers[sub_container_id].position.y = next_frame_y;
+        }
+        if (i === stackStructure[parent_container_id].sub_items.length - 1) {
+          adjusted_containers[sub_container_id].size.height =
+            parent_container.size.height -
+            adjusted_containers[sub_container_id].position.y;
+        }
+        next_frame_y =
+          adjusted_containers[sub_container_id].position.y +
+          adjusted_containers[sub_container_id].size.height;
       }
 
       if (pervious_parent_height === parent_container.size.height) {
@@ -1918,6 +2130,22 @@ const RootStackManager = React.memo(() => {
     },
     [stackStructure, containers, filters]
   );
+  const generate_next_id_for_type = useCallback(
+    (type) => {
+      const keys = Object.keys(stackStructure);
+      let max = 0;
+      keys.forEach((key) => {
+        if (stackStructure[key].type === type) {
+          const id = parseInt(key.split("_")[-1]);
+          if (id > max) {
+            max = id;
+          }
+        }
+      });
+      return `${type}_${max + 1}`;
+    },
+    [stackStructure]
+  );
 
   const clean_filter = useCallback(() => {
     setFilters({});
@@ -1936,8 +2164,186 @@ const RootStackManager = React.memo(() => {
     setFilters({});
   }, [stackStructure, containers, filters]);
 
-  useEffect(() => {
-    const calculate_root_position_and_size = throttle(() => {
+  const delete_stack_frame = useCallback(
+    (id) => {
+      const adjusted_stack_structure = { ...stackStructure };
+      const parent_id = adjusted_stack_structure[id].parent_id;
+      if (!parent_id) {
+        return adjusted_stack_structure;
+      }
+      const sub_items = adjusted_stack_structure[parent_id].sub_items;
+      const index = sub_items.indexOf(id);
+      if (index === -1) {
+        return adjusted_stack_structure;
+      }
+      adjusted_stack_structure[parent_id].sub_items.splice(index, 1);
+      setStackStructure(adjusted_stack_structure);
+      setRerendered((prev) => prev + 1);
+      setTimeout(() => {
+        setRerendered((prev) => prev + 1);
+      }, 128);
+    },
+    [stackStructure]
+  );
+  const append_stack_frame = useCallback(
+    (be_appended_id, to_append_id, append_position) => {
+      // return;
+      const horizontal_append = ["left", "right"];
+      const vertical_append = ["top", "bottom"];
+
+      const adjusted_stack_structure = { ...stackStructure };
+      const adjusted_containers = { ...containers };
+      const parent_stack_id = adjusted_stack_structure[to_append_id].parent_id;
+      const parent_stack_type = adjusted_stack_structure[parent_stack_id].type;
+      if (
+        parent_stack_type === "horizontal_stack" &&
+        horizontal_append.includes(append_position)
+      ) {
+        adjusted_stack_structure[parent_stack_id].sub_items.splice(
+          adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+            to_append_id
+          ) + (append_position === "left" ? 0 : 1),
+          0,
+          be_appended_id
+        );
+      } else if (
+        parent_stack_type === "vertical_stack" &&
+        vertical_append.includes(append_position)
+      ) {
+        adjusted_stack_structure[parent_stack_id].sub_items.splice(
+          adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+            to_append_id
+          ) + (append_position === "top" ? 0 : 1),
+          0,
+          be_appended_id
+        );
+      } else if (
+        parent_stack_type === "horizontal_stack" &&
+        vertical_append.includes(append_position)
+      ) {
+        const new_vertical_stack_id =
+          generate_next_id_for_type("vertical_stack");
+        const on_appned_container = adjusted_containers[to_append_id];
+        adjusted_containers[new_vertical_stack_id] = {
+          position: {
+            x: on_appned_container.position.x,
+            y: on_appned_container.position.y,
+          },
+          size: {
+            width: on_appned_container.size.width,
+            height: on_appned_container.size.height,
+          },
+        };
+        if (append_position === "top") {
+          adjusted_stack_structure[new_vertical_stack_id] = {
+            type: "vertical_stack",
+            parent_id: parent_stack_id,
+            sub_items: [be_appended_id, to_append_id],
+          };
+        } else {
+          adjusted_stack_structure[new_vertical_stack_id] = {
+            type: "vertical_stack",
+            parent_id: parent_stack_id,
+            sub_items: [to_append_id, be_appended_id],
+          };
+        }
+        const index =
+          adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+            to_append_id
+          );
+        if (index === -1) {
+          return adjusted_stack_structure;
+        }
+        adjusted_stack_structure[parent_stack_id].sub_items[index] =
+          new_vertical_stack_id;
+        adjusted_stack_structure[be_appended_id].parent_id =
+          new_vertical_stack_id;
+        adjusted_stack_structure[to_append_id].parent_id =
+          new_vertical_stack_id;
+        setContainers((prev) => {
+          const adjusted_containers = { ...prev };
+          adjusted_containers[new_vertical_stack_id] = {
+            position: { x: 0, y: 0 },
+            size: { width: 0, height: 0 },
+          };
+          return adjusted_containers;
+        });
+      } else if (
+        parent_stack_type === "vertical_stack" &&
+        horizontal_append.includes(append_position)
+      ) {
+        const new_horizontal_stack_id =
+          generate_next_id_for_type("horizontal_stack");
+        const on_appned_container = adjusted_containers[to_append_id];
+        adjusted_containers[new_vertical_stack_id] = {
+          position: {
+            x: on_appned_container.position.x,
+            y: on_appned_container.position.y,
+          },
+          size: {
+            width: on_appned_container.size.width,
+            height: on_appned_container.size.height,
+          },
+        };
+        if (append_position === "left") {
+          adjusted_stack_structure[new_horizontal_stack_id] = {
+            type: "horizontal_stack",
+            parent_id: parent_stack_id,
+            sub_items: [be_appended_id, to_append_id],
+          };
+        } else {
+          adjusted_stack_structure[new_horizontal_stack_id] = {
+            type: "horizontal_stack",
+            parent_id: parent_stack_id,
+            sub_items: [to_append_id, be_appended_id],
+          };
+        }
+        const index =
+          adjusted_stack_structure[parent_stack_id].sub_items.indexOf(
+            to_append_id
+          );
+        if (index === -1) {
+          return adjusted_stack_structure;
+        }
+        adjusted_stack_structure[parent_stack_id].sub_items[index] =
+          new_horizontal_stack_id;
+        adjusted_stack_structure[be_appended_id].parent_id =
+          new_vertical_stack_id;
+        adjusted_stack_structure[to_append_id].parent_id =
+          new_vertical_stack_id;
+        setContainers((prev) => {
+          const adjusted_containers = { ...prev };
+          adjusted_containers[new_horizontal_stack_id] = {
+            position: { x: 0, y: 0 },
+            size: { width: 0, height: 0 },
+          };
+          return adjusted_containers;
+        });
+      }
+      setStackStructure(adjusted_stack_structure);
+      setContainers(adjusted_containers);
+      if (
+        componentCallBacks[to_append_id] &&
+        componentCallBacks[to_append_id].to_append
+      ) {
+        componentCallBacks[to_append_id].to_append();
+      }
+      if (
+        componentCallBacks[be_appended_id] &&
+        componentCallBacks[be_appended_id].to_append
+      ) {
+        componentCallBacks[be_appended_id].to_append();
+      }
+      setRerendered((prev) => prev + 1);
+      setTimeout(() => {
+        setRerendered((prev) => prev + 1);
+      }, 128);
+    },
+    [stackStructure, containers, componentCallBacks]
+  );
+
+  const calculate_root_position_and_size = useCallback(
+    throttle(() => {
       const position = {
         x: LEFT,
         y: top,
@@ -1960,7 +2366,9 @@ const RootStackManager = React.memo(() => {
         };
       });
       setRerendered((prev) => prev + 1);
-    }, 100);
+    }, 100)
+  );
+  useEffect(() => {
     window.addEventListener("resize", calculate_root_position_and_size);
     calculate_root_position_and_size();
     return () => {
@@ -1989,6 +2397,8 @@ const RootStackManager = React.memo(() => {
         setContainers,
         filters,
         setFilters,
+        componentCallBacks,
+        setComponentCallBacks,
         onFrameResize,
         setOnFrameResize,
         onFrameReposition,
@@ -2003,6 +2413,8 @@ const RootStackManager = React.memo(() => {
         generate_vertical_sub_item_on_drag_filter,
         apply_filter,
         clean_filter,
+        delete_stack_frame,
+        append_stack_frame,
       }}
     >
       {memorized_root_stack}
