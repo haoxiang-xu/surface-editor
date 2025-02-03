@@ -1,8 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import RootEventListener from "./DATA_MANAGERs/root_event_listener/root_event_listener";
-import ChatPageDemo from "./DEMO/chat/chat_page_demo";
+import ChatPageDemo from "./DEMOs/chat/chat_page_demo";
 import InputDemo from "./BUILTIN_COMPONENTs/input/input_demo";
+import NewStackDesign from "./DEMOs/new_stack_design/new_stack_design";
 
 import "./App.css";
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<RootEventListener />} />
         <Route path="/chat" element={<ChatPageDemo />} />
         <Route path="/input" element={<InputDemo />} />
+        <Route path="/new-stack-design" element={<NewStackDesign />} />
       </Routes>
     </Router>
   );
