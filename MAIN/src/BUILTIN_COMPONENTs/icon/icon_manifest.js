@@ -22,6 +22,7 @@ export const iconManifest = {
   hammer: () => import("./SVGs/UI/hammer.svg"),
   delete: () => import("./SVGs/UI/delete.svg"),
   wrench_screwdriver: () => import("./SVGs/UI/wrench_screwdriver.svg"),
+  menu: () => import("./SVGs/UI/menu.svg"),
 
   /* {win32} */
   win32_maximize: () => import("./SVGs/UI/win32/maximize.svg"),

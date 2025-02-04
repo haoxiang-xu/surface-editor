@@ -70,7 +70,7 @@ const Ollama = ({}) => {
           left: "50%",
 
           height: "100%",
-          width: "36%",
+          width: "45%",
           minWidth: 512,
         }}
       >

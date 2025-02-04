@@ -168,8 +168,6 @@ const InputSection = ({ inputValue, setInputValue, on_input_submit }) => {
           left: 0,
           right: 16,
           height: 64,
-
-          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
         }}
       ></div>
       <Input

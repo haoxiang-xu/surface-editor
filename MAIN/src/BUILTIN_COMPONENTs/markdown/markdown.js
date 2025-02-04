@@ -60,9 +60,7 @@ const CodeSection = ({ language, children }) => {
           height: default_font_size + 24,
 
           opacity: 1,
-          borderRadius: `${default_border_radius - 4}px ${
-            default_border_radius - 4
-          }px 0 0`,
+          borderRadius: `${default_border_radius - 4}px`,
           // backgroundColor: `rgb(${R + default_forground_color_offset / 6}, ${
           //   G + default_forground_color_offset / 6
           // }, ${B + default_forground_color_offset / 6})`,
