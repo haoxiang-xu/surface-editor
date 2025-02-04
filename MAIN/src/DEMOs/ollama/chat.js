@@ -340,8 +340,6 @@ const Chat = ({ messages, setMessages }) => {
 
         width: "100%",
         height: "100%",
-
-        backgroundColor: `rgb(${R}, ${G}, ${B})`,
       }}
     >
       <ScrollingSection messages={messages} />
