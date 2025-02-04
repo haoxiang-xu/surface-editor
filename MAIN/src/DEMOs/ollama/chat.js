@@ -204,8 +204,8 @@ const InputSection = ({ inputValue, setInputValue, on_input_submit }) => {
           position: "fixed",
           transform: "translate(-50%, -50%)",
 
-          bottom: 16,
-          right: 8,
+          bottom: 17,
+          right: 9,
           width: 16,
           height: 16,
           cursor: "pointer",

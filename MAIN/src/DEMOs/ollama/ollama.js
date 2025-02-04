@@ -26,7 +26,7 @@ const Ollama = ({}) => {
         style={{
           position: "absolute",
           transform: "translate(-50%, -50%)",
-          top: "50%",
+          top: "calc(50% + 2px)",
           left: "50%",
 
           height: "100%",
