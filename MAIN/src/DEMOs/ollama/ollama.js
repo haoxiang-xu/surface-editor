@@ -53,7 +53,7 @@ const Ollama = ({}) => {
           position: "absolute",
           transform: "translate(-50%, -50%)",
 
-          top: sectionStarted ? "calc(50% + 12px)" : "calc(50% - 2px)",
+          top: "calc(50% - 2px)",
           left: "50%",
           fontSize: 32,
           color: sectionStarted ? `rgba(255, 255, 255, 0)` : `rgba(255, 255, 255, 0.32)`,
@@ -71,6 +71,7 @@ const Ollama = ({}) => {
 
           height: "100%",
           width: "36%",
+          minWidth: 512,
         }}
       >
         <Chat messages={messages} setMessages={setMessages} />

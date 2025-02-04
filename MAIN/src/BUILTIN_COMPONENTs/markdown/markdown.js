@@ -316,7 +316,6 @@ const ThinkingSection = ({ children }) => {
           transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
 
           display: "inline-block",
-          opacity: 0.32,
           backgroundColor: `rgba(${R + default_forground_color_offset}, ${
             G + default_forground_color_offset
           }, ${B + default_forground_color_offset}, 0.72)`,
@@ -324,6 +323,7 @@ const ThinkingSection = ({ children }) => {
           padding: `${default_font_size}px`,
           maxHeight: isExpanded ? "none" : "8px",
           overflowY: "hidden",
+          opacity: isExpanded ? 0.32 : 0,
         }}
       >
         <ReactShowdown markdown={children} />
