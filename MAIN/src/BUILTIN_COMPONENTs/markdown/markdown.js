@@ -89,6 +89,7 @@ const CodeSection = ({ language, children }) => {
         </span>
         <div
           style={{
+            transition: "all 0.16s cubic-bezier(0.32, 1, 0.32, 1)",
             position: "absolute",
             top: 5,
             right: 5,

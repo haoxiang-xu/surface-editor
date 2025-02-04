@@ -199,7 +199,7 @@ const InputSection = ({ inputValue, setInputValue, on_input_submit }) => {
         src={send_icon}
         alt="send"
         style={{
-          transition: "all 0.08s cubic-bezier(0.32, 0, 0.32, 1)",
+          transition: "all 0.12s cubic-bezier(0.32, 0, 0.32, 1)",
 
           position: "fixed",
           transform: "translate(-50%, -50%)",
