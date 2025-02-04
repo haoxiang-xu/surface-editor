@@ -120,30 +120,12 @@
 
 ### <a id="local-setup"></a>LOCAL SETUP
 
-<span style="opacity: 0.32">Instructions to run this application on a local machine</span><br><br>
-<span style="opacity: 0.32">1.Run the whole application in a docker container</span>
-
-- **Setup using Docker**
-  - run `docker-compose up -d`
-
-#### OR
-
-<span style="opacity: 0.32">2.Run the frontend and backend applications separately</span>
-
 - **Setup Frontend Testing Application**
 
   - To Frontend Testing Application Directory `cd MAIN`
   - To install required modules `npm install`
   - Run Frontend Testing Application `npm start`
   - Heading to the Application `http://localhost:3000/`
-
-- **Setup Backend Code Server**
-
-  - Download .env file 'https://drive.google.com/file/d/10x2XNaH_Ko8ncjUSoqfYZSdqy3UwZxKG/view?usp=sharing' and move this file under Directory `backend_services/code_services` (make sure this file to be renamed as '.env')
-  - To Backend File Server Directory `cd backend_services/code_services`
-  - To install required modules `npm install`
-  - Run Backend File Server `npm start`
-  - Server will running on `http://localhost:8200/` in development mode
 
 ### <a id="join-the-team"></a>JOIN THE DEVELOPMENT TEAM
 
