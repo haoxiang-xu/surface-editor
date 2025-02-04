@@ -4,6 +4,7 @@ import RootEventListener from "./DATA_MANAGERs/root_event_listener/root_event_li
 import ChatPageDemo from "./DEMOs/chat/chat_page_demo";
 import InputDemo from "./BUILTIN_COMPONENTs/input/input_demo";
 import NewStackDesign from "./DEMOs/new_stack_design/new_stack_design";
+import Ollama from "./DEMOs/ollama/ollama";
 
 import "./App.css";
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/chat" element={<ChatPageDemo />} />
         <Route path="/input" element={<InputDemo />} />
         <Route path="/new-stack-design" element={<NewStackDesign />} />
+        <Route path="/ollama" element={<Ollama />} />
       </Routes>
     </Router>
   );

@@ -56,7 +56,7 @@ const Input = ({ value, setValue, onSubmit, ...props }) => {
           textAlign: "left",
           backgroundColor: `rgba(0, 0, 0, 0)`,
           padding: 0,
-          fontSize: default_font_size,
+          fontSize: props && props.style && props.style.fontSize ? props.style.fontSize : default_font_size,
           fontFamily: "inherit",
           borderRadius: 0,
           opacity: "1",
