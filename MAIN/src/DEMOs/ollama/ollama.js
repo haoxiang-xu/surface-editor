@@ -10,7 +10,7 @@ const Ollama = ({}) => {
 
   return (
     <div
-        style={{
+      style={{
         position: "absolute",
         top: "0",
         left: "0",
@@ -19,7 +19,7 @@ const Ollama = ({}) => {
         height: "100%",
 
         backgroundColor: `rgb(${R}, ${G}, ${B})`,
-        }}
+      }}
     >
       <div
         className="chat-section-wrapper"

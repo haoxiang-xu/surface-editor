@@ -16,7 +16,7 @@ const B = 30;
 const default_forground_color_offset = 12;
 const default_front_object_color_offset = 50;
 const default_font_color_offset = 128;
-const default_font_size = 14;
+const default_font_size = 12;
 const default_border_radius = 10;
 const default_tag_max_Width = 128;
 
@@ -57,30 +57,32 @@ const CodeSection = ({ language, children }) => {
           right: 7,
           left: 7,
 
-          height: default_font_size + 20,
+          height: default_font_size + 24,
 
           opacity: 1,
-          borderRadius: `${default_border_radius - 6}px ${
-            default_border_radius - 6
+          borderRadius: `${default_border_radius - 4}px ${
+            default_border_radius - 4
           }px 0 0`,
-          backgroundColor: `rgb(${R + default_forground_color_offset / 2}, ${
-            G + default_forground_color_offset / 2
-          }, ${B + default_forground_color_offset / 2})`,
+          // backgroundColor: `rgb(${R + default_forground_color_offset / 6}, ${
+          //   G + default_forground_color_offset / 6
+          // }, ${B + default_forground_color_offset / 6})`,
           boxShadow: `0 2px 16px rgba(0, 0, 0, 0.64)`,
         }}
       >
         <span
           style={{
+            userSelect: "none",
             position: "absolute",
-            top: "50%",
+            top: "45%",
 
             transform: "translateY(-50%)",
-            left: 8,
+            left: 12,
 
-            fontSize: `${default_font_size + 1}px`,
+            fontSize: `${default_font_size + 4}px`,
+            fontWeight: "bold",
             color: `rgb(${R + default_font_color_offset}, ${
               G + default_font_color_offset
-            }, ${B + default_font_color_offset})`,
+            }, ${B + default_font_color_offset}, 0.64)`,
           }}
         >
           {language}
@@ -88,17 +90,15 @@ const CodeSection = ({ language, children }) => {
         <div
           style={{
             position: "absolute",
-            top: 6,
+            top: 5,
             right: 5,
 
-            width: 28,
-            padding: `${default_font_size - 4}px ${default_font_size}px ${
-              default_font_size - 4
-            }px ${default_font_size}px`,
+            width: 36,
+            padding: `${default_font_size}px ${default_font_size}px ${default_font_size}px ${default_font_size}px`,
             border: `1px solid rgba(${R + default_forground_color_offset}, ${
               G + default_forground_color_offset
             }, ${B + default_forground_color_offset} , 0)`,
-            borderRadius: `${default_border_radius - 7}px`,
+            borderRadius: `${default_border_radius - 5}px`,
             backgroundColor: style.backgroundColor,
           }}
           onMouseEnter={() => setOnHover(true)}
@@ -117,25 +117,27 @@ const CodeSection = ({ language, children }) => {
             style={{
               position: "absolute",
               top: "50%",
-              left: 4,
+              left: 5,
               transform: "translateY(-50%)",
               PointerEvents: "none",
               userSelect: "none",
+              opacity: onClicked ? 1 : 0.64,
             }}
           />
           <span
             style={{
               position: "absolute",
               top: "50%",
-              right: 4,
+              right: 5,
               transform: "translateY(-55%)",
 
-              fontSize: `${default_font_size}px`,
+              fontSize: `${default_font_size + 3}px`,
               color: `rgb(${R + default_font_color_offset}, ${
                 G + default_font_color_offset
               }, ${B + default_font_color_offset})`,
               PointerEvents: "none",
               userSelect: "none",
+              opacity: onClicked ? 1 : 0.64,
             }}
           >
             copy
@@ -145,12 +147,13 @@ const CodeSection = ({ language, children }) => {
       <CodeBlock
         text={children}
         language={language}
-        showLineNumbers={true}
+        showLineNumbers={false}
         theme={dracula}
         wrapLines={false}
         codeBlock
         customStyle={{
-          fontSize: `${default_font_size}px`,
+          fontSize: `${default_font_size + 2}px`,
+          fontFamily: "'Courier New', Courier, monospace",
           backgroundColor: `rgb(${R - 8}, ${G - 8}, ${B - 8})`,
           paddingTop: 36,
           borderRadius: default_border_radius,
@@ -242,7 +245,7 @@ const TextSection = ({ children }) => {
   return (
     <span
       style={{
-        fontSize: `${default_font_size}px`,
+        fontSize: `${default_font_size + 4}px`,
       }}
     >
       {children}
@@ -252,11 +255,143 @@ const TextSection = ({ children }) => {
 const HTMLSection = ({ children }) => {
   return <div dangerouslySetInnerHTML={{ __html: children }} />;
 };
+const ThinkingSection = ({ children }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [onClick, setOnClick] = useState(false);
+  const [onHover, setOnHover] = useState(false);
+
+  const [style, setStyle] = useState({
+    backgroundColor: "none",
+  });
+  useEffect(() => {
+    if (onClick) {
+      setStyle({
+        backgroundColor: `rgba(${R + default_forground_color_offset * 2}, ${
+          G + default_forground_color_offset * 2
+        }, ${B + default_forground_color_offset * 2}, 1)`,
+      });
+    } else if (onHover) {
+      setStyle({
+        backgroundColor: `rgba(${R + default_forground_color_offset}, ${
+          G + default_forground_color_offset
+        }, ${B + default_forground_color_offset}, 0.32)`,
+      });
+    } else {
+      setStyle({
+        backgroundColor: `rgba(${R + default_forground_color_offset}, ${
+          G + default_forground_color_offset
+        }, ${B + default_forground_color_offset}, 0)`,
+      });
+    }
+  }, [onClick, onHover]);
+
+  return (
+    <div style={{ display: "inline-block" }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+
+          width: "100%",
+          height: "64px",
+        }}
+      >
+        <span
+          style={{
+            position: "absolute",
+            top: "17px",
+            left: "44px",
+
+            opacity: 0.64,
+          }}
+        >
+          Thought process
+        </span>
+      </div>
+      <div
+        className="markdown-section"
+        style={{
+          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
+
+          display: "inline-block",
+          opacity: 0.32,
+          backgroundColor: `rgba(${R + default_forground_color_offset}, ${
+            G + default_forground_color_offset
+          }, ${B + default_forground_color_offset}, 0.72)`,
+          borderRadius: `${default_border_radius}px`,
+          padding: `${default_font_size}px`,
+          maxHeight: isExpanded ? "none" : "8px",
+          overflowY: "hidden",
+        }}
+      >
+        <ReactShowdown markdown={children} />
+      </div>
+      <Icon
+        src="arrow"
+        style={{
+          transition: "all 0.32s cubic-bezier(0.32, 1, 0.32, 1)",
+          position: "absolute",
+          top: "28px",
+          left: "28px",
+          transform: isExpanded
+            ? "translate(-50%, -50%) rotate(-90deg)"
+            : "translate(-50%, -50%) rotate(90deg)",
+          padding: 4,
+          borderRadius: default_border_radius - 4,
+          backgroundColor: style.backgroundColor,
+        }}
+        onMouseEnter={() => setOnHover(true)}
+        onMouseLeave={() => {
+          setOnHover(false);
+          setOnClick(false);
+        }}
+        onMouseDown={() => setOnClick(true)}
+        onMouseUp={() => setOnClick(false)}
+        onClick={() => setIsExpanded(!isExpanded)}
+      />
+    </div>
+  );
+};
 
 const Markdown = ({ children, style }) => {
   const [processedContent, setProcessedContent] = useState(children);
 
   useEffect(() => {
+    const extract_think = (raw_content) => {
+      let unprocessed_content = raw_content;
+      let processed_content = [];
+
+      while (unprocessed_content.indexOf("<think>") !== -1) {
+        const start_tag = "<think>";
+        const end_tag = start_tag.replace("<", "</");
+
+        const start_index = unprocessed_content.indexOf(start_tag);
+        let end_index = unprocessed_content.indexOf(end_tag);
+        if (end_index === -1) {
+          end_index = unprocessed_content.length;
+        }
+        const pre_content = unprocessed_content.slice(0, start_index);
+        const post_content = unprocessed_content.slice(
+          end_index + end_tag.length
+        );
+        const think_content = unprocessed_content.slice(
+          start_index + start_tag.length,
+          end_index
+        );
+        if (pre_content.length > 0) {
+          processed_content.push({ type: "RAW", content: pre_content });
+        }
+        if (think_content.trim()) {
+          processed_content.push({ type: "THINK", content: think_content });
+        }
+        unprocessed_content = post_content;
+      }
+      if (unprocessed_content.length > 0) {
+        processed_content.push({ type: "RAW", content: unprocessed_content });
+      }
+      return processed_content;
+    };
     const extract_code = (raw_content) => {
       const find_first_code_block = (raw_content) => {
         const start_code_block = "```";
@@ -411,7 +546,7 @@ const Markdown = ({ children, style }) => {
       }
       return processed_content;
     };
-    const extrace_LaTeX = (raw_content) => {
+    const extract_LaTeX = (raw_content) => {
       const find_first_LaTeX = (raw_content) => {
         const start_LaTeX = "$";
         const end_LaTeX = "$";
@@ -473,6 +608,10 @@ const Markdown = ({ children, style }) => {
         };
         let processed_content = [];
         processed_content = extract_code(raw_content);
+        processed_content = apply_extract_function(
+          processed_content,
+          extract_think
+        );
         // processed_content = apply_extract_function(
         //   processed_content,
         //   extract_single_line_code
@@ -483,7 +622,7 @@ const Markdown = ({ children, style }) => {
         // );
         processed_content = apply_extract_function(
           processed_content,
-          extrace_LaTeX
+          extract_LaTeX
         );
         return processed_content;
       };
@@ -528,6 +667,12 @@ const Markdown = ({ children, style }) => {
           processed_content[i].component = (
             <div key={i} style={{ display: "inline" }}>
               <TextSection>{processed_content[i].content}</TextSection>
+            </div>
+          );
+        } else if (processed_content[i].type === "THINK") {
+          processed_content[i].component = (
+            <div key={i} style={{ display: "inline" }}>
+              <ThinkingSection>{processed_content[i].content}</ThinkingSection>
             </div>
           );
         } else {

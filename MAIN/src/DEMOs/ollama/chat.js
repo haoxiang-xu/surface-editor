@@ -253,12 +253,31 @@ const Chat = ({ messages, setMessages }) => {
   }, [inputValue, messages]);
 
   const single_chat_mode = async (messages) => {
+    const preprocess_messages = (messages, memory_length) => {
+      let processed_messages = [];
+
+      for (let i = 0; i < messages.length; i++) {
+        if (messages[i].role === "system") {
+          processed_messages.push({
+            role: messages[i].role,
+            content: messages[i].content,
+          });
+        } else if (messages.length - i <= memory_length) {
+          processed_messages.push({
+            role: messages[i].role,
+            content: messages[i].content,
+          });
+        }
+      }
+      return processed_messages;
+    };
+    const processed_messages = preprocess_messages(messages, 8);
+
     try {
       const request = {
         model: MODEL,
-        messages: messages,
+        messages: processed_messages,
       };
-      console.log("Request:", request);
       const response = await fetch(`http://localhost:11434/api/chat`, {
         method: "POST",
         headers: {
@@ -296,7 +315,6 @@ const Chat = ({ messages, setMessages }) => {
           console.error("Error parsing stream chunk:", error);
         }
       }
-      console.log("Final Response:", accumulatedResponse);
       return accumulatedResponse;
     } catch (error) {
       console.error("Error communicating with Ollama:", error);
