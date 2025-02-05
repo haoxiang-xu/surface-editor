@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ollama from "./ollama.png";
 import Chat from "./chat";
+import MenuBar from "./menu_bar";
 
 const R = 30;
 const G = 30;
@@ -44,7 +45,7 @@ const Ollama = ({}) => {
 
           padding: 8,
           borderRadius: 8,
-          opacity: sectionStarted ? 0.08 : 0.32,
+          opacity: sectionStarted ? 0 : 0.32,
         }}
       />
       <span
@@ -76,6 +77,7 @@ const Ollama = ({}) => {
       >
         <Chat messages={messages} setMessages={setMessages} />
       </div>
+      <MenuBar />
     </div>
   );
 };

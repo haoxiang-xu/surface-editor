@@ -165,9 +165,11 @@ const InputSection = ({ inputValue, setInputValue, on_input_submit }) => {
         style={{
           position: "fixed",
           bottom: 0,
-          left: 0,
+          left: 16,
           right: 16,
-          height: 64,
+          height: 32,
+
+          backgroundColor: `rgba(${R}, ${G}, ${B}, 1)`,
         }}
       ></div>
       <Input
@@ -175,7 +177,7 @@ const InputSection = ({ inputValue, setInputValue, on_input_submit }) => {
         setValue={setInputValue}
         onSubmit={on_input_submit}
         style={{
-          transition: "height 0.04s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "height 0.16s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
           position: "fixed",
 
           bottom: 24,
@@ -189,7 +191,8 @@ const InputSection = ({ inputValue, setInputValue, on_input_submit }) => {
           borderRadius: default_border_radius,
           backgroundColor: `rgba(${R + default_forground_color_offset}, ${
             G + default_forground_color_offset
-          }, ${B + default_forground_color_offset}, 1)`,
+          }, ${B + default_forground_color_offset}, 0.64)`,
+          backdropFilter: "blur(24px)",
           boxShadow: `0px 4px 32px rgba(0, 0, 0, 0.64)`,
         }}
       />
