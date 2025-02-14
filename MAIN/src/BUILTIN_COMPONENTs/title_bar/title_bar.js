@@ -1,16 +1,9 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useContext,
-  useCallback,
-} from "react";
-import { TitleBarContexts } from "./title_bar_contexts";
-import Icon from "../icon/icon";
+import React, { useState, useEffect, useContext } from "react";
 
-const R = 24;
-const G = 24;
-const B = 24;
+import { TitleBarContexts } from "./title_bar_contexts";
+import { RootConfigContexts } from "../../DATA_MANAGERs/root_config_manager/root_config_contexts";
+
+import Icon from "../icon/icon";
 
 const default_title_bar_style = {
   padding: 5,
@@ -35,34 +28,23 @@ const Win32ControlPanelButton = ({
   const [onHover, setOnHover] = useState(false);
   const [onClick, setOnClick] = useState(false);
   const [zIndex, setZIndex] = useState(default_button_style.backLayer);
+  const { R, G, B, on_hover, on_click } = useContext(RootConfigContexts);
   const [backgroundColor, setBackgroundColor] = useState(
     `rgba(${R}, ${G}, ${B}, 1)`
   );
+
   const [boxShadow, setBoxShadow] = useState("0px 0px 0px 0px rgba(0,0,0,0)");
 
   useEffect(() => {
     if (onClick) {
       setBoxShadow("0px 0px 0px 0px rgba(0,0,0,0)");
-      if (color.R + color.G + color.B < 100) {
-        setBackgroundColor(
-          `rgba(${color.R + 64}, ${color.G + 64}, ${color.B + 64}, 1)`
-        );
-        setZIndex(default_button_style.frontLayer);
-      } else {
-        setBackgroundColor(
-          `rgba(${color.R - 32}, ${color.G - 32}, ${color.B - 32}, 1)`
-        );
-      }
+      setBackgroundColor(on_click(color.R, color.G, color.B));
     } else if (onHover) {
       setBoxShadow("0 2px 12px rgba(0, 0, 0, 0.32)");
-      setBackgroundColor(
-        `rgba(${color.R + 16}, ${color.G + 16}, ${color.B + 16}, 1)`
-      );
-      setZIndex(default_button_style.frontLayer);
+      setBackgroundColor(on_hover(color.R, color.G, color.B));
     } else {
       setBoxShadow("0px 0px 0px 0px rgba(0,0,0,0)");
       setBackgroundColor(`rgba(${R}, ${G}, ${B}, 1)`);
-      setZIndex(default_button_style.backLayer);
     }
   }, [onHover, onClick]);
 
@@ -125,6 +107,7 @@ const Win32ControlPanelButton = ({
 const Win32ControlPanel = () => {
   const { isWindowMaximized, handleClose, handleMinimize, handleMaximize } =
     useContext(TitleBarContexts);
+  const { R, G, B } = useContext(RootConfigContexts);
 
   return (
     <div

@@ -377,25 +377,6 @@ class Car {
   `,
   },
 };
-const DEFAULT_STACK_STRUCTURE_OPTIONS_DATA = [
-  {
-    id: "surface_explorer_0004",
-    type: "surface_explorer",
-    stack_component_unique_tag: "surface_explorer_0004",
-  },
-  {
-    id: "monaco_editor_0002",
-    type: "monaco_editor",
-    stack_component_unique_tag: "monaco_editor_0002",
-    code_editor_container_ref_index: 1,
-  },
-  {
-    id: "monaco_editor_0003",
-    type: "monaco_editor",
-    stack_component_unique_tag: "monaco_editor_0003",
-    code_editor_container_ref_index: 2,
-  },
-];
 const DIRs = {
   root: {
     file_name: "demo",
@@ -465,6 +446,12 @@ const FAKE_STORAGE = {
       "demo/index/style/code_editor.css",
       "demo/main.py",
     ],
+  },
+  monaco_editor_0003: {
+    on_selected_monaco_core_index: -1,
+    monaco_paths: ["demo/index/index.html", "demo/main.java"],
+  },
+  monaco_editor: {
     monaco_cores: {
       "demo/src/code_editor.js": {
         viewState: null,
@@ -478,12 +465,6 @@ const FAKE_STORAGE = {
         viewState: null,
         model: null,
       },
-    },
-  },
-  monaco_editor_0003: {
-    on_selected_monaco_core_index: -1,
-    monaco_paths: ["demo/index/index.html", "demo/main.java"],
-    monaco_cores: {
       "demo/index/index.html": {
         viewState: null,
         model: null,
@@ -914,33 +895,31 @@ const RootDataManager = React.memo(({ children }) => {
     },
     [storage]
   );
-  /* { STORAGE } ======================================================================================================================= */
-
-  /* Stack Structure Data and Functions ============================================================== */
-  const [stackStructureOptionsData, setStackStructureOptionsData] = useState(
-    DEFAULT_STACK_STRUCTURE_OPTIONS_DATA
+  const access_storage_by_type = useCallback(
+    (type) => {
+      return storage[type];
+    },
+    [storage]
   );
-  const updateStackStructureContainerIndex = useCallback(
-    (originalIndex, newIndex) => {
-      setStackStructureOptionsData((prevData) => {
-        const newOptionsData = [...prevData];
-        const popedData = newOptionsData.splice(originalIndex, 1);
-        newOptionsData.splice(newIndex, 0, popedData[0]);
-
-        return newOptionsData;
+  const update_storage_by_type = useCallback(
+    (type, data) => {
+      setStorage((prevData) => {
+        return { ...prevData, [type]: data };
       });
     },
-    []
+    [storage]
   );
-  const removeStackStructureContainerIndex = useCallback((index) => {
-    setStackStructureOptionsData((prevData) => {
-      const newOptionsData = [...prevData];
-      newOptionsData.splice(index, 1);
-
-      return newOptionsData;
-    });
-  }, []);
-  /* Stack Structure Data and Functions ============================================================== */
+  const remove_storage_by_type = useCallback(
+    (type) => {
+      setStorage((prevData) => {
+        const newData = { ...prevData };
+        delete newData[type];
+        return newData;
+      });
+    },
+    [storage]
+  );
+  /* { STORAGE } ======================================================================================================================= */
 
   return (
     <RootDataContexts.Provider
@@ -975,11 +954,9 @@ const RootDataManager = React.memo(({ children }) => {
         access_storage_by_id,
         update_storage_by_id,
         remove_storage_by_id,
-
-        stackStructureOptionsData,
-        setStackStructureOptionsData,
-        updateStackStructureContainerIndex,
-        removeStackStructureContainerIndex,
+        access_storage_by_type,
+        update_storage_by_type,
+        remove_storage_by_type,
       }}
     >
       {children}

@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 
 import RootDataManager from "../root_data_manager/root_data_manager";
+import RootConfigManager from "../root_config_manager/root_config_manager";
 import RootCommandManager from "../root_command_manager/root_command_manager";
 import RootStackManager from "../root_stack_manager/root_stack_manager";
 
+import { RootConfigContexts } from "../root_config_manager/root_config_contexts";
 import { RootEventContexts } from "./root_event_contexts";
 
 import TitleBar from "../../BUILTIN_COMPONENTs/title_bar/title_bar";
-import {
-  SYSTEM_FRAME_BORDER,
-  SYSTEM_FRAME_BORDER_RADIUS,
-} from "../../CONSTs/systemFrameStyling";
 
 const MainStack = React.memo(() => {
   // console.log("RDM/REL/MainStack", new Date().getTime());
@@ -118,37 +116,34 @@ const RootEventListener = () => {
         isOnTitleBar,
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          height: "100%",
-          width: "100%",
-
-          /* STYLE */
-          backgroundColor: "#181818",
-          boxSizing: "border-box",
-          overflowY: "hidden",
-          overflowX: "hidden",
-          borderRadius: isWindowMaximized ? "0px" : SYSTEM_FRAME_BORDER_RADIUS,
-          border: isWindowMaximized ? "none" : SYSTEM_FRAME_BORDER,
-        }}
-      >
-        {isOnTitleBar ? (
-          <TitleBar isWindowMaximized={isWindowMaximized} />
-        ) : null}
+      <RootConfigManager>
         <div
           style={{
             position: "absolute",
-            left: 0,
-            bottom: 0,
             top: 0,
+            left: 0,
+            height: "100%",
+            width: "100%",
+
+            overflowY: "hidden",
+            overflowX: "hidden",
           }}
         >
-          <MainStack />
+          {isOnTitleBar ? (
+            <TitleBar isWindowMaximized={isWindowMaximized} />
+          ) : null}
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              bottom: 0,
+              top: 0,
+            }}
+          >
+            <MainStack />
+          </div>
         </div>
-      </div>
+      </RootConfigManager>
     </RootEventContexts.Provider>
   );
 };

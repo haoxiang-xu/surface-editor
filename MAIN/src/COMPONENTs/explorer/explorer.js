@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ICON_MANAGER } from "../../ICONs/icon_manager.js";
 import { SurfaceExplorerContextMenuContexts } from "./surface_explorer_context_menu_contexts.js";
 import { SurfaceExplorerContexts } from "./surface_explorer_contexts.js";
 import { RootDataContexts } from "../../DATA_MANAGERs/root_data_manager/root_data_contexts.js";
@@ -8,31 +7,6 @@ import DirItem from "./dirItem/dirItem.js";
 import PulseLoader from "react-spinners/PulseLoader";
 import BarLoader from "react-spinners/BarLoader";
 import "./explorer.css";
-
-/* Load ICON manager --------------------------------------------------------------------------------- */
-let FILE_TYPE_ICON_MANAGER = {
-  default: {
-    ICON: null,
-    LABEL_COLOR: "#C8C8C8",
-  },
-};
-try {
-  FILE_TYPE_ICON_MANAGER = ICON_MANAGER().FILE_TYPE_ICON_MANAGER;
-} catch (e) {
-  console.log(e);
-}
-let SYSTEM_ICON_MANAGER = {
-  default: {
-    ICON: null,
-    LABEL_COLOR: "#C8C8C8",
-  },
-};
-try {
-  SYSTEM_ICON_MANAGER = ICON_MANAGER().SYSTEM_ICON_MANAGER;
-} catch (e) {
-  console.log(e);
-}
-/* Load ICON manager --------------------------------------------------------------------------------- */
 
 const SearchBar = ({}) => {
   /* Load ICON manager -------------------------------- */
@@ -536,6 +510,8 @@ const ContextMenuWrapper = ({ children }) => {
 };
 const Explorer = ({
   id,
+  width,
+  height,
   mode,
   command,
   setCommand,

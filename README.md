@@ -1,12 +1,18 @@
+<<<<<<< HEAD
 # <img src="./MAIN/assets/logos/logo_pink_512.png" style="height: 64px"/> Surface Editor
+=======
+# <img src="./MAIN/assets/logos/logo_pink_32.png"/> Surface Editor `in development`
+
+## "Not replacing developers, but helping developers."
+
+`Surface Editor` is a code editor built by developers for developers—not an auto-coding tool that churns out Flappy Bird clones. It’s a tool designed specifically to enhance coding efficiency by combining the power of AI with a revolutionary new UI, introducing a whole new way to code.
+>>>>>>> 31f635315fa20894a88e7440f4baa003a166fdc6
 
 ![darwin32_demo_ui](./MAIN/assets/images/darwin32_demo_ui.png)
 
 ## [ Table of Contents ]
 
 - ABOUT THE PROJECT
-  - [CodeEditor+LLMs](#codeeditor-llms)
-  - [AI-Enhanced UI](#ai-enhanced-ui)
   - [Built With](#built-with)
   - [Contributors](#contributors)
 - TO EVERYONE
@@ -19,22 +25,7 @@
 
 ## [ About the Project ]
 
-### <a id="codeeditor-llms"></a>CodeEditor+LLMs (Large Language Models):
-
-<span style="opacity: 0.64">CodeEditor+LLMs is a state-of-the-art Code Editor that leverages the power of large language models to assist in coding. By utilizing a vector database, it establishes intricate relationships between files and code segments. This advanced interconnectivity is designed to significantly enhance the efficiency of developers by providing context-aware insights and coding suggestions.</span>
-
-### <a id="ai-enhanced-ui"></a>AI-Enhanced UI:
-
-<span style="opacity: 0.64">This is a specialized UI designed specifically for AI supported application. While most AI applications focus primarily on functionality, they often overlook the importance of a better user experience. We possess incredibly powerful LLMs, but our interactions with them still resemble the command-line interface era. I believe that instead of merely providing code editors or IDE extensions for LLMs, we need a comprehensive overhaul of the entire code editor UI to align with the new paradigm of AI interaction in this era.</span>
-
 ### <a id="built-with"></a>BUILT WITH
-
-<!-- [![Github][Github-shield]][Github-url] -->
-<!-- [![Node][Node-shield]][Node-install] -->
-<!-- [![MongoDB][MongoDB-shield]][MongoDB-install] -->
-<!-- [![Figma][Figma-shield]][Figma-url] -->
-<!-- [![VSC][VSC-shield]][VSC-install] -->
-<!-- [![Nodemon][Nodemon-shield]][Nodemon-url] -->
 
 [![OpenAI][OpenAI-shield]][OpenAI-url]
 [![React][React-shield]][React-url]
