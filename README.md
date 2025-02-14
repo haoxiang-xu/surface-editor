@@ -1,4 +1,4 @@
-# <img src="./MAIN/assets/logos/logo_pink_32.png"/> Surface Editor
+# <img src="./MAIN/assets/logos/logo_pink_512.png" style="height: 64px"/> Surface Editor
 
 ![darwin32_demo_ui](./MAIN/assets/images/darwin32_demo_ui.png)
 
