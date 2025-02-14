@@ -1,12 +1,8 @@
-<<<<<<< HEAD
 # <img src="./MAIN/assets/logos/logo_pink_512.png" style="height: 64px"/> Surface Editor
-=======
-# <img src="./MAIN/assets/logos/logo_pink_32.png"/> Surface Editor `in development`
 
 ## "Not replacing developers, but helping developers."
 
 `Surface Editor` is a code editor built by developers for developers—not an auto-coding tool that churns out Flappy Bird clones. It’s a tool designed specifically to enhance coding efficiency by combining the power of AI with a revolutionary new UI, introducing a whole new way to code.
->>>>>>> 31f635315fa20894a88e7440f4baa003a166fdc6
 
 ![darwin32_demo_ui](./MAIN/assets/images/darwin32_demo_ui.png)
 
